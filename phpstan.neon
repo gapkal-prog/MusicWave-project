@@ -1,0 +1,9 @@
+parameters:
+    level: 3
+    paths:
+        - .
+    excludePaths:
+        - vendor
+        - node_modules
+        - build
+        - dist
