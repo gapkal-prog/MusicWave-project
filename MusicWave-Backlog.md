@@ -940,4 +940,3 @@
 | provider integration اولیه در `music-wave-vip` | اجباری |
 
 بخش‌هایی مثل فیلتر پیشرفته، گزارش‌گیری، analytics، Elementor addon و providerهای متعدد باید عمداً از MVP خارج بمانند تا تیم وارد فرسایش scope نشود.
-<!-- POWERSHELL_WRITE_TEST -->
