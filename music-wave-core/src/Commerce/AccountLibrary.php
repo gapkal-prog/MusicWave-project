@@ -158,7 +158,10 @@ final class AccountLibrary {
 
 		echo '<nav class="mw-user-dashboard__tabs" aria-label="' . esc_attr__( 'Account sections', 'music-wave-core' ) . '">';
 		foreach ( $panels as $key => $panel ) {
-			echo '<button type="button" class="mw-user-dashboard__tab" data-mw-dashboard-tab="' . esc_attr( $key ) . '" aria-controls="mw-dashboard-panel-' . esc_attr( $key ) . '" aria-expanded="false"><span aria-hidden="true">' . esc_html( (string) $panel['icon'] ) . '</span><strong>' . esc_html( (string) $panel['label'] ) . '</strong><small>' . esc_html( (string) $panel['description'] ) . '</small></button>';
+			// Server markup keeps every panel expanded so the dashboard remains
+			// readable when JavaScript fails; the tab controller collapses panels
+			// after it loads (progressive enhancement, PROJECT_PLAN.md §14).
+			echo '<button type="button" class="mw-user-dashboard__tab" data-mw-dashboard-tab="' . esc_attr( $key ) . '" aria-controls="mw-dashboard-panel-' . esc_attr( $key ) . '" aria-expanded="true"><span aria-hidden="true">' . esc_html( (string) $panel['icon'] ) . '</span><strong>' . esc_html( (string) $panel['label'] ) . '</strong><small>' . esc_html( (string) $panel['description'] ) . '</small></button>';
 		}
 		echo '<a class="mw-user-dashboard__tab mw-user-dashboard__tab--logout" href="' . esc_url( $logout_url ) . '"><span aria-hidden="true">&rarr;</span><strong>' . esc_html__( 'Sign out', 'music-wave-core' ) . '</strong><small>' . esc_html__( 'Securely close this account session.', 'music-wave-core' ) . '</small></a>';
 		echo '</nav>';
@@ -166,7 +169,7 @@ final class AccountLibrary {
 		echo '<div class="mw-user-dashboard__panels">';
 		foreach ( $panels as $key => $panel ) {
 			// Panel content is composed above from fully escaped internal markup only.
-			echo '<section class="mw-user-dashboard__panel" id="mw-dashboard-panel-' . esc_attr( $key ) . '" data-mw-dashboard-panel="' . esc_attr( $key ) . '" hidden><h3 class="mw-user-dashboard__panel-title">' . esc_html( (string) $panel['label'] ) . '</h3><div class="mw-user-dashboard__panel-content">' . $panel['content'] . '</div></section>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+			echo '<section class="mw-user-dashboard__panel is-open" id="mw-dashboard-panel-' . esc_attr( $key ) . '" data-mw-dashboard-panel="' . esc_attr( $key ) . '"><h3 class="mw-user-dashboard__panel-title">' . esc_html( (string) $panel['label'] ) . '</h3><div class="mw-user-dashboard__panel-content">' . $panel['content'] . '</div></section>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		}
 		echo '</div></section>';
 

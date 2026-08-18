@@ -828,7 +828,13 @@ Exit gate:
 
 **Priority:** P0/P1  
 **Dependencies:** Stable application APIs from Stage 3; urgent no-JS/navigation fixes may begin after Stage 1  
-**Status:** Not started
+**Status:** In progress — urgent no-JS and duplicate-surface fixes only (permitted early per the dependency note)
+
+**Evidence (2026-08-19):**
+
+- Account dashboard no longer server-hides every panel: markup renders all panels expanded, and `dashboard.js` collapses them on load, so content survives JavaScript failure (deliverable 2, partial; §14 item 4). Template-integrity tests now assert the no-JS contract.
+- Duplicate account/gate surfaces removed from the `account-hub` theme pattern: the standalone `music-wave/music-library` block and the `[woocommerce_my_account]` shortcode (which produced a second sign-in gate for logged-out visitors) are gone; the dashboard block already provides library, orders, account, and membership panels with a single guest gate.
+- Remaining deliverables (navigation, block.json authority, conditional assets, a11y/RTL, translations) untouched — they depend on Stage 3.
 
 Deliverables:
 

@@ -20,13 +20,9 @@
 <!-- /wp:paragraph --></div>
 <!-- /wp:group -->
 <!-- wp:music-wave/account-dashboard /-->
-<!-- wp:music-wave/music-library /-->
 <!-- wp:post-content /-->
 <!-- wp:separator {"align":"wide","className":"is-style-wide"} -->
 <hr class="wp-block-separator alignwide has-alpha-channel-opacity is-style-wide"/>
 <!-- /wp:separator -->
-<!-- wp:shortcode -->
-<div class="wp-block-shortcode">[woocommerce_my_account]</div>
-<!-- /wp:shortcode -->
 <!-- wp:musicwave/release-shelf {"eyebrow":"DISCOVER","title":"Recommended next","orderBy":"rand","itemsToShow":8,"columns":4,"layout":"scroll","showAction":false} /--></div>
 <!-- /wp:group -->

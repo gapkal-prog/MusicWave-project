@@ -64,7 +64,10 @@
 		openOnly(tab);
 	});
 
-	// Deep-link support: open the panel referenced by the URL hash.
+	// Progressive enhancement: the server renders every panel expanded so the
+	// dashboard stays readable without JavaScript. Once this controller loads,
+	// collapse everything and open only the deep-linked panel (if any).
+	closeAll();
 	var hash = (window.location.hash || '').replace('#mw-', '');
 	if (hash) {
 		var linked = tabButton(hash);

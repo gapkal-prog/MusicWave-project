@@ -396,10 +396,28 @@ mw_assert_same(
 $account_hub_pattern = (string) file_get_contents( $theme_directory . '/patterns/account-hub.php' );
 mw_assert_same(
 	true,
-	false !== strpos( $account_hub_pattern, 'wp:music-wave/account-dashboard' )
-		&& false !== strpos( $account_hub_pattern, 'wp:music-wave/music-library' )
-		&& false !== strpos( $account_hub_pattern, 'woocommerce_my_account' ),
-	'The account hub must combine the dashboard, the personal library, and WooCommerce account management.'
+	false !== strpos( $account_hub_pattern, 'wp:music-wave/account-dashboard' ),
+	'The account hub must render the unified account dashboard.'
+);
+mw_assert_same(
+	true,
+	false === strpos( $account_hub_pattern, 'wp:music-wave/music-library' )
+		&& false === strpos( $account_hub_pattern, 'woocommerce_my_account' ),
+	'The account hub must not duplicate the library or WooCommerce account surfaces; the dashboard already contains those panels (PROJECT_PLAN.md §14).'
+);
+
+$account_library_source = (string) file_get_contents( dirname( __DIR__ ) . '/music-wave-core/src/Commerce/AccountLibrary.php' );
+mw_assert_same(
+	false,
+	false !== strpos( $account_library_source, "data-mw-dashboard-panel=\"' . esc_attr( \$key ) . '\" hidden" ),
+	'Dashboard panels must not be server-hidden; content has to stay visible when JavaScript fails (PROJECT_PLAN.md §14).'
+);
+
+$dashboard_script = (string) file_get_contents( dirname( __DIR__ ) . '/music-wave-core/assets/dashboard.js' );
+mw_assert_same(
+	true,
+	false !== strpos( $dashboard_script, 'closeAll();' ),
+	'The dashboard controller must collapse panels on load so tab behavior only applies when JavaScript is available.'
 );
 
 $library_blocks_source = (string) file_get_contents( dirname( __DIR__ ) . '/music-wave-core/src/Blocks/LibraryBlocks.php' );
