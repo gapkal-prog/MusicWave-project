@@ -1,6 +1,7 @@
 <?php
 declare(strict_types=1);
 namespace ManaCore\MusicWave\Vip;
+
 use ManaCore\MusicWave\Core\Downloads\DownloadProvider;
 use ManaCore\MusicWave\Core\Downloads\DownloadTokenClaims;
 use ManaCore\MusicWave\Core\Downloads\StreamableDownloadProvider;
@@ -75,7 +76,7 @@ final class ProtectedFileProvider implements DownloadProvider, StreamableDownloa
 	}
 
 	private function content_type( string $file ): string {
-		$types = array(
+		$types     = array(
 			'mp3'  => 'audio/mpeg',
 			'm4a'  => 'audio/mp4',
 			'aac'  => 'audio/aac',
@@ -92,7 +93,7 @@ final class ProtectedFileProvider implements DownloadProvider, StreamableDownloa
 	 * @return array<int, int>|false
 	 */
 	private function requested_range( int $size ) {
-		$header = isset( $_SERVER['HTTP_RANGE'] ) && is_string( $_SERVER['HTTP_RANGE'] ) ? trim( $_SERVER['HTTP_RANGE'] ) : '';
+		$header = isset( $_SERVER['HTTP_RANGE'] ) && is_string( $_SERVER['HTTP_RANGE'] ) ? trim( sanitize_text_field( wp_unslash( $_SERVER['HTTP_RANGE'] ) ) ) : '';
 		if ( '' === $header ) {
 			return array( 0, $size );
 		}
@@ -132,7 +133,7 @@ final class ProtectedFileProvider implements DownloadProvider, StreamableDownloa
 			if ( false === $chunk || '' === $chunk ) {
 				break;
 			}
-			echo $chunk;
+			echo $chunk; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Raw binary file stream; escaping would corrupt audio bytes.
 			$length -= strlen( $chunk );
 			flush();
 		}

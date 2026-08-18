@@ -10,21 +10,21 @@ declare(strict_types=1);
 namespace ManaCore\MusicWave\Vip;
 
 final class VipSettings {
-	public const OPTION = 'music_wave_vip_settings';
+	public const OPTION             = 'music_wave_vip_settings';
 	public const LEGACY_ROOT_OPTION = 'music_wave_vip_protected_root';
 
 	/** @return array<string, mixed> */
 	public static function defaults(): array {
 		return array(
-			'delivery_provider'       => 'local',
-			'protected_root'          => '',
-			'remote_base_url'         => '',
-			'remote_path_prefix'      => '',
-			'remote_signing_secret'   => '',
-			'remote_signature_param'  => 'signature',
-			'remote_expires_param'    => 'expires',
-			'remote_ttl'              => 300,
-			'membership_sources'      => array( 'role', 'filter' ),
+			'delivery_provider'      => 'local',
+			'protected_root'         => '',
+			'remote_base_url'        => '',
+			'remote_path_prefix'     => '',
+			'remote_signing_secret'  => '',
+			'remote_signature_param' => 'signature',
+			'remote_expires_param'   => 'expires',
+			'remote_ttl'             => 300,
+			'membership_sources'     => array( 'role', 'filter' ),
 		);
 	}
 
@@ -58,17 +58,17 @@ final class VipSettings {
 		$provider = isset( $value['delivery_provider'] ) ? sanitize_key( (string) $value['delivery_provider'] ) : '';
 		$provider = in_array( $provider, array( 'local', 'remote_redirect' ), true ) ? $provider : $defaults['delivery_provider'];
 
-		$root = isset( $value['protected_root'] ) && is_scalar( $value['protected_root'] ) ? trim( wp_unslash( (string) $value['protected_root'] ) ) : '';
-		$base = isset( $value['remote_base_url'] ) && is_scalar( $value['remote_base_url'] ) ? esc_url_raw( trim( (string) $value['remote_base_url'] ), array( 'https' ) ) : '';
-		$prefix = isset( $value['remote_path_prefix'] ) && is_scalar( $value['remote_path_prefix'] ) ? trim( sanitize_text_field( (string) $value['remote_path_prefix'] ) ) : '';
-		$prefix = trim( preg_replace( '/[^A-Za-z0-9._\/-]/', '', $prefix ), '/' );
-		$secret = isset( $value['remote_signing_secret'] ) && is_scalar( $value['remote_signing_secret'] ) ? trim( (string) $value['remote_signing_secret'] ) : '';
+		$root            = isset( $value['protected_root'] ) && is_scalar( $value['protected_root'] ) ? trim( wp_unslash( (string) $value['protected_root'] ) ) : '';
+		$base            = isset( $value['remote_base_url'] ) && is_scalar( $value['remote_base_url'] ) ? esc_url_raw( trim( (string) $value['remote_base_url'] ), array( 'https' ) ) : '';
+		$prefix          = isset( $value['remote_path_prefix'] ) && is_scalar( $value['remote_path_prefix'] ) ? trim( sanitize_text_field( (string) $value['remote_path_prefix'] ) ) : '';
+		$prefix          = trim( preg_replace( '/[^A-Za-z0-9._\/-]/', '', $prefix ), '/' );
+		$secret          = isset( $value['remote_signing_secret'] ) && is_scalar( $value['remote_signing_secret'] ) ? trim( (string) $value['remote_signing_secret'] ) : '';
 		$signature_param = isset( $value['remote_signature_param'] ) ? sanitize_key( (string) $value['remote_signature_param'] ) : '';
-		$expires_param = isset( $value['remote_expires_param'] ) ? sanitize_key( (string) $value['remote_expires_param'] ) : '';
-		$ttl = isset( $value['remote_ttl'] ) ? absint( $value['remote_ttl'] ) : 0;
-		$sources = isset( $value['membership_sources'] ) && is_array( $value['membership_sources'] ) ? $value['membership_sources'] : array();
-		$sources = array_values( array_unique( array_filter( array_map( 'sanitize_key', $sources ) ) ) );
-		$sources = array_values( array_intersect( $sources, array( 'role', 'filter', 'woocommerce_memberships', 'woocommerce_subscriptions' ) ) );
+		$expires_param   = isset( $value['remote_expires_param'] ) ? sanitize_key( (string) $value['remote_expires_param'] ) : '';
+		$ttl             = isset( $value['remote_ttl'] ) ? absint( $value['remote_ttl'] ) : 0;
+		$sources         = isset( $value['membership_sources'] ) && is_array( $value['membership_sources'] ) ? $value['membership_sources'] : array();
+		$sources         = array_values( array_unique( array_filter( array_map( 'sanitize_key', $sources ) ) ) );
+		$sources         = array_values( array_intersect( $sources, array( 'role', 'filter', 'woocommerce_memberships', 'woocommerce_subscriptions' ) ) );
 		if ( empty( $sources ) ) {
 			$sources = $defaults['membership_sources'];
 		}

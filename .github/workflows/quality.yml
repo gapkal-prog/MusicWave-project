@@ -11,6 +11,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
+        # PHP 7.4 is the declared support floor for the current release line;
+        # PHP 8.2 is the next-major baseline (docs/adr/0003-runtime-support-policy.md).
         php: ['7.4', '8.2']
     steps:
       - uses: actions/checkout@v4
@@ -25,3 +27,41 @@ jobs:
       - run: composer test
       - run: composer check:phpcs
       - run: composer check:phpstan
+
+  javascript:
+    name: JavaScript lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      # npm ci fails when the lockfile is missing or stale, so this gate can
+      # never silently skip (PROJECT_PLAN.md Stage 0).
+      - run: npm ci
+      - run: npm run lint:js
+
+  wordpress-fixture:
+    name: WordPress fixture smoke
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - name: Start wp-env (WordPress 6.8, PHP 8.2, Core + VIP + theme)
+        run: npx --yes @wordpress/env@latest start
+      - name: Verify plugin and theme activation
+        run: |
+          npx @wordpress/env run cli wp plugin activate music-wave-core music-wave-vip
+          npx @wordpress/env run cli wp theme activate musicwave
+          npx @wordpress/env run cli wp plugin list --status=active --field=name | grep -q music-wave-core
+          npx @wordpress/env run cli wp theme list --status=active --field=name | grep -q musicwave
+      - name: Front page renders without fatal errors
+        run: |
+          status=$(curl -s -o /tmp/home.html -w "%{http_code}" http://localhost:8888/)
+          test "$status" = "200"
+          ! grep -qi "fatal error" /tmp/home.html

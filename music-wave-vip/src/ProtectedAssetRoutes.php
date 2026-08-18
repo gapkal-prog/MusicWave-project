@@ -74,11 +74,12 @@ final class ProtectedAssetRoutes {
 	 * List private asset identifiers without exposing their filesystem paths.
 	 */
 	public function index( WP_REST_Request $request ): WP_REST_Response {
-		$search = $request->get_param( 'search' );
-		$search = is_scalar( $search ) ? sanitize_text_field( (string) $search ) : '';
-		$page   = max( 1, absint( $request->get_param( 'page' ) ) );
-		$per_page = min( 100, max( 1, absint( $request->get_param( 'per_page' ) ?: 50 ) ) );
-		$assets = $this->storage->list_assets( $search, $page, $per_page );
+		$search   = $request->get_param( 'search' );
+		$search   = is_scalar( $search ) ? sanitize_text_field( (string) $search ) : '';
+		$page     = max( 1, absint( $request->get_param( 'page' ) ) );
+		$per_page = absint( $request->get_param( 'per_page' ) );
+		$per_page = min( 100, max( 1, $per_page > 0 ? $per_page : 50 ) );
+		$assets   = $this->storage->list_assets( $search, $page, $per_page );
 
 		return new WP_REST_Response(
 			array(

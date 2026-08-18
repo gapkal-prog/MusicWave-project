@@ -15,6 +15,7 @@ use ManaCore\MusicWave\Core\Blocks\BlockMetadata;
 use ManaCore\MusicWave\Core\Blocks\BlockSupport;
 use ManaCore\MusicWave\Core\Blocks\PreviewPlayer;
 use ManaCore\MusicWave\Core\Contracts\Module;
+use ManaCore\MusicWave\Core\Infrastructure\ReleaseRestVisibilityPolicy;
 use ManaCore\MusicWave\Core\Playback\PlaybackQueueRoutes;
 
 final class Rendering implements Module {
@@ -30,11 +31,15 @@ final class Rendering implements Module {
 	/** @var PlaybackQueueRoutes|null */
 	private $playback_queue;
 
-	public function __construct( ReleaseBlocks $blocks, ?ArtistProfileBlock $artist_profile = null, ?PreviewPlayer $preview_player = null, ?PlaybackQueueRoutes $playback_queue = null ) {
-		$this->blocks         = $blocks;
-		$this->artist_profile = $artist_profile;
-		$this->preview_player = $preview_player;
-		$this->playback_queue = $playback_queue;
+	/** @var ReleaseRestVisibilityPolicy|null */
+	private $rest_visibility;
+
+	public function __construct( ReleaseBlocks $blocks, ?ArtistProfileBlock $artist_profile = null, ?PreviewPlayer $preview_player = null, ?PlaybackQueueRoutes $playback_queue = null, ?ReleaseRestVisibilityPolicy $rest_visibility = null ) {
+		$this->blocks          = $blocks;
+		$this->artist_profile  = $artist_profile;
+		$this->preview_player  = $preview_player;
+		$this->playback_queue  = $playback_queue;
+		$this->rest_visibility = $rest_visibility;
 	}
 
 	public function register(): void {
@@ -47,6 +52,9 @@ final class Rendering implements Module {
 		}
 		if ( null !== $this->playback_queue ) {
 			$this->playback_queue->register();
+		}
+		if ( null !== $this->rest_visibility ) {
+			$this->rest_visibility->register();
 		}
 		add_action( 'init', array( $this, 'register_block_styles' ), 30 );
 		add_filter( 'block_categories_all', array( $this, 'register_block_category' ) );

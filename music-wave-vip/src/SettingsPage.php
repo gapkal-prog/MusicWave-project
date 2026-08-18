@@ -44,13 +44,13 @@ final class SettingsPage {
 
 	/** @param mixed $value @return array<string, mixed> */
 	public static function sanitize_settings( $value ): array {
-		$value = is_array( $value ) ? $value : array();
+		$value                       = is_array( $value ) ? $value : array();
 		$value['membership_sources'] = isset( $value['membership_sources'] ) && is_array( $value['membership_sources'] ) ? $value['membership_sources'] : array();
-		$settings = VipSettings::sanitize( $value );
-		$root = (string) $settings['protected_root'];
+		$settings                    = VipSettings::sanitize( $value );
+		$root                        = (string) $settings['protected_root'];
 		if ( '' !== $root ) {
-			$resolved = realpath( $root );
-			$public_root = defined( 'ABSPATH' ) ? realpath( ABSPATH ) : false;
+			$resolved      = realpath( $root );
+			$public_root   = defined( 'ABSPATH' ) ? realpath( ABSPATH ) : false;
 			$inside_public = false !== $public_root && 0 === stripos( $resolved ? $resolved . DIRECTORY_SEPARATOR : '', rtrim( $public_root, DIRECTORY_SEPARATOR ) . DIRECTORY_SEPARATOR );
 			if ( false === $resolved || ! is_dir( $resolved ) || ! is_readable( $resolved ) || $inside_public ) {
 				add_settings_error( VipSettings::OPTION, 'invalid_root', __( 'The protected directory must exist, be readable, and remain outside the public WordPress directory. The previous value was kept.', 'music-wave-vip' ) );
@@ -78,7 +78,10 @@ final class SettingsPage {
 	public function delivery_provider_field(): void {
 		$value = VipSettings::all()['delivery_provider'];
 		echo '<select name="' . esc_attr( VipSettings::OPTION ) . '[delivery_provider]">';
-		foreach ( array( 'local' => __( 'Local protected directory (recommended)', 'music-wave-vip' ), 'remote_redirect' => __( 'Remote HTTPS host with HMAC redirect', 'music-wave-vip' ) ) as $key => $label ) {
+		foreach ( array(
+			'local'           => __( 'Local protected directory (recommended)', 'music-wave-vip' ),
+			'remote_redirect' => __( 'Remote HTTPS host with HMAC redirect', 'music-wave-vip' ),
+		) as $key => $label ) {
 			echo '<option value="' . esc_attr( $key ) . '" ' . selected( $value, $key, false ) . '>' . esc_html( $label ) . '</option>';
 		}
 		echo '</select><p class="description">' . esc_html__( 'Remote mode never sends the remote secret to the browser; only a short-lived signed URL is redirected.', 'music-wave-vip' ) . '</p>';
@@ -86,8 +89,8 @@ final class SettingsPage {
 
 	public function root_field(): void {
 		$settings = VipSettings::all();
-		$value = defined( 'MUSIC_WAVE_VIP_PROTECTED_ROOT' ) ? (string) MUSIC_WAVE_VIP_PROTECTED_ROOT : (string) $settings['protected_root'];
-		$default = dirname( rtrim( ABSPATH, '/\\' ) ) . DIRECTORY_SEPARATOR . 'musicwave-private';
+		$value    = defined( 'MUSIC_WAVE_VIP_PROTECTED_ROOT' ) ? (string) MUSIC_WAVE_VIP_PROTECTED_ROOT : (string) $settings['protected_root'];
+		$default  = dirname( rtrim( ABSPATH, '/\\' ) ) . DIRECTORY_SEPARATOR . 'musicwave-private';
 		echo '<input class="regular-text code" type="text" name="' . esc_attr( VipSettings::OPTION ) . '[protected_root]" value="' . esc_attr( $value ) . '" placeholder="' . esc_attr( $default ) . '" ' . disabled( defined( 'MUSIC_WAVE_VIP_PROTECTED_ROOT' ), true, false ) . '>';
 		echo '<p class="description">' . esc_html__( 'Absolute path outside public_html/public. Leave blank to use musicwave-private beside the WordPress directory. The wp-config.php constant overrides this field.', 'music-wave-vip' ) . '</p>';
 	}
@@ -122,10 +125,10 @@ final class SettingsPage {
 
 	public function membership_sources_field(): void {
 		$selected = (array) VipSettings::all()['membership_sources'];
-		$options = array(
-			'role' => __( 'WordPress roles (level equals role slug)', 'music-wave-vip' ),
-			'filter' => __( 'External membership filter (developer adapter)', 'music-wave-vip' ),
-			'woocommerce_memberships' => __( 'WooCommerce Memberships (level or plan-slug; use plan- prefix when needed)', 'music-wave-vip' ),
+		$options  = array(
+			'role'                      => __( 'WordPress roles (level equals role slug)', 'music-wave-vip' ),
+			'filter'                    => __( 'External membership filter (developer adapter)', 'music-wave-vip' ),
+			'woocommerce_memberships'   => __( 'WooCommerce Memberships (level or plan-slug; use plan- prefix when needed)', 'music-wave-vip' ),
 			'woocommerce_subscriptions' => __( 'WooCommerce Subscriptions (level is product ID or subscription-123)', 'music-wave-vip' ),
 		);
 		foreach ( $options as $key => $label ) {
@@ -154,9 +157,9 @@ final class SettingsPage {
 
 	/** @param array<int, array<string, mixed>> $cards @return array<int, array<string, mixed>> */
 	public function integration_card( array $cards ): array {
-		$configured = VipSettings::all();
+		$configured   = VipSettings::all();
 		$remote_ready = 'remote_redirect' === $configured['delivery_provider'] && '' !== $configured['remote_base_url'] && '' !== $configured['remote_signing_secret'];
-		$card = array(
+		$card         = array(
 			'id'          => 'music-wave-vip',
 			'name'        => __( 'VIP protected delivery and memberships', 'music-wave-vip' ),
 			'active'      => 'local' === $configured['delivery_provider'] || $remote_ready,

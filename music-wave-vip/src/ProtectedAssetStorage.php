@@ -96,13 +96,13 @@ final class ProtectedAssetStorage {
 			);
 		}
 
-		$needle      = strtolower( trim( $search ) );
-		$page        = max( 1, $page );
-		$per_page    = min( 100, max( 1, $per_page ) );
-		$offset      = ( $page - 1 ) * $per_page;
-		$matches     = 0;
-		$assets      = array();
-		$has_more    = false;
+		$needle   = strtolower( trim( $search ) );
+		$page     = max( 1, $page );
+		$per_page = min( 100, max( 1, $per_page ) );
+		$offset   = ( $page - 1 ) * $per_page;
+		$matches  = 0;
+		$assets   = array();
+		$has_more = false;
 		$iterator = new RecursiveIteratorIterator(
 			new RecursiveDirectoryIterator( $root, FilesystemIterator::SKIP_DOTS ),
 			RecursiveIteratorIterator::LEAVES_ONLY
@@ -119,7 +119,7 @@ final class ProtectedAssetStorage {
 				continue;
 			}
 
-			$relative = ltrim( substr( $path, strlen( rtrim( $root, DIRECTORY_SEPARATOR ) ) ), DIRECTORY_SEPARATOR );
+			$relative   = ltrim( substr( $path, strlen( rtrim( $root, DIRECTORY_SEPARATOR ) ) ), DIRECTORY_SEPARATOR );
 			$identifier = 'local:' . str_replace( DIRECTORY_SEPARATOR, '/', $relative );
 			if ( '' !== $needle && false === strpos( strtolower( $identifier ), $needle ) ) {
 				continue;
@@ -161,8 +161,8 @@ final class ProtectedAssetStorage {
 
 		$original_name = isset( $file['name'] ) && is_string( $file['name'] ) ? sanitize_file_name( $file['name'] ) : '';
 		$extension     = strtolower( pathinfo( $original_name, PATHINFO_EXTENSION ) );
-		$allowed        = $this->allowed_extensions();
-		$size           = isset( $file['size'] ) ? (int) $file['size'] : 0;
+		$allowed       = $this->allowed_extensions();
+		$size          = isset( $file['size'] ) ? (int) $file['size'] : 0;
 
 		if ( '' === $original_name || ! in_array( $extension, $allowed, true ) || $size < 1 || $size > wp_max_upload_size() ) {
 			return new WP_Error( 'mw_protected_asset_type', __( 'The asset type or size is not allowed.', 'music-wave-vip' ), array( 'status' => 400 ) );
@@ -190,9 +190,9 @@ final class ProtectedAssetStorage {
 			return new WP_Error( 'mw_protected_asset_attachment', __( 'Choose a valid Media Library file.', 'music-wave-vip' ), array( 'status' => 400 ) );
 		}
 
-		$source = get_attached_file( $attachment_id );
-		$source = is_string( $source ) ? realpath( $source ) : false;
-		$uploads = wp_get_upload_dir();
+		$source       = get_attached_file( $attachment_id );
+		$source       = is_string( $source ) ? realpath( $source ) : false;
+		$uploads      = wp_get_upload_dir();
 		$uploads_root = isset( $uploads['basedir'] ) && is_string( $uploads['basedir'] ) ? realpath( $uploads['basedir'] ) : false;
 		if ( false === $source || false === $uploads_root || ! $this->is_within( $source, $uploads_root ) || ! is_file( $source ) || ! is_readable( $source ) ) {
 			return new WP_Error( 'mw_protected_asset_attachment_file', __( 'The selected Media Library file is unavailable.', 'music-wave-vip' ), array( 'status' => 404 ) );
@@ -267,8 +267,8 @@ final class ProtectedAssetStorage {
 
 		$audio = wp_read_audio_metadata( $file );
 		if ( is_array( $audio ) ) {
-			$format = isset( $audio['fileformat'] ) && is_scalar( $audio['fileformat'] ) ? sanitize_key( strtolower( (string) $audio['fileformat'] ) ) : '';
-			$bitrate = isset( $audio['bitrate'] ) && is_scalar( $audio['bitrate'] ) ? absint( $audio['bitrate'] ) : 0;
+			$format   = isset( $audio['fileformat'] ) && is_scalar( $audio['fileformat'] ) ? sanitize_key( strtolower( (string) $audio['fileformat'] ) ) : '';
+			$bitrate  = isset( $audio['bitrate'] ) && is_scalar( $audio['bitrate'] ) ? absint( $audio['bitrate'] ) : 0;
 			$duration = isset( $audio['length'] ) && is_scalar( $audio['length'] ) ? absint( $audio['length'] ) : 0;
 
 			if ( '' !== $format ) {

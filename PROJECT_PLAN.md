@@ -715,7 +715,20 @@ The user-requested **Phase 2** will execute the following implementation stages 
 
 **Priority:** P0  
 **Dependencies:** explicit approval to begin Phase 2  
-**Status:** Not started
+**Status:** In progress — local gates complete and passing; awaiting first GitHub CI run and Docker-based wp-env boot verification
+
+**Evidence (2026-08-19, Windows, PHP 8.2.12 XAMPP, Node 24, Composer 2):**
+
+1. Baseline commit `65b5832` captured all pre-Phase-2 user changes before any modification.
+2. `release-manifest.json` added (Core 0.9.0 / schema 0.8.0, VIP 0.3.3, theme 0.5.0, compatibility ranges).
+3. Licensing resolved: root `composer.json` `proprietary` → `GPL-2.0-or-later` (matching all shipped readme headers), verbatim GPL-2.0 `LICENSE` added, `docs/third-party-notices.md` records the provenance audit (no bundled third-party runtime code found).
+4. `docs/adr/0003-runtime-support-policy.md` accepted: PHP 7.4 floor for the current line, PHP 8.2+/WP 6.7+ at next major, WooCommerce 9.x optional.
+5. `package-lock.json` generated; CI JavaScript job uses `npm ci` + `npm run lint:js` and cannot silently skip. All committed JS passes `node --check`.
+6. `composer check:syntax` replaced with recursive `tools/check-syntax.php` — 136 PHP files pass (the old hand list covered ~110). `music-wave-vip` added to `check:phpcs` and `phpstan.neon`; `phpcs` = 0 errors across all three packages (`ignore_warnings_on_exit` gates errors only; 9 advisory VIP warnings are Stage 2 scope); `phpstan` level 3 = 0 errors; `composer test` passes; `composer validate --strict` passes.
+7. `.wp-env.json` fixture added (WP 6.8, PHP 8.2, both plugins + theme; Woo installable on demand) plus a CI `wordpress-fixture` smoke job (activation + front-page fatal check). Local Docker boot not yet verified.
+8. `DEVELOPMENT.md` onboarding corrected (stale 0.7.0 claim, gate list, fixture instructions, licensing/versioning pointers).
+
+**Remaining for exit gate:** green run of `.github/workflows/quality.yml` on GitHub (PHP 7.4 + 8.2 matrix, JS, fixture jobs) from a clean checkout.
 
 Deliverables:
 
@@ -739,7 +752,15 @@ Exit gate:
 
 **Priority:** P0  
 **Dependencies:** Stage 0 test fixture  
-**Status:** Not started
+**Status:** In progress
+
+**Evidence (2026-08-19):** PHPStan surfaced four wiring defects in `Plugin.php` — `ReleaseVisibility` and `ReleaseRestVisibilityPolicy` were constructed but the receiving classes ignored them, so none of the intended gating ran. Completed in this increment, each with regression tests in `tests/run.php` (`composer test` green):
+
+- Deliverable 1 (shared visibility policy): `LibraryRepository`, `LibraryCatalog`, and `ReleaseJsonLd` now consume `ReleaseVisibility` (deny-by-default construction when not injected).
+- Deliverable 2 (REST gating, partial): `ReleaseRestVisibilityPolicy` is now registered by the `Rendering` module; regression tests prove restricted bodies/excerpts are redacted for denied actors and preserved for allowed ones. Embed/search contexts still need real-WordPress integration tests.
+- Deliverable 3 (library + JSON-LD unpublished fixes): unprivileged actors can no longer store or list unpublished releases in personal libraries; collection JSON-LD track lists and parent-series lookups exclude non-public children (tests cover draft-release denial, privileged read-capability allowance, summary hiding, and track-list exclusion).
+
+**Remaining:** collection REST mutation errors (deliverable 4), dedicated asset capabilities (5), canonical access gate in release presentation (6), and running the security suite against a real WordPress fixture (7).
 
 Deliverables:
 

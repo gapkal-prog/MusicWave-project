@@ -10,14 +10,19 @@ declare(strict_types=1);
 namespace ManaCore\MusicWave\Core\Library;
 
 use ManaCore\MusicWave\Core\Catalog\ReleasePostType;
+use ManaCore\MusicWave\Core\Catalog\ReleaseVisibility;
 use WP_Term;
 
 final class LibraryCatalog {
 	/** @var LibraryRepository */
 	private $repository;
 
-	public function __construct( LibraryRepository $repository ) {
+	/** @var ReleaseVisibility */
+	private $visibility;
+
+	public function __construct( LibraryRepository $repository, ?ReleaseVisibility $visibility = null ) {
 		$this->repository = $repository;
+		$this->visibility = null !== $visibility ? $visibility : new ReleaseVisibility();
 	}
 
 	/**
@@ -121,7 +126,7 @@ final class LibraryCatalog {
 	 * @return array<string, mixed>|null
 	 */
 	private function release_summary( int $release_id, int $added ): ?array {
-		if ( ReleasePostType::KEY !== get_post_type( $release_id ) ) {
+		if ( ReleasePostType::KEY !== get_post_type( $release_id ) || ! $this->visibility->can_read( $release_id ) ) {
 			return null;
 		}
 

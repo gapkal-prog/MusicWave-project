@@ -53,22 +53,42 @@ Connection settings default to `docs/staging.md` values and can be overridden vi
 
 ## Current status
 
-MusicWave Core `0.7.0` provides the canonical release catalog, WooCommerce product mapping, access decisions, multi-quality protected downloads, collection relationships, global public preview player, and type-aware release authoring. The block theme provides single and archive experiences, including native taxonomy search, safe archive sorting, result counts, and removable active filters.
+MusicWave Core `0.9.0` (schema `0.8.0`) provides the canonical release catalog, WooCommerce product mapping, access decisions, multi-quality protected downloads, collection relationships, global public preview player, and type-aware release authoring. The block theme provides single and archive experiences, including native taxonomy search, safe archive sorting, result counts, and removable active filters.
 
 The release archive deliberately relies on WordPress-native archive queries. It allow-lists only `latest`, `oldest`, `title_asc`, and `title_desc` for the `mw_sort` query argument, and never queries or exposes protected access metadata. The translation pipeline and RTL QA guidance are now available. Full compatibility QA and the final license/asset audit remain before a public release.
 
 ## Local checks
 
+Run `composer install` once, then:
+
 ```bash
 composer validate --strict
-composer check:syntax
-composer install
-composer check:phpcs
-composer check:phpstan
+composer check:syntax    # recursive php -l over all three packages, tools, and tests
+composer test            # dependency-free domain + security regression smoke tests
+composer check:phpcs     # WordPress standards for music-wave-core, music-wave-vip, musicwave
+composer check:phpstan   # static analysis for all three packages
 composer make-pot
+npm ci && npm run lint:js  # JS gate; CI enforces this non-skipping
 ```
 
+All of these gates run in CI (`.github/workflows/quality.yml`) on PHP 7.4 and 8.2 and must
+pass from a clean checkout. A gate that cannot run fails CI; it never silently skips.
+
 No production Composer dependency is required by the current runtime.
+
+## Local WordPress fixture
+
+`.wp-env.json` boots WordPress 6.8 on PHP 8.2 with both plugins and the theme mounted:
+
+```bash
+npm ci
+npx @wordpress/env start   # requires Docker
+npx @wordpress/env run cli wp plugin activate music-wave-core music-wave-vip
+npx @wordpress/env run cli wp theme activate musicwave
+```
+
+WooCommerce is optional; install it inside the fixture with
+`npx @wordpress/env run cli wp plugin install woocommerce --activate` when testing commerce paths.
 
 See `docs/translations.md` for the text-domain contract, dependency-free POT generation, and Persian/RTL release checklist.
 See `docs/download-qualities-and-hosting.md` for the protected multi-quality workflow, shared-hosting boundaries, and WooCommerce membership adapter contract.
@@ -81,6 +101,14 @@ See `docs/download-qualities-and-hosting.md` for the protected multi-quality wor
 - Restricted resources use deny-by-default policies and never expose a direct private-file URL.
 - Public code remains PHP 7.4 compatible until the version policy changes in the backlog.
 
+## Versioning and compatibility
+
+`release-manifest.json` is the single source of truth for package versions, the data schema
+version, and compatibility ranges. The runtime support policy (PHP 7.4 floor for the current
+line, PHP 8.2+ at the next major) is recorded in `docs/adr/0003-runtime-support-policy.md`.
+
 ## Distribution
 
-License and marketplace packaging are not finalized. Do not distribute a release package until M10's licensing and third-party asset audit is complete.
+All packages are licensed GPL-2.0-or-later (see `LICENSE`); the third-party inventory lives in
+`docs/third-party-notices.md`. Release packaging still requires the Stage 7 qualification gates
+in `PROJECT_PLAN.md` before any archive is distributed.

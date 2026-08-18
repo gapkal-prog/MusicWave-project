@@ -9,7 +9,7 @@ declare(strict_types=1);
 
 namespace ManaCore\MusicWave\Core\Library;
 
-use ManaCore\MusicWave\Core\Catalog\ReleasePostType;
+use ManaCore\MusicWave\Core\Catalog\ReleaseVisibility;
 use WP_Term;
 
 final class LibraryRepository {
@@ -21,6 +21,13 @@ final class LibraryRepository {
 
 	/** @var array<int, array<int, array<string, mixed>>> */
 	private $cache = array();
+
+	/** @var ReleaseVisibility */
+	private $visibility;
+
+	public function __construct( ?ReleaseVisibility $visibility = null ) {
+		$this->visibility = null !== $visibility ? $visibility : new ReleaseVisibility();
+	}
 
 	/**
 	 * Register the library hooks used to keep stored items consistent.
@@ -202,7 +209,7 @@ final class LibraryRepository {
 	 */
 	private function target_exists( string $type, int $item_id ): bool {
 		if ( self::TYPE_RELEASE === $type ) {
-			return ReleasePostType::KEY === get_post_type( $item_id );
+			return $this->visibility->can_read( $item_id );
 		}
 
 		$term = get_term( $item_id, 'mw_artist' );

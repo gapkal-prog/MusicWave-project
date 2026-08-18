@@ -85,11 +85,11 @@ final class ReleaseRestVisibilityPolicy {
 	 * @return array<string, mixed>
 	 */
 	private function redacted_field( $field ): array {
-		$protected = is_array( $field ) && isset( $field['protected'] ) ? (bool) $field['protected'] : false;
+		unset( $field );
 
 		return array(
 			'rendered'  => '',
-			'protected' => true || $protected,
+			'protected' => true,
 		);
 	}
 }

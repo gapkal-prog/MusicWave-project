@@ -10,6 +10,7 @@ declare(strict_types=1);
 namespace ManaCore\MusicWave\Core\Seo;
 
 use ManaCore\MusicWave\Core\Catalog\ReleasePostType;
+use ManaCore\MusicWave\Core\Catalog\ReleaseVisibility;
 use ManaCore\MusicWave\Core\Contracts\ReleaseRepository;
 use ManaCore\MusicWave\Core\Support\Settings;
 use WP_Post;
@@ -18,8 +19,12 @@ final class ReleaseJsonLd {
 	/** @var ReleaseRepository */
 	private $releases;
 
-	public function __construct( ReleaseRepository $releases ) {
-		$this->releases = $releases;
+	/** @var ReleaseVisibility */
+	private $visibility;
+
+	public function __construct( ReleaseRepository $releases, ?ReleaseVisibility $visibility = null ) {
+		$this->releases   = $releases;
+		$this->visibility = null !== $visibility ? $visibility : new ReleaseVisibility();
 	}
 
 	/**
@@ -42,7 +47,7 @@ final class ReleaseJsonLd {
 		}
 
 		$post = get_post();
-		if ( ! $post instanceof WP_Post || 'publish' !== $post->post_status ) {
+		if ( ! $post instanceof WP_Post || ! $this->visibility->is_public( (int) $post->ID ) ) {
 			return;
 		}
 
@@ -268,7 +273,7 @@ final class ReleaseJsonLd {
 		$tracks = array();
 		foreach ( $items as $item ) {
 			$child_id = isset( $item['release_id'] ) ? absint( $item['release_id'] ) : 0;
-			if ( $child_id < 1 || ReleasePostType::KEY !== get_post_type( $child_id ) ) {
+			if ( $child_id < 1 || ! $this->visibility->is_public( $child_id ) ) {
 				continue;
 			}
 			$link = get_permalink( $child_id );
@@ -361,7 +366,7 @@ final class ReleaseJsonLd {
 		$collection_ids = $this->releases->collection_ids( $release_id );
 		foreach ( $collection_ids as $collection_id ) {
 			$link = get_permalink( $collection_id );
-			if ( ! is_string( $link ) || '' === $link || 'publish' !== get_post_status( $collection_id ) ) {
+			if ( ! is_string( $link ) || '' === $link || ! $this->visibility->is_public( (int) $collection_id ) ) {
 				continue;
 			}
 

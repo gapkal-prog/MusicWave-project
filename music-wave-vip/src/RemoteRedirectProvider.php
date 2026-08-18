@@ -56,7 +56,7 @@ final class RemoteRedirectProvider implements DownloadProvider, StreamableDownlo
 	}
 
 	private function signed_url( string $asset_id, DownloadTokenClaims $claims, bool $inline ): string {
-		$base = isset( $this->config['remote_base_url'] ) ? (string) $this->config['remote_base_url'] : '';
+		$base   = isset( $this->config['remote_base_url'] ) ? (string) $this->config['remote_base_url'] : '';
 		$secret = isset( $this->config['remote_signing_secret'] ) ? (string) $this->config['remote_signing_secret'] : '';
 		if ( '' === $base || '' === $secret || 'https' !== wp_parse_url( $base, PHP_URL_SCHEME ) ) {
 			return '';
@@ -66,16 +66,21 @@ final class RemoteRedirectProvider implements DownloadProvider, StreamableDownlo
 		if ( '' === $asset_id || false !== strpos( $asset_id, '..' ) || preg_match( '/[\x00-\x1F\x7F]/', $asset_id ) ) {
 			return '';
 		}
-		$prefix = isset( $this->config['remote_path_prefix'] ) ? trim( (string) $this->config['remote_path_prefix'], '/' ) : '';
-		$path_parts = array_filter( array_merge( '' !== $prefix ? explode( '/', $prefix ) : array(), explode( '/', ltrim( $asset_id, '/' ) ) ), static function ( $part ): bool { return '' !== $part; } );
+		$prefix        = isset( $this->config['remote_path_prefix'] ) ? trim( (string) $this->config['remote_path_prefix'], '/' ) : '';
+		$path_parts    = array_filter(
+			array_merge( '' !== $prefix ? explode( '/', $prefix ) : array(), explode( '/', ltrim( $asset_id, '/' ) ) ),
+			static function ( $part ): bool {
+				return '' !== $part;
+			}
+		);
 		$encoded_parts = array_map( 'rawurlencode', $path_parts );
-		$url = untrailingslashit( $base ) . '/' . implode( '/', $encoded_parts );
-		$expires = time() + ( isset( $this->config['remote_ttl'] ) ? max( 30, min( 900, absint( $this->config['remote_ttl'] ) ) ) : 300 );
-		$signature = rtrim( strtr( base64_encode( hash_hmac( 'sha256', $url . '|' . $expires, $secret, true ) ), '+/', '-_' ), '=' );
-		$args = array(
+		$url           = untrailingslashit( $base ) . '/' . implode( '/', $encoded_parts );
+		$expires       = time() + ( isset( $this->config['remote_ttl'] ) ? max( 30, min( 900, absint( $this->config['remote_ttl'] ) ) ) : 300 );
+		$signature     = rtrim( strtr( base64_encode( hash_hmac( 'sha256', $url . '|' . $expires, $secret, true ) ), '+/', '-_' ), '=' );
+		$args          = array(
 			(string) $this->config['remote_expires_param'] => $expires,
 			(string) $this->config['remote_signature_param'] => $signature,
-			'mode' => $inline ? 'stream' : 'download',
+			'mode'                                         => $inline ? 'stream' : 'download',
 		);
 
 		return add_query_arg( $args, $url );

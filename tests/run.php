@@ -26,6 +26,9 @@ $GLOBALS['mw_test_terms']         = array();
 $GLOBALS['mw_test_term_meta']     = array();
 $GLOBALS['mw_test_object_terms']  = array();
 $GLOBALS['mw_test_user_meta']     = array();
+$GLOBALS['mw_test_statuses']      = array();
+$GLOBALS['mw_test_capabilities']  = array();
+$GLOBALS['mw_test_terms_by_tax']  = array();
 
 final class WP_Post {
 	/** @var int */
@@ -210,10 +213,72 @@ function get_post_type( int $post_id ): string {
 	return isset( $GLOBALS['mw_test_types'][ $post_id ] ) ? $GLOBALS['mw_test_types'][ $post_id ] : '';
 }
 
+function get_post_status( int $post_id ) {
+	if ( '' === get_post_type( $post_id ) ) {
+		return false;
+	}
+	return isset( $GLOBALS['mw_test_statuses'][ $post_id ] ) ? $GLOBALS['mw_test_statuses'][ $post_id ] : 'publish';
+}
+
+function current_user_can( string $capability, ...$arguments ): bool {
+	unset( $arguments );
+	$granted = isset( $GLOBALS['mw_test_capabilities'] ) && is_array( $GLOBALS['mw_test_capabilities'] ) ? $GLOBALS['mw_test_capabilities'] : array();
+	return in_array( $capability, $granted, true );
+}
+
+function get_the_title( int $post_id ): string {
+	return '' !== get_post_type( $post_id ) ? 'Release ' . $post_id : '';
+}
+
+function get_permalink( int $post_id ) {
+	return '' !== get_post_type( $post_id ) ? 'https://example.test/?p=' . $post_id : false;
+}
+
+function get_the_post_thumbnail( int $post_id, $size = 'post-thumbnail', $attributes = array() ): string {
+	unset( $post_id, $size, $attributes );
+	return '';
+}
+
 /** @return array<int, string> */
 function wp_get_post_terms( int $post_id, string $taxonomy, array $arguments = array() ): array {
-	unset( $taxonomy, $arguments );
+	unset( $arguments );
+	if ( isset( $GLOBALS['mw_test_terms_by_tax'][ $post_id ][ $taxonomy ] ) ) {
+		return $GLOBALS['mw_test_terms_by_tax'][ $post_id ][ $taxonomy ];
+	}
 	return isset( $GLOBALS['mw_test_release_types'][ $post_id ] ) ? $GLOBALS['mw_test_release_types'][ $post_id ] : array();
+}
+
+function get_post_modified_time( string $format = 'U', bool $gmt = false, $post_id = 0 ) {
+	unset( $format, $gmt, $post_id );
+	return '';
+}
+
+function get_the_post_thumbnail_url( int $post_id, $size = 'post-thumbnail' ) {
+	unset( $post_id, $size );
+	return false;
+}
+
+function get_the_excerpt( int $post_id ): string {
+	unset( $post_id );
+	return '';
+}
+
+function get_term_link( $term ) {
+	return $term instanceof WP_Term ? 'https://example.test/artist/' . $term->term_id : new WP_Error( 'invalid_term', 'Invalid term.' );
+}
+
+function wp_get_attachment_image( int $attachment_id, $size = 'thumbnail', bool $icon = false, $attributes = array() ): string {
+	unset( $attachment_id, $size, $icon, $attributes );
+	return '';
+}
+
+function get_current_user_id(): int {
+	return isset( $GLOBALS['mw_test_current_user'] ) ? (int) $GLOBALS['mw_test_current_user'] : 0;
+}
+
+function user_can( int $user_id, string $capability, ...$arguments ): bool {
+	unset( $arguments );
+	return $user_id > 0 && current_user_can( $capability );
 }
 
 function taxonomy_exists( string $taxonomy ): bool {
@@ -463,6 +528,70 @@ final class TestMembershipProvider implements ManaCore\MusicWave\Core\Access\Mem
 	/** @param array<int, string> $levels */
 	public function has_access( int $user_id, array $levels ): bool {
 		return $this->granted && $user_id > 0 && ! empty( $levels );
+	}
+}
+
+final class TestCollectionRepository implements ManaCore\MusicWave\Core\Contracts\ReleaseRepository {
+	/** @var array<int, array<string, int|string|null>> */
+	public $items = array();
+
+	public function get( int $release_id, string $key ) {
+		unset( $release_id, $key );
+		return null;
+	}
+
+	public function update( int $release_id, string $key, $value ): bool {
+		unset( $release_id, $key, $value );
+		return true;
+	}
+
+	public function delete( int $release_id, string $key ): bool {
+		unset( $release_id, $key );
+		return true;
+	}
+
+	/** @return array<int, int> */
+	public function product_ids( int $release_id ): array {
+		unset( $release_id );
+		return array();
+	}
+
+	/** @return array<int, int> */
+	public function collection_ids( int $release_id ): array {
+		unset( $release_id );
+		return array();
+	}
+
+	/** @return array<int, array<string, int|string|null>> */
+	public function collection_items( int $collection_id ): array {
+		unset( $collection_id );
+		return $this->items;
+	}
+
+	public function replace_collection_items( int $collection_id, array $items ): bool {
+		unset( $collection_id );
+		$this->items = $items;
+		return true;
+	}
+}
+
+final class TestRestResponse {
+	/** @var mixed */
+	private $data;
+
+	/** @param mixed $data Initial response payload. */
+	public function __construct( $data ) {
+		$this->data = $data;
+	}
+
+	/** @return mixed */
+	public function get_data() {
+		return $this->data;
+	}
+
+	/** @param mixed $data Replacement payload. */
+	public function set_data( $data ): void {
+		$this->data = $data;
 	}
 }
 
@@ -926,6 +1055,112 @@ mw_assert_same( array( 2 ), $library_repository->ids( 7, 'release' ), 'Stored li
 mw_assert_same( 2, $library_repository->count( 7 ), 'Library counts must include every stored item type.' );
 mw_assert_same( true, $library_repository->remove( 7, 'release', 2 ), 'Stored library items must be removable.' );
 mw_assert_same( false, $library_repository->has( 7, 'release', 2 ), 'Removed library items must no longer report as saved.' );
+
+// --- Confidentiality regressions: shared release visibility policy (PROJECT_PLAN.md Stage 1) ---
+
+$visibility = new ManaCore\MusicWave\Core\Catalog\ReleaseVisibility();
+
+$GLOBALS['mw_test_types'][5]    = 'mw_release';
+$GLOBALS['mw_test_statuses'][5] = 'draft';
+mw_assert_same( true, $visibility->is_public( 2 ), 'Published releases must be publicly visible.' );
+mw_assert_same( false, $visibility->is_public( 5 ), 'Draft releases must never be publicly visible.' );
+mw_assert_same( false, $visibility->is_public( 10 ), 'Non-release posts must not pass the release visibility policy.' );
+mw_assert_same( false, $visibility->can_read( 5 ), 'Anonymous actors must not read unpublished releases.' );
+$GLOBALS['mw_test_capabilities'] = array( 'read_post' );
+mw_assert_same( true, $visibility->can_read( 5 ), 'Actors holding the object read capability may read unpublished releases.' );
+$GLOBALS['mw_test_capabilities'] = array();
+
+// Library persistence must not accept or expose unpublished releases for unprivileged actors.
+mw_assert_same( false, $library_repository->add( 7, 'release', 5 ), 'Draft releases must not enter the personal library without read capability.' );
+$GLOBALS['mw_test_capabilities'] = array( 'read_post' );
+mw_assert_same( true, $library_repository->add( 7, 'release', 5 ), 'Privileged actors may store an unpublished release in their library.' );
+$GLOBALS['mw_test_capabilities'] = array();
+
+$GLOBALS['mw_test_terms_by_tax'][2] = array(
+	'mw_artist' => array(),
+	'mw_genre'  => array(),
+);
+$GLOBALS['mw_test_terms_by_tax'][5] = array(
+	'mw_artist' => array(),
+	'mw_genre'  => array(),
+);
+$library_repository->add( 7, 'release', 2 );
+$library_catalog   = new ManaCore\MusicWave\Core\Library\LibraryCatalog( $library_repository );
+$library_summaries = $library_catalog->summaries( 7 );
+$summary_ids       = array();
+foreach ( $library_summaries as $library_summary ) {
+	if ( 'release' === $library_summary['type'] ) {
+		$summary_ids[] = (int) $library_summary['id'];
+	}
+}
+mw_assert_same( true, in_array( 2, $summary_ids, true ), 'Published stored releases must appear in library summaries.' );
+mw_assert_same( false, in_array( 5, $summary_ids, true ), 'Unpublished stored releases must be hidden from unprivileged library summaries.' );
+
+// JSON-LD must not disclose unpublished child releases inside collection track lists.
+$jsonld_repository        = new TestCollectionRepository();
+$jsonld_repository->items = array(
+	array(
+		'release_id' => 2,
+		'position'   => 1,
+	),
+	array(
+		'release_id' => 5,
+		'position'   => 2,
+	),
+);
+$GLOBALS['mw_test_types'][6]        = 'mw_release';
+$GLOBALS['mw_test_release_types'][6] = array( 'album' );
+$GLOBALS['mw_test_terms_by_tax'][6] = array(
+	'mw_artist' => array(),
+	'mw_genre'  => array(),
+);
+$jsonld = new ManaCore\MusicWave\Core\Seo\ReleaseJsonLd( $jsonld_repository, $visibility );
+$schema = $jsonld->schema( 6 );
+$track_names = array();
+foreach ( isset( $schema['track'] ) && is_array( $schema['track'] ) ? $schema['track'] : array() as $track ) {
+	$track_names[] = isset( $track['url'] ) ? (string) $track['url'] : '';
+}
+mw_assert_same( 1, count( $track_names ), 'Collection JSON-LD must list only published child releases.' );
+mw_assert_same( false, in_array( 'https://example.test/?p=5', $track_names, true ), 'Unpublished child releases must never appear in public JSON-LD.' );
+mw_assert_same( 1, isset( $schema['numTracks'] ) ? (int) $schema['numTracks'] : 0, 'JSON-LD track counts must exclude unpublished children.' );
+
+// Public REST projections must redact gated release bodies for denied actors.
+$rest_policy_repository = new TestPolicyRepository();
+$rest_policy_repository->values['mw_access_mode'] = 'restricted';
+$rest_engine   = new ManaCore\MusicWave\Core\Access\AccessPolicyEngine( $rest_policy_repository, $checker, new TestMembershipProvider() );
+$rest_policy   = new ManaCore\MusicWave\Core\Infrastructure\ReleaseRestVisibilityPolicy( $rest_engine );
+$rest_response = new TestRestResponse(
+	array(
+		'id'      => 1,
+		'content' => array(
+			'rendered'  => 'SECRET BODY',
+			'protected' => false,
+		),
+		'excerpt' => array(
+			'rendered'  => 'SECRET EXCERPT',
+			'protected' => false,
+		),
+	)
+);
+$rest_result   = $rest_policy->prepare( $rest_response, new WP_Post( 1, 'mw_release' ), null );
+$rest_data     = $rest_result->get_data();
+mw_assert_same( '', $rest_data['content']['rendered'], 'Restricted release bodies must be redacted from public REST responses.' );
+mw_assert_same( true, $rest_data['content']['protected'], 'Redacted REST content must be marked protected.' );
+mw_assert_same( '', $rest_data['excerpt']['rendered'], 'Restricted release excerpts must be redacted from public REST responses.' );
+mw_assert_same( false, $rest_data['music_wave_access']['allowed'], 'Redacted REST responses must expose the denial marker.' );
+
+$rest_policy_repository->values['mw_access_mode'] = 'public';
+$open_response = new TestRestResponse(
+	array(
+		'content' => array(
+			'rendered'  => 'PUBLIC BODY',
+			'protected' => false,
+		),
+	)
+);
+$open_result   = $rest_policy->prepare( $open_response, new WP_Post( 1, 'mw_release' ), null );
+$open_data     = $open_result->get_data();
+mw_assert_same( 'PUBLIC BODY', $open_data['content']['rendered'], 'Public release bodies must remain readable through REST.' );
 
 require dirname( __DIR__ ) . '/music-wave-core/music-wave-core.php';
 mw_assert_same( true, in_array( 'music_wave_core_loaded', $GLOBALS['mw_test_actions'], true ), 'Plugin composition root must boot successfully.' );

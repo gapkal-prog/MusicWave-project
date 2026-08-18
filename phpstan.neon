@@ -2,6 +2,7 @@ parameters:
     level: 3
     paths:
         - music-wave-core
+        - music-wave-vip
         - musicwave/functions.php
         - musicwave/patterns
     bootstrapFiles:

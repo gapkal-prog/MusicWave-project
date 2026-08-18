@@ -13,7 +13,8 @@
  */
 declare(strict_types=1);
 
-if ( ! defined( 'ABSPATH' ) ) { exit; }
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; }
 define( 'MUSIC_WAVE_VIP_FILE', __FILE__ );
 define( 'MUSIC_WAVE_VIP_PATH', plugin_dir_path( __FILE__ ) );
 require_once MUSIC_WAVE_VIP_PATH . 'src/Autoloader.php';
@@ -34,8 +35,18 @@ function music_wave_vip_load_textdomain(): void {
 add_action( 'init', 'music_wave_vip_load_textdomain', 1 );
 
 $music_wave_vip_storage = new ManaCore\MusicWave\Vip\ProtectedAssetStorage();
-add_filter( 'music_wave_membership_provider', static function () { return ManaCore\MusicWave\Vip\ProviderFactory::membership_provider(); } );
-add_filter( 'music_wave_download_provider', static function () use ( $music_wave_vip_storage ) { return ManaCore\MusicWave\Vip\ProviderFactory::download_provider( $music_wave_vip_storage ); } );
+add_filter(
+	'music_wave_membership_provider',
+	static function () {
+		return ManaCore\MusicWave\Vip\ProviderFactory::membership_provider();
+	}
+);
+add_filter(
+	'music_wave_download_provider',
+	static function () use ( $music_wave_vip_storage ) {
+		return ManaCore\MusicWave\Vip\ProviderFactory::download_provider( $music_wave_vip_storage );
+	}
+);
 add_action( 'admin_notices', array( ManaCore\MusicWave\Vip\Plugin::class, 'core_notice' ) );
 $music_wave_vip_settings = new ManaCore\MusicWave\Vip\SettingsPage();
 add_action( 'admin_menu', array( $music_wave_vip_settings, 'add_page' ) );

@@ -71,8 +71,8 @@ final class ConfigurableMembershipProvider implements MembershipProvider {
 
 	private function filter_access( int $user_id, string $level ): bool {
 		$user_levels = get_userdata( $user_id );
-		$roles = false !== $user_levels && is_array( $user_levels->roles ) ? $user_levels->roles : array();
-		$mapped = apply_filters( 'music_wave_vip_membership_levels_for_user', $roles, $user_id );
+		$roles       = false !== $user_levels && is_array( $user_levels->roles ) ? $user_levels->roles : array();
+		$mapped      = apply_filters( 'music_wave_vip_membership_levels_for_user', $roles, $user_id );
 
 		return is_array( $mapped ) && in_array( $level, array_map( 'sanitize_key', $mapped ), true );
 	}
