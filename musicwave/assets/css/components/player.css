@@ -1,0 +1,27 @@
+/*
+ * Streaming-style preview surface. The standalone player block looks like
+ * the inline play affordance inside Spotify/Apple Music cards and it scales
+ * down cleanly on narrow viewports.
+ */
+.mw-preview-player {
+	display: flex;
+	align-items: center;
+	gap: var(--wp--preset--spacing--20);
+	margin: var(--wp--preset--spacing--30) 0;
+	padding: var(--wp--preset--spacing--20) var(--wp--preset--spacing--30);
+	background:
+		linear-gradient(180deg, color-mix(in srgb, var(--mw-color-accent) 8%, transparent), transparent 60%),
+		var(--mw-color-surface);
+	border: 1px solid var(--mw-color-border);
+	border-radius: var(--mw-radius-lg);
+	box-shadow: var(--mw-shadow-card);
+}
+
+.mw-preview-player .mw-preview-button {
+	flex: 0 0 auto;
+}
+
+.mw-preview-player audio {
+	display: block;
+	width: 100%;
+}

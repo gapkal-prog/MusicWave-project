@@ -1,0 +1,12 @@
+/vendor/
+/node_modules/
+/test-results/
+/playwright-report/
+/.phpcs-cache
+/.phpstan-cache/
+/.staging/
+/build/
+/dist/
+*.log
+.DS_Store
+Thumbs.db

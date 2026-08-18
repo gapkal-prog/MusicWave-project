@@ -1,0 +1,31 @@
+{
+	"apiVersion": 3,
+	"name": "music-wave/preview-player",
+	"title": "Release preview player",
+	"category": "music-wave",
+	"description": "Displays an audio preview player for a release.",
+	"keywords": [ "audio", "listen" ],
+	"textdomain": "music-wave-core",
+	"icon": "controls-play",
+	"attributes": {
+		"releaseId": { "type": "integer", "default": 0 },
+		"label": { "type": "string", "default": "" },
+		"style": { "type": "string", "default": "solid" },
+		"showIcon": { "type": "boolean", "default": true }
+	},
+	"usesContext": [ "postId", "postType" ],
+	"supports": {
+		"anchor": true,
+		"align": [ "wide", "full" ],
+		"border": { "color": true, "radius": true, "style": true, "width": true },
+		"color": { "background": true, "link": true, "text": true },
+		"spacing": { "blockGap": true, "margin": true, "padding": true },
+		"typography": { "fontSize": true, "lineHeight": true }
+	},
+	"example": {
+		"attributes": {
+			"style": "solid",
+			"showIcon": true
+		}
+	}
+}

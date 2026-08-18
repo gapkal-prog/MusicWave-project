@@ -1,0 +1,39 @@
+{
+	"apiVersion": 3,
+	"name": "music-wave/catalog-filters",
+	"title": "Catalog filters",
+	"category": "music-wave",
+	"description": "Displays release catalog filters.",
+	"keywords": [ "search", "archive" ],
+	"textdomain": "music-wave-core",
+	"icon": "filter",
+	"attributes": {
+		"layout": { "type": "string", "default": "inline" },
+		"showSearch": { "type": "boolean", "default": true },
+		"showArtistFilter": { "type": "boolean", "default": true },
+		"showGenreFilter": { "type": "boolean", "default": true },
+		"showMoodFilter": { "type": "boolean", "default": true },
+		"showTypeFilter": { "type": "boolean", "default": true },
+		"showSort": { "type": "boolean", "default": true },
+		"showReset": { "type": "boolean", "default": true },
+		"maxTerms": { "type": "integer", "default": 50 },
+		"searchPlaceholder": { "type": "string", "default": "" },
+		"submitLabel": { "type": "string", "default": "" },
+		"resetLabel": { "type": "string", "default": "" }
+	},
+	"supports": {
+		"anchor": true,
+		"align": [ "wide", "full" ],
+		"border": { "color": true, "radius": true, "style": true, "width": true },
+		"color": { "background": true, "link": true, "text": true },
+		"spacing": { "blockGap": true, "margin": true, "padding": true },
+		"typography": { "fontSize": true, "lineHeight": true }
+	},
+	"example": {
+		"attributes": {
+			"layout": "inline",
+			"showSearch": true,
+			"showSort": true
+		}
+	}
+}

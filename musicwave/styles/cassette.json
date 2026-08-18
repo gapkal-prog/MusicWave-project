@@ -1,0 +1,39 @@
+{
+  "$schema": "https://schemas.wp.org/wp/6.6/theme.json",
+  "version": 3,
+  "title": "Cassette",
+  "settings": {
+    "color": {
+      "palette": [
+        { "slug": "canvas", "name": "Canvas", "color": "#f6f0e6" },
+        { "slug": "surface", "name": "Surface", "color": "#fffaf2" },
+        { "slug": "surface-raised", "name": "Raised surface", "color": "#eadcc8" },
+        { "slug": "text", "name": "Text", "color": "#2a211d" },
+        { "slug": "muted", "name": "Muted text", "color": "#75645b" },
+        { "slug": "accent", "name": "Accent", "color": "#bd3f32" },
+        { "slug": "accent-strong", "name": "Accent strong", "color": "#8d2b24" }
+      ]
+    }
+  },
+  "styles": {
+    "color": {
+      "background": "var:preset|color|canvas",
+      "text": "var:preset|color|text"
+    },
+    "typography": {
+      "fontFamily": "var:preset|font-family|serif"
+    },
+    "elements": {
+      "button": {
+        "border": { "radius": "0.25rem" },
+        "color": {
+          "background": "var:preset|color|accent",
+          "text": "var:preset|color|canvas"
+        }
+      },
+      "link": {
+        "color": { "text": "var:preset|color|accent-strong" }
+      }
+    }
+  }
+}

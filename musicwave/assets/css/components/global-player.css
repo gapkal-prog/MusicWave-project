@@ -1,0 +1,395 @@
+.mw-preview-player {
+	margin: var(--wp--preset--spacing--30) 0;
+	padding: var(--wp--preset--spacing--20);
+	background: var(--mw-color-surface);
+	border: 1px solid var(--mw-color-border);
+	border-radius: var(--mw-radius-md);
+}
+
+.mw-preview-button {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 0.55rem;
+	min-height: 2.75rem;
+	padding: 0.7rem 1.5rem;
+	color: var(--mw-color-on-accent);
+	background: var(--mw-color-accent);
+	border: 1px solid transparent;
+	border-radius: 999px;
+	box-shadow: 0 8px 24px color-mix(in srgb, var(--mw-color-accent) 35%, transparent);
+	font: inherit;
+	font-weight: 700;
+	letter-spacing: 0.01em;
+	cursor: pointer;
+	transition: background-color 160ms ease, transform 160ms ease, box-shadow 160ms ease;
+}
+
+.mw-preview-button:hover,
+.mw-preview-button[aria-pressed="true"] {
+	background: var(--mw-color-accent-strong);
+	box-shadow: 0 10px 28px color-mix(in srgb, var(--mw-color-accent) 45%, transparent);
+	transform: translateY(-1px);
+}
+
+.mw-preview-button:active {
+	transform: translateY(0);
+}
+
+.mw-preview-button__icon {
+	font-size: 0.75em;
+}
+
+.mw-preview-button--compact {
+	min-height: 2.25rem;
+	padding: 0.45rem 0.85rem;
+	font-size: 0.875rem;
+}
+
+.mw-preview-button--outline {
+	color: var(--mw-color-accent);
+	background: transparent;
+	border-color: var(--mw-color-accent);
+	box-shadow: none;
+}
+
+.mw-preview-button--outline:hover,
+.mw-preview-button--outline[aria-pressed="true"] {
+	color: var(--mw-color-on-accent);
+	background: var(--mw-color-accent);
+	box-shadow: 0 8px 24px color-mix(in srgb, var(--mw-color-accent) 25%, transparent);
+}
+
+.mw-preview-button--ghost {
+	color: inherit;
+	background: transparent;
+	border-color: transparent;
+	box-shadow: none;
+}
+
+.mw-preview-button--ghost:hover,
+.mw-preview-button--ghost[aria-pressed="true"] {
+	color: var(--mw-color-accent-strong);
+	background: color-mix(in srgb, var(--mw-color-accent) 12%, transparent);
+	box-shadow: none;
+}
+
+.mw-preview-button--block {
+	display: flex;
+	width: 100%;
+}
+
+.mw-global-player {
+	position: fixed;
+	right: max(1rem, env(safe-area-inset-right));
+	bottom: max(1rem, env(safe-area-inset-bottom));
+	left: max(1rem, env(safe-area-inset-left));
+	z-index: 100;
+	display: grid;
+	grid-template-columns: minmax(12rem, 1fr) auto minmax(7rem, 14rem) auto auto auto;
+	gap: var(--wp--preset--spacing--20);
+	align-items: center;
+	max-width: 72rem;
+	margin-inline: auto;
+	padding: 0.75rem 1rem;
+	color: var(--mw-color-text);
+	background: color-mix(in srgb, var(--mw-color-surface) 82%, transparent);
+	border: 1px solid var(--mw-color-border);
+	border-radius: var(--mw-radius-lg);
+	box-shadow: var(--mw-shadow-floating);
+	backdrop-filter: blur(22px) saturate(1.4);
+	-webkit-backdrop-filter: blur(22px) saturate(1.4);
+}
+
+.mw-global-player[hidden] {
+	display: none;
+}
+
+.mw-global-player__track {
+	display: grid;
+	grid-template-columns: 3rem minmax(0, 1fr);
+	gap: 0.75rem;
+	align-items: center;
+	min-width: 0;
+}
+
+.mw-global-player__art {
+	width: 3rem;
+	height: 3rem;
+	object-fit: cover;
+	border-radius: var(--mw-radius-sm);
+}
+
+.mw-global-player__track strong,
+.mw-global-player__track span {
+	display: block;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.mw-global-player__track span {
+	margin-top: 0.15rem;
+	color: var(--mw-color-text-muted);
+	font-size: 0.875rem;
+}
+
+.mw-global-player__controls {
+	display: flex;
+	gap: 0.25rem;
+}
+
+.mw-global-player button {
+	display: inline-grid;
+	width: 2.5rem;
+	height: 2.5rem;
+	padding: 0;
+	place-items: center;
+	color: var(--mw-color-text);
+	background: var(--mw-color-surface-raised);
+	border: 1px solid var(--mw-color-border);
+	border-radius: 50%;
+	cursor: pointer;
+}
+
+.mw-global-player button:hover:not(:disabled) {
+	color: var(--mw-color-on-accent);
+	background: var(--mw-color-accent);
+	border-color: transparent;
+}
+
+.mw-global-player button:disabled {
+	opacity: 0.45;
+	cursor: not-allowed;
+}
+
+.mw-global-player__progress {
+	min-width: 0;
+}
+
+.mw-global-player__progress input {
+	width: 100%;
+	accent-color: var(--mw-color-accent);
+}
+
+.mw-global-player__time {
+	color: var(--mw-color-text-muted);
+	font-size: 0.8125rem;
+	font-variant-numeric: tabular-nums;
+	white-space: nowrap;
+}
+
+.mw-global-player__close {
+	font-size: 1.25rem;
+}
+
+.mw-global-player__volume {
+	width: 5rem;
+	min-width: 0;
+	accent-color: var(--mw-color-accent);
+}
+
+/* Queue panel floating above the player bar. */
+.mw-global-player__queue {
+	position: absolute;
+	right: 0;
+	bottom: calc(100% + 0.5rem);
+	left: 0;
+	z-index: 1;
+	display: flex;
+	flex-direction: column;
+	max-height: min(22rem, 60vh);
+	overflow: hidden auto;
+	color: var(--mw-color-text);
+	background: var(--mw-color-surface);
+	border: 1px solid var(--mw-color-border);
+	border-radius: var(--mw-radius-lg);
+	box-shadow: var(--mw-shadow-floating);
+}
+
+.mw-global-player__queue[hidden] {
+	display: none;
+}
+
+.mw-global-player__queue-header {
+	position: sticky;
+	top: 0;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 0.65rem 0.9rem;
+	background: var(--mw-color-surface-raised);
+	border-block-end: 1px solid var(--mw-color-border);
+}
+
+.mw-global-player__queue-header h3 {
+	margin: 0;
+	font-size: 0.9375rem;
+}
+
+.mw-global-player__queue-close {
+	width: 2rem !important;
+	height: 2rem !important;
+	font-size: 1rem;
+}
+
+.mw-global-player__queue-list {
+	margin: 0;
+	padding: 0.4rem;
+	list-style: none;
+	scrollbar-width: thin;
+	scrollbar-color: color-mix(in srgb, var(--mw-color-text) 25%, transparent) transparent;
+}
+
+.mw-global-player__queue-item {
+	display: grid;
+	grid-template-columns: 1.5rem minmax(0, 1fr) auto;
+	gap: 0.75rem;
+	align-items: center;
+	width: 100%;
+	padding: 0.45rem 0.65rem;
+	text-align: start;
+	white-space: nowrap;
+	border-radius: var(--mw-radius-sm);
+	transition: background-color 140ms ease;
+}
+
+.mw-global-player__queue-item:hover {
+	background: color-mix(in srgb, var(--mw-color-accent) 12%, transparent);
+}
+
+.mw-global-player__queue-item[aria-current="true"] {
+	color: var(--mw-color-on-accent);
+	background: var(--mw-color-accent);
+}
+
+.mw-global-player__queue-position {
+	color: var(--mw-color-text-muted);
+	font-size: 0.8125rem;
+	font-variant-numeric: tabular-nums;
+	text-align: end;
+}
+
+.mw-global-player__queue-item[aria-current="true"] .mw-global-player__queue-position,
+.mw-global-player__queue-item[aria-current="true"] .mw-global-player__queue-badge {
+	color: inherit;
+	border-color: currentColor;
+}
+
+.mw-global-player__queue-title {
+	overflow: hidden;
+	font-size: 0.9375rem;
+	font-weight: 600;
+	text-overflow: ellipsis;
+}
+
+.mw-global-player__queue-badge {
+	padding: 0.1rem 0.5rem;
+	color: var(--mw-color-text-muted);
+	font-size: 0.625rem;
+	font-weight: 700;
+	letter-spacing: 0.05em;
+	text-transform: uppercase;
+	border: 1px solid var(--mw-color-border);
+	border-radius: 999px;
+}
+
+/* Upsell / preview notice floating above the player bar. */
+.mw-global-player__notice {
+	position: absolute;
+	right: 0;
+	bottom: calc(100% + 0.5rem);
+	left: 0;
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.5rem;
+	align-items: center;
+	padding: 0.7rem 0.9rem;
+	color: var(--mw-color-text);
+	background: var(--mw-color-surface);
+	border: 1px solid var(--mw-color-border);
+	border-inline-start: 4px solid var(--mw-color-accent);
+	border-radius: var(--mw-radius-lg);
+	box-shadow: var(--mw-shadow-floating);
+}
+
+.mw-global-player__notice[hidden] {
+	display: none;
+}
+
+.mw-global-player__notice-message {
+	flex: 1 1 14rem;
+	font-size: 0.9rem;
+}
+
+.mw-global-player__notice-cta {
+	min-height: 2.25rem;
+	padding: 0.4rem 1rem;
+	font-size: 0.875rem;
+}
+
+.mw-global-player__notice-login {
+	color: var(--mw-color-accent);
+	font-size: 0.875rem;
+	font-weight: 600;
+}
+
+.mw-global-player__notice-close {
+	width: 2rem !important;
+	height: 2rem !important;
+	margin-inline-start: auto;
+	font-size: 1rem;
+}
+
+/* Shared artwork play triggers on release cards. */
+.mw-card-play {
+	padding: 0;
+	font: inherit;
+	line-height: 0;
+	border: 0;
+	cursor: pointer;
+}
+
+.mw-card-play:focus-visible {
+	outline: 3px solid var(--mw-color-accent);
+	outline-offset: 2px;
+}
+
+.mw-card-play.is-loading {
+	pointer-events: none;
+	opacity: 0.6;
+}
+
+.mw-release-shelf__play[aria-pressed="true"],
+.mw-release-slider__play[aria-pressed="true"] {
+	opacity: 1;
+	transform: none;
+}
+
+@media (max-width: 64rem) {
+	.mw-global-player__volume {
+		display: none;
+	}
+}
+
+@media (max-width: 52rem) {
+	.mw-global-player {
+		grid-template-columns: minmax(0, 1fr) auto auto;
+	}
+
+	.mw-global-player__progress {
+		grid-column: 1 / -1;
+		grid-row: 2;
+	}
+
+	.mw-global-player__time {
+		display: none;
+	}
+}
+
+@media (max-width: 32rem) {
+	.mw-global-player__previous,
+	.mw-global-player__next {
+		display: none !important;
+	}
+}

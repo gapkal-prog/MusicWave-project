@@ -11,13 +11,50 @@
     <exclude-pattern>*/min/*</exclude-pattern>
     <exclude-pattern>*/assets/*</exclude-pattern>
     <exclude-pattern>*/languages/*</exclude-pattern>
+    <exclude-pattern>.staging/*</exclude-pattern>
+    <exclude-pattern>tests/*</exclude-pattern>
+    <exclude-pattern>tools/*</exclude-pattern>
 
     <rule ref="WordPress-Core"/>
     <rule ref="WordPress-Extra"/>
     <rule ref="WordPress-Docs"/>
     <rule ref="WordPress.Security"/>
 
+    <!--
+        The plugin source deliberately follows PSR-4 class file naming
+        (AccessDecision.php, ReleaseBlocks.php, ...) which conflicts with
+        the WordPress hyphenated-lowercase file name convention. Scope the
+        file name sniffs out of the PSR-4 src/ trees only; theme, patterns
+        and plugin bootstrap files keep the WordPress naming checks.
+    -->
+    <rule ref="WordPress.Files.FileName">
+        <exclude-pattern>music-wave-core/src/*</exclude-pattern>
+        <exclude-pattern>music-wave-vip/src/*</exclude-pattern>
+    </rule>
+
+    <!--
+        The codebase uses PHPDoc-style annotations (@var, typed by-ref
+        @param shapes) tuned for PHPStan rather than the WordPress docblock
+        format. Exclude the documentation sniffs that enforce the WordPress
+        docblock layout while keeping every security sniff active.
+    -->
+    <rule ref="WordPress-Docs">
+        <exclude name="Squiz.Commenting.FileComment"/>
+        <exclude name="Squiz.Commenting.ClassComment"/>
+        <exclude name="Squiz.Commenting.FunctionComment"/>
+        <exclude name="Generic.Commenting.DocComment"/>
+    </rule>
+
     <rule ref="PHPCompatibilityWP">
         <config name="testVersion" value="7.4-"/>
+    </rule>
+
+    <!-- MusicWave registers a custom capability type for the mw_release post type. -->
+    <rule ref="WordPress.WP.Capabilities">
+        <properties>
+            <property name="custom_capabilities" type="array">
+                <element value="edit_mw_releases"/>
+            </property>
+        </properties>
     </rule>
 </ruleset>

@@ -1,0 +1,48 @@
+.mw-release-gate,
+.mw-access-panel {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: var(--wp--preset--spacing--30);
+	margin: var(--wp--preset--spacing--40) 0;
+	padding: var(--wp--preset--spacing--30);
+	background: var(--mw-color-surface-raised);
+	border: 1px solid var(--mw-color-border);
+	border-radius: var(--mw-radius-lg);
+	box-shadow: var(--mw-shadow-card);
+}
+
+.mw-release-gate {
+	color: var(--mw-color-text-muted);
+}
+
+.mw-access-panel--restricted,
+.mw-release-gate--restricted {
+	border-color: color-mix(in srgb, #f59e0b 50%, var(--mw-color-border));
+}
+
+.mw-access-panel a {
+	flex: 0 0 auto;
+}
+
+.mw-access-panel__message {
+	flex: 1 1 auto;
+}
+
+.mw-access-panel--stack {
+	align-items: flex-start;
+	flex-direction: column;
+	gap: var(--wp--preset--spacing--20);
+}
+
+.mw-access-panel--granted {
+	border-color: color-mix(in srgb, #22c55e 45%, var(--mw-color-border));
+}
+
+@container (max-width: 40rem) {
+	.mw-release-gate,
+	.mw-access-panel {
+		align-items: flex-start;
+		flex-direction: column;
+	}
+}

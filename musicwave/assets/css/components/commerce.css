@@ -1,0 +1,32 @@
+.mw-shop-page .wc-block-components-product-sale-badge,
+.mw-shop-page .wc-block-grid__product-onsale {
+	color: var(--mw-color-text);
+	background: var(--mw-color-surface-raised);
+	border: 1px solid var(--mw-color-border);
+	border-radius: 999px;
+}
+
+.mw-shop-page .wc-block-components-product-price,
+.mw-shop-page .wc-block-grid__product-price {
+	color: var(--mw-color-text);
+	font-weight: 750;
+}
+
+.mw-shop-page .wc-block-components-product-button,
+.mw-shop-page .wc-block-grid__product-add-to-cart {
+	margin-top: auto;
+}
+
+.mw-product-hero {
+	background:
+		radial-gradient(circle at 80% 10%, color-mix(in srgb, var(--mw-color-accent) 20%, transparent), transparent 38%),
+		var(--mw-color-surface);
+	margin-block-end: var(--wp--preset--spacing--40);
+}
+
+.mw-shop-page :is(.wc-block-cart, .wc-block-checkout, .woocommerce-MyAccount-content) {
+	background: color-mix(in srgb, var(--mw-color-surface) 88%, transparent);
+	border: 1px solid var(--mw-color-border);
+	border-radius: var(--mw-radius-lg);
+	padding: clamp(1rem, 3vw, 2rem);
+}

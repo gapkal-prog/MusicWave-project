@@ -1,0 +1,10 @@
+.mw-muted {
+	color: var(--mw-color-text-muted);
+}
+
+.mw-surface {
+	background: var(--mw-color-surface);
+	border: 1px solid var(--mw-color-border);
+	border-radius: var(--mw-radius-lg);
+	box-shadow: var(--mw-shadow-card);
+}

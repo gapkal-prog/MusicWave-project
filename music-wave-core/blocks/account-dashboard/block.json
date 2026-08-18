@@ -1,0 +1,30 @@
+{
+	"apiVersion": 3,
+	"name": "music-wave/account-dashboard",
+	"title": "User music dashboard",
+	"category": "music-wave",
+	"description": "Displays account shortcuts, statistics, and the secure personal music library.",
+	"keywords": [ "library", "account" ],
+	"textdomain": "music-wave-core",
+	"icon": "dashboard",
+	"attributes": {
+		"showLibrary": { "type": "boolean", "default": true },
+		"showQuickLinks": { "type": "boolean", "default": true },
+		"showStats": { "type": "boolean", "default": true }
+	},
+	"supports": {
+		"anchor": true,
+		"align": [ "wide", "full" ],
+		"border": { "color": true, "radius": true, "style": true, "width": true },
+		"color": { "background": true, "link": true, "text": true },
+		"spacing": { "blockGap": true, "margin": true, "padding": true },
+		"typography": { "fontSize": true, "lineHeight": true }
+	},
+	"example": {
+		"attributes": {
+			"showLibrary": true,
+			"showQuickLinks": true,
+			"showStats": true
+		}
+	}
+}

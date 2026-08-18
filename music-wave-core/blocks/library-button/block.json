@@ -1,0 +1,33 @@
+{
+	"apiVersion": 3,
+	"name": "music-wave/library-button",
+	"title": "Add to library button",
+	"category": "music-wave",
+	"description": "Lets visitors save a release or follow an artist into their personal library.",
+	"keywords": [ "save", "follow", "favorite" ],
+	"textdomain": "music-wave-core",
+	"icon": "plus-alt",
+	"attributes": {
+		"releaseId": { "type": "integer", "default": 0 },
+		"termId": { "type": "integer", "default": 0 },
+		"label": { "type": "string", "default": "" },
+		"addedLabel": { "type": "string", "default": "" },
+		"style": { "type": "string", "default": "solid" },
+		"compact": { "type": "boolean", "default": false }
+	},
+	"usesContext": [ "postId", "postType" ],
+	"supports": {
+		"anchor": true,
+		"align": [ "wide", "full" ],
+		"border": { "color": true, "radius": true, "style": true, "width": true },
+		"color": { "background": true, "link": true, "text": true },
+		"spacing": { "blockGap": true, "margin": true, "padding": true },
+		"typography": { "fontSize": true, "lineHeight": true }
+	},
+	"example": {
+		"attributes": {
+			"style": "solid",
+			"compact": false
+		}
+	}
+}

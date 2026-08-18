@@ -1,0 +1,811 @@
+.mw-account-library {
+	margin: var(--wp--preset--spacing--30) 0;
+	padding: var(--wp--preset--spacing--30);
+	background: var(--mw-color-surface);
+	border: 1px solid var(--mw-color-border);
+	border-radius: var(--mw-radius-md);
+}
+
+.mw-user-dashboard {
+	display: grid;
+	gap: var(--wp--preset--spacing--30);
+}
+
+.mw-user-dashboard__welcome {
+	display: flex;
+	gap: var(--wp--preset--spacing--30);
+	align-items: center;
+	padding: clamp(1.25rem, 4vw, 3rem);
+	background:
+		radial-gradient(circle at 10% 20%, color-mix(in srgb, var(--mw-color-accent) 30%, transparent), transparent 45%),
+		linear-gradient(135deg, var(--mw-color-surface-raised), var(--mw-color-surface));
+	border: 1px solid var(--mw-color-border);
+	border-radius: var(--mw-radius-lg);
+	box-shadow: var(--mw-shadow-card);
+}
+
+.mw-user-dashboard__welcome h2 {
+	margin: 0.2rem 0;
+	font-size: clamp(1.7rem, 4vw, 3.5rem);
+}
+
+.mw-user-dashboard__welcome p {
+	max-width: 58ch;
+	margin: 0;
+	color: var(--mw-color-text-muted);
+}
+
+.mw-user-dashboard__eyebrow {
+	color: var(--mw-color-accent-strong);
+	font-size: 0.75rem;
+	font-weight: 800;
+	letter-spacing: 0.1em;
+	text-transform: uppercase;
+}
+
+.mw-user-dashboard__avatar {
+	flex: 0 0 auto;
+	border: 3px solid color-mix(in srgb, var(--mw-color-accent) 60%, white);
+	border-radius: 50%;
+	box-shadow: 0 12px 30px rgb(0 0 0 / 24%);
+}
+
+.mw-user-dashboard__tabs {
+	display: grid;
+	grid-template-columns: repeat(4, minmax(0, 1fr));
+	gap: var(--wp--preset--spacing--20);
+}
+
+.mw-user-dashboard__tab {
+	display: grid;
+	grid-template-columns: 2.5rem minmax(0, 1fr);
+	gap: 0.2rem 0.75rem;
+	align-items: center;
+	width: 100%;
+	padding: var(--wp--preset--spacing--20);
+	color: var(--mw-color-text);
+	font: inherit;
+	text-align: left;
+	cursor: pointer;
+	background: var(--mw-color-surface);
+	border: 1px solid var(--mw-color-border);
+	border-radius: var(--mw-radius-md);
+	text-decoration: none;
+	transition: transform 180ms var(--mw-ease-out), background-color 180ms ease, border-color 180ms ease;
+}
+
+.mw-user-dashboard__tab:hover {
+	background: var(--mw-color-surface-raised);
+	border-color: color-mix(in srgb, var(--mw-color-accent) 55%, var(--mw-color-border));
+	transform: translateY(-3px);
+}
+
+.mw-user-dashboard__tab.is-active {
+	background: color-mix(in srgb, var(--mw-color-accent) 10%, var(--mw-color-surface));
+	border-color: var(--mw-color-accent);
+	box-shadow: var(--mw-shadow-card);
+}
+
+.mw-user-dashboard__tab > span {
+	grid-row: 1 / 3;
+	display: grid;
+	width: 2.5rem;
+	height: 2.5rem;
+	place-items: center;
+	color: var(--mw-color-on-accent);
+	background: var(--mw-color-accent);
+	border-radius: 50%;
+}
+
+.mw-user-dashboard__tab.is-active > span {
+	box-shadow: 0 0 0 4px color-mix(in srgb, var(--mw-color-accent) 25%, transparent);
+}
+
+.mw-user-dashboard__tab small {
+	color: var(--mw-color-text-muted);
+	line-height: 1.35;
+}
+
+.mw-user-dashboard__tab--logout:hover {
+	border-color: color-mix(in srgb, #c0392b 55%, var(--mw-color-border));
+}
+
+.mw-user-dashboard__tab--logout > span {
+	background: color-mix(in srgb, var(--mw-color-text) 55%, var(--mw-color-surface));
+}
+
+.mw-user-dashboard__panels {
+	display: grid;
+	gap: var(--wp--preset--spacing--20);
+}
+
+.mw-user-dashboard__panel {
+	padding: var(--wp--preset--spacing--30);
+	background: var(--mw-color-surface);
+	border: 1px solid var(--mw-color-border);
+	border-top: 3px solid var(--mw-color-accent);
+	border-radius: var(--mw-radius-md);
+	box-shadow: var(--mw-shadow-card);
+}
+
+.mw-user-dashboard__panel.is-open {
+	animation: mw-dashboard-reveal 240ms var(--mw-ease-out);
+}
+
+@keyframes mw-dashboard-reveal {
+	from {
+		opacity: 0;
+		transform: translateY(8px);
+	}
+
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+.mw-user-dashboard__panel-title {
+	margin: 0 0 var(--wp--preset--spacing--20);
+	padding-bottom: var(--wp--preset--spacing--10, 0.5rem);
+	border-bottom: 1px solid var(--mw-color-border);
+}
+
+.mw-user-dashboard__panel-content {
+	display: grid;
+	gap: var(--wp--preset--spacing--20);
+	justify-items: start;
+}
+
+.mw-user-dashboard__panel-content .mw-music-library,
+.mw-user-dashboard__panel-content .mw-account-library {
+	width: 100%;
+	margin: 0;
+}
+
+.mw-user-dashboard__empty-panel {
+	margin: 0;
+	color: var(--mw-color-text-muted);
+}
+
+.mw-user-dashboard__details {
+	display: grid;
+	gap: 0.5rem;
+	width: 100%;
+	max-width: 34rem;
+	margin: 0;
+}
+
+.mw-user-dashboard__details > div {
+	display: grid;
+	grid-template-columns: 9rem minmax(0, 1fr);
+	gap: var(--wp--preset--spacing--20);
+	align-items: baseline;
+}
+
+.mw-user-dashboard__details dt {
+	color: var(--mw-color-text-muted);
+	font-size: 0.8125rem;
+	font-weight: 700;
+	letter-spacing: 0.04em;
+	text-transform: uppercase;
+}
+
+.mw-user-dashboard__details dd {
+	margin: 0;
+	font-weight: 600;
+}
+
+.mw-user-dashboard__levels {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.5rem;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.mw-user-dashboard__levels li {
+	padding: 0.3rem 0.9rem;
+	color: var(--mw-color-accent-strong);
+	font-weight: 800;
+	font-size: 0.8125rem;
+	letter-spacing: 0.04em;
+	text-transform: uppercase;
+	background: color-mix(in srgb, var(--mw-color-accent) 14%, transparent);
+	border: 1px solid color-mix(in srgb, var(--mw-color-accent) 45%, var(--mw-color-border));
+	border-radius: 999px;
+}
+
+.mw-user-dashboard__panel-content .woocommerce-orders-table {
+	width: 100%;
+	border-collapse: collapse;
+}
+
+.mw-user-dashboard__panel-content .woocommerce-orders-table th,
+.mw-user-dashboard__panel-content .woocommerce-orders-table td {
+	padding: 0.625rem 0.5rem;
+	text-align: left;
+	border-bottom: 1px solid var(--mw-color-border);
+}
+
+.mw-account-library__intro {
+	color: var(--mw-color-text-muted);
+}
+
+.mw-account-library__items {
+	display: grid;
+	gap: var(--wp--preset--spacing--20);
+	margin: var(--wp--preset--spacing--30) 0 0;
+	padding: 0;
+	list-style: none;
+}
+
+.mw-account-library__item {
+	display: grid;
+	grid-template-columns: 4.5rem minmax(0, 1fr) minmax(10rem, auto);
+	gap: var(--wp--preset--spacing--20);
+	align-items: center;
+	padding-top: var(--wp--preset--spacing--20);
+	border-top: 1px solid var(--mw-color-border);
+}
+
+.mw-account-library__image {
+	width: 4.5rem;
+	height: 4.5rem;
+	object-fit: cover;
+	border-radius: var(--mw-radius-sm);
+}
+
+.mw-account-library__details {
+	display: grid;
+	gap: 0.25rem;
+}
+
+.mw-account-library__details span {
+	color: var(--mw-color-text-muted);
+	font-size: 0.8125rem;
+	font-weight: 700;
+	letter-spacing: 0.04em;
+	text-transform: uppercase;
+}
+
+.mw-account-library__details a {
+	color: var(--mw-color-text);
+	text-decoration: none;
+}
+
+.mw-account-library__details a:hover {
+	color: var(--mw-color-accent-strong);
+}
+
+.mw-account-library__actions {
+	display: grid;
+	gap: 0.4rem;
+	justify-items: start;
+}
+
+.mw-account-library__actions.mw-download-action {
+	margin: 0;
+	padding: 0;
+	background: transparent;
+	border: 0;
+	border-radius: 0;
+	box-shadow: none;
+}
+
+.mw-account-library__actions .mw-download-action__controls {
+	grid-template-columns: 1fr;
+}
+
+.woocommerce-MyAccount-navigation {
+	padding: var(--wp--preset--spacing--20);
+	background: var(--mw-color-surface);
+	border: 1px solid var(--mw-color-border);
+	border-radius: var(--mw-radius-md);
+}
+
+.woocommerce-MyAccount-navigation ul {
+	display: grid;
+	gap: 0.25rem;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.woocommerce-MyAccount-navigation a {
+	display: block;
+	padding: 0.625rem 0.75rem;
+	color: var(--mw-color-text);
+	border-radius: var(--mw-radius-sm);
+	text-decoration: none;
+}
+
+.woocommerce-MyAccount-navigation .is-active a,
+.woocommerce-MyAccount-navigation a:hover {
+	background: var(--mw-color-surface-raised);
+}
+
+@media (max-width: 40rem) {
+	.mw-user-dashboard__welcome {
+		align-items: flex-start;
+		flex-direction: column;
+	}
+
+	.mw-user-dashboard__tabs {
+		grid-template-columns: 1fr;
+	}
+
+	.mw-user-dashboard__details > div {
+		grid-template-columns: 1fr;
+		gap: 0.15rem;
+	}
+
+	.mw-account-library__item {
+		grid-template-columns: 3.5rem minmax(0, 1fr);
+	}
+
+	.mw-account-library__image {
+		width: 3.5rem;
+		height: 3.5rem;
+	}
+
+	.mw-account-library__actions {
+		grid-column: 1 / -1;
+	}
+}
+
+@media (min-width: 40.01rem) and (max-width: 64rem) {
+	.mw-user-dashboard__tabs {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
+}
+
+/* ------------------------------------------------------------------ */
+/* Dashboard statistics                                               */
+/* ------------------------------------------------------------------ */
+
+.mw-user-dashboard__stats {
+	display: grid;
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+	gap: var(--wp--preset--spacing--20);
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.mw-user-dashboard__stats li {
+	display: grid;
+	gap: 0.2rem;
+	padding: var(--wp--preset--spacing--20);
+	text-align: center;
+	background: var(--mw-color-surface);
+	border: 1px solid var(--mw-color-border);
+	border-radius: var(--mw-radius-md);
+}
+
+.mw-user-dashboard__stats strong {
+	font-size: 1.75rem;
+	color: var(--mw-color-accent-strong);
+}
+
+.mw-user-dashboard__stats span {
+	color: var(--mw-color-text-muted);
+	font-size: 0.8125rem;
+	letter-spacing: 0.04em;
+	text-transform: uppercase;
+}
+
+/* ------------------------------------------------------------------ */
+/* Add to library button                                              */
+/* ------------------------------------------------------------------ */
+
+.mw-library-button {
+	display: inline-flex;
+	gap: 0.5rem;
+	align-items: center;
+	padding: 0.625rem 1.25rem;
+	color: var(--mw-color-on-accent);
+	font-size: 0.9375rem;
+	font-weight: 700;
+	text-decoration: none;
+	cursor: pointer;
+	background: var(--mw-color-accent);
+	border: 1px solid var(--mw-color-accent);
+	border-radius: 999px;
+	transition: background-color 180ms ease, border-color 180ms ease, color 180ms ease, transform 180ms var(--mw-ease-out);
+}
+
+.mw-library-button:hover {
+	transform: translateY(-2px);
+	filter: brightness(1.08);
+}
+
+.mw-library-button:disabled {
+	opacity: 0.6;
+	transform: none;
+}
+
+.mw-library-button--outline {
+	color: var(--mw-color-accent-strong);
+	background: transparent;
+	border-color: color-mix(in srgb, var(--mw-color-accent) 55%, var(--mw-color-border));
+}
+
+.mw-library-button--outline:hover {
+	background: color-mix(in srgb, var(--mw-color-accent) 12%, transparent);
+}
+
+.mw-library-button--ghost {
+	color: var(--mw-color-text);
+	background: transparent;
+	border-color: transparent;
+}
+
+.mw-library-button--ghost:hover {
+	background: var(--mw-color-surface-raised);
+}
+
+.mw-library-button--compact {
+	padding: 0.4rem 0.9rem;
+	font-size: 0.8125rem;
+}
+
+.mw-library-button[data-mw-library-state="in"] {
+	color: var(--mw-color-accent-strong);
+	background: color-mix(in srgb, var(--mw-color-accent) 14%, transparent);
+	border-color: color-mix(in srgb, var(--mw-color-accent) 60%, var(--mw-color-border));
+}
+
+.mw-library-button__icon {
+	display: grid;
+	place-items: center;
+	width: 1.25rem;
+	height: 1.25rem;
+	font-weight: 800;
+	line-height: 1;
+}
+
+.mw-library-button__status {
+	display: block;
+	font-size: 0.75rem;
+	font-weight: 500;
+}
+
+.mw-library-button__status:empty {
+	display: none;
+}
+
+.mw-release-meta__actions {
+	display: flex;
+	flex-wrap: wrap;
+	gap: var(--wp--preset--spacing--20);
+	margin-top: var(--wp--preset--spacing--20);
+	padding-top: var(--wp--preset--spacing--20);
+	border-top: 1px solid var(--mw-color-border);
+}
+
+.mw-artist-profile__library {
+	margin: 0.5rem 0;
+}
+
+/* ------------------------------------------------------------------ */
+/* Personal music library block                                       */
+/* ------------------------------------------------------------------ */
+
+.mw-music-library {
+	margin: var(--wp--preset--spacing--30) 0;
+	padding: var(--wp--preset--spacing--30);
+	background: var(--mw-color-surface);
+	border: 1px solid var(--mw-color-border);
+	border-radius: var(--mw-radius-md);
+}
+
+.mw-music-library__header {
+	display: flex;
+	flex-wrap: wrap;
+	gap: var(--wp--preset--spacing--20);
+	align-items: flex-start;
+	justify-content: space-between;
+}
+
+.mw-music-library__header h2 {
+	margin: 0;
+}
+
+.mw-music-library__intro {
+	max-width: 62ch;
+	margin: 0.35rem 0 0;
+	color: var(--mw-color-text-muted);
+}
+
+.mw-music-library__total {
+	display: grid;
+	place-items: center;
+	min-width: 2.75rem;
+	height: 2.75rem;
+	padding: 0 0.6rem;
+	color: var(--mw-color-on-accent);
+	font-weight: 800;
+	background: var(--mw-color-accent);
+	border-radius: 999px;
+}
+
+.mw-music-library__tabs {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.5rem;
+	margin-top: var(--wp--preset--spacing--20);
+}
+
+.mw-music-library__tab {
+	display: inline-flex;
+	gap: 0.4rem;
+	align-items: center;
+	padding: 0.45rem 1rem;
+	color: var(--mw-color-text);
+	font-size: 0.875rem;
+	font-weight: 600;
+	text-decoration: none;
+	background: var(--mw-color-surface-raised);
+	border: 1px solid var(--mw-color-border);
+	border-radius: 999px;
+	transition: color 160ms ease, background-color 160ms ease, border-color 160ms ease;
+}
+
+.mw-music-library__tab span {
+	padding: 0 0.4rem;
+	color: var(--mw-color-text-muted);
+	font-size: 0.75rem;
+	background: color-mix(in srgb, var(--mw-color-text) 8%, transparent);
+	border-radius: 999px;
+}
+
+.mw-music-library__tab:hover {
+	border-color: color-mix(in srgb, var(--mw-color-accent) 55%, var(--mw-color-border));
+}
+
+.mw-music-library__tab.is-active {
+	color: var(--mw-color-on-accent);
+	background: var(--mw-color-accent);
+	border-color: var(--mw-color-accent);
+}
+
+.mw-music-library__tab.is-active span {
+	color: inherit;
+	background: rgb(255 255 255 / 22%);
+}
+
+.mw-music-library__items {
+	display: grid;
+	gap: var(--wp--preset--spacing--20);
+	margin: var(--wp--preset--spacing--30) 0 0;
+	padding: 0;
+	list-style: none;
+}
+
+.mw-music-library__items--grid {
+	grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.mw-music-library__items--columns-2 {
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.mw-music-library__items--columns-3 {
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.mw-music-library__items--columns-5 {
+	grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+
+.mw-music-library__items--columns-6 {
+	grid-template-columns: repeat(6, minmax(0, 1fr));
+}
+
+.mw-music-library__item {
+	position: relative;
+	display: grid;
+	grid-template-columns: 4.5rem minmax(0, 1fr) auto;
+	gap: var(--wp--preset--spacing--20);
+	align-items: center;
+	padding: var(--wp--preset--spacing--20);
+	background: var(--mw-color-surface-raised);
+	border: 1px solid var(--mw-color-border);
+	border-radius: var(--mw-radius-sm);
+	transition: opacity 180ms ease, transform 180ms var(--mw-ease-out), border-color 180ms ease;
+}
+
+.mw-music-library__item:hover {
+	border-color: color-mix(in srgb, var(--mw-color-accent) 45%, var(--mw-color-border));
+	transform: translateY(-2px);
+}
+
+.mw-music-library__item.is-removing {
+	opacity: 0;
+	transform: scale(0.96);
+}
+
+.mw-music-library__items--grid .mw-music-library__item {
+	display: flex;
+	flex-direction: column;
+	align-items: stretch;
+	gap: var(--wp--preset--spacing--10, 0.5rem);
+	padding: var(--wp--preset--spacing--20);
+}
+
+.mw-music-library__art {
+	display: block;
+	width: 4.5rem;
+	height: 4.5rem;
+	flex: 0 0 auto;
+}
+
+.mw-music-library__items--grid .mw-music-library__art {
+	width: 100%;
+	height: auto;
+	aspect-ratio: 1;
+}
+
+.mw-music-library__image {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	border-radius: var(--mw-radius-sm);
+}
+
+.mw-music-library__item--artist .mw-music-library__image,
+.mw-music-library__item--artist .mw-music-library__placeholder {
+	border-radius: 50%;
+}
+
+.mw-music-library__placeholder {
+	display: grid;
+	width: 100%;
+	height: 100%;
+	place-items: center;
+	color: var(--mw-color-on-accent);
+	font-size: 1.5rem;
+	font-weight: 800;
+	background: var(--mw-color-accent);
+	border-radius: var(--mw-radius-sm);
+}
+
+.mw-music-library__details {
+	display: grid;
+	gap: 0.3rem;
+	min-width: 0;
+}
+
+.mw-music-library__details strong {
+	overflow: hidden;
+	font-size: 1rem;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.mw-music-library__details a {
+	color: var(--mw-color-text);
+	text-decoration: none;
+}
+
+.mw-music-library__details a:hover {
+	color: var(--mw-color-accent-strong);
+}
+
+.mw-music-library__meta {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.4rem;
+	align-items: center;
+}
+
+.mw-music-library__badge {
+	padding: 0.15rem 0.6rem;
+	color: var(--mw-color-accent-strong);
+	font-size: 0.6875rem;
+	font-weight: 800;
+	letter-spacing: 0.06em;
+	text-transform: uppercase;
+	background: color-mix(in srgb, var(--mw-color-accent) 14%, transparent);
+	border-radius: 999px;
+}
+
+.mw-music-library__artist,
+.mw-music-library__year {
+	color: var(--mw-color-text-muted);
+	font-size: 0.8125rem;
+}
+
+.mw-library-remove {
+	display: grid;
+	place-items: center;
+	width: 2rem;
+	height: 2rem;
+	padding: 0;
+	color: var(--mw-color-text-muted);
+	font-size: 1.125rem;
+	line-height: 1;
+	cursor: pointer;
+	background: transparent;
+	border: 1px solid transparent;
+	border-radius: 50%;
+	transition: color 160ms ease, background-color 160ms ease;
+}
+
+.mw-library-remove:hover {
+	color: var(--mw-color-text);
+	background: color-mix(in srgb, var(--mw-color-text) 10%, transparent);
+}
+
+.mw-music-library__items--grid .mw-library-remove {
+	position: absolute;
+	top: 0.5rem;
+	right: 0.5rem;
+	color: var(--mw-color-text);
+	background: color-mix(in srgb, var(--mw-color-surface) 82%, transparent);
+}
+
+.mw-music-library__empty {
+	margin: var(--wp--preset--spacing--30) 0 0;
+	padding: var(--wp--preset--spacing--30);
+	color: var(--mw-color-text-muted);
+	text-align: center;
+	border: 1px dashed var(--mw-color-border);
+	border-radius: var(--mw-radius-sm);
+}
+
+.mw-music-library--guest {
+	text-align: center;
+}
+
+.mw-music-library__guest {
+	display: grid;
+	gap: 0.75rem;
+	max-width: 46ch;
+	justify-items: center;
+	margin: 0 auto;
+	padding: var(--wp--preset--spacing--30) 0;
+}
+
+.mw-music-library__guest h2 {
+	margin: 0;
+}
+
+.mw-music-library__guest p {
+	margin: 0;
+	color: var(--mw-color-text-muted);
+}
+
+.mw-music-library__eyebrow {
+	color: var(--mw-color-accent-strong);
+	font-size: 0.75rem;
+	font-weight: 800;
+	letter-spacing: 0.1em;
+	text-transform: uppercase;
+}
+
+@media (max-width: 40rem) {
+	.mw-user-dashboard__stats {
+		grid-template-columns: 1fr;
+	}
+
+	.mw-music-library__items--grid {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
+
+	.mw-music-library__item {
+		grid-template-columns: 3.5rem minmax(0, 1fr) auto;
+	}
+
+	.mw-music-library__art {
+		width: 3.5rem;
+		height: 3.5rem;
+	}
+}
+
+@media (min-width: 40.01rem) and (max-width: 64rem) {
+	.mw-music-library__items--grid {
+		grid-template-columns: repeat(3, minmax(0, 1fr));
+	}
+}

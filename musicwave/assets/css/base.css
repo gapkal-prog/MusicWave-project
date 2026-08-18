@@ -1,0 +1,22 @@
+html {
+	scroll-behavior: smooth;
+}
+
+body {
+	background: var(--mw-color-canvas);
+	color: var(--mw-color-text);
+	text-rendering: optimizeLegibility;
+}
+
+a {
+	text-underline-offset: 0.18em;
+}
+
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+	outline: 3px solid var(--mw-color-accent-strong);
+	outline-offset: 3px;
+}

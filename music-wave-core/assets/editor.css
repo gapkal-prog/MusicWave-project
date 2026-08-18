@@ -1,0 +1,251 @@
+/*
+ * Editor canvas counterpart for the server-rendered MusicWave blocks.
+ * Keeps previews visually stable and readable while Site/Post editor
+ * chrome injects its own wrapper markup around the server markup.
+ */
+.mw-block-editor-shell {
+	position: relative;
+}
+
+.mw-block-editor-shell.alignfull {
+	margin-left: 0;
+	margin-right: 0;
+	width: 100%;
+}
+
+.mw-block-editor-shell .components-placeholder {
+	border-radius: 12px;
+	min-height: 90px;
+}
+
+.mw-block-editor-shell .components-placeholder__label {
+	font-weight: 600;
+}
+
+.mw-block-editor-empty {
+	display: grid;
+	gap: 8px;
+	justify-items: start;
+	min-height: 118px;
+	padding: 20px;
+	color: #1e1e1e;
+	background: linear-gradient(135deg, #f6f7f7, #fff);
+	border: 1px dashed #8c8f94;
+	border-radius: 12px;
+}
+
+.mw-block-editor-empty > .dashicons {
+	width: 28px;
+	height: 28px;
+	color: #1db954;
+	font-size: 28px;
+}
+
+.mw-block-editor-empty > strong {
+	font-size: 15px;
+}
+
+.mw-block-editor-empty > p {
+	max-width: 62ch;
+	margin: 0;
+	color: #50575e;
+}
+
+.mw-block-editor-empty__control {
+	width: min(100%, 420px);
+	margin-top: 8px;
+}
+
+.mw-block-editor-empty__control .components-base-control {
+	margin-bottom: 0;
+}
+
+/* Dynamic block previews inherit card spacing without double borders. */
+.mw-block-editor-shell > .wp-block-music-wave-release-meta,
+.mw-block-editor-shell > .wp-block-music-wave-access-panel,
+.mw-block-editor-shell > .wp-block-music-wave-release-credits,
+.mw-block-editor-shell > .wp-block-music-wave-collection-list,
+.mw-block-editor-shell > .wp-block-music-wave-preview-player,
+.mw-block-editor-shell > .wp-block-music-wave-download-button,
+.mw-block-editor-shell > .wp-block-music-wave-related-releases,
+.mw-block-editor-shell > .wp-block-music-wave-artist-profile {
+	margin-top: 0;
+	margin-bottom: 0;
+}
+
+/* Inspector color field wrapper for the artist profile accent. */
+.mw-block-editor-color-field {
+	margin-bottom: 16px;
+}
+
+.mw-block-editor-color-field .components-base-control__label {
+	margin-bottom: 8px;
+	font-size: 11px;
+	font-weight: 500;
+	text-transform: uppercase;
+}
+
+.mw-block-editor-color-field .components-base-control__help {
+	margin-top: 8px;
+	margin-bottom: 0;
+}
+
+.mw-block-editor-shell select,
+.mw-block-editor-shell input[type="search"] {
+	max-width: 100%;
+}
+
+.mw-editor-grid {
+	display: grid;
+	gap: 12px;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	margin: 12px 0;
+}
+
+.mw-release-manager {
+	margin-top: 24px;
+	padding-top: 4px;
+}
+
+.mw-release-manager h2 {
+	font-size: 1.1em;
+	margin: 0 0 8px;
+}
+
+.mw-release-details-divider {
+	border: 0;
+	border-top: 1px solid #dcdcde;
+	margin: 24px 0;
+}
+
+.mw-editor-divider {
+	border: 0;
+	border-top: 1px solid #dcdcde;
+	margin: 20px 0;
+}
+
+.mw-editor-quality,
+.mw-editor-download-file,
+.mw-editor-stored-asset {
+	border: 1px solid #dcdcde;
+	border-radius: 4px;
+	margin: 14px 0;
+	padding: 14px;
+}
+
+.mw-editor-quality {
+	background: #fff;
+	box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+}
+
+.mw-editor-quality__heading,
+.mw-editor-download-file__heading,
+.mw-editor-stored-asset,
+.mw-editor-actions,
+.mw-editor-browser {
+	align-items: center;
+	display: flex;
+	gap: 8px;
+	justify-content: space-between;
+}
+
+.mw-editor-stored-asset {
+	align-items: flex-start;
+}
+
+.mw-editor-download-file {
+	background: #f6f7f7;
+	margin: 18px 0;
+	padding: 16px;
+}
+
+.mw-editor-download-file__heading {
+	align-items: flex-start;
+	display: flex;
+	gap: 12px;
+	justify-content: space-between;
+	margin-bottom: 8px;
+}
+
+.mw-editor-download-file .mw-editor-quality {
+	margin: 12px 0 0;
+}
+
+.mw-editor-stored-asset .components-base-control {
+	margin: 0;
+	max-width: 180px;
+}
+
+.mw-editor-stored-asset .description {
+	display: block;
+	margin-top: 4px;
+}
+
+.mw-editor-actions {
+	flex-wrap: wrap;
+	justify-content: flex-start;
+	margin: 16px 0;
+}
+
+.mw-editor-actions .components-base-control {
+	margin: 0;
+	min-width: 220px;
+}
+
+.mw-editor-upload {
+	cursor: pointer;
+	position: relative;
+}
+
+.mw-editor-upload input {
+	height: 1px;
+	opacity: 0;
+	position: absolute;
+	width: 1px;
+}
+
+.mw-editor-browser {
+	align-items: flex-end;
+	margin-top: 20px;
+}
+
+.mw-editor-browser .components-base-control {
+	flex: 1;
+	margin-bottom: 0;
+}
+
+.mw-editor-collection-list {
+	margin: 16px 0 0;
+}
+
+.mw-editor-collection-list li {
+	align-items: center;
+	display: flex;
+	gap: 12px;
+	justify-content: space-between;
+	padding: 8px 0;
+}
+
+.mw-editor-collection-list__actions {
+	display: flex;
+	gap: 4px;
+}
+
+@media (max-width: 600px) {
+	.mw-editor-grid {
+		grid-template-columns: 1fr;
+	}
+
+	.mw-editor-quality__heading,
+	.mw-editor-download-file__heading,
+	.mw-editor-stored-asset,
+	.mw-editor-browser {
+		align-items: stretch;
+		flex-direction: column;
+	}
+
+	.mw-editor-stored-asset .components-base-control {
+		max-width: none;
+		width: 100%;
+	}
+}

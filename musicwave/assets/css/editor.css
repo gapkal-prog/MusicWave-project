@@ -1,0 +1,26 @@
+/**
+ * Editor-only styles for the block and site editors.
+ *
+ * These rules improve usability of the Music sidebar template part inside
+ * the editors without changing the public front-end appearance.
+ */
+
+.editor-styles-wrapper .mw-sidebar {
+	/* Keep the sidebar usable in the editor even before the user saves
+	 * their own navigation menu: the navigation fallback list mirrors
+	 * the spacing of regular menu items. */
+	.wp-block-navigation__fallback .wp-block-navigation-link > .wp-block-navigation-item__content {
+		display: block;
+		padding: 0.6rem 0.75rem;
+		border-radius: var(--mw-radius-sm);
+	}
+}
+
+/* The app-shell grid only applies when the shell actually contains a
+ * sidebar (see layout.css); keep a tiny optical fallback for browsers
+ * without :has() support when previewing older editor iframes. */
+@supports not (selector(:has(> *))) {
+	.editor-styles-wrapper .mw-app-shell:empty {
+		display: block;
+	}
+}

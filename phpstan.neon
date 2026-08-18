@@ -1,9 +1,12 @@
 parameters:
     level: 3
     paths:
-        - .
+        - music-wave-core
+        - musicwave/functions.php
+        - musicwave/patterns
+    bootstrapFiles:
+        - vendor/php-stubs/wordpress-stubs/wordpress-stubs.php
+        - tools/phpstan-bootstrap.php
     excludePaths:
-        - vendor
-        - node_modules
-        - build
-        - dist
+        analyse:
+            - vendor

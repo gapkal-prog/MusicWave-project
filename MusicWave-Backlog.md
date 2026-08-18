@@ -7,7 +7,88 @@
 - `Target Integration Plugin`: `music-wave-vip`
 - `Architecture`: `plugin for data/logic + theme for presentation`
 - `Theme Type`: `Block Theme`
-- `Stack`: `PHP 8.2+`, `WordPress 6.6+`, `WooCommerce 9.x+`
+- `Stack`: `PHP 7.4+`, `WordPress 6.6+`, `WooCommerce 9.x+`
+
+## وضعیت سند و قرارداد محصول
+
+| مورد | مقدار |
+|---|---|
+| مالک محصول و توسعه | `ManaCore` |
+| نسخه سند | `1.2.0` |
+| آخرین بازبینی | `2026-08-06` |
+| وضعیت فعلی | `M1 تا M6 - Code Complete؛ WordPress/WooCommerce staging smoke-tested؛ M7 Next` |
+| بازار هدف | قالب و افزونه تجاری وردپرس برای فروشگاه‌ها و پلتفرم‌های موسیقی |
+| جهت رابط | RTL و LTR از روز اول، بدون fork یا stylesheet جداگانه |
+| تجربه بصری | Dark/Light/System با هویت مستقل؛ الهام از الگوهای رایج، بدون کپی از برندها |
+| اصل سفارشی‌سازی | تنظیمات سراسری در `theme.json` و Site Editor؛ تنظیمات دامنه در افزونه Core |
+
+> تصمیم نسخه‌ای: کد توزیعی باید با PHP 7.4 سازگار بماند. محیط CI علاوه بر 7.4، روی PHP 8.2 و نسخه پایدار جاری PHP اجرا می‌شود. استفاده از قابلیت‌های نحوی PHP 8 در کد محصول ممنوع است تا baseline اعلام‌شده واقعی بماند.
+
+## اهداف قابل‌اندازه‌گیری محصول
+
+| حوزه | معیار پذیرش نسخه قابل انتشار |
+|---|---|
+| Performance | بودجه اولیه Lighthouse موبایل: Performance >= 90، Accessibility >= 95، Best Practices >= 95 و SEO >= 95 روی دموی کنترل‌شده |
+| Web Vitals | هدف p75: `LCP <= 2.5s`، `INP <= 200ms` و `CLS <= 0.1`؛ اندازه‌گیری قبل از انتشار الزامی است |
+| Accessibility | هم‌راستا با WCAG 2.2 AA؛ navigation با کیبورد، focus واضح، reduced motion و contrast معتبر |
+| SEO | HTML معنایی، title/meta سازگار با افزونه‌های SEO، canonical استاندارد و JSON-LD نوع MusicRecording/MusicAlbum بدون schema تکراری |
+| Security | deny-by-default، nonce/capability checks، validation ورودی، escape در خروجی و بدون URL مستقیم فایل خصوصی |
+| Privacy | analytics و telemetry فقط opt-in؛ export/erase داده‌های شخصی و retention قابل تنظیم برای logها |
+| Compatibility | WordPress 6.6 تا نسخه پایدار جاری، WooCommerce 9.x تا نسخه پایدار جاری و آخرین دو نسخه مرورگرهای اصلی |
+| Internationalization | همه رشته‌ها قابل ترجمه، تاریخ/عدد locale-aware و بررسی عملی RTL/LTR |
+| Marketplace | بسته‌های theme/core/vip مستقل، مجوزها و attribution شفاف، بدون secret یا asset بدون مجوز و نصب clean قابل تکرار |
+
+## مرزبندی تجربه و قابلیت‌های محصول
+
+| قابلیت | مالک فنی | فاز |
+|---|---|---|
+| Design system، Dark/Light/System، layout و responsive UI | `MusicWave` | MVP |
+| آهنگ، آلبوم، هنرمند، taxonomy، metadata و API | `music-wave-core` | MVP |
+| پلیر preview پایه، queue سبک و Media Session | Core + Theme presentation | MVP |
+| خرید، entitlement، CTA و My Account | Core adapter + WooCommerce | MVP |
+| عضویت و دانلود امن provider-specific | `music-wave-vip` | MVP |
+| تنظیم رنگ، تایپوگرافی، radius، spacing، header/footer و card styles | Site Editor / `theme.json` | MVP |
+| تنظیم schema، player، catalog، integrations و privacy | Core settings API | MVP |
+| علاقه‌مندی، playlist کاربر، history و recommendation | ماژول‌های اختیاری Core | پس از MVP |
+| import دموی امن، onboarding و diagnostics | Theme/Core | قبل از انتشار مارکت |
+
+## تصمیم‌های داده‌ای فریز اولیه
+
+- `mw_release` موجودیت مستقل موسیقی است و نباید به `product` وابسته باشد؛ محصول WooCommerce صرفاً از طریق mapping به release متصل می‌شود.
+- `mw_artist` در MVP taxonomy سلسله‌مراتبی نیست؛ صفحه هنرمند از term meta و template اختصاصی ساخته می‌شود. تبدیل آن به CPT فقط پس از اثبات نیاز به محتوای پیچیده انجام می‌شود.
+- `mw_album`, `mw_track`, `mw_playlist` به عنوان نوع release یا رابطه ساختاریافته مدل می‌شوند؛ schema نهایی در M2 و قبل از Admin UI فریز خواهد شد.
+- شناسه‌ها در API عدد صحیح وردپرس هستند و شناسه خارجی provider در meta namespaced جدا ذخیره می‌شود.
+- اطلاعات حساس دانلود، entitlement و credential هرگز با `show_in_rest=true` عمومی ثبت نمی‌شوند.
+
+## صف اجرای نزدیک
+
+| ترتیب | آیتم | وضعیت | خروجی |
+|---|---|---|---|
+| 1 | E1-S1 Core skeleton | Completed | bootstrap، autoload، module registry و lifecycle امن |
+| 2 | E1-S2 Block Theme skeleton | Completed | theme.json، templateها، parts و design tokens روشن/تیره |
+| 3 | E1-S3 Quality baseline | In Progress | PHPCS/PHPStan، syntax check و مستندات توسعه |
+| 4 | E2-S1/S2/S3 Data Model | Completed | ADR، taxonomy/meta dictionary، registration، repository و migration `0.2.0` |
+| 5 | E4 Admin Authoring | Code Complete | فرم schema-driven، save امن، validation و mapping UI |
+| 6 | E5 WooCommerce Integration | Code Complete | mapping دوطرفه، پاک‌سازی حذف محصول و purchase ownership adapter |
+| 7 | WordPress/Woo staging QA | Completed | Local WordPress 7.0.2 + WooCommerce 11.0.0 staging و smoke suite |
+| 8 | E6 Access Policy Engine | Completed | decision service مستقل با deny-by-default، membership/manual contracts و policy matrix |
+| 9 | E2-S4 Editorial relationships | Planned | ADR 0002؛ collection items، type-aware editor و podcast/artist extension قبل از M7 |
+
+### گزارش تکمیل M2 و فاز ۲
+
+| حوزه | خروجی | شواهد پذیرش |
+|---|---|---|
+| Content model | `mw_release` مستقل از WooCommerce و پنج taxonomy رسمی | `docs/adr/0001-catalog-content-model.md` |
+| Schema | ۱۳ کلید meta عمومی/خصوصی با sanitizer و REST policy | `docs/data-dictionary.md` و `ReleaseMetaSchema` |
+| Persistence | repository فقط برای release معتبر و کلید ثبت‌شده | `WordPressReleaseRepository` |
+| Migration | runner ترتیبی و idempotent با schema version `0.2.0` | `MigrationRunner` و `Schema020` |
+| Admin | nonce، capability، autosave/revision guard و فرم مبتنی بر schema | `ReleaseMetaBox` |
+| Access validation | mapping ناقص به `restricted` تبدیل می‌شود، نه public | `ReleaseMetaBox::enforce_access_invariants` |
+| Woo mapping | canonical relation روی release و reverse index خصوصی روی product | `ProductMapper` |
+| Purchase detection | تشخیص مالکیت با API رسمی WooCommerce و fail-closed بدون Woo/user | `PurchaseChecker` |
+| Automated QA | syntax تمام PHPها + domain smoke tests برای schema/migration/mapping/ownership | `tests/run.php` |
+
+> محدودیت پذیرش: اجرای واقعی CRUD در Gutenberg و ماتریس WooCommerce روی WordPress fresh install نیازمند محیط staging است. در محیط فعلی Docker، WP-CLI و WordPress نصب‌شده وجود ندارد؛ بنابراین وضعیت کد M2/E4/E5 کامل است اما UAT سازگاری تا ایجاد staging باز می‌ماند.
 
 ---
 
@@ -98,7 +179,7 @@
 | تست | lint/build/test پایه بدون خطا اجرا شود |
 | مستندات | README توسعه، ساختار پروژه، naming conventions ثبت شده باشد |
 | امنیت | dependency review اولیه انجام شده باشد |
-| سازگاری | PHP 8.2+ / WP 6.6+ / Woo 9.x baseline بررسی شده باشد |
+| سازگاری | PHP 7.4+ / WP 6.6+ / Woo 9.x baseline و CI روی PHP 7.4/8.2/current بررسی شده باشد |
 | کیفیت کد | bootstrap و module boundaries مشخص و قابل توسعه باشند |
 
 ### Story E1-S1
@@ -846,18 +927,18 @@
 
 # 7) Milestone Plan
 
-| Milestone | عنوان | اولویت | خروجی قابل تحویل |
-|---|---|---|---|
-| M1 | Foundation Setup | Must Have | اسکلت plugin/theme، استانداردها، CI، bootstrap |
-| M2 | Data Model Freeze | Must Have | content model، meta schema، taxonomyها، migration base |
-| M3 | Admin Authoring Flow | Must Have | ورود و مدیریت داده در ادمین، mapping اولیه |
-| M4 | Theme Rendering Base | Must Have | block theme templates، patternهای پایه، dynamic blocks اولیه |
-| M5 | Commerce Integration | Must Have | اتصال release به product، purchase detection |
-| M6 | Access Control Engine | Must Have | policy engine و membership abstraction |
-| M7 | Secure Download MVP | Must Have | tokenized resolver + access enforcement |
-| M8 | VIP Integration MVP | Must Have | provider adapter و integration واقعی staging-tested |
-| M9 | Frontend Completion | Should Have | single/archive polished + filter پایه |
-| M10 | Hardening & Release | Must Have | امنیت، performance، docs، package نهایی |
+| Milestone | عنوان | اولویت | وضعیت | خروجی قابل تحویل |
+|---|---|---|---|---|
+| M1 | Foundation Setup | Must Have | Code Complete | اسکلت plugin/theme، استانداردها، CI، bootstrap |
+| M2 | Data Model Freeze | Must Have | Code Complete | content model، meta schema، taxonomyها، migration base |
+| M3 | Admin Authoring Flow | Must Have | Code Complete / Staging-tested | ورود و مدیریت داده در ادمین، mapping اولیه |
+| M4 | Theme Rendering Base | Must Have | Code Complete / Staging-tested | block theme templates، dynamic release blocks، restricted state و polish اولیه |
+| M5 | Commerce Integration | Must Have | Code Complete / Staging-tested | اتصال release به product، purchase detection |
+| M6 | Access Control Engine | Must Have | Code Complete / Staging-tested | policy engine، membership/manual abstraction و deny-by-default |
+| M7 | Secure Download MVP | Must Have | Next | tokenized resolver + access enforcement |
+| M8 | VIP Integration MVP | Must Have | Pending | provider adapter و integration واقعی staging-tested |
+| M9 | Frontend Completion | Should Have | Pending | single/archive polished + filter پایه |
+| M10 | Hardening & Release | Must Have | Pending | امنیت، performance، docs، package نهایی |
 
 ---
 

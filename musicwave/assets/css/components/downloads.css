@@ -1,0 +1,246 @@
+.mw-download-action {
+	display: grid;
+	gap: var(--wp--preset--spacing--20);
+	margin: var(--wp--preset--spacing--40) 0;
+	padding: clamp(1rem, 3vw, 1.5rem);
+	background: linear-gradient(135deg, var(--mw-color-surface), var(--mw-color-surface-raised));
+	border: 1px solid var(--mw-color-border);
+	border-radius: var(--mw-radius-lg);
+	box-shadow: var(--mw-shadow-card);
+}
+
+.mw-download-action__heading {
+	display: grid;
+	gap: 0.25rem;
+}
+
+.mw-download-action__heading strong {
+	font-size: 1.125rem;
+}
+
+.mw-download-action__heading span,
+.mw-download-status {
+	color: var(--mw-color-text-muted);
+	font-size: 0.875rem;
+}
+
+.mw-download-file-list {
+	overflow: hidden;
+	background: color-mix(in srgb, var(--mw-color-surface) 72%, transparent);
+	border: 1px solid var(--mw-color-border);
+	border-radius: var(--mw-radius-sm);
+}
+
+.mw-download-action__controls {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 0.75rem;
+}
+
+.mw-download-action__file {
+	display: grid;
+	gap: 0.25rem;
+	color: var(--mw-color-text-muted);
+	font-size: 0.75rem;
+	font-weight: 600;
+}
+
+.mw-download-file-row {
+	display: grid;
+	grid-template-columns: minmax(10rem, 1fr) minmax(10rem, 14rem) auto;
+	align-items: center;
+	gap: 1rem;
+	padding: 0.875rem 1rem;
+}
+
+.mw-download-file-row + .mw-download-file-row {
+	border-top: 1px solid var(--mw-color-border);
+}
+
+.mw-download-file-row--no-quality {
+	grid-template-columns: minmax(10rem, 1fr) auto;
+}
+
+.mw-download-file-row__title {
+	display: flex;
+	min-width: 0;
+	align-items: center;
+	gap: 0.75rem;
+}
+
+.mw-download-file-row__title strong {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.mw-download-file-row__icon {
+	display: inline-grid;
+	width: 2.25rem;
+	height: 2.25rem;
+	flex: 0 0 2.25rem;
+	place-items: center;
+	color: var(--mw-color-accent-strong);
+	background: color-mix(in srgb, var(--mw-color-accent) 14%, transparent);
+	border-radius: 50%;
+	font-size: 1.05rem;
+}
+
+.mw-download-action__quality {
+	display: grid;
+	gap: 0.25rem;
+	color: var(--mw-color-text-muted);
+	font-size: 0.75rem;
+	font-weight: 600;
+}
+
+.mw-download-file,
+.mw-download-quality {
+	width: 100%;
+	min-height: 2.625rem;
+	padding: 0.45rem 2.25rem 0.45rem 0.75rem;
+	color: var(--mw-color-text);
+	background-color: var(--mw-color-surface-raised);
+	border: 1px solid var(--mw-color-border);
+	border-radius: var(--mw-radius-sm);
+}
+
+.mw-download-file:focus-visible,
+.mw-download-quality:focus-visible,
+.mw-secure-play-button:focus-visible,
+.mw-download-button:focus-visible {
+	border-color: var(--mw-color-accent);
+	outline: 2px solid color-mix(in srgb, var(--mw-color-accent) 55%, transparent);
+	outline-offset: 2px;
+}
+
+.mw-download-file-row__actions {
+	display: flex;
+	align-items: center;
+	justify-content: flex-end;
+	gap: 0.5rem;
+}
+
+.mw-download-action .mw-download-button,
+.mw-secure-play-button {
+	min-height: 2.625rem;
+	white-space: nowrap;
+}
+
+.mw-secure-play-button {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 0.45rem;
+	padding: 0.55rem 0.8rem;
+	color: var(--mw-color-text);
+	background: transparent;
+	border: 1px solid var(--mw-color-border);
+	border-radius: var(--mw-radius-sm);
+	cursor: pointer;
+}
+
+.mw-secure-play-button:hover:not(:disabled) {
+	color: var(--mw-color-accent-strong);
+	border-color: color-mix(in srgb, var(--mw-color-accent) 55%, var(--mw-color-border));
+}
+
+.mw-secure-play-button:disabled,
+.mw-download-button:disabled {
+	cursor: wait;
+	opacity: 0.55;
+}
+
+.mw-download-status {
+	min-height: 1.25rem;
+}
+
+.mw-download-action--compact {
+	display: block;
+	margin: 0;
+	padding: 0;
+	background: transparent;
+	border: 0;
+	border-radius: 0;
+	box-shadow: none;
+}
+
+.mw-download-action--compact .mw-download-file-list {
+	display: grid;
+	gap: 0.5rem;
+	background: transparent;
+	border: 0;
+}
+
+.mw-download-action--compact .mw-download-file-row {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: flex-end;
+	gap: 0.5rem;
+	padding: 0;
+	border: 0;
+}
+
+.mw-download-action--compact .mw-download-file-row__title,
+.mw-download-action--compact .mw-download-action__quality > span,
+.mw-download-action--compact .mw-download-status {
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	overflow: hidden;
+	clip: rect(0 0 0 0);
+	clip-path: inset(50%);
+	white-space: nowrap;
+}
+
+.mw-download-action--compact .mw-download-action__quality {
+	width: min(10rem, 100%);
+}
+
+.mw-download-action--compact .mw-download-quality,
+.mw-download-action--compact .mw-download-button,
+.mw-download-action--compact .mw-secure-play-button {
+	min-height: 2.25rem;
+}
+
+@media (max-width: 54rem) {
+	.mw-download-file-row {
+		grid-template-columns: minmax(10rem, 1fr) minmax(9rem, 12rem);
+	}
+
+	.mw-download-action__controls {
+		grid-template-columns: 1fr;
+	}
+
+	.mw-download-file-row__actions {
+		grid-column: 1 / -1;
+	}
+}
+
+@media (max-width: 36rem) {
+	.mw-download-file-row,
+	.mw-download-file-row--no-quality {
+		grid-template-columns: 1fr;
+		align-items: stretch;
+	}
+
+	.mw-download-file-row__actions {
+		grid-column: auto;
+		justify-content: stretch;
+	}
+
+	.mw-download-file-row__actions > *,
+	.mw-download-action .mw-download-button {
+		flex: 1 1 auto;
+		width: 100%;
+	}
+
+	.mw-download-action--compact .mw-download-file-row,
+	.mw-download-action--compact .mw-download-file-row__actions {
+		width: 100%;
+	}
+
+	.mw-download-action--compact .mw-download-action__quality {
+		width: 100%;
+	}
+}

@@ -1,0 +1,19 @@
+.mw-theme-toggle {
+	display: inline-grid;
+	width: 2.75rem;
+	height: 2.75rem;
+	padding: 0;
+	place-items: center;
+	color: var(--mw-color-text);
+	background: var(--mw-color-surface-raised);
+	border: 1px solid var(--mw-color-border);
+	border-radius: 50%;
+	box-shadow: none;
+	font-size: 1.15rem;
+	line-height: 1;
+}
+
+.mw-theme-toggle:hover {
+	color: var(--mw-color-canvas);
+	background: var(--mw-color-accent);
+}

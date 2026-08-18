@@ -1,0 +1,39 @@
+{
+	"apiVersion": 3,
+	"name": "music-wave/download-button",
+	"title": "Secure download",
+	"category": "music-wave",
+	"description": "Displays authorized download actions for a release.",
+	"keywords": [ "quality", "stream", "files" ],
+	"textdomain": "music-wave-core",
+	"icon": "download",
+	"attributes": {
+		"releaseId": { "type": "integer", "default": 0 },
+		"compact": { "type": "boolean", "default": false },
+		"heading": { "type": "string", "default": "" },
+		"description": { "type": "string", "default": "" },
+		"showHeading": { "type": "boolean", "default": true },
+		"showDescription": { "type": "boolean", "default": true },
+		"showQuality": { "type": "boolean", "default": true },
+		"showStream": { "type": "boolean", "default": true },
+		"downloadLabel": { "type": "string", "default": "" },
+		"playLabel": { "type": "string", "default": "" },
+		"loginLabel": { "type": "string", "default": "" }
+	},
+	"usesContext": [ "postId", "postType" ],
+	"supports": {
+		"anchor": true,
+		"align": [ "wide", "full" ],
+		"border": { "color": true, "radius": true, "style": true, "width": true },
+		"color": { "background": true, "link": true, "text": true },
+		"spacing": { "blockGap": true, "margin": true, "padding": true },
+		"typography": { "fontSize": true, "lineHeight": true }
+	},
+	"example": {
+		"attributes": {
+			"showHeading": true,
+			"showQuality": true,
+			"showStream": true
+		}
+	}
+}

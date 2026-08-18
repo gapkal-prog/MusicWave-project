@@ -1,0 +1,631 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: musicwave\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Domain: musicwave\n"
+
+#: functions.php:1010
+#, php-format
+msgid "%d customized MusicWave template records were moved to the Trash. The validated theme files are active again."
+msgstr ""
+
+#: functions.php:672
+msgid "A configurable grid, horizontal shelf, or compact list of releases."
+msgstr ""
+
+#: functions.php:572
+msgid "A responsive, accessible slider for featured or recent releases."
+msgstr ""
+
+#: assets/editor-blocks.js:248
+msgid "Action label"
+msgstr ""
+
+#: assets/editor-blocks.js:397
+msgid "Add published releases or enable this block to display its live preview."
+msgstr ""
+
+#: assets/editor-blocks.js:52
+msgid "All releases"
+msgstr ""
+
+#: assets/editor-blocks.js:53
+msgid "Artist"
+msgstr ""
+
+#: assets/editor-blocks.js:231
+msgid "Artwork shape"
+msgstr ""
+
+#: assets/editor-blocks.js:44
+msgid "Ascending"
+msgstr ""
+
+#: assets/editor-blocks.js:146
+msgid "Autoplay"
+msgstr ""
+
+#: assets/editor-blocks.js:152
+msgid "Autoplay interval (milliseconds)"
+msgstr ""
+
+#: assets/editor-blocks.js:315
+msgid "Body text color (hex)"
+msgstr ""
+
+#: patterns/browse-categories.php:13
+msgid "Browse by mood and genre"
+msgstr ""
+
+#: patterns/music-service-callout.php:18
+msgid "Build a library that sounds like you."
+msgstr ""
+
+#: assets/editor-blocks.js:340
+msgid "Button background (hex)"
+msgstr ""
+
+#: assets/editor-blocks.js:352
+msgid "Button corner radius (px)"
+msgstr ""
+
+#: assets/editor-blocks.js:325
+msgid "Button label"
+msgstr ""
+
+#: assets/editor-blocks.js:330
+msgid "Button style"
+msgstr ""
+
+#: assets/editor-blocks.js:346
+msgid "Button text color (hex)"
+msgstr ""
+
+#: patterns/catalog-heading.php:13
+msgid "CURATED FOR YOU"
+msgstr ""
+
+#: assets/editor-blocks.js:323
+msgid "Call-to-action button"
+msgstr ""
+
+#: patterns/browse-categories.php:29
+msgid "Calm selections for work and rest."
+msgstr ""
+
+#: functions.php:1089
+msgid "Checkout"
+msgstr ""
+
+#: assets/editor-blocks.js:237
+msgid "Circle"
+msgstr ""
+
+#: assets/editor-blocks.js:218
+msgid "Compact list"
+msgstr ""
+
+#: patterns/browse-categories.php:24
+msgid "Continuous listening for every moment."
+msgstr ""
+
+#: assets/editor-blocks.js:74
+msgid "Curated release IDs"
+msgstr ""
+
+#: functions.php:1023
+#, php-format
+msgid "Customized built-in template overrides found: %d"
+msgstr ""
+
+#: assets/editor-blocks.js:43
+msgid "Descending"
+msgstr ""
+
+#: assets/editor-blocks.js:196
+msgid "Description"
+msgstr ""
+
+#: assets/editor-blocks.js:224
+msgid "Desktop columns"
+msgstr ""
+
+#: assets/editor-blocks.js:40
+msgid "Direction"
+msgstr ""
+
+#: assets/editor-blocks.js:14
+msgid "Disabled"
+msgstr ""
+
+#: patterns/home-hero.php:15
+msgid "Discover the next track you will love."
+msgstr ""
+
+#: patterns/editorial-feature.php:16
+msgid "EDITORIAL"
+msgstr ""
+
+#: assets/editor-blocks.js:219 assets/editor-blocks.js:255
+msgid "Editorial feature"
+msgstr ""
+
+#: assets/editor-blocks.js:13
+msgid "Enabled"
+msgstr ""
+
+#: patterns/user-dashboard.php:18
+msgid "Everything you own, ready to play."
+msgstr ""
+
+#: patterns/home-hero.php:18
+msgid "Explore music"
+msgstr ""
+
+#: patterns/home-hero.php:17
+msgid "Explore releases, artists, albums, and exclusive downloads in one focused experience."
+msgstr ""
+
+#: assets/editor-blocks.js:104 assets/editor-blocks.js:186
+msgid "Eyebrow"
+msgstr ""
+
+#: assets/editor-blocks.js:264
+msgid "Featured body"
+msgstr ""
+
+#: assets/editor-blocks.js:257
+msgid "Featured release ID (0 = first result)"
+msgstr ""
+
+#: functions.php:1225 patterns/featured-release-slider.php:12
+msgid "Featured releases"
+msgstr ""
+
+#: assets/editor-blocks.js:49
+msgid "Filter taxonomy"
+msgstr ""
+
+#: patterns/browse-categories.php:28
+msgid "Focus and chill"
+msgstr ""
+
+#: patterns/browse-categories.php:19
+msgid "Fresh releases and emerging sounds."
+msgstr ""
+
+#: assets/editor-blocks.js:54
+msgid "Genre"
+msgstr ""
+
+#: assets/editor-blocks.js:335
+msgid "Ghost"
+msgstr ""
+
+#: functions.php:174
+#, php-format
+msgid "Go to slide group %d"
+msgstr ""
+
+#: assets/editor-blocks.js:109 assets/editor-blocks.js:191
+msgid "Heading"
+msgstr ""
+
+#: assets/editor-blocks.js:300
+msgid "Hero title"
+msgstr ""
+
+#: patterns/music-service-callout.php:21
+msgid "Highlight memberships, exclusive releases, downloads, or a curated playlist with this editable callout."
+msgstr ""
+
+#: assets/editor-blocks.js:217
+msgid "Horizontal shelf"
+msgstr ""
+
+#: assets/editor-blocks.js:57
+msgid "Label"
+msgstr ""
+
+#: assets/editor-blocks.js:235
+msgid "Landscape"
+msgstr ""
+
+#: functions.php:1084
+msgid "Latest releases"
+msgstr ""
+
+#: assets/editor-blocks.js:213
+msgid "Layout"
+msgstr ""
+
+#: assets/editor-blocks.js:211
+msgid "Layout and artwork"
+msgstr ""
+
+#: assets/editor-blocks.js:63
+msgid "Leave empty to include every term."
+msgstr ""
+
+#: assets/editor-blocks.js:341
+msgid "Leave empty to use theme accent color."
+msgstr ""
+
+#: assets/editor-blocks.js:347
+msgid "Leave empty to use theme default."
+msgstr ""
+
+#: assets/editor-blocks.js:147
+msgid "Loop"
+msgstr ""
+
+#: patterns/featured-release-slider.php:12
+msgid "MADE FOR YOU"
+msgstr ""
+
+#: functions.php:1224
+msgid "Made for you"
+msgstr ""
+
+#: assets/editor-blocks.js:32
+msgid "Modified date"
+msgstr ""
+
+#: assets/editor-blocks.js:55
+msgid "Mood"
+msgstr ""
+
+#: functions.php:1536
+msgid "More releases"
+msgstr ""
+
+#: assets/editor-blocks.js:35
+msgid "Most viewed"
+msgstr ""
+
+#: functions.php:211
+msgid "MusicWave"
+msgstr ""
+
+#: functions.php:564
+msgid "MusicWave display preference"
+msgstr ""
+
+#: functions.php:1191
+msgid "MusicWave release"
+msgstr ""
+
+#: functions.php:671
+msgid "MusicWave release shelf"
+msgstr ""
+
+#: functions.php:571
+msgid "MusicWave release slider"
+msgstr ""
+
+#: functions.php:853 functions.php:854 functions.php:1003
+msgid "MusicWave template repair"
+msgstr ""
+
+#: functions.php:544
+msgid "MusicWave template text"
+msgstr ""
+
+#: functions.php:1090
+msgid "My account"
+msgstr ""
+
+#: assets/editor-blocks.js:149
+msgid "Navigation arrows"
+msgstr ""
+
+#: patterns/browse-categories.php:18
+msgid "New music"
+msgstr ""
+
+#: functions.php:1227
+msgid "Next releases"
+msgstr ""
+
+#: assets/editor-blocks.js:269
+msgid "No body text"
+msgstr ""
+
+#: functions.php:1040
+msgid "No database overrides were found. WordPress is already using the bundled template files."
+msgstr ""
+
+#: functions.php:1085
+msgid "No music was found."
+msgstr ""
+
+#: functions.php:1086
+msgid "Nothing playing here."
+msgstr ""
+
+#: functions.php:1363
+#, php-format
+msgid "Open %s"
+msgstr ""
+
+#: functions.php:1338 functions.php:1455
+msgid "Open release"
+msgstr ""
+
+#: assets/editor-blocks.js:75
+msgid "Optional. Comma-separated release IDs override the query and preserve this exact order."
+msgstr ""
+
+#: assets/editor-blocks.js:69
+msgid "Optional. Filter by a release type term slug, e.g. album, single, podcast_show."
+msgstr ""
+
+#: assets/editor-blocks.js:28
+msgid "Order by"
+msgstr ""
+
+#: assets/editor-blocks.js:334
+msgid "Outline"
+msgstr ""
+
+#: assets/editor-blocks.js:274
+msgid "Overlay darkness"
+msgstr ""
+
+#: patterns/music-service-callout.php:15
+msgid "PREMIUM LISTENING"
+msgstr ""
+
+#: assets/editor-blocks.js:150
+msgid "Pagination dots"
+msgstr ""
+
+#: assets/editor-blocks.js:148
+msgid "Pause on hover or focus"
+msgstr ""
+
+#: assets/editor-blocks.js:236
+msgid "Portrait"
+msgstr ""
+
+#: functions.php:1091
+msgid "Powered by MusicWave."
+msgstr ""
+
+#: functions.php:1227
+msgid "Previous releases"
+msgstr ""
+
+#: assets/editor-blocks.js:31
+msgid "Published date"
+msgstr ""
+
+#: assets/editor-blocks.js:26
+msgid "Query and filtering"
+msgstr ""
+
+#: patterns/browse-categories.php:23
+msgid "Radio and mixes"
+msgstr ""
+
+#: assets/editor-blocks.js:34
+msgid "Random"
+msgstr ""
+
+#: assets/editor-blocks.js:56
+msgid "Release type"
+msgstr ""
+
+#: assets/editor-blocks.js:68
+msgid "Release type (slug)"
+msgstr ""
+
+#: assets/editor-blocks.js:114
+msgid "Releases loaded"
+msgstr ""
+
+#: assets/editor-blocks.js:201
+msgid "Releases to show"
+msgstr ""
+
+#: assets/editor-blocks.js:216
+msgid "Responsive grid"
+msgstr ""
+
+#: functions.php:1037
+msgid "Restore validated theme templates"
+msgstr ""
+
+#: assets/editor-blocks.js:361
+msgid "Section link"
+msgstr ""
+
+#: functions.php:1391
+msgid "See all"
+msgstr ""
+
+#: assets/editor-blocks.js:184
+msgid "Shelf content"
+msgstr ""
+
+#: assets/editor-blocks.js:246
+msgid "Show action link"
+msgstr ""
+
+#: assets/editor-blocks.js:126 assets/editor-blocks.js:243
+msgid "Show artist"
+msgstr ""
+
+#: assets/editor-blocks.js:241
+msgid "Show artwork"
+msgstr ""
+
+#: assets/editor-blocks.js:131 assets/editor-blocks.js:244
+msgid "Show date"
+msgstr ""
+
+#: assets/editor-blocks.js:245
+msgid "Show excerpt"
+msgstr ""
+
+#: assets/editor-blocks.js:121
+msgid "Show excerpts"
+msgstr ""
+
+#: assets/editor-blocks.js:242
+msgid "Show play affordance"
+msgstr ""
+
+#: assets/editor-blocks.js:281
+msgid "Show rank numbers"
+msgstr ""
+
+#: assets/editor-blocks.js:136 assets/editor-blocks.js:286
+msgid "Show view count"
+msgstr ""
+
+#: assets/editor-blocks.js:291
+msgid "Side column width (px)"
+msgstr ""
+
+#: functions.php:1017
+msgid "Site Editor customizations are stored in the database and override updated theme files. Use this tool only when a MusicWave template reports an unavailable template part or invalid block content."
+msgstr ""
+
+#: functions.php:176
+#, php-format
+msgid "Slide group %1$d of %2$d"
+msgstr ""
+
+#: assets/editor-blocks.js:144
+msgid "Slider behavior"
+msgstr ""
+
+#: assets/editor-blocks.js:102
+msgid "Slider content"
+msgstr ""
+
+#: functions.php:1228
+msgid "Slider pagination"
+msgstr ""
+
+#: assets/editor-blocks.js:145
+msgid "Slider visibility"
+msgstr ""
+
+#: assets/editor-blocks.js:333
+msgid "Solid fill"
+msgstr ""
+
+#: assets/editor-blocks.js:234
+msgid "Square"
+msgstr ""
+
+#: patterns/music-service-callout.php:26
+msgid "Start listening"
+msgstr ""
+
+#: patterns/catalog-heading.php:16
+msgid "Start with what moves you"
+msgstr ""
+
+#: assets/editor-blocks.js:62
+msgid "Term slug"
+msgstr ""
+
+#: functions.php:1087
+msgid "The page may have moved. Try searching the catalog."
+msgstr ""
+
+#: functions.php:1018
+msgid "This does not delete releases, pages, menus, media, plugin settings, or global styles."
+msgstr ""
+
+#: assets/editor-blocks.js:33
+msgid "Title"
+msgstr ""
+
+#: assets/editor-blocks.js:302
+msgid "Title color (hex)"
+msgstr ""
+
+#: assets/editor-blocks.js:308
+msgid "Title font size (px, 0 = default)"
+msgstr ""
+
+#: patterns/editorial-feature.php:17
+msgid "Top picks this week"
+msgstr ""
+
+#: functions.php:186
+msgid "Use dark theme"
+msgstr ""
+
+#: assets/editor-blocks.js:268
+msgid "Use description field"
+msgstr ""
+
+#: assets/editor-blocks.js:267
+msgid "Use excerpt"
+msgstr ""
+
+#: assets/editor-blocks.js:12
+msgid "Use global setting"
+msgstr ""
+
+#: functions.php:185
+msgid "Use light theme"
+msgstr ""
+
+#: functions.php:184 functions.php:1577
+msgid "Use system theme"
+msgstr ""
+
+#: patterns/catalog-heading.php:19
+msgid "Use this editable heading above a Query Loop, playlist, artist collection, or any custom block."
+msgstr ""
+
+#: assets/editor-blocks.js:368
+msgid "View-all label"
+msgstr ""
+
+#: assets/editor-blocks.js:363
+msgid "View-all link"
+msgstr ""
+
+#: patterns/account-hub.php:15 patterns/user-dashboard.php:15
+msgid "YOUR MUSIC"
+msgstr ""
+
+#: functions.php:1053
+msgid "You are not allowed to repair theme templates."
+msgstr ""
+
+#: functions.php:1088
+msgid "Your cart"
+msgstr ""
+
+#: patterns/account-hub.php:19
+msgid "Your purchases, personal music library, and account tools in one place."
+msgstr ""
+
+#: patterns/home-hero.php:13
+msgid "Your sound, beautifully organized"
+msgstr ""
+
+#: assets/editor-blocks.js:316
+msgid "e.g. #cccccc"
+msgstr ""
+
+#: assets/editor-blocks.js:303
+msgid "e.g. #ffffff"
+msgstr ""
+
+#: functions.php:1202 functions.php:1482
+msgid "views"
+msgstr ""
+

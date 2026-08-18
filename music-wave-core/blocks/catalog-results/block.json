@@ -1,0 +1,28 @@
+{
+	"apiVersion": 3,
+	"name": "music-wave/catalog-results",
+	"title": "Catalog results",
+	"category": "music-wave",
+	"description": "Displays the current catalog result summary.",
+	"keywords": [ "count", "active filters" ],
+	"textdomain": "music-wave-core",
+	"icon": "chart-bar",
+	"attributes": {
+		"showCount": { "type": "boolean", "default": true },
+		"showChips": { "type": "boolean", "default": true }
+	},
+	"supports": {
+		"anchor": true,
+		"align": [ "wide", "full" ],
+		"border": { "color": true, "radius": true, "style": true, "width": true },
+		"color": { "background": true, "link": true, "text": true },
+		"spacing": { "blockGap": true, "margin": true, "padding": true },
+		"typography": { "fontSize": true, "lineHeight": true }
+	},
+	"example": {
+		"attributes": {
+			"showCount": true,
+			"showChips": true
+		}
+	}
+}
