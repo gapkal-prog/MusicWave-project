@@ -120,6 +120,22 @@ final class WordPressReleaseRepository implements ReleaseRepository {
 	}
 
 	/**
+	 * Validate relation input for a collection that does not exist yet.
+	 *
+	 * REST creation requests cannot run parent-dependent checks (cycles,
+	 * type compatibility) before the post exists, but every shape, uniqueness,
+	 * and child-existence rule must still fail fast with a structured error
+	 * instead of surviving until the silent after-insert rollback
+	 * (PROJECT_PLAN.md §5.2, Stage 1 deliverable 4).
+	 *
+	 * @param array<int, array<string, mixed>> $items Relation input.
+	 * @return array<int, array<string, int|string|null>> Canonical relation.
+	 */
+	public function validate_collection_items_for_create( array $items ): array {
+		return $this->validate_collection_shape( $items );
+	}
+
+	/**
 	 * Append a child at the next stable position.
 	 *
 	 * @param array<string, mixed> $item Child definition without a position.
@@ -176,6 +192,27 @@ final class WordPressReleaseRepository implements ReleaseRepository {
 	 * @throws InvalidArgumentException When an entry is malformed, duplicated, or cyclic.
 	 */
 	private function validate_collection_items( int $collection_id, array $items ): array {
+		$normalized = $this->validate_collection_shape( $items );
+
+		foreach ( $normalized as $item ) {
+			$child_id = (int) $item['release_id'];
+			if ( $child_id === $collection_id || $this->would_create_cycle( $collection_id, $child_id ) ) {
+				throw new InvalidArgumentException( 'A collection cannot contain itself or one of its ancestors.' );
+			}
+			$this->assert_compatible_item( $collection_id, $child_id, (string) $item['role'] );
+		}
+
+		return $normalized;
+	}
+
+	/**
+	 * Parent-independent relation validation: shape, uniqueness, child existence.
+	 *
+	 * @param array<int, array<string, mixed>> $items Relation input.
+	 * @return array<int, array<string, int|string|null>> Canonical relation.
+	 * @throws InvalidArgumentException When entries are malformed, duplicated, or reference unknown releases.
+	 */
+	private function validate_collection_shape( array $items ): array {
 		$definition = $this->schema->get( 'mw_collection_items' );
 		$sanitized  = null === $definition ? array() : $definition->sanitize( $items );
 		if ( count( $sanitized ) !== count( $items ) ) {
@@ -193,10 +230,6 @@ final class WordPressReleaseRepository implements ReleaseRepository {
 			$ids[ $child_id ]       = true;
 			$positions[ $position ] = true;
 			$this->assert_release( $child_id );
-			if ( $child_id === $collection_id || $this->would_create_cycle( $collection_id, $child_id ) ) {
-				throw new InvalidArgumentException( 'A collection cannot contain itself or one of its ancestors.' );
-			}
-			$this->assert_compatible_item( $collection_id, $child_id, (string) $item['role'] );
 		}
 
 		usort(

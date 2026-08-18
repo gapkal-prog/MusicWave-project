@@ -64,10 +64,15 @@ final class ProtectedAssetRoutes {
 	}
 
 	/**
-	 * Require WordPress upload permission for file inventory and writes.
+	 * Require the dedicated MusicWave asset capability for inventory access.
+	 *
+	 * `upload_files` was too broad: any author-level user could enumerate the
+	 * protected inventory. The dedicated capability maps to administrators by
+	 * default and is filterable through `music_wave_manage_asset_caps`
+	 * (PROJECT_PLAN.md Stage 1 deliverable 5).
 	 */
 	public function can_manage_assets(): bool {
-		return current_user_can( 'upload_files' );
+		return current_user_can( 'manage_mw_protected_assets' );
 	}
 
 	/**

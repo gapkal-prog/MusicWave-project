@@ -22,6 +22,15 @@ final class ReleaseBlocks {
 	/** @var AccessPolicyEngine */
 	private $policy;
 
+	/**
+	 * Release IDs whose canonical denied-access gate already rendered in this
+	 * request, preventing duplicate gate output across body, meta, and panel
+	 * surfaces (PROJECT_PLAN.md Stage 1 deliverable 6).
+	 *
+	 * @var array<int, bool>
+	 */
+	private $denied_gate_rendered = array();
+
 	/** @var ReleaseRepository */
 	private $repository;
 
@@ -628,7 +637,12 @@ final class ReleaseBlocks {
 			return $content;
 		}
 
-		return $this->gate_markup( $decision->reason(), $decision->mode() );
+		// The access panel is the single canonical gate: it carries the
+		// editor-configured message and purchase/membership CTA. Rendering it
+		// here (in the body position) marks the gate as shown, so a template's
+		// dedicated access-panel block will not duplicate it
+		// (PROJECT_PLAN.md Stage 1 deliverable 6).
+		return $this->render_access_panel( array( 'releaseId' => $post->ID ) );
 	}
 
 	/**
@@ -648,7 +662,9 @@ final class ReleaseBlocks {
 
 		$decision = $this->policy->decide( $release_id, AccessSubject::current() );
 		if ( ! $decision->is_allowed() ) {
-			return $this->gate_markup( $decision->reason(), $decision->mode() );
+			// No duplicate gate: the canonical access panel explains the
+			// restriction; gated metadata simply does not render.
+			return '';
 		}
 
 		$compact   = ! empty( $attributes['compact'] );
@@ -796,6 +812,11 @@ final class ReleaseBlocks {
 			$message = $this->message_attribute( $attributes, 'grantedMessage', 'access_granted_message', __( 'Access granted', 'music-wave-core' ) );
 			return '<aside ' . BlockSupport::wrapper_attributes( 'mw-access-panel mw-access-panel--' . $layout . ' mw-access-panel--granted' ) . '><strong class="mw-access-panel__message">' . esc_html( $message ) . '</strong></aside>';
 		}
+
+		if ( isset( $this->denied_gate_rendered[ $release_id ] ) ) {
+			return '';
+		}
+		$this->denied_gate_rendered[ $release_id ] = true;
 
 		$message = $this->message_attribute( $attributes, 'restrictedMessage', 'restricted_message', __( 'This release is not currently available.', 'music-wave-core' ) );
 		$cta     = '';
@@ -1804,20 +1825,6 @@ final class ReleaseBlocks {
 
 		$post = get_post();
 		return $post instanceof WP_Post && ReleasePostType::KEY === $post->post_type ? $post->ID : 0;
-	}
-
-	private function gate_markup( string $reason, string $mode ): string {
-		$message = (string) Settings::get( 'restricted_message' );
-		if ( 'purchase_required' === $reason ) {
-			$purchase_message = (string) Settings::get( 'purchase_message' );
-			$message          = '' !== $purchase_message ? $purchase_message : $message;
-		} elseif ( 'membership_required' === $reason ) {
-			$membership_message = (string) Settings::get( 'membership_message' );
-			$message            = '' !== $membership_message ? $membership_message : $message;
-		}
-		$message = '' !== $message ? $message : __( 'This release is protected.', 'music-wave-core' );
-
-		return '<div class="mw-release-gate mw-release-gate--' . esc_attr( $reason ) . '" data-access-mode="' . esc_attr( $mode ) . '"><strong>' . esc_html( $message ) . '</strong></div>';
 	}
 
 	/**

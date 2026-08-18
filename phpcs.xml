@@ -62,6 +62,7 @@
         <properties>
             <property name="custom_capabilities" type="array">
                 <element value="edit_mw_releases"/>
+                <element value="manage_mw_protected_assets"/>
             </property>
         </properties>
     </rule>

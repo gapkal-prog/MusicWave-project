@@ -55,3 +55,27 @@ add_filter( 'music_wave_admin_integrations', array( $music_wave_vip_settings, 'i
 add_action( 'music_wave_admin_integration_settings', array( $music_wave_vip_settings, 'render_embedded' ) );
 $music_wave_vip_asset_routes = new ManaCore\MusicWave\Vip\ProtectedAssetRoutes( $music_wave_vip_storage );
 $music_wave_vip_asset_routes->register();
+
+/**
+ * Provider-side authorization for assigning local protected assets.
+ *
+ * VIP only judges its own `local:` namespace: the asset must exist in the
+ * protected inventory and the acting user must hold the dedicated asset
+ * capability. Other providers' identifiers pass through untouched
+ * (PROJECT_PLAN.md Stage 1 deliverable 5).
+ */
+add_filter(
+	'music_wave_can_assign_download_asset',
+	static function ( $authorized, $asset_id ) use ( $music_wave_vip_storage ) {
+		if ( null !== $authorized || 0 !== strpos( (string) $asset_id, 'local:' ) ) {
+			return $authorized;
+		}
+		if ( ! current_user_can( 'manage_mw_protected_assets' ) ) {
+			return false;
+		}
+
+		return false !== $music_wave_vip_storage->resolve( (string) $asset_id );
+	},
+	10,
+	2
+);

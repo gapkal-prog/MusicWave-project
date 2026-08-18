@@ -113,8 +113,11 @@ $rendering = new ReleaseBlocks(
 	$repository
 );
 $guest_meta = $rendering->render_meta(array());
-mw_staging_assert(false !== strpos($guest_meta, 'mw-release-gate'), 'M4: Guest must receive a gated release state.');
-mw_staging_assert(false === strpos($rendering->filter_content('Private editorial body'), 'Private editorial body'), 'M4: Restricted release content must not leak.');
+mw_staging_assert('' === $guest_meta, 'M4: Gated release metadata must render nothing instead of a duplicate gate.');
+$guest_body = $rendering->filter_content('Private editorial body');
+mw_staging_assert(false === strpos($guest_body, 'Private editorial body'), 'M4: Restricted release content must not leak.');
+mw_staging_assert(false !== strpos($guest_body, 'mw-access-panel'), 'M4: The canonical access panel must replace restricted body content.');
+mw_staging_assert('' === $rendering->render_access_panel(array()), 'M4: The canonical access gate must render only once per release request.');
 mw_staging_assert(! $policy_engine->decide($release_id, new AccessSubject())->is_allowed(), 'M6: Anonymous visitor must be denied purchase access.');
 wp_set_current_user(1);
 $public_release_id = wp_insert_post(array('post_type' => ReleasePostType::KEY, 'post_status' => 'publish', 'post_title' => 'Public Rendering Release'));

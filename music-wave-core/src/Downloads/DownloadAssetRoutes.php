@@ -91,10 +91,90 @@ final class DownloadAssetRoutes {
 		}
 
 		$release_id = absint( $request->get_param( 'id' ) );
+		$denied     = $this->deny_unauthorized_assignments( $release_id, $assets );
+		if ( null !== $denied ) {
+			return $denied;
+		}
+
 		$this->releases->update( $release_id, 'mw_download_assets', $assets );
 		$this->releases->delete( $release_id, 'mw_download_asset_id' );
 
 		return new WP_REST_Response( array( 'items' => $this->assets( $release_id ) ), 200 );
+	}
+
+	/**
+	 * Authorization stopgap: editors may keep or reorder the asset IDs already
+	 * assigned to a release, but introducing a new protected asset identifier
+	 * requires provider-side authorization or the dedicated asset capability,
+	 * so guessed identifiers cannot be attached to editable releases
+	 * (PROJECT_PLAN.md Stage 1 deliverable 5).
+	 *
+	 * @param int                  $release_id Release being edited.
+	 * @param array<int, mixed>    $assets     Submitted variant definitions.
+	 * @return WP_Error|null Error when an assignment is not authorized.
+	 */
+	private function deny_unauthorized_assignments( int $release_id, array $assets ): ?WP_Error {
+		$existing = $this->assigned_asset_ids( $release_id );
+
+		foreach ( $assets as $asset ) {
+			if ( ! is_array( $asset ) || ! isset( $asset['asset_id'] ) || ! is_scalar( $asset['asset_id'] ) ) {
+				continue;
+			}
+			$asset_id = sanitize_text_field( (string) $asset['asset_id'] );
+			if ( '' === $asset_id || in_array( $asset_id, $existing, true ) ) {
+				continue;
+			}
+
+			/**
+			 * Allow the active download provider to authorize one asset assignment.
+			 *
+			 * Return true to authorize, false to reject, or null when the
+			 * provider has no opinion (the dedicated capability then decides).
+			 *
+			 * @param bool|null $authorized Provider decision.
+			 * @param string    $asset_id   Opaque asset identifier.
+			 * @param int       $release_id Release being edited.
+			 * @param int       $user_id    Acting user.
+			 */
+			$authorized = apply_filters( 'music_wave_can_assign_download_asset', null, $asset_id, $release_id, get_current_user_id() );
+			if ( true === $authorized ) {
+				continue;
+			}
+			if ( false === $authorized || ! current_user_can( 'manage_mw_protected_assets' ) ) {
+				return new WP_Error(
+					'mw_download_asset_forbidden',
+					__( 'You are not authorized to assign this protected asset.', 'music-wave-core' ),
+					array(
+						'status'   => 403,
+						'asset_id' => $asset_id,
+					)
+				);
+			}
+		}
+
+		return null;
+	}
+
+	/**
+	 * Collect the asset identifiers already stored on a release.
+	 *
+	 * @return array<int, string>
+	 */
+	private function assigned_asset_ids( int $release_id ): array {
+		$ids   = array();
+		$value = $this->releases->get( $release_id, 'mw_download_assets' );
+		foreach ( is_array( $value ) ? $value : array() as $asset ) {
+			if ( is_array( $asset ) && isset( $asset['asset_id'] ) && is_scalar( $asset['asset_id'] ) ) {
+				$ids[] = sanitize_text_field( (string) $asset['asset_id'] );
+			}
+		}
+
+		$legacy = $this->releases->get( $release_id, 'mw_download_asset_id' );
+		if ( is_string( $legacy ) && '' !== $legacy ) {
+			$ids[] = sanitize_text_field( $legacy );
+		}
+
+		return array_values( array_unique( array_filter( $ids ) ) );
 	}
 
 	/**

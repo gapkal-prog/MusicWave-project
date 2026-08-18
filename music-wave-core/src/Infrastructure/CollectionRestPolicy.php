@@ -20,6 +20,9 @@ final class CollectionRestPolicy {
 	/** @var array<int, array<int, array<string, int|string|null>>> */
 	private $previous_items = array();
 
+	/** @var WP_Error|null Deferred error for a mutation discarded after insert. */
+	private $pending_error = null;
+
 	public function __construct( WordPressReleaseRepository $repository ) {
 		$this->repository = $repository;
 	}
@@ -27,6 +30,7 @@ final class CollectionRestPolicy {
 	public function register(): void {
 		add_filter( 'rest_pre_insert_' . ReleasePostType::KEY, array( $this, 'pre_insert' ), 10, 2 );
 		add_action( 'rest_after_insert_' . ReleasePostType::KEY, array( $this, 'after_insert' ), 10, 3 );
+		add_filter( 'rest_request_after_callbacks', array( $this, 'fail_discarded_mutation' ), 10, 3 );
 	}
 
 	/**
@@ -66,13 +70,17 @@ final class CollectionRestPolicy {
 			}
 		}
 
-		if ( $post_id > 0 ) {
-			try {
+		try {
+			if ( $post_id > 0 ) {
 				$this->repository->validate_collection_items_for_write( $post_id, $items );
 				$this->previous_items[ $post_id ] = $this->repository->collection_items( $post_id );
-			} catch ( \InvalidArgumentException $exception ) {
-				return new WP_Error( 'mw_invalid_collection_items', $exception->getMessage(), array( 'status' => 400 ) );
+			} else {
+				// Creation: the parent does not exist yet, but shape, uniqueness,
+				// and child-existence rules must still fail before insert.
+				$this->repository->validate_collection_items_for_create( $items );
 			}
+		} catch ( \InvalidArgumentException $exception ) {
+			return new WP_Error( 'mw_invalid_collection_items', $exception->getMessage(), array( 'status' => 400 ) );
 		}
 
 		return $prepared_post;
@@ -105,6 +113,39 @@ final class CollectionRestPolicy {
 			$this->repository->replace_collection_items_with_previous( $post_id, $previous, $meta['mw_collection_items'] );
 		} catch ( \InvalidArgumentException $exception ) {
 			update_post_meta( $post_id, 'mw_collection_items', $previous );
+			// Never report a discarded relation mutation as success: convert the
+			// eventual REST response into a structured error while keeping the
+			// stored data consistent (PROJECT_PLAN.md §5.2, Stage 1 deliverable 4).
+			$this->pending_error = new WP_Error(
+				'mw_collection_items_discarded',
+				$exception->getMessage(),
+				array(
+					'status'              => 400,
+					'release_id'          => $post_id,
+					'relations_discarded' => true,
+					'detail'              => __( 'The release was saved but the submitted collection items were rejected and the previous relations were restored.', 'music-wave-core' ),
+				)
+			);
 		}
+	}
+
+	/**
+	 * Replace a would-be success response with the deferred relation error.
+	 *
+	 * @param mixed $response Result of the REST handler.
+	 * @param mixed $handler  Matched route handler (unused).
+	 * @param mixed $request  REST request (unused).
+	 * @return mixed
+	 */
+	public function fail_discarded_mutation( $response, $handler = null, $request = null ) {
+		unset( $handler, $request );
+		if ( null === $this->pending_error ) {
+			return $response;
+		}
+
+		$error               = $this->pending_error;
+		$this->pending_error = null;
+
+		return is_wp_error( $response ) ? $response : $error;
 	}
 }

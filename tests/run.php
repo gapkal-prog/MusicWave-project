@@ -78,6 +78,44 @@ final class WP_Error {
 	}
 }
 
+final class WP_REST_Response {
+	/** @var mixed */
+	private $data;
+
+	/** @var int */
+	private $status;
+
+	/** @param mixed $data Response payload. */
+	public function __construct( $data = null, int $status = 200 ) {
+		$this->data   = $data;
+		$this->status = $status;
+	}
+
+	/** @return mixed */
+	public function get_data() {
+		return $this->data;
+	}
+
+	public function get_status(): int {
+		return $this->status;
+	}
+}
+
+final class WP_REST_Request {
+	/** @var array<string, mixed> */
+	private $params;
+
+	/** @param array<string, mixed> $params Request parameters. */
+	public function __construct( array $params = array() ) {
+		$this->params = $params;
+	}
+
+	/** @return mixed */
+	public function get_param( string $key ) {
+		return isset( $this->params[ $key ] ) ? $this->params[ $key ] : null;
+	}
+}
+
 final class WP_Query {
 	/** @var bool */
 	public $is_search = false;
@@ -261,6 +299,33 @@ function get_the_post_thumbnail_url( int $post_id, $size = 'post-thumbnail' ) {
 function get_the_excerpt( int $post_id ): string {
 	unset( $post_id );
 	return '';
+}
+
+function esc_html( string $value ): string {
+	return htmlspecialchars( $value, ENT_QUOTES );
+}
+
+function esc_attr( string $value ): string {
+	return htmlspecialchars( $value, ENT_QUOTES );
+}
+
+function esc_url( string $url ): string {
+	return $url;
+}
+
+function sanitize_html_class( string $value ): string {
+	return (string) preg_replace( '/[^A-Za-z0-9_-]/', '', $value );
+}
+
+function is_feed(): bool {
+	return false;
+}
+
+function get_post( $post = null ) {
+	if ( null !== $post ) {
+		return $post;
+	}
+	return isset( $GLOBALS['mw_test_post'] ) ? $GLOBALS['mw_test_post'] : null;
 }
 
 function get_term_link( $term ) {
@@ -987,6 +1052,147 @@ try {
 	$duplicate_rejected = true;
 }
 mw_assert_same( true, $duplicate_rejected, 'Duplicate collection children must be rejected.' );
+
+// --- Collection REST mutation regressions (PROJECT_PLAN.md Stage 1 deliverable 4) ---
+
+$create_shape_rejected = false;
+try {
+	$relation_repository->validate_collection_items_for_create(
+		array(
+			array(
+				'release_id' => 999,
+				'position'   => 1,
+				'role'       => 'track',
+			),
+		)
+	);
+} catch ( InvalidArgumentException $exception ) {
+	$create_shape_rejected = true;
+}
+mw_assert_same( true, $create_shape_rejected, 'Creation-path validation must reject unknown child releases before insert.' );
+mw_assert_same(
+	1,
+	count(
+		$relation_repository->validate_collection_items_for_create(
+			array(
+				array(
+					'release_id' => 2,
+					'position'   => 1,
+					'role'       => 'track',
+				),
+			)
+		)
+	),
+	'Creation-path validation must accept well-formed relation input.'
+);
+
+$GLOBALS['mw_test_capabilities'] = array( 'edit_mw_releases', 'edit_post' );
+$rest_collections                = new ManaCore\MusicWave\Core\Infrastructure\CollectionRestPolicy( $relation_repository );
+
+$create_request = new WP_REST_Request(
+	array(
+		'meta' => array(
+			'mw_collection_items' => array(
+				array(
+					'release_id' => 999,
+					'position'   => 1,
+					'role'       => 'track',
+				),
+			),
+		),
+	)
+);
+$create_result  = $rest_collections->pre_insert( new stdClass(), $create_request );
+mw_assert_same( true, is_wp_error( $create_result ), 'REST collection creation must fail before insert when relation input is invalid.' );
+
+// Simulate the after-insert failure path: parent-dependent validation fails,
+// the previous relations are restored, and the response must become an error.
+$GLOBALS['mw_test_types'][8] = 'mw_release';
+$discard_request             = new WP_REST_Request(
+	array(
+		'meta' => array(
+			'mw_collection_items' => array(
+				array(
+					'release_id' => 3,
+					'position'   => 1,
+					'role'       => 'track',
+				),
+			),
+		),
+	)
+);
+$rest_collections->after_insert( new WP_Post( 8, 'mw_release' ), $discard_request, true );
+mw_assert_same( array(), $relation_repository->collection_items( 8 ), 'Discarded relation mutations must restore the previous stored state.' );
+$converted = $rest_collections->fail_discarded_mutation( 'would-be-success' );
+mw_assert_same( true, is_wp_error( $converted ), 'A discarded relation mutation must never surface as a successful REST response.' );
+mw_assert_same( 'would-be-success', $rest_collections->fail_discarded_mutation( 'would-be-success' ), 'The deferred relation error must clear after one response.' );
+$GLOBALS['mw_test_capabilities'] = array();
+
+// --- Protected asset assignment stopgap (PROJECT_PLAN.md Stage 1 deliverable 5) ---
+
+$foundation = new ManaCore\MusicWave\Core\Modules\Foundation();
+mw_assert_same( array( 'manage_options' ), $foundation->map_asset_capability( array(), 'manage_mw_protected_assets' ), 'The dedicated asset capability must map to administrators by default.' );
+mw_assert_same( array( 'edit_posts' ), $foundation->map_asset_capability( array( 'edit_posts' ), 'edit_post' ), 'Unrelated capabilities must pass through the asset capability mapping untouched.' );
+
+$asset_repository = new TestPolicyRepository();
+$asset_routes     = new ManaCore\MusicWave\Core\Downloads\DownloadAssetRoutes( $asset_repository );
+$asset_request    = new WP_REST_Request(
+	array(
+		'id'     => 1,
+		'assets' => array(
+			array(
+				'key'      => 'flac',
+				'label'    => 'Lossless',
+				'asset_id' => 'local:guessed/master.flac',
+			),
+		),
+	)
+);
+$GLOBALS['mw_test_capabilities'] = array( 'edit_post', 'edit_mw_releases' );
+$asset_denied                    = $asset_routes->update( $asset_request );
+mw_assert_same( true, is_wp_error( $asset_denied ), 'Editors without the asset capability must not assign new protected asset identifiers.' );
+
+$GLOBALS['mw_test_capabilities'] = array( 'edit_post', 'edit_mw_releases', 'manage_mw_protected_assets' );
+$asset_allowed                   = $asset_routes->update( $asset_request );
+mw_assert_same( false, is_wp_error( $asset_allowed ), 'Users holding the dedicated asset capability may assign new protected assets.' );
+
+// Keeping an already-assigned identifier must not require the capability.
+$asset_repository->values['mw_download_assets'] = array(
+	array(
+		'key'      => 'std',
+		'label'    => 'Standard',
+		'asset_id' => 'local:existing/track.mp3',
+	),
+);
+$GLOBALS['mw_test_capabilities']                = array( 'edit_post', 'edit_mw_releases' );
+$asset_keep_request                             = new WP_REST_Request(
+	array(
+		'id'     => 1,
+		'assets' => array(
+			array(
+				'key'      => 'std',
+				'label'    => 'Renamed standard',
+				'asset_id' => 'local:existing/track.mp3',
+			),
+		),
+	)
+);
+mw_assert_same( false, is_wp_error( $asset_routes->update( $asset_keep_request ) ), 'Editors may relabel or reorder assets already assigned to the release.' );
+$GLOBALS['mw_test_capabilities'] = array();
+
+// --- Canonical access gate (PROJECT_PLAN.md Stage 1 deliverable 6) ---
+
+$gate_repository = new TestPolicyRepository();
+$gate_repository->values['mw_access_mode'] = 'restricted';
+$gate_engine  = new ManaCore\MusicWave\Core\Access\AccessPolicyEngine( $gate_repository, new ManaCore\MusicWave\Core\Commerce\PurchaseChecker( $gate_repository ), new TestMembershipProvider() );
+$gate_blocks  = new ManaCore\MusicWave\Core\Blocks\ReleaseBlocks( $gate_engine, $gate_repository );
+$GLOBALS['mw_test_post'] = new WP_Post( 1, 'mw_release' );
+$gated_body   = $gate_blocks->filter_content( 'PRIVATE RELEASE BODY' );
+mw_assert_same( false, strpos( $gated_body, 'PRIVATE RELEASE BODY' ), 'Restricted body content must never reach the frontend.' );
+mw_assert_same( true, false !== strpos( $gated_body, 'mw-access-panel' ), 'The canonical access panel must replace restricted body content.' );
+mw_assert_same( '', $gate_blocks->render_access_panel( array( 'releaseId' => 1 ) ), 'The canonical access gate must render only once per release request.' );
+mw_assert_same( '', $gate_blocks->render_meta( array( 'releaseId' => 1 ) ), 'Gated release metadata must render nothing instead of a duplicate gate.' );
+unset( $GLOBALS['mw_test_post'] );
 
 $token_service   = new ManaCore\MusicWave\Core\Downloads\DownloadTokenService( 'test-download-secret' );
 $download_token  = $token_service->issue( 1, 7, 60, 'test-nonce', 'mp3-320' );

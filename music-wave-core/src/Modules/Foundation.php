@@ -13,12 +13,48 @@ use ManaCore\MusicWave\Core\Contracts\Module;
 
 final class Foundation implements Module {
 	/**
+	 * Dedicated capability for managing protected download assets.
+	 *
+	 * Assigning new protected asset identifiers to releases requires this
+	 * capability (or an explicit provider-side authorization), so ordinary
+	 * release editors cannot attach guessed asset IDs (PROJECT_PLAN.md
+	 * Stage 1 deliverable 5).
+	 */
+	public const MANAGE_ASSETS_CAP = 'manage_mw_protected_assets';
+
+	/**
 	 * Register hooks owned by the foundation module.
 	 *
 	 * @return void
 	 */
 	public function register(): void {
 		add_action( 'init', array( $this, 'load_textdomain' ), 1 );
+		add_filter( 'map_meta_cap', array( $this, 'map_asset_capability' ), 10, 2 );
+	}
+
+	/**
+	 * Map the dedicated asset capability to concrete site capabilities.
+	 *
+	 * Defaults to administrators (`manage_options`); sites can broaden or
+	 * narrow this through the `music_wave_manage_asset_caps` filter.
+	 *
+	 * @param mixed  $caps Primitive capabilities required so far.
+	 * @param string $cap  Requested meta capability.
+	 * @return array<int, string>|mixed
+	 */
+	public function map_asset_capability( $caps, $cap ) {
+		if ( self::MANAGE_ASSETS_CAP !== $cap ) {
+			return $caps;
+		}
+
+		/**
+		 * Filter the primitive capabilities required to manage protected assets.
+		 *
+		 * @param array<int, string> $required Primitive capabilities.
+		 */
+		$required = apply_filters( 'music_wave_manage_asset_caps', array( 'manage_options' ) );
+
+		return is_array( $required ) && array() !== $required ? $required : array( 'manage_options' );
 	}
 
 	/**

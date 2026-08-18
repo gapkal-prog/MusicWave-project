@@ -760,7 +760,14 @@ Exit gate:
 - Deliverable 2 (REST gating, partial): `ReleaseRestVisibilityPolicy` is now registered by the `Rendering` module; regression tests prove restricted bodies/excerpts are redacted for denied actors and preserved for allowed ones. Embed/search contexts still need real-WordPress integration tests.
 - Deliverable 3 (library + JSON-LD unpublished fixes): unprivileged actors can no longer store or list unpublished releases in personal libraries; collection JSON-LD track lists and parent-series lookups exclude non-public children (tests cover draft-release denial, privileged read-capability allowance, summary hiding, and track-list exclusion).
 
-**Remaining:** collection REST mutation errors (deliverable 4), dedicated asset capabilities (5), canonical access gate in release presentation (6), and running the security suite against a real WordPress fixture (7).
+**Evidence (2026-08-19, second increment):** deliverables 4–6 completed with regression tests (`composer test`, `phpcs` 0 errors, `phpstan` 0 errors all green):
+
+- Deliverable 4 (collection REST errors): creation requests now run parent-independent validation (`validate_collection_items_for_create`) before insert and fail with `mw_invalid_collection_items` (400); when after-insert validation must discard a relation mutation, the previous state is restored **and** the REST response is converted to a structured `mw_collection_items_discarded` error through `rest_request_after_callbacks` — a discarded mutation can no longer surface as success.
+- Deliverable 5 (asset capabilities stopgap): new dedicated `manage_mw_protected_assets` capability, mapped to `manage_options` by default via `map_meta_cap` (filter `music_wave_manage_asset_caps`). `DownloadAssetRoutes::update` now rejects any *new* asset identifier unless the provider authorizes it (`music_wave_can_assign_download_asset` filter) or the user holds the capability; already-assigned identifiers may still be relabeled/reordered by editors. VIP validates its `local:` namespace against the real inventory and its asset-inventory routes now require the dedicated capability instead of `upload_files`.
+- Deliverable 6 (canonical access gate): the access panel (editor-configured messages + purchase/membership CTA) is the single gate. Restricted body content is replaced by the canonical panel, gated `release-meta` renders nothing, and a per-request guard prevents a second denied panel for the same release. The duplicate generic `mw-release-gate` markup was removed; staging smoke assertions updated to the new contract.
+- Deliverable 7 (regression suite): every repaired path above is covered in `tests/run.php` (REST redaction, unpublished library/JSON-LD, creation/after-insert collection errors, asset assignment denial/allowance/keep, gate de-duplication, no-JS dashboard contract).
+
+**Remaining for exit gate:** run the security suite against a real WordPress fixture (wp-env, Docker) including embed/search REST contexts, then re-verify the three exit-gate statements end to end.
 
 Deliverables:
 
