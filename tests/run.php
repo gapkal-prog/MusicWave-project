@@ -1272,8 +1272,9 @@ $runner  = new ManaCore\MusicWave\Core\Migrations\MigrationRunner( array( new Te
 $pending = $runner->pending( '0.2.0' );
 mw_assert_same( 1, count( $pending ), 'Only newer migrations should be pending.' );
 mw_assert_same( '0.3.0', $pending[0]->version(), 'Migrations must be version sorted.' );
-mw_assert_same( '0.9.0', ManaCore\MusicWave\Core\Migrations\MigrationRunner::LATEST_VERSION, 'Health checks must compare against the schema version rather than the plugin release version.' );
+mw_assert_same( '0.10.0', ManaCore\MusicWave\Core\Migrations\MigrationRunner::LATEST_VERSION, 'Health checks must compare against the schema version rather than the plugin release version.' );
 mw_assert_same( '0.9.0', ( new ManaCore\MusicWave\Core\Migrations\Schema090() )->version(), 'The replay-table migration must carry the 0.9.0 schema version.' );
+mw_assert_same( '0.10.0', ( new ManaCore\MusicWave\Core\Migrations\Schema0100() )->version(), 'The listening-activity migration must carry the 0.10.0 schema version.' );
 
 // --- Secure delivery foundation (PROJECT_PLAN.md Stage 2) ---
 
@@ -1432,6 +1433,44 @@ mw_assert_same( 2, count( $page_one['items'] ), 'The first library page must con
 mw_assert_same( true, $page_one['has_more'], 'The first library page must report that more items exist.' );
 mw_assert_same( 1, count( $page_two['items'] ), 'The second library page must contain the remaining items.' );
 mw_assert_same( false, $page_two['has_more'], 'The final library page must not report more items.' );
+
+// --- Listening, durable queue, and explainable discovery (PROJECT_PLAN.md Stages 5–6) ---
+
+$listening = new ManaCore\MusicWave\Core\Listening\ListeningRepository();
+mw_assert_same( false, $listening->has_consent( 7 ), 'Listening history must be opt-in and default to no consent.' );
+mw_assert_same( false, $listening->record( 7, 2, 'progress', 30 ), 'No listening event may be recorded without explicit consent.' );
+$listening->set_consent( 7, true );
+mw_assert_same( true, $listening->has_consent( 7 ), 'Explicit opt-in must persist.' );
+mw_assert_same( false, $listening->record( 7, 5, 'progress', 30 ), 'Unreadable releases must never enter the listening history.' );
+mw_assert_same( array(), $listening->recent( 7, 'progress' ), 'Without the activity table the repository must degrade to an empty history.' );
+
+$queue_payload = array(
+	'ids'      => array( 2, 2, 5, 999, 3 ),
+	'position' => 9,
+	'shuffle'  => 1,
+	'repeat'   => 'ALL',
+);
+mw_assert_same( true, $listening->save_queue( 7, $queue_payload ), 'The durable queue must persist for signed-in users.' );
+$saved_queue = $listening->queue( 7 );
+mw_assert_same( array( 2, 3 ), $saved_queue['ids'], 'The durable queue must deduplicate and drop unreadable or unknown releases.' );
+mw_assert_same( 1, $saved_queue['position'], 'The queue position must clamp to the validated item range.' );
+mw_assert_same( true, $saved_queue['shuffle'], 'The shuffle preference must persist.' );
+mw_assert_same( 'off', $saved_queue['repeat'], 'Invalid repeat modes must normalize to off.' );
+
+$listening->set_consent( 7, false );
+mw_assert_same( false, $listening->has_consent( 7 ), 'Withdrawing consent must persist.' );
+mw_assert_same( array( 'ids' => array(), 'position' => 0, 'shuffle' => false, 'repeat' => 'off' ), $listening->queue( 7 ), 'Withdrawing consent must erase the stored queue.' );
+
+$recommendations = new ManaCore\MusicWave\Core\Discovery\Recommendations( $listening );
+$recommended     = $recommendations->recommend( 0, 8 );
+mw_assert_same( true, count( $recommended ) > 0, 'Anonymous visitors must receive editorial recommendations.' );
+$recommended_ids = array();
+foreach ( $recommended as $recommendation ) {
+	$recommended_ids[] = (int) $recommendation['release_id'];
+	mw_assert_same( ManaCore\MusicWave\Core\Discovery\Recommendations::REASON_EDITORIAL, (string) $recommendation['reason'], 'Anonymous recommendations must be editorial only.' );
+	mw_assert_same( true, '' !== (string) $recommendation['explanation'], 'Every recommendation must carry a human explanation.' );
+}
+mw_assert_same( false, in_array( 5, $recommended_ids, true ), 'Unpublished releases must never be recommended.' );
 
 $mapper = new ManaCore\MusicWave\Core\Commerce\ProductMapper();
 $mapper->sync_reverse_index( 1, array(), array( 10, 11 ) );

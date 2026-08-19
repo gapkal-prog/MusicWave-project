@@ -8,7 +8,7 @@
     "music-wave-core": {
       "version": "0.9.0",
       "type": "wordpress-plugin",
-      "schema_version": "0.9.0",
+      "schema_version": "0.10.0",
       "requires": {
         "wordpress": ">=6.6",
         "php": ">=7.4"

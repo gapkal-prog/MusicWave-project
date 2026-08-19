@@ -293,7 +293,7 @@ msgstr ""
 msgid "Album cover preview"
 msgstr ""
 
-#: src/Library/LibraryCatalog.php:105
+#: src/Library/LibraryCatalog.php:137
 msgid "All"
 msgstr ""
 
@@ -358,7 +358,7 @@ msgstr ""
 msgid "Applying…"
 msgstr ""
 
-#: src/Blocks/ReleaseBlocks.php:701 src/Blocks/ReleaseBlocks.php:1153 src/Blocks/ReleaseBlocks.php:1840 src/Catalog/ReleaseTaxonomies.php:23 src/Library/LibraryCatalog.php:194 src/Modules/Metadata.php:112
+#: src/Blocks/ReleaseBlocks.php:701 src/Blocks/ReleaseBlocks.php:1153 src/Blocks/ReleaseBlocks.php:1840 src/Catalog/ReleaseTaxonomies.php:23 src/Library/LibraryCatalog.php:226 src/Modules/Metadata.php:112
 msgid "Artist"
 msgstr ""
 
@@ -386,7 +386,7 @@ msgstr ""
 msgid "Artist term ID"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:384 src/Catalog/ReleaseTaxonomies.php:24 src/Library/LibraryCatalog.php:106
+#: src/Admin/SettingsPage.php:384 src/Catalog/ReleaseTaxonomies.php:24 src/Library/LibraryCatalog.php:138
 msgid "Artists"
 msgstr ""
 
@@ -444,6 +444,10 @@ msgstr ""
 
 #: assets/blocks.js:51
 msgid "Banner (message and action in one row)"
+msgstr ""
+
+#: src/Discovery/Recommendations.php:90
+msgid "Because of genres you listened to recently."
 msgstr ""
 
 #: assets/blocks.js:496
@@ -508,7 +512,7 @@ msgstr ""
 msgid "Card content"
 msgstr ""
 
-#: src/Privacy/PersonalData.php:97
+#: src/Privacy/PersonalData.php:102 src/Privacy/PersonalData.php:125
 msgid "Catalog ID"
 msgstr ""
 
@@ -944,6 +948,10 @@ msgstr ""
 msgid "Empty state message"
 msgstr ""
 
+#: src/Listening/ListeningRoutes.php:99
+msgid "Enable listening history in your account to save playback progress."
+msgstr ""
+
 #: src/Admin/SettingsPage.php:180
 msgid "Enabled"
 msgstr ""
@@ -980,7 +988,11 @@ msgstr ""
 msgid "Episode one of the public sample podcast."
 msgstr ""
 
-#: src/Blocks/LibraryBlocks.php:188
+#: src/Privacy/PersonalData.php:121
+msgid "Event"
+msgstr ""
+
+#: src/Blocks/LibraryBlocks.php:189
 msgid "Every song, album, podcast, and artist you save appears here. Add items with the “Add to library” button on any release or artist page."
 msgstr ""
 
@@ -1233,7 +1245,7 @@ msgstr ""
 msgid "Item display"
 msgstr ""
 
-#: src/Privacy/PersonalData.php:93
+#: src/Privacy/PersonalData.php:98
 msgid "Item type"
 msgstr ""
 
@@ -1322,12 +1334,21 @@ msgstr ""
 msgid "Lets visitors save this artist to their personal music library."
 msgstr ""
 
-#: src/Blocks/LibraryBlocks.php:355
+#: src/Blocks/LibraryBlocks.php:359
 msgid "Library filters"
 msgstr ""
 
 #: assets/blocks.js:259
 msgid "Library layout"
+msgstr ""
+
+#: src/Blocks/LibraryBlocks.php:393
+#, php-format
+msgid "Library page %d"
+msgstr ""
+
+#: src/Blocks/LibraryBlocks.php:395
+msgid "Library pages"
 msgstr ""
 
 #: src/Admin/SettingsPage.php:185
@@ -1366,6 +1387,10 @@ msgstr ""
 #: src/Seo/ReleaseMetadata.php:190
 #, php-format
 msgid "Listen to %1$s on %2$s."
+msgstr ""
+
+#: src/Privacy/PersonalData.php:117
+msgid "Listening history"
 msgstr ""
 
 #: assets/editor.js:734
@@ -1661,7 +1686,7 @@ msgstr ""
 msgid "MusicWave needs pretty permalinks"
 msgstr ""
 
-#: src/Privacy/PersonalData.php:46 src/Privacy/PersonalData.php:61
+#: src/Privacy/PersonalData.php:51 src/Privacy/PersonalData.php:66
 msgid "MusicWave personal library"
 msgstr ""
 
@@ -1733,7 +1758,7 @@ msgstr ""
 msgid "Musical key"
 msgstr ""
 
-#: src/Blocks/LibraryBlocks.php:187 src/Commerce/AccountLibrary.php:371 src/Commerce/AccountLibrary.php:399
+#: src/Blocks/LibraryBlocks.php:188 src/Commerce/AccountLibrary.php:371 src/Commerce/AccountLibrary.php:399
 msgid "My music library"
 msgstr ""
 
@@ -1769,12 +1794,20 @@ msgstr ""
 msgid "New downloadable file"
 msgstr ""
 
+#: src/Discovery/Recommendations.php:93
+msgid "New in the catalog."
+msgstr ""
+
 #: src/Catalog/ReleasePostType.php:45
 msgid "New release"
 msgstr ""
 
 #: src/Admin/SettingsPage.php:170
 msgid "New release defaults"
+msgstr ""
+
+#: src/Blocks/LibraryBlocks.php:386
+msgid "Newer items"
 msgstr ""
 
 #: src/Catalog/ReleaseArchiveQuery.php:138
@@ -1825,7 +1858,7 @@ msgstr ""
 msgid "Nothing is available in your library yet. Save releases with the “Add to library” button or unlock protected music."
 msgstr ""
 
-#: src/Blocks/LibraryBlocks.php:221
+#: src/Blocks/LibraryBlocks.php:224
 msgid "Nothing saved in this collection yet."
 msgstr ""
 
@@ -1835,6 +1868,10 @@ msgstr ""
 
 #: src/Blocks/ArtistProfileBlock.php:136
 msgid "Official artist page"
+msgstr ""
+
+#: src/Blocks/LibraryBlocks.php:389
+msgid "Older items"
 msgstr ""
 
 #: src/Catalog/ReleaseArchiveQuery.php:139
@@ -1942,7 +1979,7 @@ msgstr ""
 msgid "Permalinks"
 msgstr ""
 
-#: src/Modules/Rendering.php:850 src/Privacy/PersonalData.php:89
+#: src/Modules/Rendering.php:850 src/Privacy/PersonalData.php:94
 msgid "Personal music library"
 msgstr ""
 
@@ -1971,6 +2008,10 @@ msgstr ""
 msgid "Playback could not be started."
 msgstr ""
 
+#: src/Listening/ListeningRoutes.php:102
+msgid "Playback progress could not be saved."
+msgstr ""
+
 #: src/Catalog/ReleaseTaxonomies.php:103
 msgid "Playlist"
 msgstr ""
@@ -1989,6 +2030,10 @@ msgstr ""
 
 #: assets/blocks.js:210
 msgid "Portrait"
+msgstr ""
+
+#: src/Privacy/PersonalData.php:129
+msgid "Position (seconds)"
 msgstr ""
 
 #: src/Admin/SettingsPage.php:275
@@ -2171,7 +2216,7 @@ msgstr ""
 msgid "Related sections appear when the selected release shares artists, genres, moods, or release types with other releases."
 msgstr ""
 
-#: src/Commerce/AccountLibrary.php:488 src/Library/LibraryCatalog.php:136
+#: src/Commerce/AccountLibrary.php:488 src/Library/LibraryCatalog.php:168
 msgid "Release"
 msgstr ""
 
@@ -2252,7 +2297,7 @@ msgstr ""
 msgid "Remove"
 msgstr ""
 
-#: src/Blocks/LibraryBlocks.php:305
+#: src/Blocks/LibraryBlocks.php:309
 #, php-format
 msgid "Remove %s from library"
 msgstr ""
@@ -2373,7 +2418,7 @@ msgstr ""
 msgid "Save this release once to add protected files and collection items."
 msgstr ""
 
-#: src/Privacy/PersonalData.php:101
+#: src/Privacy/PersonalData.php:106
 msgid "Saved on"
 msgstr ""
 
@@ -2739,11 +2784,11 @@ msgstr ""
 msgid "Shows the current slide group and direct navigation controls."
 msgstr ""
 
-#: src/Blocks/LibraryBlocks.php:191 src/Commerce/AccountLibrary.php:132 src/Playback/PlaybackQueueRoutes.php:307
+#: src/Blocks/LibraryBlocks.php:192 src/Commerce/AccountLibrary.php:132 src/Playback/PlaybackQueueRoutes.php:307
 msgid "Sign in"
 msgstr ""
 
-#: src/Blocks/LibraryBlocks.php:191
+#: src/Blocks/LibraryBlocks.php:192
 msgid "Sign in to build your personal library: save songs, albums, podcasts, and follow your favorite artists."
 msgstr ""
 
@@ -2757,6 +2802,10 @@ msgstr ""
 
 #: src/Commerce/AccountLibrary.php:132
 msgid "Sign in to open your music dashboard"
+msgstr ""
+
+#: src/Listening/ListeningRoutes.php:80
+msgid "Sign in to use listening features."
 msgstr ""
 
 #: src/Commerce/AccountLibrary.php:166
@@ -2989,6 +3038,14 @@ msgstr ""
 msgid "The personal library lists every song, album, podcast, and artist a signed-in visitor saves with the add-to-library button."
 msgstr ""
 
+#: src/Listening/ListeningRoutes.php:143
+msgid "The playback queue could not be saved."
+msgstr ""
+
+#: src/Listening/ListeningRoutes.php:140
+msgid "The playback queue payload must be an object."
+msgstr ""
+
 #: assets/editor.js:348
 msgid "The protected file could not be uploaded."
 msgstr ""
@@ -3134,7 +3191,7 @@ msgstr ""
 msgid "Untitled downloadable file"
 msgstr ""
 
-#: src/Commerce/AccountLibrary.php:489 src/Library/LibraryCatalog.php:144
+#: src/Commerce/AccountLibrary.php:489 src/Library/LibraryCatalog.php:176
 msgid "Untitled release"
 msgstr ""
 
@@ -3144,6 +3201,10 @@ msgstr ""
 
 #: src/Admin/SettingsPage.php:267
 msgid "Update releases in batches of 200. Purchase and membership modes are applied only when each release already has the required product or level mapping; incomplete releases are skipped."
+msgstr ""
+
+#: src/Privacy/PersonalData.php:133
+msgid "Updated"
 msgstr ""
 
 #: assets/editor.js:679
@@ -3314,7 +3375,7 @@ msgstr ""
 msgid "Your active VIP membership levels:"
 msgstr ""
 
-#: src/Blocks/LibraryBlocks.php:191
+#: src/Blocks/LibraryBlocks.php:192
 msgid "Your collection"
 msgstr ""
 
@@ -3326,7 +3387,7 @@ msgstr ""
 msgid "Your library could not be updated. Try again."
 msgstr ""
 
-#: src/Blocks/LibraryBlocks.php:220
+#: src/Blocks/LibraryBlocks.php:223
 msgid "Your library is empty. Open any release or artist page and use the “Add to library” button to save it here."
 msgstr ""
 

@@ -16,13 +16,18 @@ declare(strict_types=1);
 namespace ManaCore\MusicWave\Core\Privacy;
 
 use ManaCore\MusicWave\Core\Library\LibraryRepository;
+use ManaCore\MusicWave\Core\Listening\ListeningRepository;
 
 final class PersonalData {
 	/** @var LibraryRepository */
 	private $library;
 
-	public function __construct( LibraryRepository $library ) {
-		$this->library = $library;
+	/** @var ListeningRepository|null */
+	private $listening;
+
+	public function __construct( LibraryRepository $library, ?ListeningRepository $listening = null ) {
+		$this->library   = $library;
+		$this->listening = $listening;
 	}
 
 	/**
@@ -105,6 +110,34 @@ final class PersonalData {
 			);
 		}
 
+		if ( null !== $this->listening ) {
+			foreach ( $this->listening->export( (int) $user->ID ) as $row ) {
+				$items[] = array(
+					'group_id'    => 'music-wave-listening',
+					'group_label' => __( 'Listening history', 'music-wave-core' ),
+					'item_id'     => 'music-wave-listening-' . (string) $row['event'] . '-' . (string) $row['release_id'],
+					'data'        => array(
+						array(
+							'name'  => __( 'Event', 'music-wave-core' ),
+							'value' => (string) $row['event'],
+						),
+						array(
+							'name'  => __( 'Catalog ID', 'music-wave-core' ),
+							'value' => (string) $row['release_id'],
+						),
+						array(
+							'name'  => __( 'Position (seconds)', 'music-wave-core' ),
+							'value' => (string) $row['position'],
+						),
+						array(
+							'name'  => __( 'Updated', 'music-wave-core' ),
+							'value' => (int) $row['updated_at'] > 0 ? gmdate( 'Y-m-d H:i:s', (int) $row['updated_at'] ) : '',
+						),
+					),
+				);
+			}
+		}
+
 		return array(
 			'data' => $items,
 			'done' => true,
@@ -124,6 +157,10 @@ final class PersonalData {
 		$removed = false;
 		if ( false !== $user && isset( $user->ID ) && $this->library->count( (int) $user->ID ) > 0 ) {
 			$removed = delete_user_meta( (int) $user->ID, LibraryRepository::META_KEY );
+		}
+		if ( false !== $user && isset( $user->ID ) && null !== $this->listening ) {
+			$removed = $this->listening->erase( (int) $user->ID ) || $removed;
+			delete_user_meta( (int) $user->ID, ListeningRepository::CONSENT_META );
 		}
 
 		return array(

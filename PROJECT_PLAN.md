@@ -907,7 +907,16 @@ Exit gate:
 
 **Priority:** P2  
 **Dependencies:** Stages 2–4  
-**Status:** Not started
+**Status:** In progress
+
+**Evidence (2026-08-19; all gates green — tests, phpcs 0 errors, phpstan 0 errors, 152-file syntax):**
+
+- Deliverable 1 (indexed activity storage): new `{prefix}mw_user_activity` table (migration `Schema0100`, schema → 0.10.0) with unique `user+release+event` upsert and `user+updated_at` index; retention pruning (default 180 days, `music_wave_listening_retention_days`) rides the daily cleanup event; graceful empty-degradation until the migration runs.
+- Deliverable 2 (durable queue): bounded (100 items), validated durable queue in user meta with shuffle/repeat normalization, dedupe, visibility filtering, and position clamping; `GET/POST /listening/queue` REST surface. Regression-tested.
+- Deliverable 3 (progress/recently played/continue with consent): explicit opt-in (`POST /listening/consent`); nothing records without consent; withdrawal erases history and queue immediately; `POST /listening/progress` + `GET /listening/continue`; unreadable releases never enter or leave the history. Privacy exporter/eraser extended to activity rows and consent meta. Regression-tested.
+- Deliverable 5 (partial): artist follows already exist as library artist items; wishlist/pre-save not started.
+
+**Remaining:** playlists (4), wishlist/pre-save (5), catalog autocomplete/facets + search adapter boundary (6), large-dataset query benchmarks (7), and wp-env verification of the activity migration and retention cron.
 
 Deliverables:
 
@@ -929,7 +938,13 @@ Exit gate:
 
 **Priority:** P2/P3  
 **Dependencies:** Stable user activity/discovery from Stage 5  
-**Status:** Not started
+**Status:** In progress
+
+**Evidence (2026-08-19):**
+
+- Deliverable 1 (explainable recommendations): new `Recommendations` service — every item carries a machine `reason` plus a translatable `explanation`; personalization (recent-genre matching) uses only the consented history and anonymous/non-consenting users get editorial-latest only (opt-out by design); only publicly visible releases are ever recommended; `music_wave_recommendations` filter for editorial curation; public `GET /recommendations` route (anonymous responses cacheable, personalized ones `no-store`). Regression tests cover editorial-only anonymous output, explanation presence, and unpublished-release exclusion.
+
+**Remaining:** follow notifications (2), podcast speed/chapters/transcripts/completion (3), contributor pages (4), deep links/timestamp sharing (5), lyrics rights decision (6).
 
 Deliverables:
 
