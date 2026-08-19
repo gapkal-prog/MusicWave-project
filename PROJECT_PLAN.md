@@ -789,7 +789,17 @@ Exit gate:
 
 **Priority:** P0/P1  
 **Dependencies:** Stages 0–1  
-**Status:** Not started
+**Status:** In progress
+
+**Evidence (2026-08-19, first increment; all gates green — tests, phpcs 0 errors, phpstan 0 errors, 140-file syntax):**
+
+- Deliverable 1 (private-root preflight): `ProtectedAssetStorage` now checks both ABSPATH and `DOCUMENT_ROOT`; the automatic `musicwave-private` default is refused when its parent is still web-reachable (subdirectory installs) — the unsafe automatic guarantee is gone. New `preflight()` returns structured checks surfaced as a warning list on the VIP settings screen with migration guidance; provisioning writes `.htaccess`/`web.config`/`index.html` deny files as defense in depth.
+- Deliverable 3 (atomic ticket/replay store): new `DatabaseReplayStore` uses the indexed `{prefix}mw_download_replays` table (migration `Schema090`, schema bumped to 0.9.0) with single-statement `INSERT IGNORE` consumption; daily `music_wave_replay_cleanup` cron prunes expired rows and legacy option rows (unscheduled on deactivation); transparent fallback to the options store until the migration runs.
+- Deliverable 4 (partial — rate limits + audit): fixed-window per-user rate limit on token issuance (default 30/60s, filterable, HTTP 429 `mw_download_rate_limited`); `music_wave_download_event` now carries a structured context array (timestamp, denial reason, asset key, purpose) — additive signature.
+- Deliverable 5 (partial — remote signing): complete-payload HMAC (`url|expires|mode|key_id`), fail-closed minimum 32-char secret, optional `kid` rotation parameter, and an explicit HTTPS host allowlist that also constrains `music_wave_vip_remote_download_url` filter overrides (documented as a breaking contract change for remote verifiers in `docs/secure-downloads.md`).
+- Regression tests cover fallback replay consumption, rate-limit exhaustion, weak-key refusal, mode-covered signatures, and allowlist enforcement.
+
+**Remaining:** opaque asset registry & provider assignment contract (2), quotas/concurrency policy (4), opaque browser tickets (5), MIME/size/checksum & archive policy (6), X-Accel/X-Sendfile + object-storage interface (7), threat-model & load tests (8), and real-WordPress verification of the migration + cleanup cron in wp-env.
 
 Deliverables:
 

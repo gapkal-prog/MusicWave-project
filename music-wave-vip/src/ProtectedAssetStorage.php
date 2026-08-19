@@ -25,13 +25,63 @@ final class ProtectedAssetStorage {
 		$settings        = VipSettings::all();
 		$configured_root = defined( 'MUSIC_WAVE_VIP_PROTECTED_ROOT' ) ? (string) MUSIC_WAVE_VIP_PROTECTED_ROOT : (string) $settings['protected_root'];
 		$root            = '' === $configured_root ? $this->default_root() : realpath( $configured_root );
-		$public_root     = defined( 'ABSPATH' ) ? realpath( ABSPATH ) : false;
 
-		if ( false === $root || ! is_dir( $root ) || ! is_readable( $root ) || ( false !== $public_root && ( $root === $public_root || $this->is_within( $root, $public_root ) ) ) ) {
+		if ( false === $root || ! is_dir( $root ) || ! is_readable( $root ) || $this->is_web_reachable( $root ) ) {
 			return false;
 		}
 
 		return $root;
+	}
+
+	/**
+	 * Whether a directory sits inside a tree the web server publicly serves.
+	 *
+	 * Checks both ABSPATH and the server document root: on subdirectory
+	 * installations the WordPress parent directory is often still inside the
+	 * served tree, which made the previous “beside ABSPATH” default unsafe
+	 * (PROJECT_PLAN.md Stage 2 deliverable 1).
+	 */
+	public function is_web_reachable( string $directory ): bool {
+		$public_root = defined( 'ABSPATH' ) ? realpath( ABSPATH ) : false;
+		if ( false !== $public_root && ( $directory === $public_root || $this->is_within( $directory, $public_root ) ) ) {
+			return true;
+		}
+
+		$document_root = isset( $_SERVER['DOCUMENT_ROOT'] ) && is_string( $_SERVER['DOCUMENT_ROOT'] ) && '' !== $_SERVER['DOCUMENT_ROOT'] ? realpath( sanitize_text_field( wp_unslash( $_SERVER['DOCUMENT_ROOT'] ) ) ) : false;
+		if ( false !== $document_root && ( $directory === $document_root || $this->is_within( $directory, $document_root ) ) ) {
+			return true;
+		}
+
+		return false;
+	}
+
+	/**
+	 * Structured provisioning checks for operators.
+	 *
+	 * Returns check => passed pairs used by the settings screen so operators
+	 * see exactly why delivery is disabled instead of a silent failure.
+	 *
+	 * @return array<string, bool>
+	 */
+	public function preflight(): array {
+		$settings        = VipSettings::all();
+		$configured_root = defined( 'MUSIC_WAVE_VIP_PROTECTED_ROOT' ) ? (string) MUSIC_WAVE_VIP_PROTECTED_ROOT : (string) $settings['protected_root'];
+		$candidate       = '' === $configured_root ? $this->default_root() : realpath( $configured_root );
+
+		$exists      = false !== $candidate && is_dir( $candidate );
+		$readable    = $exists && is_readable( $candidate );
+		$writable    = $exists && is_writable( $candidate );
+		$outside_web = $exists && ! $this->is_web_reachable( (string) $candidate );
+		$deny_files  = $exists && file_exists( $candidate . DIRECTORY_SEPARATOR . '.htaccess' );
+
+		return array(
+			'root_resolved'    => false !== $candidate,
+			'directory_exists' => $exists,
+			'readable'         => $readable,
+			'writable'         => $writable,
+			'outside_web_root' => $outside_web,
+			'deny_files'       => $deny_files,
+		);
 	}
 
 	/**
@@ -51,11 +101,49 @@ final class ProtectedAssetStorage {
 		$public_root = rtrim( ABSPATH, '/\\' );
 		$parent      = dirname( $public_root );
 		$root        = $parent . DIRECTORY_SEPARATOR . 'musicwave-private';
+
+		// No unsafe automatic guarantee: when the computed default would still
+		// be publicly served (subdirectory installations), refuse to provision
+		// it and require an explicit, operator-verified path instead
+		// (PROJECT_PLAN.md Stage 2 deliverable 1).
+		$parent_real = realpath( $parent );
+		if ( false !== $parent_real && $this->is_web_reachable( $parent_real ) ) {
+			return false;
+		}
+
 		if ( ! is_dir( $root ) && ! wp_mkdir_p( $root ) ) {
 			return false;
 		}
 
-		return realpath( $root );
+		$resolved = realpath( $root );
+		if ( false !== $resolved ) {
+			$this->harden_directory( $resolved );
+		}
+
+		return $resolved;
+	}
+
+	/**
+	 * Write defense-in-depth deny files into a protected directory.
+	 *
+	 * These are a second layer only; the primary control remains keeping the
+	 * directory outside every publicly served tree.
+	 *
+	 * @return void
+	 */
+	public function harden_directory( string $root ): void {
+		$deny_files = array(
+			'.htaccess'  => "Require all denied\nDeny from all\n",
+			'web.config' => "<?xml version=\"1.0\"?><configuration><system.webServer><authorization><deny users=\"*\" /></authorization></system.webServer></configuration>\n",
+			'index.html' => '',
+		);
+
+		foreach ( $deny_files as $name => $contents ) {
+			$path = $root . DIRECTORY_SEPARATOR . $name;
+			if ( ! file_exists( $path ) ) {
+				file_put_contents( $path, $contents ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_file_put_contents -- Writing hardening stubs into the private (non-WP) directory.
+			}
+		}
 	}
 
 	/**

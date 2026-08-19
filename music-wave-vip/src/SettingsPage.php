@@ -33,6 +33,8 @@ final class SettingsPage {
 		$this->field( 'remote_signature_param', __( 'Signature query parameter', 'music-wave-vip' ), 'remote_signature_param_field' );
 		$this->field( 'remote_expires_param', __( 'Expiry query parameter', 'music-wave-vip' ), 'remote_expires_param_field' );
 		$this->field( 'remote_ttl', __( 'Remote URL lifetime', 'music-wave-vip' ), 'remote_ttl_field' );
+		$this->field( 'remote_allowed_hosts', __( 'Additional allowed redirect hosts', 'music-wave-vip' ), 'remote_allowed_hosts_field' );
+		$this->field( 'remote_key_id', __( 'Signing key ID', 'music-wave-vip' ), 'remote_key_id_field' );
 
 		add_settings_section( 'music_wave_vip_membership', __( 'Membership and entitlement adapters', 'music-wave-vip' ), array( $this, 'membership_section' ), 'music-wave-vip' );
 		$this->field( 'membership_sources', __( 'Membership sources', 'music-wave-vip' ), 'membership_sources_field', 'music_wave_vip_membership' );
@@ -61,6 +63,9 @@ final class SettingsPage {
 		}
 		if ( 'remote_redirect' === $settings['delivery_provider'] && ( '' === $settings['remote_base_url'] || '' === $settings['remote_signing_secret'] ) ) {
 			add_settings_error( VipSettings::OPTION, 'remote_incomplete', __( 'Remote redirect mode needs both an HTTPS base URL and a signing secret. Delivery remains fail-closed until both are configured.', 'music-wave-vip' ), 'warning' );
+		}
+		if ( '' !== (string) $settings['remote_signing_secret'] && strlen( (string) $settings['remote_signing_secret'] ) < 32 ) {
+			add_settings_error( VipSettings::OPTION, 'weak_secret', __( 'The remote signing secret is shorter than 32 characters. Signed URLs will not be issued until a stronger secret is saved.', 'music-wave-vip' ), 'warning' );
 		}
 
 		return $settings;
@@ -123,6 +128,18 @@ final class SettingsPage {
 		echo '<input class="small-text" type="number" min="30" max="900" step="1" name="' . esc_attr( VipSettings::OPTION ) . '[remote_ttl]" value="' . esc_attr( (string) $value ) . '"> <span>' . esc_html__( 'seconds (30–900)', 'music-wave-vip' ) . '</span><p class="description">' . esc_html__( 'Keep this short. The Core token and remote URL both expire; entitlement is checked again before every delivery.', 'music-wave-vip' ) . '</p>';
 	}
 
+	public function remote_allowed_hosts_field(): void {
+		$hosts = (array) VipSettings::all()['remote_allowed_hosts'];
+		echo '<textarea class="regular-text code" rows="3" name="' . esc_attr( VipSettings::OPTION ) . '[remote_allowed_hosts]">' . esc_textarea( implode( "\n", array_map( 'strval', $hosts ) ) ) . '</textarea>';
+		echo '<p class="description">' . esc_html__( 'One host per line. The remote base URL host is always allowed; redirects to any other host are refused.', 'music-wave-vip' ) . '</p>';
+	}
+
+	public function remote_key_id_field(): void {
+		$value = (string) VipSettings::all()['remote_key_id'];
+		echo '<input class="regular-text code" type="text" name="' . esc_attr( VipSettings::OPTION ) . '[remote_key_id]" value="' . esc_attr( $value ) . '">';
+		echo '<p class="description">' . esc_html__( 'Optional key identifier appended as the kid parameter so the remote host can rotate signing secrets without downtime.', 'music-wave-vip' ) . '</p>';
+	}
+
 	public function membership_sources_field(): void {
 		$selected = (array) VipSettings::all()['membership_sources'];
 		$options  = array(
@@ -148,11 +165,53 @@ final class SettingsPage {
 		}
 		echo '<div class="wrap"><h1>' . esc_html__( 'MusicWave VIP', 'music-wave-vip' ) . '</h1>';
 		settings_errors( VipSettings::OPTION );
+		$this->render_preflight_notice();
 		echo '<form action="options.php" method="post">';
 		settings_fields( 'music_wave_vip' );
 		do_settings_sections( 'music-wave-vip' );
 		submit_button();
 		echo '</form></div>';
+	}
+
+	/**
+	 * Show why local protected delivery is disabled instead of failing silently.
+	 *
+	 * @return void
+	 */
+	private function render_preflight_notice(): void {
+		if ( 'local' !== (string) VipSettings::all()['delivery_provider'] ) {
+			return;
+		}
+
+		$checks = ( new ProtectedAssetStorage() )->preflight();
+		$labels = array(
+			'root_resolved'    => __( 'A protected directory path is configured or derivable.', 'music-wave-vip' ),
+			'directory_exists' => __( 'The protected directory exists.', 'music-wave-vip' ),
+			'readable'         => __( 'The web server can read the protected directory.', 'music-wave-vip' ),
+			'writable'         => __( 'The web server can write uploads into the protected directory.', 'music-wave-vip' ),
+			'outside_web_root' => __( 'The directory is outside every publicly served web root.', 'music-wave-vip' ),
+			'deny_files'       => __( 'Defense-in-depth deny files (.htaccess) are present.', 'music-wave-vip' ),
+		);
+
+		$failed = array_keys(
+			array_filter(
+				$checks,
+				static function ( bool $passed ): bool {
+					return ! $passed;
+				}
+			)
+		);
+		if ( array() === $failed ) {
+			return;
+		}
+
+		echo '<div class="notice notice-warning"><p><strong>' . esc_html__( 'Protected delivery preflight failed. Local downloads stay disabled until every check passes:', 'music-wave-vip' ) . '</strong></p><ul style="list-style:disc;padding-left:20px">';
+		foreach ( $failed as $check ) {
+			if ( isset( $labels[ $check ] ) ) {
+				echo '<li>' . esc_html( $labels[ $check ] ) . '</li>';
+			}
+		}
+		echo '</ul><p>' . esc_html__( 'On subdirectory installations the automatic default beside WordPress is refused because it is still web-reachable. Configure an absolute path outside the server document root (for example /var/private/musicwave) and move existing files there.', 'music-wave-vip' ) . '</p></div>';
 	}
 
 	/** @param array<int, array<string, mixed>> $cards @return array<int, array<string, mixed>> */

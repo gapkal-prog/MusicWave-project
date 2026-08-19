@@ -24,6 +24,8 @@ final class VipSettings {
 			'remote_signature_param' => 'signature',
 			'remote_expires_param'   => 'expires',
 			'remote_ttl'             => 300,
+			'remote_allowed_hosts'   => array(),
+			'remote_key_id'          => '',
 			'membership_sources'     => array( 'role', 'filter' ),
 		);
 	}
@@ -66,6 +68,22 @@ final class VipSettings {
 		$signature_param = isset( $value['remote_signature_param'] ) ? sanitize_key( (string) $value['remote_signature_param'] ) : '';
 		$expires_param   = isset( $value['remote_expires_param'] ) ? sanitize_key( (string) $value['remote_expires_param'] ) : '';
 		$ttl             = isset( $value['remote_ttl'] ) ? absint( $value['remote_ttl'] ) : 0;
+		$allowed_hosts   = isset( $value['remote_allowed_hosts'] ) ? $value['remote_allowed_hosts'] : array();
+		$allowed_hosts   = is_array( $allowed_hosts ) ? $allowed_hosts : explode( "\n", (string) $allowed_hosts );
+		$allowed_hosts   = array_values(
+			array_filter(
+				array_unique(
+					array_map(
+						static function ( $host ): string {
+							$host = strtolower( trim( (string) $host ) );
+							return 1 === preg_match( '/^[a-z0-9.-]+$/', $host ) ? $host : '';
+						},
+						$allowed_hosts
+					)
+				)
+			)
+		);
+		$key_id          = isset( $value['remote_key_id'] ) ? sanitize_key( (string) $value['remote_key_id'] ) : '';
 		$sources         = isset( $value['membership_sources'] ) && is_array( $value['membership_sources'] ) ? $value['membership_sources'] : array();
 		$sources         = array_values( array_unique( array_filter( array_map( 'sanitize_key', $sources ) ) ) );
 		$sources         = array_values( array_intersect( $sources, array( 'role', 'filter', 'woocommerce_memberships', 'woocommerce_subscriptions' ) ) );
@@ -82,6 +100,8 @@ final class VipSettings {
 			'remote_signature_param' => '' !== $signature_param ? $signature_param : $defaults['remote_signature_param'],
 			'remote_expires_param'   => '' !== $expires_param ? $expires_param : $defaults['remote_expires_param'],
 			'remote_ttl'             => $ttl >= 30 && $ttl <= 900 ? $ttl : $defaults['remote_ttl'],
+			'remote_allowed_hosts'   => $allowed_hosts,
+			'remote_key_id'          => $key_id,
 			'membership_sources'     => $sources,
 		);
 	}

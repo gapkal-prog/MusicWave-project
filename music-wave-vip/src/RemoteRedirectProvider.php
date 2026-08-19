@@ -32,15 +32,47 @@ final class RemoteRedirectProvider implements DownloadProvider, StreamableDownlo
 
 	private function redirect( string $asset_id, DownloadTokenClaims $claims, bool $inline ): bool {
 		$url = $this->create_url( $asset_id, $claims, $inline );
-		if ( ! is_string( $url ) || 'https' !== wp_parse_url( $url, PHP_URL_SCHEME ) ) {
+		if ( ! is_string( $url ) || ! $this->allowed_url( $url ) ) {
 			return false;
 		}
 
 		nocache_headers();
 		header( 'Referrer-Policy: no-referrer' );
 		header( 'X-Content-Type-Options: nosniff' );
-		wp_redirect( esc_url_raw( $url ), 302, 'MusicWave VIP' );
+		wp_redirect( esc_url_raw( $url ), 302, 'MusicWave VIP' ); // phpcs:ignore WordPress.Security.SafeRedirect.wp_redirect_wp_redirect -- Cross-host redirect is validated against the explicit HTTPS host allowlist above; wp_safe_redirect would strip the configured remote host.
 		exit;
+	}
+
+	/**
+	 * Enforce the HTTPS + host allowlist boundary on every outgoing redirect.
+	 *
+	 * Filter overrides (`music_wave_vip_remote_download_url`) previously only
+	 * had to be HTTPS, letting a compromised or careless integration redirect
+	 * entitled customers to an arbitrary host. The final URL host must now be
+	 * the configured remote host or an explicitly allowlisted one
+	 * (PROJECT_PLAN.md Stage 2 deliverable 5).
+	 */
+	public function allowed_url( string $url ): bool {
+		if ( 'https' !== wp_parse_url( $url, PHP_URL_SCHEME ) ) {
+			return false;
+		}
+
+		$host = strtolower( (string) wp_parse_url( $url, PHP_URL_HOST ) );
+		if ( '' === $host ) {
+			return false;
+		}
+
+		$allowed = array();
+		$base    = isset( $this->config['remote_base_url'] ) ? (string) $this->config['remote_base_url'] : '';
+		if ( '' !== $base ) {
+			$allowed[] = strtolower( (string) wp_parse_url( $base, PHP_URL_HOST ) );
+		}
+		foreach ( isset( $this->config['remote_allowed_hosts'] ) && is_array( $this->config['remote_allowed_hosts'] ) ? $this->config['remote_allowed_hosts'] : array() as $extra ) {
+			$allowed[] = strtolower( trim( (string) $extra ) );
+		}
+		$allowed = array_values( array_filter( array_unique( $allowed ) ) );
+
+		return in_array( $host, $allowed, true );
 	}
 
 	/**
@@ -58,7 +90,9 @@ final class RemoteRedirectProvider implements DownloadProvider, StreamableDownlo
 	private function signed_url( string $asset_id, DownloadTokenClaims $claims, bool $inline ): string {
 		$base   = isset( $this->config['remote_base_url'] ) ? (string) $this->config['remote_base_url'] : '';
 		$secret = isset( $this->config['remote_signing_secret'] ) ? (string) $this->config['remote_signing_secret'] : '';
-		if ( '' === $base || '' === $secret || 'https' !== wp_parse_url( $base, PHP_URL_SCHEME ) ) {
+		// Fail closed on weak keys: a short shared secret makes offline
+		// signature forgery practical (PROJECT_PLAN.md Stage 2 deliverable 5).
+		if ( '' === $base || strlen( $secret ) < 32 || 'https' !== wp_parse_url( $base, PHP_URL_SCHEME ) ) {
 			return '';
 		}
 
@@ -76,12 +110,23 @@ final class RemoteRedirectProvider implements DownloadProvider, StreamableDownlo
 		$encoded_parts = array_map( 'rawurlencode', $path_parts );
 		$url           = untrailingslashit( $base ) . '/' . implode( '/', $encoded_parts );
 		$expires       = time() + ( isset( $this->config['remote_ttl'] ) ? max( 30, min( 900, absint( $this->config['remote_ttl'] ) ) ) : 300 );
-		$signature     = rtrim( strtr( base64_encode( hash_hmac( 'sha256', $url . '|' . $expires, $secret, true ) ), '+/', '-_' ), '=' );
-		$args          = array(
+		$mode          = $inline ? 'stream' : 'download';
+		$key_id        = isset( $this->config['remote_key_id'] ) ? sanitize_key( (string) $this->config['remote_key_id'] ) : '';
+
+		// Complete-payload signing: every value the remote host acts on (path,
+		// expiry, delivery mode, key id) is covered by the HMAC so no query
+		// parameter can be tampered with independently
+		// (PROJECT_PLAN.md Stage 2 deliverable 5).
+		$payload   = $url . '|' . $expires . '|' . $mode . '|' . $key_id;
+		$signature = rtrim( strtr( base64_encode( hash_hmac( 'sha256', $payload, $secret, true ) ), '+/', '-_' ), '=' ); // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_encode -- URL-safe encoding of a binary HMAC, not obfuscation.
+		$args      = array(
 			(string) $this->config['remote_expires_param'] => $expires,
 			(string) $this->config['remote_signature_param'] => $signature,
-			'mode'                                         => $inline ? 'stream' : 'download',
+			'mode'                                         => $mode,
 		);
+		if ( '' !== $key_id ) {
+			$args['kid'] = $key_id;
+		}
 
 		return add_query_arg( $args, $url );
 	}

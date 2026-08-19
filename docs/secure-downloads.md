@@ -13,3 +13,34 @@ Core emits `music_wave_download_event` with an event name, release ID, and user 
 MusicWave VIP provides an editor-only protected-asset route at `GET`/`POST /wp-json/music-wave/v1/protected-assets`. It lists at most 50 identifiers and accepts only explicitly allowed audio/archive extensions into the configured directory outside the public web root. The selected value remains an opaque `local:` identifier. The local provider supports single HTTP byte ranges for resumable downloads and audio clients; it does not reveal a master URL. Responses use private/no-store caching, no-referrer, content sniffing protection, RFC-compatible filenames, and buffering controls suitable for protected media.
 
 For WooCommerce customers, Core adds a `My music library` My Account endpoint. It shows only releases that pass the current access decision and have at least one protected asset. When multiple quality variants exist, the customer selects a label such as `MP3 320 kbps` or `FLAC lossless`; its buttons reuse the same token issuance route, so a refunded order, expired membership, or revoked manual grant cannot continue to download merely because an item was once shown in the library.
+
+## Stage 2 hardening (schema 0.9.0)
+
+**Replay protection.** One-time replay markers moved from unbounded `wp_options` rows to the
+dedicated indexed table `{prefix}mw_download_replays` (migration `0.9.0`). Consumption is a
+single atomic `INSERT IGNORE`; a daily `music_wave_replay_cleanup` event prunes expired rows
+and purges any legacy option-based markers. Sites where the migration has not run yet fall
+back to the previous behavior automatically.
+
+**Rate limiting.** Token issuance is limited per user with a fixed window (default 30 requests
+per 60 seconds; `music_wave_download_rate_limit` / `music_wave_download_rate_window` filters).
+Exceeding the limit returns `mw_download_rate_limited` (HTTP 429).
+
+**Structured audit.** `music_wave_download_event` now receives a fourth `$context` array
+(`timestamp`, plus `reason` on denials and `asset_key`/`purpose` on issuance). The previous
+three-argument signature keeps working.
+
+**Remote redirect contract (breaking for remote verifiers).** The HMAC now covers the complete
+payload `url|expires|mode|key_id` instead of `url|expires`, so the delivery mode can no longer
+be tampered with independently. Signing fails closed when the shared secret is shorter than
+32 characters. An optional `remote_key_id` setting is appended as `kid` for secret rotation.
+Redirects are refused unless the final URL host is the configured remote host or listed in
+`remote_allowed_hosts` — this now also constrains URLs returned by the
+`music_wave_vip_remote_download_url` filter. Remote verifiers must be updated to the new
+payload before upgrading.
+
+**Private-root preflight.** VIP no longer silently provisions `musicwave-private` beside
+WordPress when that location is still inside a publicly served tree (subdirectory installs);
+the settings screen shows structured preflight results (exists / readable / writable /
+outside web root / deny files) and provisioning writes `.htaccess`, `web.config`, and
+`index.html` deny files as defense in depth.

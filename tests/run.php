@@ -29,6 +29,7 @@ $GLOBALS['mw_test_user_meta']     = array();
 $GLOBALS['mw_test_statuses']      = array();
 $GLOBALS['mw_test_capabilities']  = array();
 $GLOBALS['mw_test_terms_by_tax']  = array();
+$GLOBALS['mw_test_transients']    = array();
 
 final class WP_Post {
 	/** @var int */
@@ -326,6 +327,28 @@ function get_post( $post = null ) {
 		return $post;
 	}
 	return isset( $GLOBALS['mw_test_post'] ) ? $GLOBALS['mw_test_post'] : null;
+}
+
+function untrailingslashit( string $value ): string {
+	return rtrim( $value, '/\\' );
+}
+
+function add_query_arg( array $args, string $url ): string {
+	$pairs = array();
+	foreach ( $args as $key => $value ) {
+		$pairs[] = rawurlencode( (string) $key ) . '=' . rawurlencode( (string) $value );
+	}
+	return $url . ( false === strpos( $url, '?' ) ? '?' : '&' ) . implode( '&', $pairs );
+}
+
+function get_transient( string $key ) {
+	return isset( $GLOBALS['mw_test_transients'][ $key ] ) ? $GLOBALS['mw_test_transients'][ $key ] : false;
+}
+
+function set_transient( string $key, $value, int $expiration = 0 ): bool {
+	unset( $expiration );
+	$GLOBALS['mw_test_transients'][ $key ] = $value;
+	return true;
 }
 
 function get_term_link( $term ) {
@@ -1209,7 +1232,63 @@ $runner  = new ManaCore\MusicWave\Core\Migrations\MigrationRunner( array( new Te
 $pending = $runner->pending( '0.2.0' );
 mw_assert_same( 1, count( $pending ), 'Only newer migrations should be pending.' );
 mw_assert_same( '0.3.0', $pending[0]->version(), 'Migrations must be version sorted.' );
-mw_assert_same( '0.8.0', ManaCore\MusicWave\Core\Migrations\MigrationRunner::LATEST_VERSION, 'Health checks must compare against the schema version rather than the plugin release version.' );
+mw_assert_same( '0.9.0', ManaCore\MusicWave\Core\Migrations\MigrationRunner::LATEST_VERSION, 'Health checks must compare against the schema version rather than the plugin release version.' );
+mw_assert_same( '0.9.0', ( new ManaCore\MusicWave\Core\Migrations\Schema090() )->version(), 'The replay-table migration must carry the 0.9.0 schema version.' );
+
+// --- Secure delivery foundation (PROJECT_PLAN.md Stage 2) ---
+
+// Replay store: without the dedicated table the store must fall back to the
+// legacy behavior while staying single-use.
+$database_replays = new ManaCore\MusicWave\Core\Downloads\DatabaseReplayStore();
+mw_assert_same( true, $database_replays->consume( 'stage2-token', time() + 60 ), 'The database replay store must accept the first token use (fallback path).' );
+mw_assert_same( false, $database_replays->consume( 'stage2-token', time() + 60 ), 'The database replay store must reject replays (fallback path).' );
+
+// Token issuance rate limiting.
+$rate_limiter = new ManaCore\MusicWave\Core\Downloads\DownloadRateLimiter();
+mw_assert_same( false, $rate_limiter->allow( 0 ), 'Anonymous users must never pass the download rate limiter.' );
+$rate_allowed = 0;
+for ( $i = 0; $i < ManaCore\MusicWave\Core\Downloads\DownloadRateLimiter::DEFAULT_LIMIT + 5; $i++ ) {
+	if ( $rate_limiter->allow( 7 ) ) {
+		++$rate_allowed;
+	}
+}
+mw_assert_same( ManaCore\MusicWave\Core\Downloads\DownloadRateLimiter::DEFAULT_LIMIT, $rate_allowed, 'Token issuance must stop at the configured per-window rate limit.' );
+
+// Remote redirect provider: complete-payload signing, strong keys, host allowlist.
+require_once dirname( __DIR__ ) . '/music-wave-vip/src/Autoloader.php';
+ManaCore\MusicWave\Vip\Autoloader::register();
+$remote_claims = new ManaCore\MusicWave\Core\Downloads\DownloadTokenClaims( 1, 7, time() + 300, 'token-id', 'binding' );
+$weak_remote   = new ManaCore\MusicWave\Vip\RemoteRedirectProvider(
+	array(
+		'remote_base_url'        => 'https://cdn.example.com/files',
+		'remote_signing_secret'  => 'short-secret',
+		'remote_signature_param' => 'signature',
+		'remote_expires_param'   => 'expires',
+	)
+);
+mw_assert_same( '', $weak_remote->create_url( 'album/track.flac', $remote_claims, false ), 'Remote signing must fail closed when the shared secret is weaker than 32 characters.' );
+
+$strong_config = array(
+	'remote_base_url'        => 'https://cdn.example.com/files',
+	'remote_signing_secret'  => str_repeat( 'k', 40 ),
+	'remote_signature_param' => 'signature',
+	'remote_expires_param'   => 'expires',
+	'remote_ttl'             => 300,
+	'remote_allowed_hosts'   => array( 'mirror.example.net' ),
+	'remote_key_id'          => 'k2026',
+);
+$strong_remote = new ManaCore\MusicWave\Vip\RemoteRedirectProvider( $strong_config );
+$download_url  = $strong_remote->create_url( 'album/track.flac', $remote_claims, false );
+$stream_url    = $strong_remote->create_url( 'album/track.flac', $remote_claims, true );
+mw_assert_same( true, false !== strpos( $download_url, 'mode=download' ), 'Signed remote URLs must carry the delivery mode.' );
+mw_assert_same( true, false !== strpos( $download_url, 'kid=k2026' ), 'Signed remote URLs must carry the rotation key id.' );
+parse_str( (string) parse_url( $download_url, PHP_URL_QUERY ), $download_args );
+parse_str( (string) parse_url( $stream_url, PHP_URL_QUERY ), $stream_args );
+mw_assert_same( true, isset( $download_args['signature'], $stream_args['signature'] ) && $download_args['signature'] !== $stream_args['signature'], 'The delivery mode must be covered by the signature (complete-payload signing).' );
+mw_assert_same( true, $strong_remote->allowed_url( 'https://cdn.example.com/files/a.flac?x=1' ), 'The configured remote host must pass the redirect allowlist.' );
+mw_assert_same( true, $strong_remote->allowed_url( 'https://mirror.example.net/a.flac' ), 'Explicitly allowlisted hosts must pass the redirect check.' );
+mw_assert_same( false, $strong_remote->allowed_url( 'https://attacker.example.org/a.flac' ), 'Unlisted hosts must be refused even over HTTPS.' );
+mw_assert_same( false, $strong_remote->allowed_url( 'http://cdn.example.com/a.flac' ), 'Plain HTTP redirects must always be refused.' );
 
 $mapper = new ManaCore\MusicWave\Core\Commerce\ProductMapper();
 $mapper->sync_reverse_index( 1, array(), array( 10, 11 ) );

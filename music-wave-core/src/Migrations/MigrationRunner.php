@@ -14,7 +14,7 @@ use RuntimeException;
 
 final class MigrationRunner {
 	public const OPTION         = 'music_wave_schema_version';
-	public const LATEST_VERSION = '0.8.0';
+	public const LATEST_VERSION = '0.9.0';
 
 	/** @var array<int, Migration> */
 	private $migrations;

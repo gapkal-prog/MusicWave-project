@@ -18,7 +18,9 @@ if ( ! defined( 'MUSIC_WAVE_CORE_URL' ) ) {
 if ( ! defined( 'MUSIC_WAVE_CORE_PATH' ) ) {
 	define( 'MUSIC_WAVE_CORE_PATH', __DIR__ . '/../music-wave-core/' );
 }
-if ( ! defined( 'HOUR_IN_SECONDS' ) ) { define( 'HOUR_IN_SECONDS', 3600 ); }if ( ! defined( 'OBJECT' ) ) { define( 'OBJECT', 'OBJECT' ); }
+if ( ! defined( 'HOUR_IN_SECONDS' ) ) { define( 'HOUR_IN_SECONDS', 3600 ); }
+if ( ! defined( 'DAY_IN_SECONDS' ) ) { define( 'DAY_IN_SECONDS', 86400 ); }
+if ( ! defined( 'OBJECT' ) ) { define( 'OBJECT', 'OBJECT' ); }
 if ( ! defined( 'EP_ROOT' ) ) { define( 'EP_ROOT', 1 ); }
 if ( ! defined( 'EP_PAGES' ) ) { define( 'EP_PAGES', 1 ); }
 

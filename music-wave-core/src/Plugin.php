@@ -47,6 +47,7 @@ use ManaCore\MusicWave\Core\Downloads\DownloadRoutes;
 use ManaCore\MusicWave\Core\Downloads\DownloadAssetRoutes;
 use ManaCore\MusicWave\Core\Downloads\DownloadTokenService;
 use ManaCore\MusicWave\Core\Downloads\NullDownloadProvider;
+use ManaCore\MusicWave\Core\Downloads\DatabaseReplayStore;
 use ManaCore\MusicWave\Core\Downloads\TransientReplayStore;
 use ManaCore\MusicWave\Core\Migrations\MigrationRunner;
 use ManaCore\MusicWave\Core\Migrations\Schema020;
@@ -55,6 +56,7 @@ use ManaCore\MusicWave\Core\Migrations\Schema040;
 use ManaCore\MusicWave\Core\Migrations\Schema050;
 use ManaCore\MusicWave\Core\Migrations\Schema070;
 use ManaCore\MusicWave\Core\Migrations\Schema080;
+use ManaCore\MusicWave\Core\Migrations\Schema090;
 use ManaCore\MusicWave\Core\Metadata\DiscogsProvider;
 use ManaCore\MusicWave\Core\Metadata\MetadataLookupRoutes;
 use ManaCore\MusicWave\Core\Metadata\MetadataResolver;
@@ -128,7 +130,8 @@ final class Plugin {
 			$download_provider = new NullDownloadProvider();
 		}
 		$download_secret = function_exists( 'wp_salt' ) ? wp_salt( 'auth' ) : hash( 'sha256', MUSIC_WAVE_CORE_FILE );
-		$downloads       = new DownloadResolver( $releases, $policy, new DownloadTokenService( $download_secret ), new TransientReplayStore(), $download_provider );
+		$replay_store    = new DatabaseReplayStore( new TransientReplayStore() );
+		$downloads       = new DownloadResolver( $releases, $policy, new DownloadTokenService( $download_secret ), $replay_store, $download_provider );
 
 		$metadata_resolver   = new MetadataResolver(
 			array(
@@ -148,7 +151,7 @@ final class Plugin {
 				new ReleasePostType(),
 				new ReleaseTaxonomies(),
 				new ReleaseMetaRegistry( $schema ),
-				new MigrationRunner( array( new Schema020(), new Schema030(), new Schema040(), new Schema050(), new Schema070(), new Schema080() ) ),
+				new MigrationRunner( array( new Schema020(), new Schema030(), new Schema040(), new Schema050(), new Schema070(), new Schema080(), new Schema090() ) ),
 				new CollectionRestPolicy( $releases ),
 				new ArtistTermMeta(),
 				new ReleaseArchiveQuery(),
@@ -159,7 +162,7 @@ final class Plugin {
 		$registry->add( new Commerce( $mapper, new ProductReleasePanel( $mapper ), $purchase_checker, new AccountLibrary( $policy, $releases, $library_repository ) ) );
 		$registry->add( new Library( $library_repository, new LibraryRoutes( $library_repository, $library_catalog ), new LibraryBlocks( $library_repository, $library_catalog ) ) );
 		$registry->add( new Rendering( new ReleaseBlocks( $policy, $releases ), new ArtistProfileBlock(), new PreviewPlayer( $releases, $policy ), new PlaybackQueueRoutes( $policy, $releases ), new ReleaseRestVisibilityPolicy( $policy ) ) );
-		$registry->add( new Downloads( new DownloadRoutes( $downloads ), new DownloadAssetRoutes( $releases ) ) );
+		$registry->add( new Downloads( new DownloadRoutes( $downloads ), new DownloadAssetRoutes( $releases ), $replay_store ) );
 		$registry->add( new Diagnostics( new DiagnosticsPage( new DemoContentImporter( $releases ) ), new SiteHealth() ) );
 		$registry->add( new Seo( new ReleaseJsonLd( $releases, $visibility ), new ReleaseMetadata( $releases ) ) );
 		$registry->add( new \ManaCore\MusicWave\Core\Modules\Metadata( new MetadataLookupRoutes( $metadata_resolver, $metadata_taxonomies ), $metadata_taxonomies ) );

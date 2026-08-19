@@ -22,17 +22,25 @@ final class DownloadResolver {
 
 	public function issue( int $release_id, AccessSubject $subject, string $binding, string $asset_key = '', string $purpose = 'download' ): ?string {
 		if ( $subject->user_id() < 1 || ! $this->policy->decide( $release_id, $subject )->is_allowed() ) {
-			$this->audit( 'token_denied', $release_id, $subject->user_id() );
+			$this->audit( 'token_denied', $release_id, $subject->user_id(), array( 'reason' => 'entitlement' ) );
 			return null; }
 		$asset = $this->asset( $release_id, $asset_key );
 		if ( null === $asset ) {
-			$this->audit( 'token_denied', $release_id, $subject->user_id() );
+			$this->audit( 'token_denied', $release_id, $subject->user_id(), array( 'reason' => 'unknown_asset' ) );
 			return null; }
 		$purpose = in_array( $purpose, array( 'download', 'stream' ), true ) ? $purpose : 'download';
 		if ( 'stream' === $purpose && ! $this->provider instanceof StreamableDownloadProvider ) {
-			$this->audit( 'token_denied', $release_id, $subject->user_id() );
+			$this->audit( 'token_denied', $release_id, $subject->user_id(), array( 'reason' => 'stream_unsupported' ) );
 			return null; }
-		$this->audit( 'token_issued', $release_id, $subject->user_id() );
+		$this->audit(
+			'token_issued',
+			$release_id,
+			$subject->user_id(),
+			array(
+				'asset_key' => $asset['key'],
+				'purpose'   => $purpose,
+			)
+		);
 		return $this->tokens->issue( $release_id, $subject->user_id(), 'stream' === $purpose ? 900 : 300, $binding, $asset['key'], $purpose );
 	}
 
@@ -122,7 +130,22 @@ final class DownloadResolver {
 		) : null;
 	}
 
-	private function audit( string $event, int $release_id, int $user_id ): void {
-		do_action( 'music_wave_download_event', $event, $release_id, $user_id );
+	/**
+	 * Emit one structured, PII-free delivery audit event.
+	 *
+	 * @param string               $event      Event key.
+	 * @param int                  $release_id Release ID.
+	 * @param int                  $user_id    Acting user ID.
+	 * @param array<string, mixed> $context    Structured event context
+	 *                                         (reason, asset_key, purpose).
+	 */
+	private function audit( string $event, int $release_id, int $user_id, array $context = array() ): void {
+		$context = array_merge(
+			array(
+				'timestamp' => time(),
+			),
+			$context
+		);
+		do_action( 'music_wave_download_event', $event, $release_id, $user_id, $context );
 	}
 }

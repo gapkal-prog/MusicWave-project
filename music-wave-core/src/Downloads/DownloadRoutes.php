@@ -18,8 +18,12 @@ final class DownloadRoutes {
 	/** @var DownloadResolver */
 	private $resolver;
 
-	public function __construct( DownloadResolver $resolver ) {
-		$this->resolver = $resolver;
+	/** @var DownloadRateLimiter */
+	private $rate_limiter;
+
+	public function __construct( DownloadResolver $resolver, ?DownloadRateLimiter $rate_limiter = null ) {
+		$this->resolver     = $resolver;
+		$this->rate_limiter = null !== $rate_limiter ? $rate_limiter : new DownloadRateLimiter();
 	}
 
 	public function register(): void {
@@ -82,6 +86,14 @@ final class DownloadRoutes {
 	 * @return WP_REST_Response|WP_Error
 	 */
 	public function issue( WP_REST_Request $request ) {
+		if ( ! $this->rate_limiter->allow( get_current_user_id() ) ) {
+			return new WP_Error(
+				'mw_download_rate_limited',
+				__( 'Too many download requests. Wait a moment and try again.', 'music-wave-core' ),
+				array( 'status' => 429 )
+			);
+		}
+
 		$release_id = absint( $request->get_param( 'id' ) );
 		$quality    = $request->get_param( 'quality' );
 		$quality    = is_scalar( $quality ) ? sanitize_key( (string) $quality ) : '';

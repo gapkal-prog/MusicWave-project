@@ -16,6 +16,9 @@ final class Deactivator {
 	 * @return void
 	 */
 	public static function deactivate(): void {
+		if ( function_exists( 'wp_clear_scheduled_hook' ) ) {
+			wp_clear_scheduled_hook( 'music_wave_replay_cleanup' );
+		}
 		if ( function_exists( 'flush_rewrite_rules' ) ) {
 			flush_rewrite_rules();
 		}
