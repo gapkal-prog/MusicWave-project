@@ -106,6 +106,10 @@ function musicwave_style_modules(): array {
 			'file'         => 'assets/css/components/account-library.css',
 			'dependencies' => array( 'musicwave-utilities' ),
 		),
+		'musicwave-playlists'       => array(
+			'file'         => 'assets/css/components/playlists.css',
+			'dependencies' => array( 'musicwave-utilities' ),
+		),
 		'musicwave-accessibility'   => array(
 			'file'         => 'assets/css/accessibility.css',
 			'dependencies' => array( 'musicwave-base' ),

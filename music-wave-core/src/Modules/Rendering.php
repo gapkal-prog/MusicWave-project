@@ -703,6 +703,10 @@ final class Rendering implements Module {
 				'type'    => 'integer',
 				'default' => 0,
 			),
+			'itemType'   => array(
+				'type'    => 'string',
+				'default' => 'release',
+			),
 			'termId'     => array(
 				'type'    => 'integer',
 				'default' => 0,
@@ -857,10 +861,43 @@ final class Rendering implements Module {
 			array(
 				'name'        => 'music-wave/library-button',
 				'title'       => __( 'Add to library button', 'music-wave-core' ),
-				'description' => __( 'Lets visitors save a release or follow an artist into their personal library.', 'music-wave-core' ),
+				'description' => __( 'Lets visitors save a release, wishlist it, pre-save an upcoming release, or follow an artist.', 'music-wave-core' ),
 				'icon'        => 'plus-alt',
 				'keywords'    => array( __( 'save', 'music-wave-core' ), __( 'follow', 'music-wave-core' ), __( 'favorite', 'music-wave-core' ) ),
 				'attributes'  => $library_button_attributes,
+				'usesContext' => array( 'postId', 'postType' ),
+				'supports'    => $supports,
+			),
+			array(
+				'name'        => 'music-wave/playlists',
+				'title'       => __( 'Playlists', 'music-wave-core' ),
+				'description' => __( 'Lets signed-in listeners create, order, share, and delete their playlists.', 'music-wave-core' ),
+				'icon'        => 'playlist-audio',
+				'keywords'    => array( __( 'playlist', 'music-wave-core' ), __( 'queue', 'music-wave-core' ), __( 'collection', 'music-wave-core' ) ),
+				'attributes'  => array(
+					'heading' => array(
+						'type'    => 'string',
+						'default' => '',
+					),
+				),
+				'supports'    => $supports,
+			),
+			array(
+				'name'        => 'music-wave/add-to-playlist',
+				'title'       => __( 'Add to playlist', 'music-wave-core' ),
+				'description' => __( 'Adds the current release to one of the listener\'s playlists.', 'music-wave-core' ),
+				'icon'        => 'plus-alt',
+				'keywords'    => array( __( 'playlist', 'music-wave-core' ), __( 'save', 'music-wave-core' ), __( 'queue', 'music-wave-core' ) ),
+				'attributes'  => array(
+					'releaseId' => array(
+						'type'    => 'integer',
+						'default' => 0,
+					),
+					'label'     => array(
+						'type'    => 'string',
+						'default' => '',
+					),
+				),
 				'usesContext' => array( 'postId', 'postType' ),
 				'supports'    => $supports,
 			),

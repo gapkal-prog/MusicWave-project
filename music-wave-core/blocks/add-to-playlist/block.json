@@ -1,0 +1,26 @@
+{
+	"apiVersion": 3,
+	"name": "music-wave/add-to-playlist",
+	"title": "Add to playlist",
+	"category": "music-wave",
+	"description": "Adds the current release to one of the listener's playlists.",
+	"keywords": [ "playlist", "save", "queue" ],
+	"textdomain": "music-wave-core",
+	"icon": "plus-alt",
+	"usesContext": [ "postId", "postType" ],
+	"attributes": {
+		"releaseId": { "type": "integer", "default": 0 },
+		"label": { "type": "string", "default": "" }
+	},
+	"supports": {
+		"anchor": true,
+		"color": { "background": true, "link": true, "text": true },
+		"spacing": { "margin": true, "padding": true },
+		"typography": { "fontSize": true, "lineHeight": true }
+	},
+	"example": {
+		"attributes": {
+			"label": "Add to playlist"
+		}
+	}
+}

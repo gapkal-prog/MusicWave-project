@@ -483,6 +483,8 @@ $music_wave_expected_blocks    = array(
 	'account-dashboard',
 	'music-library',
 	'library-button',
+	'playlists',
+	'add-to-playlist',
 );
 foreach ( $music_wave_expected_blocks as $music_wave_block_slug ) {
 	$music_wave_metadata_file = $music_wave_block_metadata_dir . '/' . $music_wave_block_slug . '/block.json';

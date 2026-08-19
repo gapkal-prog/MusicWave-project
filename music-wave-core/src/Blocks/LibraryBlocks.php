@@ -145,6 +145,10 @@ final class LibraryBlocks {
 				'type'    => 'integer',
 				'default' => 0,
 			),
+			'itemType'   => array(
+				'type'    => 'string',
+				'default' => 'release',
+			),
 			'termId'     => array(
 				'type'    => 'integer',
 				'default' => 0,
@@ -261,9 +265,18 @@ final class LibraryBlocks {
 			return '';
 		}
 
-		return '<div ' . BlockSupport::wrapper_attributes( 'mw-library-button-wrap' ) . '>'
-			. LibraryButton::markup( LibraryRepository::TYPE_RELEASE, $release_id, $this->button_settings( $attributes ) )
-			. '</div>';
+		$item_type = $this->key_attribute(
+			$attributes,
+			'itemType',
+			array( LibraryRepository::TYPE_RELEASE, LibraryRepository::TYPE_WISHLIST, LibraryRepository::TYPE_PRESAVE ),
+			LibraryRepository::TYPE_RELEASE
+		);
+		$markup    = LibraryButton::markup( $item_type, $release_id, $this->button_settings( $attributes ) );
+		if ( '' === $markup ) {
+			return '';
+		}
+
+		return '<div ' . BlockSupport::wrapper_attributes( 'mw-library-button-wrap mw-library-button-wrap--' . $item_type ) . '>' . $markup . '</div>';
 	}
 
 	/**

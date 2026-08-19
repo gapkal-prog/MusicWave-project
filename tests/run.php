@@ -30,6 +30,9 @@ $GLOBALS['mw_test_statuses']      = array();
 $GLOBALS['mw_test_capabilities']  = array();
 $GLOBALS['mw_test_terms_by_tax']  = array();
 $GLOBALS['mw_test_transients']    = array();
+$GLOBALS['mw_test_redirects']     = array();
+$GLOBALS['mw_test_scripts']       = array();
+$GLOBALS['mw_test_localized']     = array();
 $GLOBALS['mw_test_term_queries']  = array(
 	'object' => 0,
 	'post'   => 0,
@@ -195,6 +198,108 @@ function do_action( string $hook, ...$arguments ): void {
 
 function is_admin(): bool {
 	return false;
+}
+
+function esc_html__( string $text, string $domain = '' ): string {
+	unset( $domain );
+	return esc_html( $text );
+}
+
+function esc_attr__( string $text, string $domain = '' ): string {
+	unset( $domain );
+	return esc_attr( $text );
+}
+
+function _n( string $single, string $plural, int $number, string $domain = '' ): string {
+	unset( $domain );
+	return 1 === $number ? $single : $plural;
+}
+
+function _x( string $text, string $context, string $domain = '' ): string {
+	unset( $context, $domain );
+	return $text;
+}
+
+function home_url( string $path = '/' ): string {
+	return 'https://example.test' . ( '' === $path ? '/' : $path );
+}
+
+function admin_url( string $path = '' ): string {
+	return 'https://example.test/wp-admin/' . $path;
+}
+
+function rest_url( string $path = '' ): string {
+	return 'https://example.test/wp-json/' . $path;
+}
+
+function wp_login_url( string $redirect = '' ): string {
+	return 'https://example.test/wp-login.php?redirect_to=' . rawurlencode( $redirect );
+}
+
+function wp_create_nonce( string $action = '' ): string {
+	return 'nonce-' . md5( $action );
+}
+
+function wp_nonce_field( string $action = '', string $name = '_wpnonce', bool $referer = true, bool $display = true ): string {
+	unset( $referer );
+	$field = '<input type="hidden" name="' . esc_attr( $name ) . '" value="' . esc_attr( wp_create_nonce( $action ) ) . '">';
+	if ( $display ) {
+		echo $field; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+	}
+
+	return $field;
+}
+
+function check_admin_referer( string $action = '', string $name = '_wpnonce' ): bool {
+	unset( $action, $name );
+	return true;
+}
+
+function wp_get_referer() {
+	return 'https://example.test/account/';
+}
+
+function wp_safe_redirect( string $location, int $status = 302 ): bool {
+	$GLOBALS['mw_test_redirects'][] = array( $location, $status );
+	return true;
+}
+
+function selected( $selected, $current = true, bool $display = true ): string {
+	$markup = (string) $selected === (string) $current ? ' selected="selected"' : '';
+	if ( $display ) {
+		echo $markup; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+	}
+
+	return $markup;
+}
+
+function remove_query_arg( $keys, string $url = '' ): string {
+	unset( $keys );
+	return $url;
+}
+
+function is_singular( $post_types = '' ): bool {
+	unset( $post_types );
+	return false;
+}
+
+function get_the_ID(): int {
+	return isset( $GLOBALS['mw_test_current_post'] ) ? (int) $GLOBALS['mw_test_current_post'] : 0;
+}
+
+function wp_enqueue_script( string $handle, string $src = '', array $dependencies = array(), $version = false, $args = array() ): void {
+	unset( $src, $dependencies, $version, $args );
+	$GLOBALS['mw_test_scripts'][] = $handle;
+}
+
+function wp_localize_script( string $handle, string $object_name, array $data ): bool {
+	unset( $data );
+	$GLOBALS['mw_test_localized'][] = $handle . ':' . $object_name;
+	return true;
+}
+
+function get_block_wrapper_attributes( array $attributes = array() ): string {
+	return 'class="' . esc_attr( isset( $attributes['class'] ) ? (string) $attributes['class'] : '' ) . '"';
 }
 
 function __( string $text, string $domain = '' ): string {
@@ -2022,6 +2127,72 @@ mw_assert_same( 'PUBLIC BODY', $open_data['content']['rendered'], 'Public releas
 
 require dirname( __DIR__ ) . '/music-wave-core/music-wave-core.php';
 mw_assert_same( true, in_array( 'music_wave_core_loaded', $GLOBALS['mw_test_actions'], true ), 'Plugin composition root must boot successfully.' );
+
+// --- Playlist UI layer: no-JS operations and accessible markup (PROJECT_PLAN.md Stage 4 deliverable 2, Stage 5 deliverable 4) ---
+
+$ui_store      = new TestPlaylistStore();
+$ui_playlists  = new ManaCore\MusicWave\Core\Playlists\PlaylistRepository( $ui_store );
+$ui_forms      = new ManaCore\MusicWave\Core\Playlists\PlaylistFormHandler( $ui_playlists );
+
+list( $ui_notice, $ui_created ) = $ui_forms->run( 'create', 7, 0, 0, 'Road trip', 'private' );
+mw_assert_same( 'created', $ui_notice, 'The no-JS create operation must create a playlist.' );
+mw_assert_same( true, $ui_created > 0, 'The create operation must return the new playlist for focus.' );
+mw_assert_same( array( 'create-failed', 0 ), $ui_forms->run( 'create', 7, 0, 0, '   ', '' ), 'An empty title must fail without creating a playlist.' );
+mw_assert_same( array( 'invalid', 0 ), $ui_forms->run( 'wat', 7, 0, 0, '', '' ), 'Unknown operations must be rejected.' );
+mw_assert_same( array( 'item-added', $ui_created ), $ui_forms->run( 'add-item', 7, $ui_created, 2, '', '' ), 'The no-JS add operation must add a readable release.' );
+$ui_forms->run( 'add-item', 7, $ui_created, 3, '', '' );
+$ui_forms->run( 'add-item', 7, $ui_created, 4, '', '' );
+mw_assert_same( array( 'item-add-failed', $ui_created ), $ui_forms->run( 'add-item', 8, $ui_created, 2, '', '' ), 'A non-owner must not mutate a playlist through the form handler.' );
+
+mw_assert_same( array( 'moved', $ui_created ), $ui_forms->run( 'move-down', 7, $ui_created, 2, '', '' ), 'Move down must reorder the playlist.' );
+$ui_order = array();
+foreach ( $ui_playlists->items_for_viewer( $ui_created, 7 ) as $ui_item ) {
+	$ui_order[] = (int) $ui_item['release_id'];
+}
+mw_assert_same( array( 3, 2, 4 ), $ui_order, 'Move down must swap exactly one position.' );
+mw_assert_same( array( 'moved', $ui_created ), $ui_forms->run( 'move-up', 7, $ui_created, 2, '', '' ), 'Move up must reorder the playlist.' );
+mw_assert_same( array( 'move-failed', $ui_created ), $ui_forms->run( 'move-up', 7, $ui_created, 2, '', '' ), 'Moving the first item up must fail instead of wrapping around.' );
+mw_assert_same( array( 'move-failed', $ui_created ), $ui_forms->run( 'move-down', 8, $ui_created, 2, '', '' ), 'A non-owner must not reorder a playlist.' );
+mw_assert_same( array( 'item-removed', $ui_created ), $ui_forms->run( 'remove-item', 7, $ui_created, 4, '', '' ), 'The no-JS remove operation must remove an item.' );
+mw_assert_same( array( 'updated', $ui_created ), $ui_forms->run( 'update', 7, $ui_created, 0, 'Road trip 2026', 'unlisted' ), 'The no-JS update operation must rename and share.' );
+mw_assert_same( 'unlisted', (string) $ui_playlists->find( $ui_created )['visibility'], 'The update operation must persist the visibility change.' );
+mw_assert_same( array( 'update-failed', $ui_created ), $ui_forms->run( 'update', 8, $ui_created, 0, 'Hijacked', '' ), 'A non-owner must not rename a playlist.' );
+mw_assert_same( true, '' !== $ui_forms->notice_message( 'created' ), 'Every notice code must carry a translated message.' );
+mw_assert_same( true, $ui_forms->notice_is_error( 'item-add-failed' ), 'Failure notices must be flagged as errors.' );
+mw_assert_same( false, $ui_forms->notice_is_error( 'item-added' ), 'Success notices must not be flagged as errors.' );
+
+$ui_blocks = new ManaCore\MusicWave\Core\Blocks\PlaylistBlocks( $ui_playlists, $ui_forms );
+$GLOBALS['mw_test_current_user'] = 7;
+$ui_markup                       = $ui_blocks->render_manager( array( 'heading' => 'My lists' ) );
+mw_assert_same( true, false !== strpos( $ui_markup, 'Road trip 2026' ), 'The playlist manager must render the listener\'s playlists.' );
+mw_assert_same( true, false !== strpos( $ui_markup, 'method="post"' ), 'Every playlist control must work as a plain form post without JavaScript.' );
+mw_assert_same( true, false !== strpos( $ui_markup, 'name="mw_operation" value="create"' ), 'The manager must expose the create operation.' );
+mw_assert_same( true, false !== strpos( $ui_markup, 'aria-expanded=' ), 'The track toggle must expose its expanded state.' );
+mw_assert_same( true, false !== strpos( $ui_markup, 'mw_nonce_field' ) || false !== strpos( $ui_markup, '_wpnonce' ), 'Playlist forms must carry a nonce field.' );
+mw_assert_same( false, false !== strpos( $ui_markup, (string) $ui_playlists->find( $ui_created )['share_token'] ) && 7 !== $GLOBALS['mw_test_current_user'], 'Share tokens must only render for the owner.' );
+
+$ui_picker = $ui_blocks->render_picker( array( 'releaseId' => 2 ) );
+mw_assert_same( true, false !== strpos( $ui_picker, 'name="mw_operation" value="add-item"' ), 'The picker must post the add-item operation.' );
+mw_assert_same( true, false !== strpos( $ui_picker, 'name="mw_release_id" value="2"' ), 'The picker must target the rendered release.' );
+mw_assert_same( true, false !== strpos( $ui_picker, '<label for=' ), 'The picker select must have an associated label.' );
+
+$GLOBALS['mw_test_current_user'] = 0;
+$ui_guest                        = $ui_blocks->render_manager( array() );
+mw_assert_same( true, false !== strpos( $ui_guest, 'mw-playlists--guest' ), 'Signed-out visitors must see the sign-in state instead of controls.' );
+mw_assert_same( false, false !== strpos( $ui_guest, 'mw_operation' ), 'Signed-out visitors must not receive playlist mutation forms.' );
+$GLOBALS['mw_test_current_user'] = 0;
+
+// Wishlist and pre-save buttons reuse the shared library button.
+ManaCore\MusicWave\Core\Library\LibraryButton::bind( $wishlist_library );
+$GLOBALS['mw_test_current_user']               = 9;
+$GLOBALS['mw_test_meta'][3]['mw_release_date'] = gmdate( 'Y-m-d', time() + ( 10 * 86400 ) );
+$presave_button                                = ManaCore\MusicWave\Core\Library\LibraryButton::markup( 'presave', 3 );
+mw_assert_same( true, false !== strpos( $presave_button, 'data-mw-library-type="presave"' ), 'The pre-save button must post the presave item type.' );
+mw_assert_same( true, false !== strpos( $presave_button, 'aria-pressed=' ), 'Library toggles must expose their pressed state.' );
+$GLOBALS['mw_test_meta'][3]['mw_release_date'] = gmdate( 'Y-m-d', time() - 86400 );
+mw_assert_same( '', ManaCore\MusicWave\Core\Library\LibraryButton::markup( 'presave', 3 ), 'A released item must not render a pre-save button.' );
+mw_assert_same( true, false !== strpos( ManaCore\MusicWave\Core\Library\LibraryButton::markup( 'wishlist', 4 ), 'data-mw-library-type="wishlist"' ), 'The wishlist button must post the wishlist item type.' );
+$GLOBALS['mw_test_current_user'] = 0;
 
 require __DIR__ . '/template-integrity.php';
 

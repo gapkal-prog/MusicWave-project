@@ -43,7 +43,18 @@ final class LibraryButton {
 	 * @return string
 	 */
 	public static function markup( string $type, int $item_id, array $settings = array() ): string {
-		if ( $item_id < 1 || ! in_array( $type, array( LibraryRepository::TYPE_RELEASE, LibraryRepository::TYPE_ARTIST ), true ) ) {
+		$supported = array(
+			LibraryRepository::TYPE_RELEASE,
+			LibraryRepository::TYPE_ARTIST,
+			LibraryRepository::TYPE_WISHLIST,
+			LibraryRepository::TYPE_PRESAVE,
+		);
+		if ( $item_id < 1 || ! in_array( $type, $supported, true ) ) {
+			return '';
+		}
+		// A pre-save only exists while the release is still upcoming; once it is
+		// out the button would be a dead end, so it is not rendered.
+		if ( LibraryRepository::TYPE_PRESAVE === $type && null !== self::$repository && ! self::$repository->is_upcoming( $item_id ) ) {
 			return '';
 		}
 
@@ -113,6 +124,12 @@ final class LibraryButton {
 
 		if ( LibraryRepository::TYPE_ARTIST === $type ) {
 			return $in_library ? __( 'Following', 'music-wave-core' ) : __( 'Follow artist', 'music-wave-core' );
+		}
+		if ( LibraryRepository::TYPE_WISHLIST === $type ) {
+			return $in_library ? __( 'On your wishlist', 'music-wave-core' ) : __( 'Add to wishlist', 'music-wave-core' );
+		}
+		if ( LibraryRepository::TYPE_PRESAVE === $type ) {
+			return $in_library ? __( 'Pre-saved', 'music-wave-core' ) : __( 'Pre-save', 'music-wave-core' );
 		}
 
 		return $in_library ? __( 'In your library', 'music-wave-core' ) : __( 'Add to library', 'music-wave-core' );

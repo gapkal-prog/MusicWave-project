@@ -276,6 +276,11 @@
 			compact: true,
 			groups: [
 				{ title: __('Button', 'music-wave-core'), controls: [
+					['select', 'itemType', __('What the button saves', 'music-wave-core'), [
+						['release', __('Add to library', 'music-wave-core')],
+						['wishlist', __('Add to wishlist', 'music-wave-core')],
+						['presave', __('Pre-save (upcoming releases only)', 'music-wave-core')]
+					], __('Pre-save buttons only render while the release date is still in the future.', 'music-wave-core')],
 					['text', 'label', __('Button label', 'music-wave-core'), ''],
 					['text', 'addedLabel', __('Saved state label', 'music-wave-core'), ''],
 					['select', 'style', __('Button style', 'music-wave-core'), [
@@ -291,6 +296,21 @@
 		},
 		'music-wave/artist-profile': {
 			artistProfile: true
+		},
+		'music-wave/playlists': {
+			groups: [
+				{ title: __('Heading', 'music-wave-core'), controls: [
+					['text', 'heading', __('Section heading', 'music-wave-core'), '']
+				], help: __('Listeners manage playlists here. Every control works without JavaScript.', 'music-wave-core') }
+			]
+		},
+		'music-wave/add-to-playlist': {
+			releaseId: true,
+			groups: [
+				{ title: __('Control', 'music-wave-core'), controls: [
+					['text', 'label', __('Field label', 'music-wave-core'), '']
+				] }
+			]
 		}
 	};
 
@@ -307,7 +327,9 @@
 		'music-wave/artist-profile': __('Artist profile content is displayed on an artist archive after an image, biography, or official URL is added to that artist.', 'music-wave-core'),
 		'music-wave/preview-button': __('Add a secure HTTPS preview URL to the selected release to display the play button.', 'music-wave-core'),
 		'music-wave/music-library': __('The personal library lists every song, album, podcast, and artist a signed-in visitor saves with the add-to-library button.', 'music-wave-core'),
-		'music-wave/library-button': __('The button saves the selected release to a visitor\'s personal library, or follows an artist when an artist term ID is set.', 'music-wave-core')
+		'music-wave/library-button': __('The button saves the selected release to a visitor\'s personal library, or follows an artist when an artist term ID is set.', 'music-wave-core'),
+		'music-wave/playlists': __('Signed-in listeners see their playlists here, with create, rename, share, reorder, and delete controls.', 'music-wave-core'),
+		'music-wave/add-to-playlist': __('Signed-in listeners can add the selected release to one of their playlists.', 'music-wave-core')
 	};
 
 	function editorReleaseId(props) {

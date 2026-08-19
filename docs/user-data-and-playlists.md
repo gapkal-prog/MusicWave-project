@@ -86,3 +86,30 @@ be readable; only its availability date lies ahead.
 | `music_wave_listening_retention_days` | filter | Listening-history retention window in days (default 180). |
 | `music_wave_recommendations` | filter | Adjust recommendation items; every item must keep a machine `reason` and a translated `explanation`. |
 | `music_wave_library_items` | filter | Adjust normalized library items for display paths. |
+
+## Interface surfaces
+
+| Surface | Where | Behavior without JavaScript |
+|---|---|---|
+| `music-wave/playlists` block | Account dashboard panel **Playlists**, or placed anywhere | Fully functional: create, rename, change visibility, delete, reorder (move up/down), and remove tracks are plain form posts to `admin-post.php` |
+| `music-wave/add-to-playlist` block | Single release template | A labeled select plus submit; with no playlists yet it becomes a "create playlist" form |
+| `music-wave/library-button` block (`itemType`) | Release pages | Server-rendered toggle for `release`, `wishlist`, or `presave`; signed-out visitors get a sign-in link |
+| Catalog autocomplete | Catalog filter search field | A plain search input that submits the normal archive GET request |
+
+Accessibility and privacy notes:
+
+- Playlist mutations use post/redirect/get. The redirect carries a notice code
+  that renders inside a `role="status"` live region, so screen readers hear the
+  result without a JavaScript round trip.
+- Reordering uses per-item **Move up** / **Move down** submit buttons with
+  screen-reader names that include the track title, instead of drag-and-drop.
+- The track list toggle exposes `aria-expanded`/`aria-controls`, and the expanded
+  playlist is addressable through the `mw-playlist` query argument.
+- Every form carries a nonce; ownership is re-checked in the repository, so a
+  replayed or forged post cannot touch another listener's playlist.
+- The share link input is rendered only for the owner of a shared playlist.
+- Autocomplete upgrades the search field to an ARIA 1.2 combobox
+  (`role="combobox"`, `aria-expanded`, `aria-activedescendant`, arrow-key and
+  Escape handling) and announces result counts politely.
+- Playlists appear inside the single account dashboard shell as a panel rather
+  than as a second account surface.

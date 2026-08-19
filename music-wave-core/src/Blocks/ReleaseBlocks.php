@@ -1200,7 +1200,14 @@ final class ReleaseBlocks {
 		if ( $show_search ) {
 			$search      = isset( $_GET['s'] ) && is_scalar( $_GET['s'] ) ? sanitize_text_field( wp_unslash( (string) $_GET['s'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			$placeholder = $this->text_attribute( $attributes, 'searchPlaceholder', __( 'Search releases', 'music-wave-core' ) );
-			$search_html = '<label><span class="screen-reader-text">' . esc_html__( 'Search releases', 'music-wave-core' ) . '</span><input type="search" name="s" value="' . esc_attr( $search ) . '" placeholder="' . esc_attr( $placeholder ) . '"></label>';
+			// The field is a plain input for no-JS visitors; catalog-suggest.js
+			// upgrades it to an ARIA combobox in place.
+			$search_html = '<div class="mw-catalog-suggest">'
+				. '<label><span class="screen-reader-text">' . esc_html__( 'Search releases', 'music-wave-core' ) . '</span>'
+				. '<input type="search" name="s" value="' . esc_attr( $search ) . '" placeholder="' . esc_attr( $placeholder ) . '"></label>'
+				. '<span class="screen-reader-text" role="status" aria-live="polite" data-mw-suggest-status></span>'
+				. '</div>';
+			$this->enqueue_catalog_suggest_assets();
 		}
 
 		$sort_markup = '';
@@ -1238,6 +1245,37 @@ final class ReleaseBlocks {
 		$hidden = '<input type="hidden" name="post_type" value="' . esc_attr( ReleasePostType::KEY ) . '">';
 
 		return '<form ' . BlockSupport::wrapper_attributes( $class ) . ' method="get" action="' . esc_url( $archive_url ) . '">' . $hidden . $search_html . implode( '', $fields ) . $sort_markup . $actions . '</form>';
+	}
+
+	/**
+	 * Enqueue the accessible catalog autocomplete enhancement.
+	 *
+	 * @return void
+	 */
+	private function enqueue_catalog_suggest_assets(): void {
+		if ( is_admin() || ! function_exists( 'wp_enqueue_script' ) ) {
+			return;
+		}
+
+		wp_enqueue_script( 'music-wave-catalog-suggest', MUSIC_WAVE_CORE_URL . 'assets/catalog-suggest.js', array(), MUSIC_WAVE_CORE_VERSION, true );
+		wp_localize_script(
+			'music-wave-catalog-suggest',
+			'musicWaveCatalogSuggest',
+			array(
+				'endpoint'     => esc_url_raw( rest_url( 'music-wave/v1/catalog/suggest' ) ),
+				'minLength'    => \ManaCore\MusicWave\Core\Discovery\CatalogSearch::MIN_TERM_LENGTH,
+				'noResults'    => __( 'No catalog matches found.', 'music-wave-core' ),
+				/* translators: %d: number of autocomplete suggestions. */
+				'resultsCount' => __( '%d catalog suggestions available.', 'music-wave-core' ),
+				'typeLabels'   => array(
+					'release'      => __( 'Release', 'music-wave-core' ),
+					'artist'       => __( 'Artist', 'music-wave-core' ),
+					'genre'        => __( 'Genre', 'music-wave-core' ),
+					'mood'         => __( 'Mood', 'music-wave-core' ),
+					'release_type' => __( 'Release type', 'music-wave-core' ),
+				),
+			)
+		);
 	}
 
 	/**
