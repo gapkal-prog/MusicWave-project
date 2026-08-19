@@ -49,6 +49,10 @@ inventory of public extension points, their stability level, and the deprecation
 | `music_wave_presave_fulfilled` | action | `$release_id, $user_id` when a pre-saved release becomes available; the notification integration point. |
 | `music_wave_listening_retention_days` | filter | Listening-history retention window in days (default 180). |
 | `music_wave_recommendations` | filter | Curate recommendation items; each item must keep a machine `reason` and a translated `explanation`. |
+| `music_wave_catalog_search_adapter` | filter | Return a `CatalogSearchAdapter` for external search. It proposes candidate release IDs only; Core still enforces release visibility. |
+| `music_wave_catalog_suggestions` | filter | Curate autocomplete suggestions; entries must stay public (published releases and public terms). |
+| `music_wave_catalog_discovery_ttl` | filter | Cache lifetime for autocomplete/facet payloads (default 300s). |
+| `music_wave_discovery_rate_limit` / `music_wave_discovery_rate_window` | filter | Public discovery rate limit per actor and window (default 60/60s). |
 | `music_wave_dashboard_panels` | filter | Add/remove account dashboard panels (key => icon/label/description/content). |
 | `music_wave_release_json_ld` | filter | Adjust public JSON-LD; must not add private assets, entitlements, or user data. |
 | `music_wave_json_ld_enabled` | filter | Toggle Core JSON-LD output. |

@@ -1,6 +1,7 @@
 <?php
 /**
- * Public discovery REST surface: explainable recommendations.
+ * Public discovery REST surface: explainable recommendations, catalog
+ * autocomplete, and facet counts.
  *
  * @package ManaCore\MusicWave\Core
  */
@@ -9,6 +10,7 @@ declare(strict_types=1);
 
 namespace ManaCore\MusicWave\Core\Discovery;
 
+use WP_Error;
 use WP_REST_Request;
 use WP_REST_Response;
 
@@ -16,8 +18,16 @@ final class DiscoveryRoutes {
 	/** @var Recommendations */
 	private $recommendations;
 
-	public function __construct( Recommendations $recommendations ) {
+	/** @var CatalogSearch */
+	private $search;
+
+	/** @var DiscoveryRateLimiter */
+	private $rate_limiter;
+
+	public function __construct( Recommendations $recommendations, ?CatalogSearch $search = null, ?DiscoveryRateLimiter $rate_limiter = null ) {
 		$this->recommendations = $recommendations;
+		$this->search          = null !== $search ? $search : new CatalogSearch();
+		$this->rate_limiter    = null !== $rate_limiter ? $rate_limiter : new DiscoveryRateLimiter();
 	}
 
 	public function register(): void {
@@ -35,6 +45,94 @@ final class DiscoveryRoutes {
 				'permission_callback' => '__return_true',
 			)
 		);
+		register_rest_route(
+			'music-wave/v1',
+			'/catalog/suggest',
+			array(
+				'methods'             => 'GET',
+				'callback'            => array( $this, 'suggest' ),
+				// Public catalog data only; rate limited per actor.
+				'permission_callback' => '__return_true',
+			)
+		);
+		register_rest_route(
+			'music-wave/v1',
+			'/catalog/facets',
+			array(
+				'methods'             => 'GET',
+				'callback'            => array( $this, 'facets' ),
+				'permission_callback' => '__return_true',
+			)
+		);
+	}
+
+	/**
+	 * Bounded catalog autocomplete.
+	 *
+	 * @return WP_REST_Response|WP_Error
+	 */
+	public function suggest( WP_REST_Request $request ) {
+		if ( ! $this->rate_limiter->allow( 'suggest' ) ) {
+			return $this->throttled();
+		}
+
+		$term  = (string) $request->get_param( 'term' );
+		$limit = absint( $request->get_param( 'per_page' ) );
+		$clean = $this->search->sanitize_term( $term );
+		if ( '' === $clean ) {
+			return new WP_Error(
+				'mw_search_term_too_short',
+				sprintf(
+					/* translators: %d: minimum number of characters. */
+					__( 'Enter at least %d characters to search the catalog.', 'music-wave-core' ),
+					CatalogSearch::MIN_TERM_LENGTH
+				),
+				array( 'status' => 400 )
+			);
+		}
+
+		$response = new WP_REST_Response(
+			array(
+				'term'  => $clean,
+				'items' => $this->search->suggest( $clean, $limit > 0 ? $limit : 8 ),
+			),
+			200
+		);
+		// Public catalog data: safe to cache for shared caches as well.
+		$response->header( 'Cache-Control', 'public, max-age=300' );
+
+		return $response;
+	}
+
+	/**
+	 * Facet counts for the active catalog filters.
+	 *
+	 * @return WP_REST_Response|WP_Error
+	 */
+	public function facets( WP_REST_Request $request ) {
+		if ( ! $this->rate_limiter->allow( 'facets' ) ) {
+			return $this->throttled();
+		}
+
+		$filters = array();
+		foreach ( $this->search->taxonomies() as $taxonomy ) {
+			$value = $request->get_param( $taxonomy );
+			if ( null !== $value ) {
+				$filters[ $taxonomy ] = $value;
+			}
+		}
+
+		$per_taxonomy = absint( $request->get_param( 'per_taxonomy' ) );
+		$per_taxonomy = $per_taxonomy > 0 ? $per_taxonomy : CatalogSearch::MAX_FACET_TERMS;
+
+		$response = new WP_REST_Response( $this->search->facets( $filters, $per_taxonomy ), 200 );
+		$response->header( 'Cache-Control', 'public, max-age=300' );
+
+		return $response;
+	}
+
+	private function throttled(): WP_Error {
+		return new WP_Error( 'mw_discovery_throttled', __( 'Too many catalog searches. Try again in a moment.', 'music-wave-core' ), array( 'status' => 429 ) );
 	}
 
 	/** @return WP_REST_Response */

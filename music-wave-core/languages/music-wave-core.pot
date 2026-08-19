@@ -984,6 +984,11 @@ msgstr ""
 msgid "Enter a track title or artist name to search."
 msgstr ""
 
+#: src/Discovery/DiscoveryRoutes.php:87
+#, php-format
+msgid "Enter at least %d characters to search the catalog."
+msgstr ""
+
 #: src/Admin/DiagnosticsPage.php:70
 msgid "Environment checks"
 msgstr ""
@@ -3180,6 +3185,10 @@ msgstr ""
 
 #: src/Catalog/ReleaseArchiveQuery.php:141
 msgid "Title: Z to A"
+msgstr ""
+
+#: src/Discovery/DiscoveryRoutes.php:135
+msgid "Too many catalog searches. Try again in a moment."
 msgstr ""
 
 #: src/Downloads/DownloadRoutes.php:92

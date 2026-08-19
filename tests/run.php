@@ -723,6 +723,22 @@ final class TestDownloadProvider implements ManaCore\MusicWave\Core\Downloads\Do
 	}
 }
 
+final class TestCatalogSearchAdapter implements ManaCore\MusicWave\Core\Discovery\CatalogSearchAdapter {
+	/** @var array<int, int>|null */
+	public $proposed = null;
+
+	/** @var array<int, string> */
+	public $terms = array();
+
+	/** @return array<int, int>|null */
+	public function search( string $term, int $limit ): ?array {
+		unset( $limit );
+		$this->terms[] = $term;
+
+		return $this->proposed;
+	}
+}
+
 final class TestPlaylistStore implements ManaCore\MusicWave\Core\Playlists\PlaylistStore {
 	/** @var array<int, array<string, mixed>> */
 	public $rows = array();
@@ -1697,6 +1713,68 @@ mw_assert_same( true, $wishlist_library->has( 9, 'release', 3 ), 'A fulfilled pr
 mw_assert_same( true, in_array( 'music_wave_presave_fulfilled', $GLOBALS['mw_test_actions'], true ), 'Fulfillment must fire the notification action for integrations.' );
 mw_assert_same( false, $presave_scheduler->fulfill_for_user( 3, 9 ), 'Pre-save fulfillment must be idempotent.' );
 mw_assert_same( array(), $wishlist_library->users_with( 'presave', 3 ), 'Pre-save lookups must degrade to an empty list without the usermeta index.' );
+
+// --- Catalog autocomplete, facets, and the search adapter boundary (PROJECT_PLAN.md Stage 5 deliverable 6) ---
+
+$catalog_search = new ManaCore\MusicWave\Core\Discovery\CatalogSearch();
+mw_assert_same( '', $catalog_search->sanitize_term( ' a ' ), 'Search terms shorter than the minimum must be refused.' );
+mw_assert_same( 'Release 3', $catalog_search->sanitize_term( "  Release\n  3  " ), 'Search terms must be sanitized and whitespace-collapsed.' );
+mw_assert_same( array(), $catalog_search->suggest( 'x' ), 'Autocomplete must not query the catalog for a too-short term.' );
+
+$suggestions = $catalog_search->suggest( 'Release 3', 8 );
+$suggested   = array();
+foreach ( $suggestions as $suggestion ) {
+	if ( 'release' === (string) $suggestion['type'] ) {
+		$suggested[] = (int) $suggestion['id'];
+	}
+}
+mw_assert_same( array( 3 ), $suggested, 'Autocomplete must return releases whose public title matches the term.' );
+mw_assert_same( 'https://example.test/?p=3', (string) $suggestions[0]['url'], 'Suggestions must carry a public permalink.' );
+
+$GLOBALS['mw_test_types'][12]    = 'mw_release';
+$GLOBALS['mw_test_statuses'][12] = 'draft';
+$search_adapter                  = new TestCatalogSearchAdapter();
+$search_adapter->proposed        = array( 12, 4, 4, 0 );
+$adapter_search                  = new ManaCore\MusicWave\Core\Discovery\CatalogSearch( null, $search_adapter );
+$GLOBALS['mw_test_transients']   = array();
+$adapter_suggestions             = $adapter_search->suggest( 'Release', 8 );
+$adapter_ids                     = array();
+foreach ( $adapter_suggestions as $suggestion ) {
+	if ( 'release' === (string) $suggestion['type'] ) {
+		$adapter_ids[] = (int) $suggestion['id'];
+	}
+}
+mw_assert_same( array( 4 ), $adapter_ids, 'An external search adapter must never bypass the release visibility policy.' );
+mw_assert_same( array( 'Release' ), $search_adapter->terms, 'The adapter must receive the sanitized term exactly once per uncached query.' );
+$adapter_search->suggest( 'Release', 8 );
+mw_assert_same( 1, count( $search_adapter->terms ), 'Repeated autocomplete queries must be served from cache.' );
+
+$search_adapter->proposed      = null;
+$GLOBALS['mw_test_transients'] = array();
+$fallback_suggestions          = $adapter_search->suggest( 'Release 4', 8 );
+mw_assert_same( true, count( $fallback_suggestions ) > 0, 'A null adapter result must fall back to native catalog search.' );
+
+$GLOBALS['mw_test_transients'] = array();
+$facets                        = $catalog_search->facets( array( 'mw_genre' => 'rock,rock, ', 'unknown_tax' => 'x' ) );
+mw_assert_same( array( 'mw_genre' => array( 'rock' ) ), $facets['filters'], 'Facet filters must be deduplicated and restricted to known taxonomies.' );
+mw_assert_same( false, $facets['approximate'], 'Small result sets must report exact facet counts.' );
+mw_assert_same( true, isset( $facets['facets']['mw_release_type'] ), 'Facets must cover every catalog taxonomy.' );
+$release_type_counts = array();
+foreach ( $facets['facets']['mw_release_type'] as $facet_term ) {
+	$release_type_counts[ (string) $facet_term['slug'] ] = (int) $facet_term['count'];
+}
+mw_assert_same( true, isset( $release_type_counts['album'] ) && $release_type_counts['album'] >= 1, 'Facet counts must aggregate release-type terms of the matched releases.' );
+mw_assert_same( false, isset( $release_type_counts['podcast-episode'] ) && $release_type_counts['podcast-episode'] > 1, 'Facet counts must not double-count a release.' );
+
+$discovery_limiter = new ManaCore\MusicWave\Core\Discovery\DiscoveryRateLimiter( 2, 60 );
+mw_assert_same( true, $discovery_limiter->allow( 'suggest' ), 'The first public discovery request must be allowed.' );
+mw_assert_same( true, $discovery_limiter->allow( 'suggest' ), 'Requests below the limit must be allowed.' );
+mw_assert_same( false, $discovery_limiter->allow( 'suggest' ), 'Public discovery requests must be rate limited per actor and window.' );
+mw_assert_same( true, $discovery_limiter->allow( 'facets' ), 'Rate-limit buckets must be independent per route.' );
+
+$discovery_routes = new ManaCore\MusicWave\Core\Discovery\DiscoveryRoutes( $recommendations, $catalog_search, $discovery_limiter );
+$short_term_error = $discovery_routes->suggest( new WP_REST_Request( array( 'term' => 'a' ) ) );
+mw_assert_same( true, is_wp_error( $short_term_error ), 'The autocomplete route must reject a too-short term with an actionable error.' );
 
 $mapper = new ManaCore\MusicWave\Core\Commerce\ProductMapper();
 $mapper->sync_reverse_index( 1, array(), array( 10, 11 ) );

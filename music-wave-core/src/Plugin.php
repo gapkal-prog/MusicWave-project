@@ -180,7 +180,11 @@ final class Plugin {
 			new \ManaCore\MusicWave\Core\Modules\Listening(
 				$listening_repository,
 				new \ManaCore\MusicWave\Core\Listening\ListeningRoutes( $listening_repository ),
-				new \ManaCore\MusicWave\Core\Discovery\DiscoveryRoutes( new \ManaCore\MusicWave\Core\Discovery\Recommendations( $listening_repository, $visibility ) )
+				new \ManaCore\MusicWave\Core\Discovery\DiscoveryRoutes(
+					new \ManaCore\MusicWave\Core\Discovery\Recommendations( $listening_repository, $visibility ),
+					new \ManaCore\MusicWave\Core\Discovery\CatalogSearch( $visibility ),
+					new \ManaCore\MusicWave\Core\Discovery\DiscoveryRateLimiter()
+				)
 			)
 		);
 		$registry->add( new Seo( new ReleaseJsonLd( $releases, $visibility ), new ReleaseMetadata( $releases ) ) );
