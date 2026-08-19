@@ -351,6 +351,29 @@ function set_transient( string $key, $value, int $expiration = 0 ): bool {
 	return true;
 }
 
+function get_user_by( string $field, string $value ) {
+	foreach ( $GLOBALS['mw_test_users'] as $user_id => $user ) {
+		if ( 'email' === $field && isset( $user->user_email ) && $user->user_email === $value ) {
+			$found     = clone $user;
+			$found->ID = (int) $user_id;
+			return $found;
+		}
+	}
+	return false;
+}
+
+/** @return array<int, int> */
+function get_posts( array $arguments = array() ) {
+	$type = isset( $arguments['post_type'] ) ? (string) $arguments['post_type'] : 'post';
+	$ids  = array();
+	foreach ( $GLOBALS['mw_test_types'] as $post_id => $post_type ) {
+		if ( $post_type === $type ) {
+			$ids[] = (int) $post_id;
+		}
+	}
+	return $ids;
+}
+
 function get_term_link( $term ) {
 	return $term instanceof WP_Term ? 'https://example.test/artist/' . $term->term_id : new WP_Error( 'invalid_term', 'Invalid term.' );
 }
@@ -484,6 +507,12 @@ function add_option( string $key, $value, string $deprecated = '', bool $autoloa
 	if ( array_key_exists( $key, $GLOBALS['mw_test_options'] ) ) {
 		return false;
 	}
+	$GLOBALS['mw_test_options'][ $key ] = $value;
+	return true;
+}
+
+function update_option( string $key, $value, $autoload = null ): bool {
+	unset( $autoload );
 	$GLOBALS['mw_test_options'][ $key ] = $value;
 	return true;
 }
@@ -1348,6 +1377,48 @@ mw_assert_same( true, $ticket_resolver->deliver( 1, 7, (string) $issued_ticket, 
 mw_assert_same( array( 'vip:' . str_repeat( 'b', 32 ) ), $ticket_provider->delivered, 'Delivery must resolve the opaque ticket to the assigned asset.' );
 mw_assert_same( false, $ticket_resolver->deliver( 1, 7, (string) $issued_ticket, 'ticket-binding' ), 'Replaying a consumed opaque ticket must fail closed.' );
 mw_assert_same( false, $ticket_resolver->deliver( 1, 7, 'mwt_' . str_repeat( '1', 40 ), 'ticket-binding' ), 'Guessed opaque tickets must fail closed.' );
+
+// --- Application boundaries and data consistency (PROJECT_PLAN.md Stage 3) ---
+
+// Locked, resumable migrations.
+$lock_runner = new ManaCore\MusicWave\Core\Migrations\MigrationRunner( array( new TestMigration( '9.1.0' ), new TestMigration( '9.2.0' ) ) );
+$GLOBALS['mw_test_options'][ ManaCore\MusicWave\Core\Migrations\MigrationRunner::OPTION ] = '9.0.0';
+$GLOBALS['mw_test_options'][ ManaCore\MusicWave\Core\Migrations\MigrationRunner::LOCK_OPTION ] = time();
+mw_assert_same( 0, $lock_runner->run_pending(), 'A held migration lock must prevent concurrent migration runs.' );
+unset( $GLOBALS['mw_test_options'][ ManaCore\MusicWave\Core\Migrations\MigrationRunner::LOCK_OPTION ] );
+mw_assert_same( 2, $lock_runner->run_pending(), 'Pending migrations must run in order once the lock is free.' );
+mw_assert_same( '9.2.0', $GLOBALS['mw_test_options'][ ManaCore\MusicWave\Core\Migrations\MigrationRunner::OPTION ], 'Each migration step must persist its version for resumability.' );
+mw_assert_same( false, array_key_exists( ManaCore\MusicWave\Core\Migrations\MigrationRunner::LOCK_OPTION, $GLOBALS['mw_test_options'] ), 'The migration lock must be released after a run.' );
+$GLOBALS['mw_test_options'][ ManaCore\MusicWave\Core\Migrations\MigrationRunner::LOCK_OPTION ] = time() - 9999;
+mw_assert_same( 0, $lock_runner->run_pending(), 'A stale lock must be reclaimed and the run must proceed (no pending steps remain).' );
+
+// Derived-index reconciliation from canonical metadata.
+$GLOBALS['mw_test_meta'][2]['mw_product_ids'] = array( 10 );
+$GLOBALS['mw_test_meta'][10][ ManaCore\MusicWave\Core\Commerce\ProductMapper::REVERSE_META_KEY ] = array( 999 );
+$GLOBALS['mw_test_meta'][3]['mw_collection_items'] = array(
+	array(
+		'release_id' => 2,
+		'position'   => 1,
+		'role'       => 'track',
+	),
+);
+$reconcile_result = ( new ManaCore\MusicWave\Core\Support\IndexReconciler() )->reconcile();
+mw_assert_same( array( 2 ), $GLOBALS['mw_test_meta'][10][ ManaCore\MusicWave\Core\Commerce\ProductMapper::REVERSE_META_KEY ], 'Reconciliation must rebuild product reverse indexes from canonical release metadata.' );
+mw_assert_same( array( 3 ), $GLOBALS['mw_test_meta'][2]['_mw_collection_ids'], 'Reconciliation must rebuild collection reverse indexes from canonical relation metadata.' );
+mw_assert_same( true, $reconcile_result['releases'] >= 2 && 1 === $reconcile_result['product_links'], 'Reconciliation must report auditable counts.' );
+unset( $GLOBALS['mw_test_meta'][2]['mw_product_ids'], $GLOBALS['mw_test_meta'][10][ ManaCore\MusicWave\Core\Commerce\ProductMapper::REVERSE_META_KEY ], $GLOBALS['mw_test_meta'][3]['mw_collection_items'], $GLOBALS['mw_test_meta'][2]['_mw_collection_ids'] );
+
+// Privacy exporter and eraser for the personal library.
+$privacy_library = new ManaCore\MusicWave\Core\Library\LibraryRepository();
+$privacy_library->add( 7, 'release', 2 );
+$personal_data = new ManaCore\MusicWave\Core\Privacy\PersonalData( $privacy_library );
+$export_result = $personal_data->export( 'buyer@example.test' );
+mw_assert_same( true, $export_result['done'] && count( $export_result['data'] ) >= 1, 'The privacy exporter must return stored library items for the account email.' );
+mw_assert_same( 'music-wave-library', $export_result['data'][0]['group_id'], 'Exported items must use the MusicWave library group.' );
+mw_assert_same( array( 'data' => array(), 'done' => true ), $personal_data->export( 'unknown@example.test' ), 'Unknown accounts must export an empty completed dataset.' );
+$erase_result = $personal_data->erase( 'buyer@example.test' );
+mw_assert_same( true, $erase_result['items_removed'] && $erase_result['done'], 'The privacy eraser must delete the stored library.' );
+mw_assert_same( false, isset( $GLOBALS['mw_test_user_meta'][7]['mw_music_library'] ) && array() !== $GLOBALS['mw_test_user_meta'][7]['mw_music_library'], 'Erased libraries must not persist user metadata.' );
 
 $mapper = new ManaCore\MusicWave\Core\Commerce\ProductMapper();
 $mapper->sync_reverse_index( 1, array(), array( 10, 11 ) );

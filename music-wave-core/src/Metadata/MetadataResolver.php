@@ -151,9 +151,40 @@ final class MetadataResolver {
 			return new \WP_Error( 'invalid_cover', __( 'The cover URL is invalid.', 'music-wave-core' ) );
 		}
 
-		$tmp = download_url( $url );
+		/**
+		 * Filter the download budgets for imported covers.
+		 *
+		 * Bounded import: explicit HTTP timeout, byte cap, and pixel cap so a
+		 * hostile or misconfigured metadata source cannot exhaust the worker
+		 * (PROJECT_PLAN.md Stage 3 deliverable 2).
+		 *
+		 * @param array<string, int> $budgets timeout (s), max_bytes, max_pixels (per side).
+		 */
+		$budgets = apply_filters(
+			'music_wave_cover_import_budgets',
+			array(
+				'timeout'    => 15,
+				'max_bytes'  => 10 * 1024 * 1024,
+				'max_pixels' => 5000,
+			)
+		);
+
+		$tmp = download_url( $url, isset( $budgets['timeout'] ) ? max( 5, (int) $budgets['timeout'] ) : 15 );
 		if ( is_wp_error( $tmp ) ) {
 			return $tmp;
+		}
+
+		$bytes = filesize( $tmp );
+		if ( false === $bytes || $bytes < 1 || ( isset( $budgets['max_bytes'] ) && $bytes > (int) $budgets['max_bytes'] ) ) {
+			@unlink( $tmp ); // phpcs:ignore WordPress.WP.AlternativeFunctions.unlink_unlink, WordPress.PHP.NoSilencedErrors.Discouraged -- best-effort temp cleanup.
+			return new \WP_Error( 'cover_too_large', __( 'The downloaded cover exceeds the configured size budget.', 'music-wave-core' ) );
+		}
+
+		$dimensions = @getimagesize( $tmp ); // phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged -- probing untrusted bytes; failures handled below.
+		$max_pixels = isset( $budgets['max_pixels'] ) ? (int) $budgets['max_pixels'] : 5000;
+		if ( ! is_array( $dimensions ) || ! isset( $dimensions[0], $dimensions[1] ) || $dimensions[0] < 1 || $dimensions[1] < 1 || $dimensions[0] > $max_pixels || $dimensions[1] > $max_pixels ) {
+			@unlink( $tmp ); // phpcs:ignore WordPress.WP.AlternativeFunctions.unlink_unlink, WordPress.PHP.NoSilencedErrors.Discouraged -- best-effort temp cleanup.
+			return new \WP_Error( 'invalid_cover_dimensions', __( 'The downloaded cover is not a decodable image within the configured pixel budget.', 'music-wave-core' ) );
 		}
 
 		$mime       = function_exists( 'wp_get_image_mime' ) ? wp_get_image_mime( $tmp ) : false;

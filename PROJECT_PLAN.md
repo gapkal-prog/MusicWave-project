@@ -829,7 +829,19 @@ Exit gate:
 
 **Priority:** P1  
 **Dependencies:** Shared policies and provider contracts from Stages 1–2  
-**Status:** Not started
+**Status:** In progress — core deliverables implemented; exit gate pending real-Woo fixture tests
+
+**Evidence (2026-08-19; all gates green — tests, phpcs 0 errors, phpstan 0 errors, 146-file syntax):**
+
+- Deliverable 1 (entitlement lifecycle): explicit, documented Woo policy (ADR 0004) — `processing`/`completed` grant, `refunded`/`cancelled`/`failed` revoke, no cached entitlements so refunds revoke immediately; `music_wave_purchase_owns_release` extension point for custom lifecycles.
+- Deliverable 2 (partial — bounded cover import): explicit timeout/byte/pixel budgets (`music_wave_cover_import_budgets`, 15s/10MB/5000px defaults) with fail-closed dimension probing. The full metadata application-service refactor (typed result, preview/overwrite choices) remains.
+- Deliverable 3 (reconciliation): new `IndexReconciler` rebuilds `_mw_release_ids` and `_mw_collection_ids` idempotently from canonical metadata, purges stale rows, reports auditable counts; exposed as `wp musicwave reconcile`. Regression-tested.
+- Deliverable 4 (provider health): shared error taxonomy (`ok|misconfigured|unreachable|rate_limited|failed`) aggregated from `music_wave_provider_health` into a Site Health test, so outages/bad credentials stop hiding as “no results”.
+- Deliverable 5 (migrations + CLI + multisite): `MigrationRunner` now runs under an atomic, stale-safe option lock with per-step persistence (resumable); `wp musicwave migrate|reconcile|replay-cleanup` commands; multisite explicitly decided as unsupported for the baseline (ADR 0004). Lock/resume behavior regression-tested.
+- Deliverable 6 (privacy): WordPress personal-data exporter and eraser registered for the personal library (`mw_music_library`); rate/quota counters are ephemeral transients; audit-event retention documented as the persisting integration's duty. Export/erase regression-tested.
+- Deliverable 7 (contracts): `docs/extension-contracts.md` inventories every public hook with stability levels and a one-minor-cycle deprecation policy.
+
+**Remaining for exit gate:** metadata application service refactor (deliverable 2), and real Woo order-transition tests (pending → processing → refunded) on the wp-env fixture proving ADR 0004.
 
 Deliverables:
 

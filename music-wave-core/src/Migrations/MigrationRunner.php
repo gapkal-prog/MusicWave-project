@@ -14,6 +14,8 @@ use RuntimeException;
 
 final class MigrationRunner {
 	public const OPTION         = 'music_wave_schema_version';
+	public const LOCK_OPTION    = 'music_wave_migration_lock';
+	public const LOCK_TIMEOUT   = 300;
 	public const LATEST_VERSION = '0.9.0';
 
 	/** @var array<int, Migration> */
@@ -53,7 +55,57 @@ final class MigrationRunner {
 			return;
 		}
 
-		$current = (string) get_option( self::OPTION, '0.0.0' );
+		$this->run_pending();
+	}
+
+	/**
+	 * Run pending migrations under a stale-safe lock.
+	 *
+	 * The lock prevents two concurrent admin requests (or a request racing a
+	 * WP-CLI run) from executing the same migration twice; progress persists
+	 * after every step, so an interrupted run resumes from the next version
+	 * (PROJECT_PLAN.md Stage 3 deliverable 5).
+	 *
+	 * @return int Number of migrations executed.
+	 * @throws RuntimeException When the schema version cannot be persisted.
+	 */
+	public function run_pending(): int {
+		if ( ! $this->acquire_lock() ) {
+			return 0;
+		}
+
+		try {
+			return $this->run_locked();
+		} finally {
+			$this->release_lock();
+		}
+	}
+
+	private function acquire_lock(): bool {
+		$existing = get_option( self::LOCK_OPTION, false );
+		if ( false !== $existing && (int) $existing > time() - self::LOCK_TIMEOUT ) {
+			return false;
+		}
+		if ( false !== $existing ) {
+			delete_option( self::LOCK_OPTION );
+		}
+
+		// add_option() is atomic on the option name, so exactly one concurrent
+		// caller wins the lock.
+		return add_option( self::LOCK_OPTION, time(), '', false );
+	}
+
+	private function release_lock(): void {
+		delete_option( self::LOCK_OPTION );
+	}
+
+	/**
+	 * @return int Number of migrations executed.
+	 * @throws RuntimeException When the schema version cannot be persisted.
+	 */
+	private function run_locked(): int {
+		$executed = 0;
+		$current  = (string) get_option( self::OPTION, '0.0.0' );
 		foreach ( $this->pending( $current ) as $migration ) {
 			$migration->up();
 			if ( ! update_option( self::OPTION, $migration->version(), false ) ) {
@@ -63,6 +115,9 @@ final class MigrationRunner {
 				}
 			}
 			$current = $migration->version();
+			++$executed;
 		}
+
+		return $executed;
 	}
 }

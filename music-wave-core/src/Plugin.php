@@ -145,13 +145,15 @@ final class Plugin {
 		$library_repository = new LibraryRepository( $visibility );
 		$library_catalog    = new LibraryCatalog( $library_repository, $visibility );
 
+		$migration_runner = new MigrationRunner( array( new Schema020(), new Schema030(), new Schema040(), new Schema050(), new Schema070(), new Schema080(), new Schema090() ) );
+
 		$registry->add( new Foundation() );
 		$registry->add(
 			new Catalog(
 				new ReleasePostType(),
 				new ReleaseTaxonomies(),
 				new ReleaseMetaRegistry( $schema ),
-				new MigrationRunner( array( new Schema020(), new Schema030(), new Schema040(), new Schema050(), new Schema070(), new Schema080(), new Schema090() ) ),
+				$migration_runner,
 				new CollectionRestPolicy( $releases ),
 				new ArtistTermMeta(),
 				new ReleaseArchiveQuery(),
@@ -175,6 +177,9 @@ final class Plugin {
 		$modules = apply_filters( 'music_wave_core_modules', array() );
 		$registry->add_filtered( $modules );
 		$registry->register_all();
+
+		( new \ManaCore\MusicWave\Core\Cli\Commands( $migration_runner ) )->register();
+		( new \ManaCore\MusicWave\Core\Privacy\PersonalData( $library_repository ) )->register();
 
 		$this->booted = true;
 		do_action( 'music_wave_core_loaded', $this );

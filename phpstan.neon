@@ -8,6 +8,7 @@ parameters:
     bootstrapFiles:
         - vendor/php-stubs/wordpress-stubs/wordpress-stubs.php
         - tools/phpstan-bootstrap.php
+        - tools/stubs/wp-cli.php
     excludePaths:
         analyse:
             - vendor

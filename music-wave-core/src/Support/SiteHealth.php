@@ -46,8 +46,52 @@ final class SiteHealth {
 			'label' => __( 'MusicWave structured data avoids duplicate SEO schema', 'music-wave-core' ),
 			'test'  => array( $this, 'test_structured_data' ),
 		);
+		$tests['direct']['music_wave_provider_health']   = array(
+			'label' => __( 'MusicWave integration providers are healthy', 'music-wave-core' ),
+			'test'  => array( $this, 'test_provider_health' ),
+		);
 
 		return $tests;
+	}
+
+	/**
+	 * Aggregate structured provider health reports.
+	 *
+	 * Providers push reports through `music_wave_provider_health` using the
+	 * shared error taxonomy: `ok`, `misconfigured`, `unreachable`,
+	 * `rate_limited`, or `failed`, plus a safe human summary that must not
+	 * contain secrets (PROJECT_PLAN.md Stage 3 deliverable 4).
+	 *
+	 * @return array<string, string|array<string, string>>
+	 */
+	public function test_provider_health(): array {
+		/**
+		 * Filter structured provider health reports.
+		 *
+		 * @param array<string, array<string, string>> $reports provider-slug => [status, summary].
+		 */
+		$reports  = apply_filters( 'music_wave_provider_health', array() );
+		$reports  = is_array( $reports ) ? $reports : array();
+		$statuses = array( 'ok', 'misconfigured', 'unreachable', 'rate_limited', 'failed' );
+		$broken   = array();
+		foreach ( $reports as $slug => $report ) {
+			$status = isset( $report['status'] ) && in_array( (string) $report['status'], $statuses, true ) ? (string) $report['status'] : 'failed';
+			if ( 'ok' !== $status ) {
+				$broken[] = sanitize_key( (string) $slug ) . ' (' . $status . ')';
+			}
+		}
+
+		$healthy = array() === $broken;
+
+		return $this->result(
+			$healthy ? __( 'MusicWave integration providers are healthy', 'music-wave-core' ) : __( 'A MusicWave integration provider reports a problem', 'music-wave-core' ),
+			$healthy ? 'good' : 'critical',
+			$healthy
+				? __( 'No membership, metadata, or delivery provider reported a failure.', 'music-wave-core' )
+				/* translators: %s: comma-separated list of failing providers. */
+				: sprintf( __( 'Failing providers: %s. Provider outages and bad credentials are reported here instead of being silently treated as “no results”.', 'music-wave-core' ), implode( ', ', $broken ) ),
+			'music_wave_provider_health'
+		);
 	}
 
 	/**
