@@ -14,6 +14,7 @@ use ManaCore\MusicWave\Core\Contracts\Module;
 use ManaCore\MusicWave\Core\Library\LibraryButton;
 use ManaCore\MusicWave\Core\Library\LibraryRepository;
 use ManaCore\MusicWave\Core\Library\LibraryRoutes;
+use ManaCore\MusicWave\Core\Library\PreSaveScheduler;
 
 final class Library implements Module {
 	/** @var LibraryRepository */
@@ -25,16 +26,23 @@ final class Library implements Module {
 	/** @var LibraryBlocks */
 	private $blocks;
 
-	public function __construct( LibraryRepository $repository, LibraryRoutes $routes, LibraryBlocks $blocks ) {
+	/** @var PreSaveScheduler|null */
+	private $presaves;
+
+	public function __construct( LibraryRepository $repository, LibraryRoutes $routes, LibraryBlocks $blocks, ?PreSaveScheduler $presaves = null ) {
 		$this->repository = $repository;
 		$this->routes     = $routes;
 		$this->blocks     = $blocks;
+		$this->presaves   = $presaves;
 	}
 
 	public function register(): void {
 		LibraryButton::bind( $this->repository );
 		$this->repository->register();
 		$this->routes->register();
+		if ( null !== $this->presaves ) {
+			$this->presaves->register();
+		}
 		add_action( 'init', array( $this->blocks, 'register' ), 23 );
 	}
 }

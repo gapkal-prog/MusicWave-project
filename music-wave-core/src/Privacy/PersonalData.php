@@ -2,8 +2,9 @@
 /**
  * WordPress personal-data exporter and eraser for MusicWave user data.
  *
- * MusicWave stores one user-owned dataset: the personal music library
- * (`mw_music_library` user meta). Delivery audit events are emitted as hooks
+ * MusicWave stores three user-owned datasets: the personal music library
+ * (`mw_music_library` user meta, including wishlist and pre-save items),
+ * consented listening activity, and playlists. Delivery audit events are emitted as hooks
  * and only persisted by integrations, which own their retention; rate and
  * quota counters are ephemeral transients (PROJECT_PLAN.md Stage 3
  * deliverable 6).
@@ -17,6 +18,7 @@ namespace ManaCore\MusicWave\Core\Privacy;
 
 use ManaCore\MusicWave\Core\Library\LibraryRepository;
 use ManaCore\MusicWave\Core\Listening\ListeningRepository;
+use ManaCore\MusicWave\Core\Playlists\PlaylistRepository;
 
 final class PersonalData {
 	/** @var LibraryRepository */
@@ -25,9 +27,13 @@ final class PersonalData {
 	/** @var ListeningRepository|null */
 	private $listening;
 
-	public function __construct( LibraryRepository $library, ?ListeningRepository $listening = null ) {
+	/** @var PlaylistRepository|null */
+	private $playlists;
+
+	public function __construct( LibraryRepository $library, ?ListeningRepository $listening = null, ?PlaylistRepository $playlists = null ) {
 		$this->library   = $library;
 		$this->listening = $listening;
+		$this->playlists = $playlists;
 	}
 
 	/**
@@ -138,6 +144,34 @@ final class PersonalData {
 			}
 		}
 
+		if ( null !== $this->playlists ) {
+			foreach ( $this->playlists->export( (int) $user->ID ) as $playlist ) {
+				$items[] = array(
+					'group_id'    => 'music-wave-playlists',
+					'group_label' => __( 'Playlists', 'music-wave-core' ),
+					'item_id'     => 'music-wave-playlist-' . (string) $playlist['id'],
+					'data'        => array(
+						array(
+							'name'  => __( 'Playlist', 'music-wave-core' ),
+							'value' => (string) $playlist['title'],
+						),
+						array(
+							'name'  => __( 'Visibility', 'music-wave-core' ),
+							'value' => (string) $playlist['visibility'],
+						),
+						array(
+							'name'  => __( 'Catalog IDs', 'music-wave-core' ),
+							'value' => implode( ', ', array_map( 'strval', $playlist['release_ids'] ) ),
+						),
+						array(
+							'name'  => __( 'Created', 'music-wave-core' ),
+							'value' => (int) $playlist['created_at'] > 0 ? gmdate( 'Y-m-d H:i:s', (int) $playlist['created_at'] ) : '',
+						),
+					),
+				);
+			}
+		}
+
 		return array(
 			'data' => $items,
 			'done' => true,
@@ -161,6 +195,9 @@ final class PersonalData {
 		if ( false !== $user && isset( $user->ID ) && null !== $this->listening ) {
 			$removed = $this->listening->erase( (int) $user->ID ) || $removed;
 			delete_user_meta( (int) $user->ID, ListeningRepository::CONSENT_META );
+		}
+		if ( false !== $user && isset( $user->ID ) && null !== $this->playlists ) {
+			$removed = $this->playlists->erase( (int) $user->ID ) || $removed;
 		}
 
 		return array(

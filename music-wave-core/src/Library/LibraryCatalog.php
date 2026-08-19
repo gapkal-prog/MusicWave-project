@@ -36,6 +36,16 @@ final class LibraryCatalog {
 	public const FILTER_ARTISTS = 'artists';
 
 	/**
+	 * Return the library filter key grouping wishlist items.
+	 */
+	public const FILTER_WISHLIST = 'wishlist';
+
+	/**
+	 * Return the library filter key grouping pre-saved upcoming releases.
+	 */
+	public const FILTER_PRESAVES = 'presaves';
+
+	/**
 	 * Summarize library items for display, optionally narrowed to one filter.
 	 *
 	 * Filters are "all", "artists", or any release-type term slug.
@@ -73,9 +83,9 @@ final class LibraryCatalog {
 		$has_more  = false;
 
 		foreach ( $this->repository->all( $user_id ) as $item ) {
-			$summary = LibraryRepository::TYPE_RELEASE === $item['type']
-				? $this->release_summary( (int) $item['id'], (int) $item['added'] )
-				: $this->artist_summary( (int) $item['id'], (int) $item['added'] );
+			$summary = LibraryRepository::TYPE_ARTIST === $item['type']
+				? $this->artist_summary( (int) $item['id'], (int) $item['added'] )
+				: $this->release_summary( (int) $item['id'], (int) $item['added'], (string) $item['type'] );
 
 			if ( null === $summary || ! $this->matches_filter( $summary, $filter ) ) {
 				continue;
@@ -113,8 +123,9 @@ final class LibraryCatalog {
 		foreach ( $this->repository->all( $user_id ) as $item ) {
 			++$counts[ self::FILTER_ALL ];
 
-			if ( LibraryRepository::TYPE_ARTIST === $item['type'] ) {
-				$counts[ self::FILTER_ARTISTS ] = isset( $counts[ self::FILTER_ARTISTS ] ) ? $counts[ self::FILTER_ARTISTS ] + 1 : 1;
+			$grouped = $this->group_filter( (string) $item['type'] );
+			if ( '' !== $grouped ) {
+				$counts[ $grouped ] = isset( $counts[ $grouped ] ) ? $counts[ $grouped ] + 1 : 1;
 				continue;
 			}
 
@@ -134,8 +145,10 @@ final class LibraryCatalog {
 	 */
 	public function filter_labels( array $counts ): array {
 		$labels = array(
-			self::FILTER_ALL     => __( 'All', 'music-wave-core' ),
-			self::FILTER_ARTISTS => __( 'Artists', 'music-wave-core' ),
+			self::FILTER_ALL      => __( 'All', 'music-wave-core' ),
+			self::FILTER_ARTISTS  => __( 'Artists', 'music-wave-core' ),
+			self::FILTER_WISHLIST => __( 'Wishlist', 'music-wave-core' ),
+			self::FILTER_PRESAVES => __( 'Coming soon', 'music-wave-core' ),
 		);
 
 		foreach ( array_keys( $counts ) as $key ) {
@@ -157,7 +170,7 @@ final class LibraryCatalog {
 	 *
 	 * @return array<string, mixed>|null
 	 */
-	private function release_summary( int $release_id, int $added ): ?array {
+	private function release_summary( int $release_id, int $added, string $item_type = LibraryRepository::TYPE_RELEASE ): ?array {
 		if ( ReleasePostType::KEY !== get_post_type( $release_id ) || ! $this->visibility->can_read( $release_id ) ) {
 			return null;
 		}
@@ -170,8 +183,16 @@ final class LibraryCatalog {
 		$link    = get_permalink( $release_id );
 		$year    = get_post_meta( $release_id, 'mw_release_year', true );
 
+		$grouped = $this->group_filter( $item_type );
+		if ( LibraryRepository::TYPE_WISHLIST === $item_type ) {
+			$type = __( 'Wishlist', 'music-wave-core' );
+		}
+		if ( LibraryRepository::TYPE_PRESAVE === $item_type ) {
+			$type = __( 'Coming soon', 'music-wave-core' );
+		}
+
 		return array(
-			'type'       => LibraryRepository::TYPE_RELEASE,
+			'type'       => $item_type,
 			'id'         => $release_id,
 			'title'      => '' !== $title ? $title : __( 'Untitled release', 'music-wave-core' ),
 			'url'        => is_string( $link ) ? $link : '',
@@ -187,7 +208,7 @@ final class LibraryCatalog {
 			'type_label' => $type,
 			'year'       => is_scalar( $year ) && (int) $year > 0 ? (string) (int) $year : '',
 			'added'      => $added,
-			'type_slugs' => $this->release_type_slugs( $release_id ),
+			'type_slugs' => '' !== $grouped ? array( $grouped ) : $this->release_type_slugs( $release_id ),
 		);
 	}
 
@@ -228,6 +249,23 @@ final class LibraryCatalog {
 			'added'      => $added,
 			'type_slugs' => array( self::FILTER_ARTISTS ),
 		);
+	}
+
+	/**
+	 * Filter key that groups one library item type, or '' for plain releases.
+	 */
+	private function group_filter( string $item_type ): string {
+		if ( LibraryRepository::TYPE_ARTIST === $item_type ) {
+			return self::FILTER_ARTISTS;
+		}
+		if ( LibraryRepository::TYPE_WISHLIST === $item_type ) {
+			return self::FILTER_WISHLIST;
+		}
+		if ( LibraryRepository::TYPE_PRESAVE === $item_type ) {
+			return self::FILTER_PRESAVES;
+		}
+
+		return '';
 	}
 
 	/**

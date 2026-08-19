@@ -331,15 +331,19 @@ final class LibraryBlocks {
 		$labels = $this->catalog->filter_labels( $counts );
 		$tabs   = array();
 
-		// Keep "all" first and "artists" last for a predictable order.
-		$ordered = array( LibraryCatalog::FILTER_ALL );
+		// Keep "all" first, release types next, then the grouped tabs in a
+		// predictable order: wishlist, coming soon, artists.
+		$trailing = array( LibraryCatalog::FILTER_WISHLIST, LibraryCatalog::FILTER_PRESAVES, LibraryCatalog::FILTER_ARTISTS );
+		$ordered  = array( LibraryCatalog::FILTER_ALL );
 		foreach ( array_keys( $counts ) as $key ) {
-			if ( LibraryCatalog::FILTER_ALL !== $key && LibraryCatalog::FILTER_ARTISTS !== $key ) {
+			if ( LibraryCatalog::FILTER_ALL !== $key && ! in_array( (string) $key, $trailing, true ) ) {
 				$ordered[] = (string) $key;
 			}
 		}
-		if ( isset( $counts[ LibraryCatalog::FILTER_ARTISTS ] ) ) {
-			$ordered[] = LibraryCatalog::FILTER_ARTISTS;
+		foreach ( $trailing as $key ) {
+			if ( isset( $counts[ $key ] ) ) {
+				$ordered[] = $key;
+			}
 		}
 
 		foreach ( $ordered as $key ) {

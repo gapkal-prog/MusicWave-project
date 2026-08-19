@@ -63,6 +63,18 @@ Schema version: `0.8.0`
 |---|---|---:|---|
 | `_mw_release_ids` | array | No | Reverse index maintained by the product mapper |
 
+## Operational tables
+
+High-cardinality per-user data lives in indexed tables rather than serialized
+meta. See `docs/user-data-and-playlists.md` for the rules and REST surface.
+
+| Table | Schema | Purpose | Key indexes |
+|---|---|---|---|
+| `{prefix}mw_download_replays` | 0.9.0 | One-time delivery token replay records | unique `token_hash`, `expires_at` |
+| `{prefix}mw_user_activity` | 0.10.0 | Consented listening progress and plays | unique `user+release+event`, `user+updated_at` |
+| `{prefix}mw_playlists` | 0.11.0 | User playlists (title, visibility, share token) | unique `share_token`, `user+updated_at` |
+| `{prefix}mw_playlist_items` | 0.11.0 | Ordered playlist entries | unique `playlist+release`, `playlist+position`, `release_id` |
+
 ## Invariants
 
 - Product IDs must refer to existing `product` posts.
@@ -77,6 +89,9 @@ Schema version: `0.8.0`
 - A quality may store private editor metadata: `file_name`, `format`, `bitrate` (kbps), `duration` (seconds), and `file_size` (bytes). These values are never emitted in public HTML or REST.
 - Albums and podcast shows contain tracks or episodes by relation. Add quality variants to each child release once; collections reuse those children without duplicating files.
 - Deleting a product removes it from every release mapping without deleting catalog content.
+- Deleting a release removes it from every personal library, wishlist, pre-save, and playlist without leaving orphaned rows or gaps in playlist positions.
+- Playlist share tokens are capabilities: minted per share, rotated on re-share, never returned to a non-owner, and never resolvable for a private playlist.
+- Non-owner playlist views contain published releases only.
 
 ## Relationship invariants
 

@@ -42,6 +42,10 @@ use ManaCore\MusicWave\Core\Infrastructure\ReleaseRestVisibilityPolicy;
 use ManaCore\MusicWave\Core\Library\LibraryCatalog;
 use ManaCore\MusicWave\Core\Library\LibraryRepository;
 use ManaCore\MusicWave\Core\Library\LibraryRoutes;
+use ManaCore\MusicWave\Core\Library\PreSaveScheduler;
+use ManaCore\MusicWave\Core\Playlists\DatabasePlaylistStore;
+use ManaCore\MusicWave\Core\Playlists\PlaylistRepository;
+use ManaCore\MusicWave\Core\Playlists\PlaylistRoutes;
 use ManaCore\MusicWave\Core\Downloads\DownloadResolver;
 use ManaCore\MusicWave\Core\Downloads\DownloadRoutes;
 use ManaCore\MusicWave\Core\Downloads\DownloadAssetRoutes;
@@ -58,6 +62,7 @@ use ManaCore\MusicWave\Core\Migrations\Schema070;
 use ManaCore\MusicWave\Core\Migrations\Schema080;
 use ManaCore\MusicWave\Core\Migrations\Schema090;
 use ManaCore\MusicWave\Core\Migrations\Schema0100;
+use ManaCore\MusicWave\Core\Migrations\Schema0110;
 use ManaCore\MusicWave\Core\Metadata\DiscogsProvider;
 use ManaCore\MusicWave\Core\Metadata\MetadataLookupRoutes;
 use ManaCore\MusicWave\Core\Metadata\MetadataResolver;
@@ -146,7 +151,9 @@ final class Plugin {
 		$library_repository = new LibraryRepository( $visibility );
 		$library_catalog    = new LibraryCatalog( $library_repository, $visibility );
 
-		$migration_runner = new MigrationRunner( array( new Schema020(), new Schema030(), new Schema040(), new Schema050(), new Schema070(), new Schema080(), new Schema090(), new Schema0100() ) );
+		$playlists = new PlaylistRepository( new DatabasePlaylistStore(), $visibility );
+
+		$migration_runner = new MigrationRunner( array( new Schema020(), new Schema030(), new Schema040(), new Schema050(), new Schema070(), new Schema080(), new Schema090(), new Schema0100(), new Schema0110() ) );
 
 		$registry->add( new Foundation() );
 		$registry->add(
@@ -163,7 +170,8 @@ final class Plugin {
 		);
 		$registry->add( new Admin( new ReleaseMetaBox( $schema, $releases, $mapper ), new EditorAssets(), new ReleaseReadiness( $releases ), new CollectionCandidateRoutes(), new SettingsPage( new BulkAccessManager( $releases ) ) ) );
 		$registry->add( new Commerce( $mapper, new ProductReleasePanel( $mapper ), $purchase_checker, new AccountLibrary( $policy, $releases, $library_repository ) ) );
-		$registry->add( new Library( $library_repository, new LibraryRoutes( $library_repository, $library_catalog ), new LibraryBlocks( $library_repository, $library_catalog ) ) );
+		$registry->add( new Library( $library_repository, new LibraryRoutes( $library_repository, $library_catalog ), new LibraryBlocks( $library_repository, $library_catalog ), new PreSaveScheduler( $library_repository ) ) );
+		$registry->add( new \ManaCore\MusicWave\Core\Modules\Playlists( $playlists, new PlaylistRoutes( $playlists ) ) );
 		$registry->add( new Rendering( new ReleaseBlocks( $policy, $releases ), new ArtistProfileBlock(), new PreviewPlayer( $releases, $policy ), new PlaybackQueueRoutes( $policy, $releases ), new ReleaseRestVisibilityPolicy( $policy ) ) );
 		$registry->add( new Downloads( new DownloadRoutes( $downloads ), new DownloadAssetRoutes( $releases ), $replay_store ) );
 		$registry->add( new Diagnostics( new DiagnosticsPage( new DemoContentImporter( $releases ) ), new SiteHealth() ) );
@@ -188,7 +196,7 @@ final class Plugin {
 		$registry->register_all();
 
 		( new \ManaCore\MusicWave\Core\Cli\Commands( $migration_runner ) )->register();
-		( new \ManaCore\MusicWave\Core\Privacy\PersonalData( $library_repository, $listening_repository ) )->register();
+		( new \ManaCore\MusicWave\Core\Privacy\PersonalData( $library_repository, $listening_repository, $playlists ) )->register();
 
 		$this->booted = true;
 		do_action( 'music_wave_core_loaded', $this );

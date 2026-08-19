@@ -16,7 +16,7 @@ final class MigrationRunner {
 	public const OPTION         = 'music_wave_schema_version';
 	public const LOCK_OPTION    = 'music_wave_migration_lock';
 	public const LOCK_TIMEOUT   = 300;
-	public const LATEST_VERSION = '0.10.0';
+	public const LATEST_VERSION = '0.11.0';
 
 	/** @var array<int, Migration> */
 	private $migrations;

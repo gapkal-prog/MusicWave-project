@@ -16,8 +16,12 @@ final class LibraryRepository {
 	public const META_KEY  = 'mw_music_library';
 	public const MAX_ITEMS = 500;
 
-	public const TYPE_RELEASE = 'release';
-	public const TYPE_ARTIST  = 'artist';
+	public const TYPE_RELEASE  = 'release';
+	public const TYPE_ARTIST   = 'artist';
+	public const TYPE_WISHLIST = 'wishlist';
+	public const TYPE_PRESAVE  = 'presave';
+
+	public const RELEASE_DATE_META = 'mw_release_date';
 
 	/** @var array<int, array<int, array<string, mixed>>> */
 	private $cache = array();
@@ -45,7 +49,77 @@ final class LibraryRepository {
 	 * @return array<int, string>
 	 */
 	public function types(): array {
-		return array( self::TYPE_RELEASE, self::TYPE_ARTIST );
+		return array( self::TYPE_RELEASE, self::TYPE_ARTIST, self::TYPE_WISHLIST, self::TYPE_PRESAVE );
+	}
+
+	/**
+	 * Item types that reference a release post.
+	 *
+	 * @return array<int, string>
+	 */
+	public function release_types(): array {
+		return array( self::TYPE_RELEASE, self::TYPE_WISHLIST, self::TYPE_PRESAVE );
+	}
+
+	/**
+	 * Users who stored one specific item, used for pre-save fulfillment.
+	 *
+	 * Bounded by the number of accounts that own a library; callers pass a
+	 * concrete target, so no unbounded catalog scan is required.
+	 *
+	 * @return array<int, int>
+	 */
+	public function users_with( string $type, int $item_id ): array {
+		global $wpdb;
+
+		if ( $item_id < 1 || ! in_array( $type, $this->types(), true ) ) {
+			return array();
+		}
+		if ( ! isset( $wpdb ) || ! is_object( $wpdb ) || ! property_exists( $wpdb, 'usermeta' ) || ! method_exists( $wpdb, 'get_col' ) ) {
+			return array();
+		}
+
+		$candidates = $wpdb->get_col(
+			$wpdb->prepare( "SELECT user_id FROM {$wpdb->usermeta} WHERE meta_key = %s", self::META_KEY ) // phpcs:ignore WordPress.DB.DirectDatabaseQuery
+		);
+
+		$matched = array();
+		foreach ( is_array( $candidates ) ? $candidates : array() as $candidate ) {
+			$user_id = absint( $candidate );
+			if ( $user_id > 0 && $this->has( $user_id, $type, $item_id ) ) {
+				$matched[] = $user_id;
+			}
+		}
+
+		return $matched;
+	}
+
+	/**
+	 * Release date stored for one release as a UTC timestamp, or 0.
+	 */
+	public function release_timestamp( int $release_id ): int {
+		$stored = get_post_meta( $release_id, self::RELEASE_DATE_META, true );
+		if ( ! is_scalar( $stored ) || '' === (string) $stored ) {
+			return 0;
+		}
+
+		$timestamp = strtotime( (string) $stored . ' 00:00:00 UTC' );
+
+		return is_int( $timestamp ) && $timestamp > 0 ? $timestamp : 0;
+	}
+
+	/**
+	 * Whether a release is announced but not yet available.
+	 *
+	 * Pre-saves only apply to upcoming releases: a readable release page with a
+	 * release date still in the future. Unpublished records stay out of reach,
+	 * so pre-save cannot be used to probe unreleased catalog data
+	 * (PROJECT_PLAN.md Stage 5 deliverable 5).
+	 */
+	public function is_upcoming( int $release_id ): bool {
+		$timestamp = $this->release_timestamp( $release_id );
+
+		return $timestamp > time();
 	}
 
 	/**
@@ -185,7 +259,9 @@ final class LibraryRepository {
 	 * @return void
 	 */
 	public function handle_deleted_post( int $post_id ): void {
-		$this->purge_target( self::TYPE_RELEASE, $post_id );
+		foreach ( $this->release_types() as $type ) {
+			$this->purge_target( $type, $post_id );
+		}
 	}
 
 	/**
@@ -208,7 +284,10 @@ final class LibraryRepository {
 	 * Verify that the referenced catalog object exists.
 	 */
 	private function target_exists( string $type, int $item_id ): bool {
-		if ( self::TYPE_RELEASE === $type ) {
+		if ( self::TYPE_PRESAVE === $type ) {
+			return $this->visibility->can_read( $item_id ) && $this->is_upcoming( $item_id );
+		}
+		if ( in_array( $type, array( self::TYPE_RELEASE, self::TYPE_WISHLIST ), true ) ) {
 			return $this->visibility->can_read( $item_id );
 		}
 

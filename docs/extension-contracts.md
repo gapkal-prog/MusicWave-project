@@ -45,6 +45,10 @@ inventory of public extension points, their stability level, and the deprecation
 | Hook | Type | Contract |
 |---|---|---|
 | `music_wave_library_items` | filter | Adjust normalized personal-library items for display paths. |
+| `music_wave_library_item_added` / `music_wave_library_item_removed` | action | `$type, $item_id, $user_id` after a library mutation (`release`, `artist`, `wishlist`, `presave`). |
+| `music_wave_presave_fulfilled` | action | `$release_id, $user_id` when a pre-saved release becomes available; the notification integration point. |
+| `music_wave_listening_retention_days` | filter | Listening-history retention window in days (default 180). |
+| `music_wave_recommendations` | filter | Curate recommendation items; each item must keep a machine `reason` and a translated `explanation`. |
 | `music_wave_dashboard_panels` | filter | Add/remove account dashboard panels (key => icon/label/description/content). |
 | `music_wave_release_json_ld` | filter | Adjust public JSON-LD; must not add private assets, entitlements, or user data. |
 | `music_wave_json_ld_enabled` | filter | Toggle Core JSON-LD output. |

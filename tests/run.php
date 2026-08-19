@@ -723,6 +723,127 @@ final class TestDownloadProvider implements ManaCore\MusicWave\Core\Downloads\Do
 	}
 }
 
+final class TestPlaylistStore implements ManaCore\MusicWave\Core\Playlists\PlaylistStore {
+	/** @var array<int, array<string, mixed>> */
+	public $rows = array();
+
+	/** @var array<int, array<int, array{release_id: int, position: int, added_at: int}>> */
+	public $stored_items = array();
+
+	/** @var int */
+	private $next_id = 1;
+
+	public function available(): bool {
+		return true;
+	}
+
+	/** @return array<string, mixed>|null */
+	public function find( int $playlist_id ): ?array {
+		return isset( $this->rows[ $playlist_id ] ) ? $this->rows[ $playlist_id ] : null;
+	}
+
+	/** @return array<string, mixed>|null */
+	public function find_by_share_token( string $share_token ): ?array {
+		foreach ( $this->rows as $row ) {
+			if ( '' !== $share_token && isset( $row['share_token'] ) && (string) $row['share_token'] === $share_token ) {
+				return $row;
+			}
+		}
+
+		return null;
+	}
+
+	/** @return array<int, array<string, mixed>> */
+	public function for_user( int $user_id, int $limit = 50, int $offset = 0 ): array {
+		$rows = array();
+		foreach ( $this->rows as $row ) {
+			if ( (int) $row['user_id'] === $user_id ) {
+				$rows[] = $row;
+			}
+		}
+
+		return array_slice( $rows, $offset, $limit );
+	}
+
+	public function count_for_user( int $user_id ): int {
+		return count( $this->for_user( $user_id, 1000 ) );
+	}
+
+	/** @param array<string, mixed> $row Row values. */
+	public function insert( array $row ): int {
+		$id                = $this->next_id;
+		++$this->next_id;
+		$row['id']         = $id;
+		$this->rows[ $id ] = $row;
+
+		return $id;
+	}
+
+	/** @param array<string, mixed> $fields Column values. */
+	public function update( int $playlist_id, array $fields ): bool {
+		if ( ! isset( $this->rows[ $playlist_id ] ) ) {
+			return false;
+		}
+		foreach ( $fields as $column => $value ) {
+			$this->rows[ $playlist_id ][ $column ] = $value;
+		}
+
+		return true;
+	}
+
+	public function delete( int $playlist_id ): bool {
+		if ( ! isset( $this->rows[ $playlist_id ] ) ) {
+			return false;
+		}
+		unset( $this->rows[ $playlist_id ], $this->stored_items[ $playlist_id ] );
+
+		return true;
+	}
+
+	/** @return array<int, array{release_id: int, position: int, added_at: int}> */
+	public function items( int $playlist_id ): array {
+		return isset( $this->stored_items[ $playlist_id ] ) ? $this->stored_items[ $playlist_id ] : array();
+	}
+
+	/** @param array<int, int> $release_ids Ordered release IDs. */
+	public function replace_items( int $playlist_id, array $release_ids ): bool {
+		$items    = array();
+		$position = 0;
+		foreach ( $release_ids as $release_id ) {
+			$items[] = array(
+				'release_id' => (int) $release_id,
+				'position'   => $position,
+				'added_at'   => 1000 + $position,
+			);
+			++$position;
+		}
+		$this->stored_items[ $playlist_id ] = $items;
+
+		return true;
+	}
+
+	public function delete_for_user( int $user_id ): bool {
+		$deleted = false;
+		foreach ( $this->for_user( $user_id, 1000 ) as $row ) {
+			$deleted = $this->delete( (int) $row['id'] ) || $deleted;
+		}
+
+		return $deleted;
+	}
+
+	public function purge_release( int $release_id ): void {
+		foreach ( array_keys( $this->stored_items ) as $playlist_id ) {
+			$kept = array();
+			foreach ( $this->stored_items[ $playlist_id ] as $item ) {
+				if ( (int) $item['release_id'] !== $release_id ) {
+					$kept[] = (int) $item['release_id'];
+				}
+			}
+			$this->replace_items( (int) $playlist_id, $kept );
+		}
+	}
+}
+
 final class TestMigration implements ManaCore\MusicWave\Core\Contracts\Migration {
 	/** @var string */
 	private $version;
@@ -1272,7 +1393,7 @@ $runner  = new ManaCore\MusicWave\Core\Migrations\MigrationRunner( array( new Te
 $pending = $runner->pending( '0.2.0' );
 mw_assert_same( 1, count( $pending ), 'Only newer migrations should be pending.' );
 mw_assert_same( '0.3.0', $pending[0]->version(), 'Migrations must be version sorted.' );
-mw_assert_same( '0.10.0', ManaCore\MusicWave\Core\Migrations\MigrationRunner::LATEST_VERSION, 'Health checks must compare against the schema version rather than the plugin release version.' );
+mw_assert_same( '0.11.0', ManaCore\MusicWave\Core\Migrations\MigrationRunner::LATEST_VERSION, 'Health checks must compare against the schema version rather than the plugin release version.' );
 mw_assert_same( '0.9.0', ( new ManaCore\MusicWave\Core\Migrations\Schema090() )->version(), 'The replay-table migration must carry the 0.9.0 schema version.' );
 mw_assert_same( '0.10.0', ( new ManaCore\MusicWave\Core\Migrations\Schema0100() )->version(), 'The listening-activity migration must carry the 0.10.0 schema version.' );
 
@@ -1471,6 +1592,111 @@ foreach ( $recommended as $recommendation ) {
 	mw_assert_same( true, '' !== (string) $recommendation['explanation'], 'Every recommendation must carry a human explanation.' );
 }
 mw_assert_same( false, in_array( 5, $recommended_ids, true ), 'Unpublished releases must never be recommended.' );
+
+// --- Playlists: ownership, ordering, privacy, and share rules (PROJECT_PLAN.md Stage 5 deliverable 4) ---
+
+mw_assert_same( '0.11.0', ( new ManaCore\MusicWave\Core\Migrations\Schema0110() )->version(), 'The playlist migration must carry the 0.11.0 schema version.' );
+
+$playlist_store = new TestPlaylistStore();
+$playlists      = new ManaCore\MusicWave\Core\Playlists\PlaylistRepository( $playlist_store );
+$playlist_id    = $playlists->create( 7, '  Late night mixtape  ' );
+mw_assert_same( true, $playlist_id > 0, 'Signed-in customers must be able to create a playlist.' );
+$created = $playlists->find( $playlist_id );
+mw_assert_same( 'Late night mixtape', (string) $created['title'], 'Playlist titles must be sanitized and trimmed.' );
+mw_assert_same( 'private', (string) $created['visibility'], 'Playlists must be private by default.' );
+mw_assert_same( '', (string) $created['share_token'], 'A private playlist must not carry a share token.' );
+mw_assert_same( 0, $playlists->create( 7, '   ' ), 'Empty playlist titles must be rejected.' );
+mw_assert_same( 0, $playlists->create( 0, 'Anonymous list' ), 'Anonymous callers must not create playlists.' );
+
+mw_assert_same( true, $playlists->add_item( 7, $playlist_id, 2 ), 'Owners may add readable releases to their playlist.' );
+mw_assert_same( true, $playlists->add_item( 7, $playlist_id, 3 ), 'Playlists must accept multiple releases.' );
+mw_assert_same( true, $playlists->add_item( 7, $playlist_id, 4 ), 'Playlists must accept multiple releases.' );
+mw_assert_same( false, $playlists->add_item( 7, $playlist_id, 2 ), 'Playlists must reject duplicate releases.' );
+mw_assert_same( false, $playlists->add_item( 7, $playlist_id, 10 ), 'Non-release posts must not enter a playlist.' );
+mw_assert_same( false, $playlists->add_item( 8, $playlist_id, 2 ), 'Only the owner may add playlist items.' );
+mw_assert_same( false, $playlists->remove_item( 8, $playlist_id, 2 ), 'Only the owner may remove playlist items.' );
+mw_assert_same( false, $playlists->reorder( 8, $playlist_id, array( 3, 2 ) ), 'Only the owner may reorder a playlist.' );
+mw_assert_same( false, $playlists->delete( 8, $playlist_id ), 'Only the owner may delete a playlist.' );
+
+mw_assert_same( true, $playlists->reorder( 7, $playlist_id, array( 4, 999, 3 ) ), 'Owners may reorder their playlist.' );
+$playlist_order = array();
+foreach ( $playlists->items_for_viewer( $playlist_id, 7 ) as $playlist_item ) {
+	$playlist_order[] = (int) $playlist_item['release_id'];
+}
+mw_assert_same( array( 4, 3, 2 ), $playlist_order, 'Reordering must apply the requested order, ignore unknown IDs, and keep omitted items.' );
+
+mw_assert_same( array(), $playlists->items_for_viewer( $playlist_id, 8 ), 'Private playlists must be invisible to other signed-in users.' );
+mw_assert_same( null, $playlists->view( $playlist_id, 0 ), 'Anonymous visitors must not read a private playlist.' );
+
+mw_assert_same( true, $playlists->update( 7, $playlist_id, array( 'visibility' => 'unlisted' ) ), 'Owners may share a playlist through an unlisted link.' );
+$share_token = (string) $playlists->find( $playlist_id )['share_token'];
+mw_assert_same( true, strlen( $share_token ) >= 24, 'Sharing a playlist must mint a high-entropy share token.' );
+mw_assert_same( null, $playlists->view( $playlist_id, 0, '' ), 'Unlisted playlists must stay hidden without the share token.' );
+mw_assert_same( null, $playlists->view( $playlist_id, 0, 'wrongtokenwrongtokenwrongtoken' ), 'A wrong share token must be refused.' );
+$shared_view = $playlists->view( $playlist_id, 0, $share_token );
+mw_assert_same( 3, (int) $shared_view['count'], 'The exact share token must unlock the unlisted playlist.' );
+mw_assert_same( '', (string) $shared_view['share_token'], 'Share tokens must never be echoed back to non-owners.' );
+mw_assert_same( false, (bool) $shared_view['owner'], 'A shared view must not claim ownership.' );
+
+$GLOBALS['mw_test_types'][9]      = 'mw_release';
+$GLOBALS['mw_test_statuses'][9]   = 'draft';
+$GLOBALS['mw_test_capabilities']  = array( 'read_post' );
+mw_assert_same( true, $playlists->add_item( 7, $playlist_id, 9 ), 'A privileged owner may place an unpublished release in their own playlist.' );
+mw_assert_same( 4, count( $playlists->items_for_viewer( $playlist_id, 7 ) ), 'Owners see every playlist release they may read.' );
+$GLOBALS['mw_test_capabilities'] = array();
+mw_assert_same( 3, (int) $playlists->view( $playlist_id, 0, $share_token )['count'], 'Shared playlist views must expose published releases only.' );
+
+mw_assert_same( true, $playlists->update( 7, $playlist_id, array( 'visibility' => 'private' ) ), 'Owners may revoke sharing.' );
+mw_assert_same( null, $playlists->find_shared( $share_token ), 'A revoked share link must stop resolving.' );
+mw_assert_same( true, $playlists->update( 7, $playlist_id, array( 'visibility' => 'unlisted' ) ), 'Owners may share a playlist again.' );
+mw_assert_same( false, $share_token === (string) $playlists->find( $playlist_id )['share_token'], 'Re-sharing must mint a fresh token instead of restoring the revoked link.' );
+
+$public_playlist_id = $playlists->create( 7, 'Editorial picks', 'public' );
+$playlists->add_item( 7, $public_playlist_id, 2 );
+mw_assert_same( true, $playlists->can_view( $playlists->find( $public_playlist_id ), 0 ), 'Public playlists must be readable by anyone.' );
+mw_assert_same( 1, (int) $playlists->view( $public_playlist_id, 0 )['count'], 'Public playlist views must list published items.' );
+
+mw_assert_same( 2, count( $playlists->export( 7 ) ), 'Playlists must be exportable for privacy requests.' );
+$playlists->handle_deleted_post( 2 );
+mw_assert_same( 0, (int) $playlists->view( $public_playlist_id, 0 )['count'], 'Deleting a release must remove it from every playlist.' );
+mw_assert_same( true, $playlists->erase( 7 ), 'Privacy erasure must delete every playlist a user owns.' );
+mw_assert_same( array(), $playlists->for_user( 7 ), 'Erased playlists must not come back.' );
+
+// The database-backed store must degrade instead of failing before its migration runs.
+mw_assert_same( false, ( new ManaCore\MusicWave\Core\Playlists\DatabasePlaylistStore() )->available(), 'Playlist storage must report unavailable until the migration has run.' );
+mw_assert_same( 0, ( new ManaCore\MusicWave\Core\Playlists\PlaylistRepository( new ManaCore\MusicWave\Core\Playlists\DatabasePlaylistStore() ) )->create( 7, 'Pending schema' ), 'Playlist creation must degrade safely without its tables.' );
+
+// --- Wishlist and pre-save (PROJECT_PLAN.md Stage 5 deliverable 5) ---
+
+$GLOBALS['mw_test_meta'][3]['mw_release_date'] = gmdate( 'Y-m-d', time() + ( 30 * 86400 ) );
+$GLOBALS['mw_test_meta'][4]['mw_release_date'] = gmdate( 'Y-m-d', time() - ( 30 * 86400 ) );
+
+$wishlist_library = new ManaCore\MusicWave\Core\Library\LibraryRepository();
+mw_assert_same( true, $wishlist_library->add( 9, 'wishlist', 4 ), 'Released items must be wishlistable.' );
+mw_assert_same( false, $wishlist_library->add( 9, 'wishlist', 4 ), 'Duplicate wishlist entries must be rejected.' );
+mw_assert_same( true, $wishlist_library->add( 9, 'presave', 3 ), 'Upcoming releases must be pre-savable.' );
+mw_assert_same( false, $wishlist_library->add( 9, 'presave', 4 ), 'Already-released items must not be pre-saved.' );
+mw_assert_same( false, $wishlist_library->add( 9, 'presave', 10 ), 'Non-release posts must not be pre-saved.' );
+
+$wishlist_catalog = new ManaCore\MusicWave\Core\Library\LibraryCatalog( $wishlist_library );
+$wishlist_counts  = $wishlist_catalog->counts( 9 );
+mw_assert_same( 1, isset( $wishlist_counts['wishlist'] ) ? (int) $wishlist_counts['wishlist'] : 0, 'Wishlist items must count under their own filter.' );
+mw_assert_same( 1, isset( $wishlist_counts['presaves'] ) ? (int) $wishlist_counts['presaves'] : 0, 'Pre-saves must count under their own filter.' );
+$presave_summaries = $wishlist_catalog->summaries( 9, 'presaves' );
+mw_assert_same( 1, count( $presave_summaries ), 'The pre-save filter must list pre-saved releases only.' );
+mw_assert_same( 3, (int) $presave_summaries[0]['id'], 'Pre-save summaries must resolve the pre-saved release.' );
+mw_assert_same( 'presave', (string) $presave_summaries[0]['type'], 'Pre-save summaries must keep their item type.' );
+
+$presave_scheduler = new ManaCore\MusicWave\Core\Library\PreSaveScheduler( $wishlist_library );
+mw_assert_same( false, $presave_scheduler->fulfill_for_user( 3, 9 ), 'A pre-save must not be fulfilled before its release date.' );
+mw_assert_same( 0, $presave_scheduler->fulfill( 3 ), 'Fulfillment must stay pending while the release date is in the future.' );
+$GLOBALS['mw_test_meta'][3]['mw_release_date'] = gmdate( 'Y-m-d', time() - 86400 );
+mw_assert_same( true, $presave_scheduler->fulfill_for_user( 3, 9 ), 'When the release date arrives the pre-save must become a saved release.' );
+mw_assert_same( false, $wishlist_library->has( 9, 'presave', 3 ), 'A fulfilled pre-save must be cleared.' );
+mw_assert_same( true, $wishlist_library->has( 9, 'release', 3 ), 'A fulfilled pre-save must appear as a saved library release.' );
+mw_assert_same( true, in_array( 'music_wave_presave_fulfilled', $GLOBALS['mw_test_actions'], true ), 'Fulfillment must fire the notification action for integrations.' );
+mw_assert_same( false, $presave_scheduler->fulfill_for_user( 3, 9 ), 'Pre-save fulfillment must be idempotent.' );
+mw_assert_same( array(), $wishlist_library->users_with( 'presave', 3 ), 'Pre-save lookups must degrade to an empty list without the usermeta index.' );
 
 $mapper = new ManaCore\MusicWave\Core\Commerce\ProductMapper();
 $mapper->sync_reverse_index( 1, array(), array( 10, 11 ) );
