@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace ManaCore\MusicWave\Core\Discovery;
 
 use ManaCore\MusicWave\Core\Catalog\ReleasePostType;
+use ManaCore\MusicWave\Core\Catalog\ReleaseTermIndex;
 use ManaCore\MusicWave\Core\Catalog\ReleaseVisibility;
 use WP_Term;
 
@@ -39,9 +40,13 @@ final class CatalogSearch {
 	/** @var CatalogSearchAdapter|null Explicit adapter; otherwise resolved by filter. */
 	private $adapter;
 
-	public function __construct( ?ReleaseVisibility $visibility = null, ?CatalogSearchAdapter $adapter = null ) {
+	/** @var ReleaseTermIndex */
+	private $term_index;
+
+	public function __construct( ?ReleaseVisibility $visibility = null, ?CatalogSearchAdapter $adapter = null, ?ReleaseTermIndex $term_index = null ) {
 		$this->visibility = null !== $visibility ? $visibility : new ReleaseVisibility();
 		$this->adapter    = $adapter;
+		$this->term_index = null !== $term_index ? $term_index : new ReleaseTermIndex();
 	}
 
 	/**
@@ -129,7 +134,10 @@ final class CatalogSearch {
 		}
 
 		$release_ids = $this->filtered_release_ids( $filters );
-		$counts      = array();
+		// One batched taxonomy query for the whole scanned set instead of one
+		// query per release per taxonomy.
+		$this->term_index->prime( $release_ids, $this->taxonomies() );
+		$counts = array();
 		foreach ( $this->taxonomies() as $taxonomy ) {
 			$counts[ $taxonomy ] = array();
 		}
@@ -349,18 +357,10 @@ final class CatalogSearch {
 	 * @return array<string, string>
 	 */
 	private function slugs_and_names( int $release_id, string $taxonomy ): array {
-		$terms = wp_get_post_terms( $release_id, $taxonomy, array( 'fields' => 'all' ) );
-		$map   = array();
-		foreach ( is_array( $terms ) ? $terms : array() as $term ) {
-			if ( $term instanceof WP_Term ) {
-				$map[ $term->slug ] = $term->name;
-				continue;
-			}
-			// Slug-only backends (and the dependency-free test harness) still
-			// produce usable, if unlabeled, facet keys.
-			if ( is_scalar( $term ) && '' !== (string) $term ) {
-				$slug         = sanitize_title( (string) $term );
-				$map[ $slug ] = (string) $term;
+		$map = array();
+		foreach ( $this->term_index->terms( $release_id, $taxonomy ) as $term ) {
+			if ( '' !== (string) $term->slug ) {
+				$map[ (string) $term->slug ] = (string) $term->name;
 			}
 		}
 

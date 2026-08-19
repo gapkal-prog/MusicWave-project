@@ -30,6 +30,11 @@ $GLOBALS['mw_test_statuses']      = array();
 $GLOBALS['mw_test_capabilities']  = array();
 $GLOBALS['mw_test_terms_by_tax']  = array();
 $GLOBALS['mw_test_transients']    = array();
+$GLOBALS['mw_test_term_queries']  = array(
+	'object' => 0,
+	'post'   => 0,
+);
+$GLOBALS['mw_test_synth_terms']   = array();
 
 final class WP_Post {
 	/** @var int */
@@ -45,6 +50,9 @@ final class WP_Post {
 }
 
 final class WP_Term {
+	/** @var int Object ID set by batched taxonomy lookups. */
+	public $object_id = 0;
+
 	/** @var int */
 	public $term_id;
 
@@ -285,6 +293,53 @@ function wp_get_post_terms( int $post_id, string $taxonomy, array $arguments = a
 		return $GLOBALS['mw_test_terms_by_tax'][ $post_id ][ $taxonomy ];
 	}
 	return isset( $GLOBALS['mw_test_release_types'][ $post_id ] ) ? $GLOBALS['mw_test_release_types'][ $post_id ] : array();
+}
+
+/**
+ * Batched taxonomy lookup used by ReleaseTermIndex.
+ *
+ * @param array<int, int>          $object_ids Object IDs.
+ * @param array<int, string>|string $taxonomies Taxonomies.
+ * @param array<string, mixed>     $arguments  Query arguments.
+ * @return array<int, WP_Term>
+ */
+function wp_get_object_terms( array $object_ids, $taxonomies, array $arguments = array() ) {
+	unset( $arguments );
+	++$GLOBALS['mw_test_term_queries']['object'];
+	$taxonomies = is_array( $taxonomies ) ? $taxonomies : array( (string) $taxonomies );
+	$terms      = array();
+
+	foreach ( $object_ids as $object_id ) {
+		$object_id = (int) $object_id;
+		foreach ( $taxonomies as $taxonomy ) {
+			$taxonomy = (string) $taxonomy;
+			$values   = isset( $GLOBALS['mw_test_terms_by_tax'][ $object_id ][ $taxonomy ] )
+				? $GLOBALS['mw_test_terms_by_tax'][ $object_id ][ $taxonomy ]
+				: ( 'mw_release_type' === $taxonomy && isset( $GLOBALS['mw_test_release_types'][ $object_id ] ) ? $GLOBALS['mw_test_release_types'][ $object_id ] : array() );
+
+			foreach ( is_array( $values ) ? $values : array() as $value ) {
+				if ( $value instanceof WP_Term ) {
+					$term            = clone $value;
+					$term->object_id = $object_id;
+					$terms[]         = $term;
+					continue;
+				}
+				if ( ! is_scalar( $value ) || '' === (string) $value ) {
+					continue;
+				}
+				$slug = sanitize_title( (string) $value );
+				$key  = $taxonomy . '|' . $slug;
+				if ( ! isset( $GLOBALS['mw_test_synth_terms'][ $key ] ) ) {
+					$GLOBALS['mw_test_synth_terms'][ $key ] = 900 + count( $GLOBALS['mw_test_synth_terms'] );
+				}
+				$term            = new WP_Term( (int) $GLOBALS['mw_test_synth_terms'][ $key ], $taxonomy, (string) $value, $slug );
+				$term->object_id = $object_id;
+				$terms[]         = $term;
+			}
+		}
+	}
+
+	return $terms;
 }
 
 function get_post_modified_time( string $format = 'U', bool $gmt = false, $post_id = 0 ) {
@@ -1775,6 +1830,38 @@ mw_assert_same( true, $discovery_limiter->allow( 'facets' ), 'Rate-limit buckets
 $discovery_routes = new ManaCore\MusicWave\Core\Discovery\DiscoveryRoutes( $recommendations, $catalog_search, $discovery_limiter );
 $short_term_error = $discovery_routes->suggest( new WP_REST_Request( array( 'term' => 'a' ) ) );
 mw_assert_same( true, is_wp_error( $short_term_error ), 'The autocomplete route must reject a too-short term with an actionable error.' );
+
+// --- Batched taxonomy index and list-query budgets (PROJECT_PLAN.md Stage 5 deliverable 7) ---
+
+$GLOBALS['mw_test_term_queries']['object'] = 0;
+$term_index                                = new ManaCore\MusicWave\Core\Catalog\ReleaseTermIndex();
+$term_index->prime( array( 1, 2, 3, 4 ), array( 'mw_release_type', 'mw_genre' ) );
+mw_assert_same( 1, $GLOBALS['mw_test_term_queries']['object'], 'Priming a release set must use exactly one batched taxonomy query.' );
+mw_assert_same( array( 'album' ), $term_index->slugs( 1, 'mw_release_type' ), 'The batched index must map terms back to the right release.' );
+mw_assert_same( array( 'track' ), $term_index->slugs( 2, 'mw_release_type' ), 'The batched index must map terms back to the right release.' );
+mw_assert_same( array(), $term_index->slugs( 1, 'mw_genre' ), 'A primed taxonomy with no terms must resolve to an empty list.' );
+mw_assert_same( 1, $GLOBALS['mw_test_term_queries']['object'], 'Primed lookups, including empty ones, must never re-query.' );
+$term_index->slugs( 8, 'mw_release_type' );
+mw_assert_same( 2, $GLOBALS['mw_test_term_queries']['object'], 'An unprimed release must resolve lazily with a single query.' );
+
+$GLOBALS['mw_test_transients']             = array();
+$GLOBALS['mw_test_term_queries']['object'] = 0;
+$facet_budget                              = ( new ManaCore\MusicWave\Core\Discovery\CatalogSearch() )->facets( array() );
+mw_assert_same( true, $facet_budget['matched'] > 1, 'The facet scan must cover the published catalog.' );
+mw_assert_same( 1, $GLOBALS['mw_test_term_queries']['object'], 'Facet counts must resolve the whole scanned set in one batched taxonomy query.' );
+
+$perf_library = new ManaCore\MusicWave\Core\Library\LibraryRepository();
+$perf_library->add( 20, 'release', 2 );
+$perf_library->add( 20, 'release', 3 );
+$perf_library->add( 20, 'wishlist', 4 );
+$GLOBALS['mw_test_term_queries']['object'] = 0;
+$perf_catalog                              = new ManaCore\MusicWave\Core\Library\LibraryCatalog( $perf_library );
+mw_assert_same( 3, count( $perf_catalog->summaries( 20 ) ), 'Library summaries must render every stored item.' );
+mw_assert_same( 1, $GLOBALS['mw_test_term_queries']['object'], 'Library summaries must batch taxonomy lookups for the whole page.' );
+$GLOBALS['mw_test_term_queries']['object'] = 0;
+$perf_counts                               = $perf_catalog->counts( 20 );
+mw_assert_same( 3, (int) $perf_counts['all'], 'Library counts must include every stored item type.' );
+mw_assert_same( 0, $GLOBALS['mw_test_term_queries']['object'], 'Repeated library rendering in one request must reuse the primed index.' );
 
 $mapper = new ManaCore\MusicWave\Core\Commerce\ProductMapper();
 $mapper->sync_reverse_index( 1, array(), array( 10, 11 ) );

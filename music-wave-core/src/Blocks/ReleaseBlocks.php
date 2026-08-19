@@ -12,6 +12,7 @@ namespace ManaCore\MusicWave\Core\Blocks;
 use ManaCore\MusicWave\Core\Access\AccessPolicyEngine;
 use ManaCore\MusicWave\Core\Access\AccessSubject;
 use ManaCore\MusicWave\Core\Catalog\ReleasePostType;
+use ManaCore\MusicWave\Core\Catalog\ReleaseTermIndex;
 use ManaCore\MusicWave\Core\Contracts\ReleaseRepository;
 use ManaCore\MusicWave\Core\Library\LibraryButton;
 use ManaCore\MusicWave\Core\Library\LibraryRepository;
@@ -37,9 +38,13 @@ final class ReleaseBlocks {
 	/** @var object|null */
 	private $render_context;
 
-	public function __construct( AccessPolicyEngine $policy, ReleaseRepository $repository ) {
+	/** @var ReleaseTermIndex */
+	private $term_index;
+
+	public function __construct( AccessPolicyEngine $policy, ReleaseRepository $repository, ?ReleaseTermIndex $term_index = null ) {
 		$this->policy     = $policy;
 		$this->repository = $repository;
+		$this->term_index = null !== $term_index ? $term_index : new ReleaseTermIndex();
 	}
 
 	public function register(): void {
@@ -1573,11 +1578,14 @@ final class ReleaseBlocks {
 		$scores          = array();
 		$order           = array_flip( $candidates );
 
+		// Resolve every candidate's signal taxonomies in one batched query
+		// instead of one query per candidate per taxonomy.
+		$this->term_index->prime( $candidates, array_map( 'strval', array_keys( $signals ) ) );
+
 		foreach ( $candidates as $candidate_id ) {
 			$score = 0;
 			foreach ( $signals as $taxonomy => $signal ) {
-				$term_ids = wp_get_post_terms( $candidate_id, $taxonomy, array( 'fields' => 'ids' ) );
-				$term_ids = is_array( $term_ids ) ? array_values( array_filter( array_map( 'absint', $term_ids ) ) ) : array();
+				$term_ids = $this->term_index->ids( $candidate_id, (string) $taxonomy );
 				$shared   = count( array_intersect( $signal['terms'], $term_ids ) );
 				$score   += $shared * (int) $signal['weight'];
 			}

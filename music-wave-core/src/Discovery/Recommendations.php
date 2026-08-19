@@ -15,6 +15,7 @@ declare(strict_types=1);
 namespace ManaCore\MusicWave\Core\Discovery;
 
 use ManaCore\MusicWave\Core\Catalog\ReleasePostType;
+use ManaCore\MusicWave\Core\Catalog\ReleaseTermIndex;
 use ManaCore\MusicWave\Core\Catalog\ReleaseVisibility;
 use ManaCore\MusicWave\Core\Listening\ListeningRepository;
 
@@ -28,9 +29,13 @@ final class Recommendations {
 	/** @var ReleaseVisibility */
 	private $visibility;
 
-	public function __construct( ?ListeningRepository $listening = null, ?ReleaseVisibility $visibility = null ) {
+	/** @var ReleaseTermIndex */
+	private $term_index;
+
+	public function __construct( ?ListeningRepository $listening = null, ?ReleaseVisibility $visibility = null, ?ReleaseTermIndex $term_index = null ) {
 		$this->visibility = null !== $visibility ? $visibility : new ReleaseVisibility();
 		$this->listening  = null !== $listening ? $listening : new ListeningRepository( $this->visibility );
+		$this->term_index = null !== $term_index ? $term_index : new ReleaseTermIndex();
 	}
 
 	/**
@@ -110,11 +115,18 @@ final class Recommendations {
 	 */
 	private function recent_genres( int $user_id, array &$seen ): array {
 		$genres = array();
-		foreach ( $this->listening->recent( $user_id, ListeningRepository::EVENT_PLAYED, 10 ) as $row ) {
+		$recent = $this->listening->recent( $user_id, ListeningRepository::EVENT_PLAYED, 10 );
+		$ids    = array();
+		foreach ( $recent as $row ) {
+			$ids[] = (int) $row['release_id'];
+		}
+		// Resolve the history's genres in one batched query.
+		$this->term_index->prime( $ids, array( 'mw_genre' ) );
+
+		foreach ( $recent as $row ) {
 			$seen[ (int) $row['release_id'] ] = true;
-			$terms                            = wp_get_post_terms( (int) $row['release_id'], 'mw_genre', array( 'fields' => 'slugs' ) );
-			foreach ( is_array( $terms ) ? $terms : array() as $slug ) {
-				$slug = sanitize_key( (string) $slug );
+			foreach ( $this->term_index->slugs( (int) $row['release_id'], 'mw_genre' ) as $slug ) {
+				$slug = sanitize_key( $slug );
 				if ( '' !== $slug && ! in_array( $slug, $genres, true ) ) {
 					$genres[] = $slug;
 				}

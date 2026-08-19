@@ -10,6 +10,7 @@ declare(strict_types=1);
 namespace ManaCore\MusicWave\Core\Library;
 
 use ManaCore\MusicWave\Core\Catalog\ReleasePostType;
+use ManaCore\MusicWave\Core\Catalog\ReleaseTermIndex;
 use ManaCore\MusicWave\Core\Catalog\ReleaseVisibility;
 use WP_Term;
 
@@ -20,9 +21,13 @@ final class LibraryCatalog {
 	/** @var ReleaseVisibility */
 	private $visibility;
 
-	public function __construct( LibraryRepository $repository, ?ReleaseVisibility $visibility = null ) {
+	/** @var ReleaseTermIndex */
+	private $term_index;
+
+	public function __construct( LibraryRepository $repository, ?ReleaseVisibility $visibility = null, ?ReleaseTermIndex $term_index = null ) {
 		$this->repository = $repository;
 		$this->visibility = null !== $visibility ? $visibility : new ReleaseVisibility();
+		$this->term_index = null !== $term_index ? $term_index : new ReleaseTermIndex();
 	}
 
 	/**
@@ -81,8 +86,11 @@ final class LibraryCatalog {
 		$skip      = ( $page - 1 ) * $limit;
 		$matched   = 0;
 		$has_more  = false;
+		$items     = $this->repository->all( $user_id );
 
-		foreach ( $this->repository->all( $user_id ) as $item ) {
+		$this->prime_release_terms( $items );
+
+		foreach ( $items as $item ) {
 			$summary = LibraryRepository::TYPE_ARTIST === $item['type']
 				? $this->artist_summary( (int) $item['id'], (int) $item['added'] )
 				: $this->release_summary( (int) $item['id'], (int) $item['added'], (string) $item['type'] );
@@ -119,8 +127,11 @@ final class LibraryCatalog {
 	 */
 	public function counts( int $user_id ): array {
 		$counts = array( self::FILTER_ALL => 0 );
+		$items  = $this->repository->all( $user_id );
 
-		foreach ( $this->repository->all( $user_id ) as $item ) {
+		$this->prime_release_terms( $items );
+
+		foreach ( $items as $item ) {
 			++$counts[ self::FILTER_ALL ];
 
 			$grouped = $this->group_filter( (string) $item['type'] );
@@ -175,10 +186,10 @@ final class LibraryCatalog {
 			return null;
 		}
 
-		$artists = wp_get_post_terms( $release_id, 'mw_artist', array( 'fields' => 'names' ) );
-		$artist  = is_array( $artists ) && ! empty( $artists ) ? implode( ', ', array_map( 'strval', $artists ) ) : '';
-		$types   = wp_get_post_terms( $release_id, 'mw_release_type', array( 'fields' => 'names' ) );
-		$type    = is_array( $types ) && ! empty( $types ) ? (string) $types[0] : __( 'Release', 'music-wave-core' );
+		$artists = $this->term_index->names( $release_id, 'mw_artist' );
+		$artist  = array() !== $artists ? implode( ', ', $artists ) : '';
+		$types   = $this->term_index->names( $release_id, 'mw_release_type' );
+		$type    = array() !== $types ? (string) $types[0] : __( 'Release', 'music-wave-core' );
 		$title   = get_the_title( $release_id );
 		$link    = get_permalink( $release_id );
 		$year    = get_post_meta( $release_id, 'mw_release_year', true );
@@ -274,19 +285,24 @@ final class LibraryCatalog {
 	 * @return array<int, string>
 	 */
 	private function release_type_slugs( int $release_id ): array {
-		$terms = wp_get_post_terms( $release_id, 'mw_release_type', array( 'fields' => 'slugs' ) );
-		if ( ! is_array( $terms ) ) {
-			return array();
+		return $this->term_index->slugs( $release_id, 'mw_release_type' );
+	}
+
+	/**
+	 * Batch-resolve taxonomy terms for every release-shaped library item.
+	 *
+	 * @param array<int, array<string, mixed>> $items Normalized library items.
+	 * @return void
+	 */
+	private function prime_release_terms( array $items ): void {
+		$release_ids = array();
+		foreach ( $items as $item ) {
+			if ( LibraryRepository::TYPE_ARTIST !== $item['type'] ) {
+				$release_ids[] = (int) $item['id'];
+			}
 		}
 
-		return array_values(
-			array_filter(
-				array_map( 'strval', $terms ),
-				static function ( string $slug ): bool {
-					return '' !== $slug;
-				}
-			)
-		);
+		$this->term_index->prime( $release_ids, array( 'mw_artist', 'mw_release_type' ) );
 	}
 
 	/**

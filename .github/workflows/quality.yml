@@ -65,3 +65,14 @@ jobs:
           status=$(curl -s -o /tmp/home.html -w "%{http_code}" http://localhost:8888/)
           test "$status" = "200"
           ! grep -qi "fatal error" /tmp/home.html
+      # Schema migrations must apply on a real database and create every
+      # operational table (PROJECT_PLAN.md Stage 5 deliverables 1, 4, 7).
+      - name: Run schema migrations and verify operational tables
+        run: |
+          npx @wordpress/env run cli wp musicwave migrate
+          npx @wordpress/env run cli wp option get music_wave_schema_version | grep -q "0.11.0"
+          for table in mw_download_replays mw_user_activity mw_playlists mw_playlist_items; do
+            npx @wordpress/env run cli wp db query "SHOW TABLES LIKE '$(npx @wordpress/env run cli wp db prefix --allow-root | tr -d '\r\n')${table}'" | grep -q "${table}"
+          done
+      - name: Discovery, library, and playlist query budgets
+        run: npx @wordpress/env run cli wp eval-file wp-content/mw-tools/benchmark-catalog.php seed=500 cleanup=1
