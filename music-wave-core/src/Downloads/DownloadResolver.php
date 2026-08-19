@@ -13,12 +13,14 @@ final class DownloadResolver {
 	/** @var DownloadTokenService */ private $tokens;
 	/** @var ReplayStore */ private $replays;
 	/** @var DownloadProvider */ private $provider;
-	public function __construct( ReleaseRepository $releases, AccessPolicyEngine $policy, DownloadTokenService $tokens, ReplayStore $replays, DownloadProvider $provider ) {
+	/** @var OpaqueTicketStore */ private $tickets;
+	public function __construct( ReleaseRepository $releases, AccessPolicyEngine $policy, DownloadTokenService $tokens, ReplayStore $replays, DownloadProvider $provider, ?OpaqueTicketStore $tickets = null ) {
 		$this->releases = $releases;
 		$this->policy   = $policy;
 		$this->tokens   = $tokens;
 		$this->replays  = $replays;
-		$this->provider = $provider; }
+		$this->provider = $provider;
+		$this->tickets  = null !== $tickets ? $tickets : new OpaqueTicketStore(); }
 
 	public function issue( int $release_id, AccessSubject $subject, string $binding, string $asset_key = '', string $purpose = 'download' ): ?string {
 		if ( $subject->user_id() < 1 || ! $this->policy->decide( $release_id, $subject )->is_allowed() ) {
@@ -41,11 +43,28 @@ final class DownloadResolver {
 				'purpose'   => $purpose,
 			)
 		);
-		return $this->tokens->issue( $release_id, $subject->user_id(), 'stream' === $purpose ? 900 : 300, $binding, $asset['key'], $purpose );
+		$ttl = 'stream' === $purpose ? 900 : 300;
+
+		// Browsers only ever receive an opaque random ticket; the signed token
+		// with its structured claims never leaves the server
+		// (PROJECT_PLAN.md Stage 2 deliverable 5).
+		return $this->tickets->wrap( $this->tokens->issue( $release_id, $subject->user_id(), $ttl, $binding, $asset['key'], $purpose ), $ttl );
+	}
+
+	/**
+	 * Accept an opaque browser ticket or (legacy, short-lived) signed token.
+	 */
+	private function exchange( string $token ): string {
+		if ( ! OpaqueTicketStore::looks_like_ticket( $token ) ) {
+			return $token;
+		}
+		$stored = $this->tickets->unwrap( $token );
+
+		return null !== $stored ? $stored : '';
 	}
 
 	public function deliver( int $release_id, int $user_id, string $token, string $binding ): bool {
-		$claims = $this->tokens->verify( $token, $binding );
+		$claims = $this->tokens->verify( $this->exchange( $token ), $binding );
 		if ( null === $claims || 'download' !== $claims->purpose() || $claims->release_id() !== $release_id || $claims->user_id() !== $user_id ) {
 			$this->audit( 'download_denied', $release_id, $user_id );
 			return false; }
@@ -53,14 +72,47 @@ final class DownloadResolver {
 		if ( ! $this->policy->decide( $release_id, $subject )->is_allowed() || ! $this->replays->consume( $claims->token_id(), $claims->expires_at() ) ) {
 			$this->audit( 'download_denied', $release_id, $user_id );
 			return false; }
+		if ( ! $this->within_daily_quota( $user_id ) ) {
+			$this->audit( 'download_denied', $release_id, $user_id, array( 'reason' => 'quota_exceeded' ) );
+			return false; }
 		$asset     = $this->asset( $release_id, $claims->asset_key() );
 		$delivered = null !== $asset && $this->provider->deliver( $asset['asset_id'], $claims );
+		if ( $delivered ) {
+			$this->count_delivery( $user_id );
+		}
 		$this->audit( $delivered ? 'download_delivered' : 'download_denied', $release_id, $user_id );
 		return $delivered;
 	}
 
+	/**
+	 * Optional per-user daily delivery quota (disabled by default).
+	 *
+	 * Sites can bound bulk exfiltration through a single compromised account
+	 * via the `music_wave_download_daily_quota` filter
+	 * (PROJECT_PLAN.md Stage 2 deliverable 4).
+	 */
+	private function within_daily_quota( int $user_id ): bool {
+		$quota = (int) apply_filters( 'music_wave_download_daily_quota', 0, $user_id );
+		if ( $quota < 1 ) {
+			return true;
+		}
+		$count = get_transient( $this->quota_key( $user_id ) );
+
+		return ( false === $count ? 0 : (int) $count ) < $quota;
+	}
+
+	private function count_delivery( int $user_id ): void {
+		$key   = $this->quota_key( $user_id );
+		$count = get_transient( $key );
+		set_transient( $key, ( false === $count ? 0 : (int) $count ) + 1, defined( 'DAY_IN_SECONDS' ) ? DAY_IN_SECONDS : 86400 );
+	}
+
+	private function quota_key( int $user_id ): string {
+		return 'mw_dl_quota_' . $user_id . '_' . gmdate( 'Ymd' );
+	}
+
 	public function stream( int $release_id, int $user_id, string $token, string $binding ): bool {
-		$claims = $this->tokens->verify( $token, $binding );
+		$claims = $this->tokens->verify( $this->exchange( $token ), $binding );
 		if ( null === $claims || 'stream' !== $claims->purpose() || $claims->release_id() !== $release_id || $claims->user_id() !== $user_id || ! $this->provider instanceof StreamableDownloadProvider ) {
 			$this->audit( 'stream_denied', $release_id, $user_id );
 			return false;

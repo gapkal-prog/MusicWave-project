@@ -683,6 +683,17 @@ final class TestRestResponse {
 	}
 }
 
+final class TestDownloadProvider implements ManaCore\MusicWave\Core\Downloads\DownloadProvider {
+	/** @var array<int, string> */
+	public $delivered = array();
+
+	public function deliver( string $asset_id, ManaCore\MusicWave\Core\Downloads\DownloadTokenClaims $claims ): bool {
+		unset( $claims );
+		$this->delivered[] = $asset_id;
+		return true;
+	}
+}
+
 final class TestMigration implements ManaCore\MusicWave\Core\Contracts\Migration {
 	/** @var string */
 	private $version;
@@ -1304,6 +1315,39 @@ mw_assert_same( true, is_array( $xsendfile_headers ) && in_array( 'X-Sendfile: /
 $xaccel_headers = ManaCore\MusicWave\Vip\ProtectedFileProvider::sendfile_headers( 'xaccel', '/private/album/a b.flac', 'album/a b.flac', '/musicwave-protected', 'application/octet-stream', 'attachment; filename="a_b.flac"' );
 mw_assert_same( true, is_array( $xaccel_headers ) && in_array( 'X-Accel-Redirect: /musicwave-protected/album/a%20b.flac', $xaccel_headers, true ), 'X-Accel mode must emit the URL-encoded internal redirect path.' );
 mw_assert_same( null, ManaCore\MusicWave\Vip\ProtectedFileProvider::sendfile_headers( 'xaccel', '/private/a.flac', 'a.flac', '', 'audio/flac', 'inline' ), 'X-Accel mode without an internal prefix must fall back to PHP streaming.' );
+
+// Opaque browser tickets (Stage 2 deliverable 5): claims never reach the browser.
+$ticket_store = new ManaCore\MusicWave\Core\Downloads\OpaqueTicketStore();
+$wrapped      = $ticket_store->wrap( 'signed-token-value', 300 );
+mw_assert_same( 0, strpos( $wrapped, 'mwt_' ), 'Browser tickets must use the opaque mwt_ namespace.' );
+mw_assert_same( 'signed-token-value', $ticket_store->unwrap( $wrapped ), 'A stored ticket must exchange back into its signed token.' );
+mw_assert_same( null, $ticket_store->unwrap( 'mwt_' . str_repeat( '0', 40 ) ), 'Unknown tickets must not exchange into tokens.' );
+mw_assert_same( null, $ticket_store->unwrap( 'not-a-ticket' ), 'Malformed tickets must be rejected before storage lookup.' );
+
+$ticket_repository = new TestPolicyRepository();
+$ticket_repository->values['mw_access_mode']      = 'public';
+$ticket_repository->values['mw_download_assets']  = array(
+	array(
+		'key'      => 'mp3-320',
+		'label'    => 'MP3 320',
+		'asset_id' => 'vip:' . str_repeat( 'b', 32 ),
+	),
+);
+$ticket_provider  = new TestDownloadProvider();
+$ticket_resolver  = new ManaCore\MusicWave\Core\Downloads\DownloadResolver(
+	$ticket_repository,
+	new ManaCore\MusicWave\Core\Access\AccessPolicyEngine( $ticket_repository, new ManaCore\MusicWave\Core\Commerce\PurchaseChecker( $ticket_repository ), new TestMembershipProvider() ),
+	new ManaCore\MusicWave\Core\Downloads\DownloadTokenService( 'ticket-test-secret' ),
+	new ManaCore\MusicWave\Core\Downloads\TransientReplayStore(),
+	$ticket_provider
+);
+$issued_ticket    = $ticket_resolver->issue( 1, new ManaCore\MusicWave\Core\Access\AccessSubject( 7 ), 'ticket-binding', 'mp3-320' );
+mw_assert_same( true, is_string( $issued_ticket ) && 0 === strpos( $issued_ticket, 'mwt_' ), 'Issued download credentials must be opaque tickets.' );
+mw_assert_same( false, strpos( (string) $issued_ticket, '.' ), 'Opaque tickets must not contain readable signed-token segments.' );
+mw_assert_same( true, $ticket_resolver->deliver( 1, 7, (string) $issued_ticket, 'ticket-binding' ), 'A valid opaque ticket must deliver through the provider.' );
+mw_assert_same( array( 'vip:' . str_repeat( 'b', 32 ) ), $ticket_provider->delivered, 'Delivery must resolve the opaque ticket to the assigned asset.' );
+mw_assert_same( false, $ticket_resolver->deliver( 1, 7, (string) $issued_ticket, 'ticket-binding' ), 'Replaying a consumed opaque ticket must fail closed.' );
+mw_assert_same( false, $ticket_resolver->deliver( 1, 7, 'mwt_' . str_repeat( '1', 40 ), 'ticket-binding' ), 'Guessed opaque tickets must fail closed.' );
 
 $mapper = new ManaCore\MusicWave\Core\Commerce\ProductMapper();
 $mapper->sync_reverse_index( 1, array(), array( 10, 11 ) );
