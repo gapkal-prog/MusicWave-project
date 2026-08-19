@@ -1420,6 +1420,19 @@ $erase_result = $personal_data->erase( 'buyer@example.test' );
 mw_assert_same( true, $erase_result['items_removed'] && $erase_result['done'], 'The privacy eraser must delete the stored library.' );
 mw_assert_same( false, isset( $GLOBALS['mw_test_user_meta'][7]['mw_music_library'] ) && array() !== $GLOBALS['mw_test_user_meta'][7]['mw_music_library'], 'Erased libraries must not persist user metadata.' );
 
+// Library pagination keeps large collections reachable (PROJECT_PLAN.md Stage 4 deliverable 5).
+$paging_repository = new ManaCore\MusicWave\Core\Library\LibraryRepository();
+$paging_repository->add( 9, 'release', 2 );
+$paging_repository->add( 9, 'release', 3 );
+$paging_repository->add( 9, 'release', 4 );
+$paging_catalog = new ManaCore\MusicWave\Core\Library\LibraryCatalog( $paging_repository );
+$page_one       = $paging_catalog->paged_summaries( 9, 'all', 2, 1 );
+$page_two       = $paging_catalog->paged_summaries( 9, 'all', 2, 2 );
+mw_assert_same( 2, count( $page_one['items'] ), 'The first library page must contain exactly the page size.' );
+mw_assert_same( true, $page_one['has_more'], 'The first library page must report that more items exist.' );
+mw_assert_same( 1, count( $page_two['items'] ), 'The second library page must contain the remaining items.' );
+mw_assert_same( false, $page_two['has_more'], 'The final library page must not report more items.' );
+
 $mapper = new ManaCore\MusicWave\Core\Commerce\ProductMapper();
 $mapper->sync_reverse_index( 1, array(), array( 10, 11 ) );
 mw_assert_same( array( 1 ), get_post_meta( 10, '_mw_release_ids', true ), 'Product reverse index must be created.' );

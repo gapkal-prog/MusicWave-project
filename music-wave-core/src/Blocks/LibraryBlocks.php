@@ -15,6 +15,7 @@ use ManaCore\MusicWave\Core\Library\LibraryRepository;
 
 final class LibraryBlocks {
 	public const FILTER_QUERY_ARG = 'mw-library';
+	public const PAGE_QUERY_ARG   = 'mw-library-page';
 
 	/** @var LibraryRepository */
 	private $repository;
@@ -193,7 +194,9 @@ final class LibraryBlocks {
 
 		$filter  = $this->active_filter();
 		$counts  = $this->catalog->counts( $user_id );
-		$items   = $this->catalog->summaries( $user_id, $filter, $this->range_attribute( $attributes, 'itemsToShow', 1, 100, 24 ) );
+		$page    = $this->active_page();
+		$paged   = $this->catalog->paged_summaries( $user_id, $filter, $this->range_attribute( $attributes, 'itemsToShow', 1, 100, 24 ), $page );
+		$items   = $paged['items'];
 		$layout  = $this->key_attribute( $attributes, 'layout', array( 'list', 'grid' ), 'list' );
 		$columns = $this->range_attribute( $attributes, 'columns', 2, 6, 4 );
 
@@ -232,7 +235,8 @@ final class LibraryBlocks {
 			$class = 'mw-music-library__items mw-music-library__items--' . $layout
 				. ( 'grid' === $layout ? ' mw-music-library__items--columns-' . $columns : '' );
 			$body  = '<ul class="' . esc_attr( $class ) . '" data-mw-library-items>' . implode( '', $rows ) . '</ul>'
-				. '<p class="mw-music-library__empty" data-mw-library-empty hidden>' . esc_html( $empty ) . '</p>';
+				. '<p class="mw-music-library__empty" data-mw-library-empty hidden>' . esc_html( $empty ) . '</p>'
+				. $this->pagination_markup( $filter, $page, (bool) $paged['has_more'] );
 		}
 
 		return '<section ' . BlockSupport::wrapper_attributes( 'mw-music-library' ) . ' data-mw-library-panel>' . $header . $tabs . $body . '</section>';
@@ -367,6 +371,52 @@ final class LibraryBlocks {
 		}
 
 		return add_query_arg( self::FILTER_QUERY_ARG, rawurlencode( $filter ), $base );
+	}
+
+	/**
+	 * Accessible previous/next pagination preserving the active filter.
+	 */
+	private function pagination_markup( string $filter, int $page, bool $has_more ): string {
+		if ( $page <= 1 && ! $has_more ) {
+			return '';
+		}
+
+		$links = array();
+		if ( $page > 1 ) {
+			$links[] = '<a class="mw-music-library__page-link mw-music-library__page-link--previous" href="' . esc_url( $this->page_url( $filter, $page - 1 ) ) . '">' . esc_html__( 'Newer items', 'music-wave-core' ) . '</a>';
+		}
+		if ( $has_more ) {
+			$links[] = '<a class="mw-music-library__page-link mw-music-library__page-link--next" href="' . esc_url( $this->page_url( $filter, $page + 1 ) ) . '">' . esc_html__( 'Older items', 'music-wave-core' ) . '</a>';
+		}
+
+		/* translators: %d: current library page number. */
+		$status = sprintf( __( 'Library page %d', 'music-wave-core' ), $page );
+
+		return '<nav class="mw-music-library__pagination" aria-label="' . esc_attr__( 'Library pages', 'music-wave-core' ) . '"><span class="mw-music-library__page-status">' . esc_html( $status ) . '</span>' . implode( '', $links ) . '</nav>';
+	}
+
+	/**
+	 * Build the current page URL for one library page, preserving the filter.
+	 */
+	private function page_url( string $filter, int $page ): string {
+		$base = $this->filter_url( $filter );
+		if ( $page <= 1 ) {
+			$cleaned = remove_query_arg( self::PAGE_QUERY_ARG, $base );
+
+			return is_string( $cleaned ) ? $cleaned : $base;
+		}
+
+		return add_query_arg( self::PAGE_QUERY_ARG, (string) $page, $base );
+	}
+
+	/**
+	 * Read the active library page from the public query string.
+	 */
+	private function active_page(): int {
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only display pagination.
+		$page = isset( $_GET[ self::PAGE_QUERY_ARG ] ) && is_scalar( $_GET[ self::PAGE_QUERY_ARG ] ) ? absint( wp_unslash( (string) $_GET[ self::PAGE_QUERY_ARG ] ) ) : 0;
+
+		return max( 1, $page );
 	}
 
 	/**

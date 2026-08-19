@@ -159,7 +159,10 @@ function musicwave_enqueue_assets(): void {
 		$version,
 		true
 	);
-	wp_enqueue_script(
+	// Registered only: the slider script enqueues at render time of the
+	// musicwave/release-slider block, so routes without a slider ship no
+	// slider bytes (PROJECT_PLAN.md Stage 4 deliverable 4).
+	wp_register_script(
 		'musicwave-slider',
 		get_template_directory_uri() . '/assets/slider.js',
 		array(),
@@ -887,7 +890,9 @@ function musicwave_repairable_template_slugs(): array {
 			'taxonomy-mw_genre',
 			'archive-product',
 		),
-		'wp_template_part' => array( 'header', 'footer', 'music-sidebar', 'sidebar' ),
+		// Stale sidebar architecture removed: the theme ships no sidebar parts
+		// and no template renders one (PROJECT_PLAN.md Stage 4 deliverable 9).
+		'wp_template_part' => array( 'header', 'footer' ),
 	);
 }
 
@@ -1160,6 +1165,10 @@ function musicwave_slider_number( string $setting, int $fallback ): int {
 function musicwave_render_release_slider( array $attributes ): string {
 	if ( ! post_type_exists( 'mw_release' ) || ! musicwave_slider_toggle( $attributes, 'enabled', 'slider_enabled' ) ) {
 		return '';
+	}
+
+	if ( function_exists( 'wp_enqueue_script' ) ) {
+		wp_enqueue_script( 'musicwave-slider' );
 	}
 
 	$items = isset( $attributes['itemsToShow'] ) ? absint( $attributes['itemsToShow'] ) : 0;

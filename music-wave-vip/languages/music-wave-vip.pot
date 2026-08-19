@@ -8,28 +8,44 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Domain: music-wave-vip\n"
 
-#: src/SettingsPage.php:92
+#: src/SettingsPage.php:210
+msgid "A protected directory path is configured or derivable."
+msgstr ""
+
+#: src/SettingsPage.php:102
 msgid "Absolute path outside public_html/public. Leave blank to use musicwave-private beside the WordPress directory. The wp-config.php constant overrides this field."
 msgstr ""
 
-#: src/SettingsPage.php:75
+#: src/SettingsPage.php:82
 msgid "Access Policy remains the only authority. Select one or more sources; a user needs at least one matching level. Never put emails, passwords, direct file URLs, or private API tokens into release membership levels."
 msgstr ""
 
-#: src/SettingsPage.php:71
+#: src/SettingsPage.php:36
+msgid "Additional allowed redirect hosts"
+msgstr ""
+
+#: src/SettingsPage.php:149
+msgid "Apache/LiteSpeed X-Sendfile"
+msgstr ""
+
+#: src/SettingsPage.php:78
 msgid "Beginner guide:"
 msgstr ""
 
-#: src/ProtectedAssetStorage.php:190
+#: src/ProtectedAssetStorage.php:335
 msgid "Choose a valid Media Library file."
 msgstr ""
 
-#: src/SettingsPage.php:70
+#: src/SettingsPage.php:77
 msgid "Choose where protected files are delivered. Local mode keeps files outside the public web root. Remote redirect mode creates a short-lived HTTPS HMAC URL for an S3-compatible bucket, CDN, download host, or your own signing endpoint."
 msgstr ""
 
-#: src/SettingsPage.php:163
+#: src/SettingsPage.php:247
 msgid "Connect local protected storage, an HTTPS signed download host, WordPress roles, membership extensions, and WooCommerce subscriptions."
+msgstr ""
+
+#: src/SettingsPage.php:215
+msgid "Defense-in-depth deny files (.htaccess) are present."
 msgstr ""
 
 #: src/SettingsPage.php:28
@@ -40,67 +56,91 @@ msgstr ""
 msgid "Expiry query parameter"
 msgstr ""
 
-#: src/SettingsPage.php:127
+#: src/SettingsPage.php:169
 msgid "External membership filter (developer adapter)"
 msgstr ""
 
-#: src/SettingsPage.php:107
+#: src/SettingsPage.php:117
 msgid "Generate a long random secret"
 msgstr ""
 
-#: src/SettingsPage.php:97
+#: src/SettingsPage.php:107
 msgid "HTTPS only. The generated URL is base/path-prefix/asset-id."
 msgstr ""
 
-#: src/SettingsPage.php:120
+#: src/SettingsPage.php:130
 msgid "Keep this short. The Core token and remote URL both expire; entitlement is checked again before every delivery."
 msgstr ""
 
-#: src/SettingsPage.php:81
+#: src/SettingsPage.php:89
 msgid "Local protected directory (recommended)"
 msgstr ""
 
-#: src/SettingsPage.php:37
+#: src/SettingsPage.php:41
 msgid "Membership and entitlement adapters"
 msgstr ""
 
-#: src/SettingsPage.php:38
+#: src/SettingsPage.php:42
 msgid "Membership sources"
 msgstr ""
 
-#: src/SettingsPage.php:14 src/SettingsPage.php:146
+#: src/SettingsPage.php:14 src/SettingsPage.php:188
 msgid "MusicWave VIP"
 msgstr ""
 
-#: src/Plugin.php:7
+#: src/Plugin.php:9
 msgid "MusicWave VIP requires the MusicWave Core plugin."
 msgstr ""
 
-#: src/SettingsPage.php:165
+#: src/SettingsPage.php:156
+msgid "Offload protected-file transfers to the web server. Requires mod_xsendfile or an nginx internal location pointing at the protected directory."
+msgstr ""
+
+#: src/SettingsPage.php:236
+msgid "On subdirectory installations the automatic default beside WordPress is refused because it is still web-reachable. Configure an absolute path outside the server document root (for example /var/private/musicwave) and move existing files there."
+msgstr ""
+
+#: src/SettingsPage.php:136
+msgid "One host per line. The remote base URL host is always allowed; redirects to any other host are refused."
+msgstr ""
+
+#: src/SettingsPage.php:249
 msgid "Open VIP settings"
 msgstr ""
 
-#: src/SettingsPage.php:102
+#: src/SettingsPage.php:142
+msgid "Optional key identifier appended as the kid parameter so the remote host can rotate signing secrets without downtime."
+msgstr ""
+
+#: src/SettingsPage.php:112
 msgid "Optional path only; traversal and special characters are removed."
+msgstr ""
+
+#: src/SettingsPage.php:148
+msgid "PHP streaming (default)"
 msgstr ""
 
 #: src/SettingsPage.php:27
 msgid "Protected delivery"
 msgstr ""
 
+#: src/SettingsPage.php:230
+msgid "Protected delivery preflight failed. Local downloads stay disabled until every check passes:"
+msgstr ""
+
 #: src/SettingsPage.php:29
 msgid "Protected files directory"
 msgstr ""
 
-#: src/SettingsPage.php:115
+#: src/SettingsPage.php:125
 msgid "Query key receiving the Unix expiry timestamp."
 msgstr ""
 
-#: src/SettingsPage.php:111
+#: src/SettingsPage.php:121
 msgid "Query key receiving the base64url HMAC-SHA256 signature."
 msgstr ""
 
-#: src/SettingsPage.php:81
+#: src/SettingsPage.php:90
 msgid "Remote HTTPS host with HMAC redirect"
 msgstr ""
 
@@ -112,7 +152,7 @@ msgstr ""
 msgid "Remote host base URL"
 msgstr ""
 
-#: src/SettingsPage.php:84
+#: src/SettingsPage.php:94
 msgid "Remote mode never sends the remote secret to the browser; only a short-lived signed URL is redirected."
 msgstr ""
 
@@ -120,7 +160,7 @@ msgstr ""
 msgid "Remote path prefix"
 msgstr ""
 
-#: src/SettingsPage.php:63
+#: src/SettingsPage.php:67
 msgid "Remote redirect mode needs both an HTTPS base URL and a signing secret. Delivery remains fail-closed until both are configured."
 msgstr ""
 
@@ -128,79 +168,119 @@ msgstr ""
 msgid "Remote signing secret"
 msgstr ""
 
-#: src/SettingsPage.php:184
+#: src/SettingsPage.php:268
 msgid "Save VIP settings"
+msgstr ""
+
+#: src/SettingsPage.php:38
+msgid "Server acceleration"
 msgstr ""
 
 #: src/SettingsPage.php:33
 msgid "Signature query parameter"
 msgstr ""
 
-#: src/SettingsPage.php:71
+#: src/SettingsPage.php:37
+msgid "Signing key ID"
+msgstr ""
+
+#: src/SettingsPage.php:78
 msgid "Start with Local protected storage. Use Remote redirect only when your host accepts the expires, signature, and mode query parameters described below, or when a developer connects the URL filter."
 msgstr ""
 
-#: src/SettingsPage.php:107
+#: src/SettingsPage.php:117
 msgid "Stored secret; leave blank to keep it"
 msgstr ""
 
-#: src/ProtectedAssetStorage.php:216
+#: src/ProtectedAssetStorage.php:361
 msgid "The Media Library file could not be copied to protected storage."
 msgstr ""
 
-#: src/ProtectedAssetStorage.php:168 src/ProtectedAssetStorage.php:210
+#: src/ProtectedAssetStorage.php:311 src/ProtectedAssetStorage.php:355
 msgid "The asset type or size is not allowed."
 msgstr ""
 
-#: src/ProtectedAssetStorage.php:174
+#: src/SettingsPage.php:214
+msgid "The directory is outside every publicly served web root."
+msgstr ""
+
+#: src/ProtectedAssetStorage.php:317
 msgid "The protected asset could not be stored."
 msgstr ""
 
-#: src/ProtectedAssetStorage.php:154 src/ProtectedAssetStorage.php:203
+#: src/ProtectedAssetStorage.php:297 src/ProtectedAssetStorage.php:348
 msgid "The protected asset directory is unavailable or not writable."
 msgstr ""
 
-#: src/ProtectedAssetStorage.php:159
+#: src/ProtectedAssetStorage.php:302
 msgid "The protected asset upload was invalid."
 msgstr ""
 
-#: src/SettingsPage.php:56
+#: src/SettingsPage.php:211
+msgid "The protected directory exists."
+msgstr ""
+
+#: src/SettingsPage.php:60
 msgid "The protected directory must exist, be readable, and remain outside the public WordPress directory. The previous value was kept."
 msgstr ""
 
-#: src/ProtectedAssetStorage.php:198
+#: src/SettingsPage.php:70
+msgid "The remote signing secret is shorter than 32 characters. Signed URLs will not be issued until a stronger secret is saved."
+msgstr ""
+
+#: src/ProtectedAssetStorage.php:343
 msgid "The selected Media Library file is unavailable."
 msgstr ""
 
-#: src/SettingsPage.php:107
+#: src/SettingsPage.php:212
+msgid "The web server can read the protected directory."
+msgstr ""
+
+#: src/SettingsPage.php:213
+msgid "The web server can write uploads into the protected directory."
+msgstr ""
+
+#: src/SettingsPage.php:117
 msgid "Use at least 32 random characters. It is stored server-side and never exposed in editor responses."
 msgstr ""
 
-#: src/SettingsPage.php:134
+#: src/SettingsPage.php:176
 msgid "Use neutral release levels such as gold, plan-pro, or subscription-123. If a selected Woo extension is inactive, it fails closed and does not grant access."
 msgstr ""
 
-#: src/SettingsPage.php:181
+#: src/SettingsPage.php:265
 msgid "VIP delivery and membership settings"
 msgstr ""
 
-#: src/SettingsPage.php:161
+#: src/SettingsPage.php:245
 msgid "VIP protected delivery and memberships"
 msgstr ""
 
-#: src/SettingsPage.php:128
+#: src/SettingsPage.php:170
 msgid "WooCommerce Memberships (level or plan-slug; use plan- prefix when needed)"
 msgstr ""
 
-#: src/SettingsPage.php:129
+#: src/SettingsPage.php:171
 msgid "WooCommerce Subscriptions (level is product ID or subscription-123)"
 msgstr ""
 
-#: src/SettingsPage.php:126
+#: src/SettingsPage.php:168
 msgid "WordPress roles (level equals role slug)"
 msgstr ""
 
-#: src/SettingsPage.php:120
+#: src/SettingsPage.php:39
+msgid "X-Accel internal prefix"
+msgstr ""
+
+#: src/SettingsPage.php:150
+msgid "nginx X-Accel-Redirect"
+msgstr ""
+
+#: src/SettingsPage.php:162
+msgid "nginx internal location mapped to the protected directory, for example: location /musicwave-protected/ { internal; alias /var/private/musicwave/; }"
+msgstr ""
+
+#: src/SettingsPage.php:130
 msgid "seconds (30–900)"
 msgstr ""
 

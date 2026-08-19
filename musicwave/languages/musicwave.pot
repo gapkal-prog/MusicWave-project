@@ -8,16 +8,16 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Domain: musicwave\n"
 
-#: functions.php:1010
+#: functions.php:1015
 #, php-format
 msgid "%d customized MusicWave template records were moved to the Trash. The validated theme files are active again."
 msgstr ""
 
-#: functions.php:672
+#: functions.php:675
 msgid "A configurable grid, horizontal shelf, or compact list of releases."
 msgstr ""
 
-#: functions.php:572
+#: functions.php:575
 msgid "A responsive, accessible slider for featured or recent releases."
 msgstr ""
 
@@ -97,7 +97,7 @@ msgstr ""
 msgid "Calm selections for work and rest."
 msgstr ""
 
-#: functions.php:1089
+#: functions.php:1094
 msgid "Checkout"
 msgstr ""
 
@@ -117,7 +117,7 @@ msgstr ""
 msgid "Curated release IDs"
 msgstr ""
 
-#: functions.php:1023
+#: functions.php:1028
 #, php-format
 msgid "Customized built-in template overrides found: %d"
 msgstr ""
@@ -182,7 +182,7 @@ msgstr ""
 msgid "Featured release ID (0 = first result)"
 msgstr ""
 
-#: functions.php:1225 patterns/featured-release-slider.php:12
+#: functions.php:1234 patterns/featured-release-slider.php:12
 msgid "Featured releases"
 msgstr ""
 
@@ -206,7 +206,7 @@ msgstr ""
 msgid "Ghost"
 msgstr ""
 
-#: functions.php:174
+#: functions.php:177
 #, php-format
 msgid "Go to slide group %d"
 msgstr ""
@@ -235,7 +235,7 @@ msgstr ""
 msgid "Landscape"
 msgstr ""
 
-#: functions.php:1084
+#: functions.php:1089
 msgid "Latest releases"
 msgstr ""
 
@@ -267,7 +267,7 @@ msgstr ""
 msgid "MADE FOR YOU"
 msgstr ""
 
-#: functions.php:1224
+#: functions.php:1233
 msgid "Made for you"
 msgstr ""
 
@@ -279,7 +279,7 @@ msgstr ""
 msgid "Mood"
 msgstr ""
 
-#: functions.php:1536
+#: functions.php:1545
 msgid "More releases"
 msgstr ""
 
@@ -287,35 +287,35 @@ msgstr ""
 msgid "Most viewed"
 msgstr ""
 
-#: functions.php:211
+#: functions.php:214
 msgid "MusicWave"
 msgstr ""
 
-#: functions.php:564
+#: functions.php:567
 msgid "MusicWave display preference"
 msgstr ""
 
-#: functions.php:1191
+#: functions.php:1200
 msgid "MusicWave release"
 msgstr ""
 
-#: functions.php:671
+#: functions.php:674
 msgid "MusicWave release shelf"
 msgstr ""
 
-#: functions.php:571
+#: functions.php:574
 msgid "MusicWave release slider"
 msgstr ""
 
-#: functions.php:853 functions.php:854 functions.php:1003
+#: functions.php:856 functions.php:857 functions.php:1008
 msgid "MusicWave template repair"
 msgstr ""
 
-#: functions.php:544
+#: functions.php:547
 msgid "MusicWave template text"
 msgstr ""
 
-#: functions.php:1090
+#: functions.php:1095
 msgid "My account"
 msgstr ""
 
@@ -327,7 +327,7 @@ msgstr ""
 msgid "New music"
 msgstr ""
 
-#: functions.php:1227
+#: functions.php:1236
 msgid "Next releases"
 msgstr ""
 
@@ -335,24 +335,24 @@ msgstr ""
 msgid "No body text"
 msgstr ""
 
-#: functions.php:1040
+#: functions.php:1045
 msgid "No database overrides were found. WordPress is already using the bundled template files."
 msgstr ""
 
-#: functions.php:1085
+#: functions.php:1090
 msgid "No music was found."
 msgstr ""
 
-#: functions.php:1086
+#: functions.php:1091
 msgid "Nothing playing here."
 msgstr ""
 
-#: functions.php:1363
+#: functions.php:1372
 #, php-format
 msgid "Open %s"
 msgstr ""
 
-#: functions.php:1338 functions.php:1455
+#: functions.php:1347 functions.php:1464
 msgid "Open release"
 msgstr ""
 
@@ -392,11 +392,11 @@ msgstr ""
 msgid "Portrait"
 msgstr ""
 
-#: functions.php:1091
+#: functions.php:1096
 msgid "Powered by MusicWave."
 msgstr ""
 
-#: functions.php:1227
+#: functions.php:1236
 msgid "Previous releases"
 msgstr ""
 
@@ -436,7 +436,7 @@ msgstr ""
 msgid "Responsive grid"
 msgstr ""
 
-#: functions.php:1037
+#: functions.php:1042
 msgid "Restore validated theme templates"
 msgstr ""
 
@@ -444,7 +444,7 @@ msgstr ""
 msgid "Section link"
 msgstr ""
 
-#: functions.php:1391
+#: functions.php:1400
 msgid "See all"
 msgstr ""
 
@@ -492,11 +492,11 @@ msgstr ""
 msgid "Side column width (px)"
 msgstr ""
 
-#: functions.php:1017
+#: functions.php:1022
 msgid "Site Editor customizations are stored in the database and override updated theme files. Use this tool only when a MusicWave template reports an unavailable template part or invalid block content."
 msgstr ""
 
-#: functions.php:176
+#: functions.php:179
 #, php-format
 msgid "Slide group %1$d of %2$d"
 msgstr ""
@@ -509,7 +509,7 @@ msgstr ""
 msgid "Slider content"
 msgstr ""
 
-#: functions.php:1228
+#: functions.php:1237
 msgid "Slider pagination"
 msgstr ""
 
@@ -537,11 +537,11 @@ msgstr ""
 msgid "Term slug"
 msgstr ""
 
-#: functions.php:1087
+#: functions.php:1092
 msgid "The page may have moved. Try searching the catalog."
 msgstr ""
 
-#: functions.php:1018
+#: functions.php:1023
 msgid "This does not delete releases, pages, menus, media, plugin settings, or global styles."
 msgstr ""
 
@@ -561,7 +561,7 @@ msgstr ""
 msgid "Top picks this week"
 msgstr ""
 
-#: functions.php:186
+#: functions.php:189
 msgid "Use dark theme"
 msgstr ""
 
@@ -577,11 +577,11 @@ msgstr ""
 msgid "Use global setting"
 msgstr ""
 
-#: functions.php:185
+#: functions.php:188
 msgid "Use light theme"
 msgstr ""
 
-#: functions.php:184 functions.php:1577
+#: functions.php:187 functions.php:1586
 msgid "Use system theme"
 msgstr ""
 
@@ -601,11 +601,11 @@ msgstr ""
 msgid "YOUR MUSIC"
 msgstr ""
 
-#: functions.php:1053
+#: functions.php:1058
 msgid "You are not allowed to repair theme templates."
 msgstr ""
 
-#: functions.php:1088
+#: functions.php:1093
 msgid "Your cart"
 msgstr ""
 
@@ -625,7 +625,7 @@ msgstr ""
 msgid "e.g. #ffffff"
 msgstr ""
 
-#: functions.php:1202 functions.php:1482
+#: functions.php:1211 functions.php:1491
 msgid "views"
 msgstr ""
 

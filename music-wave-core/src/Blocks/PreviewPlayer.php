@@ -100,10 +100,19 @@ final class PreviewPlayer {
 			'music-wave-preview-player',
 			'musicWavePreviewPlayer',
 			array(
-				'restUrl'   => esc_url_raw( rest_url() ),
-				'restNonce' => wp_create_nonce( 'wp_rest' ),
-				'loggedIn'  => get_current_user_id() > 0,
-				'labels'    => array(
+				'restUrl'       => esc_url_raw( rest_url() ),
+				'restNonce'     => wp_create_nonce( 'wp_rest' ),
+				'loggedIn'      => get_current_user_id() > 0,
+				/**
+				 * Native navigation is the default: the SPA-style body swap does
+				 * not safely reconcile WordPress/WooCommerce lifecycle state and
+				 * is therefore opt-in until the persistent player is re-scoped
+				 * (PROJECT_PLAN.md Stage 4 deliverable 1).
+				 *
+				 * @param bool $enabled Whether persistent navigation is active.
+				 */
+				'persistentNav' => (bool) apply_filters( 'music_wave_persistent_navigation', 'enabled' === (string) \ManaCore\MusicWave\Core\Support\Settings::get( 'persistent_navigation' ) ),
+				'labels'        => array(
 					'play'         => __( 'Play preview', 'music-wave-core' ),
 					'pause'        => __( 'Pause preview', 'music-wave-core' ),
 					'previous'     => __( 'Previous preview', 'music-wave-core' ),

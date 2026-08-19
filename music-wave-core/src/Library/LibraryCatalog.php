@@ -46,14 +46,33 @@ final class LibraryCatalog {
 	 * @return array<int, array<string, mixed>>
 	 */
 	public function summaries( int $user_id, string $filter = self::FILTER_ALL, int $limit = 24 ): array {
+		$page = $this->paged_summaries( $user_id, $filter, $limit, 1 );
+
+		return $page['items'];
+	}
+
+	/**
+	 * Paginated library summaries so large collections stay reachable.
+	 *
+	 * The stored library is bounded (500 items) and already normalized, so
+	 * offset pagination over the filtered stream is predictable and cheap
+	 * (PROJECT_PLAN.md Stage 4 deliverable 5).
+	 *
+	 * @param int    $user_id Library owner.
+	 * @param string $filter  Active library filter key.
+	 * @param int    $limit   Items per page.
+	 * @param int    $page    1-based page number.
+	 * @return array{items: array<int, array<string, mixed>>, page: int, has_more: bool}
+	 */
+	public function paged_summaries( int $user_id, string $filter = self::FILTER_ALL, int $limit = 24, int $page = 1 ): array {
 		$summaries = array();
 		$limit     = min( 100, max( 1, $limit ) );
+		$page      = max( 1, $page );
+		$skip      = ( $page - 1 ) * $limit;
+		$matched   = 0;
+		$has_more  = false;
 
 		foreach ( $this->repository->all( $user_id ) as $item ) {
-			if ( count( $summaries ) >= $limit ) {
-				break;
-			}
-
 			$summary = LibraryRepository::TYPE_RELEASE === $item['type']
 				? $this->release_summary( (int) $item['id'], (int) $item['added'] )
 				: $this->artist_summary( (int) $item['id'], (int) $item['added'] );
@@ -62,10 +81,23 @@ final class LibraryCatalog {
 				continue;
 			}
 
+			++$matched;
+			if ( $matched <= $skip ) {
+				continue;
+			}
+			if ( count( $summaries ) >= $limit ) {
+				$has_more = true;
+				break;
+			}
+
 			$summaries[] = $summary;
 		}
 
-		return $summaries;
+		return array(
+			'items'    => $summaries,
+			'page'     => $page,
+			'has_more' => $has_more,
+		);
 	}
 
 	/**

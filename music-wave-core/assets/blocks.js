@@ -810,9 +810,11 @@
 	dynamicBlocks.forEach(function (block) {
 		var existing = blocks.getBlockType(block.name);
 		if (existing) {
-			// Server hydration from block.json registers a bare dynamic block;
-			// replace it with the MusicWave editor experience while preserving
-			// style variations and examples provided by the server.
+			// Server hydration from block.json registers a bare dynamic block.
+			// Re-registration only adds the editor experience: every schema
+			// field the server provided (attributes, supports, context, titles)
+			// stays authoritative, so block.json remains the single source of
+			// truth (PROJECT_PLAN.md Stage 4 deliverable 3).
 			try {
 				blocks.unregisterBlockType(block.name);
 			} catch (error) {
@@ -821,15 +823,15 @@
 		}
 
 		blocks.registerBlockType(block.name, {
-			apiVersion: 3,
-			title: block.title,
-			description: block.description,
-			category: 'music-wave',
-			icon: block.icon || 'album',
+			apiVersion: existing && existing.apiVersion ? existing.apiVersion : 3,
+			title: (existing && existing.title) || block.title,
+			description: (existing && existing.description) || block.description,
+			category: (existing && existing.category) || 'music-wave',
+			icon: block.icon || (existing && existing.icon) || 'album',
 			keywords: block.keywords || [],
-			attributes: block.attributes || {},
-			usesContext: block.usesContext || [],
-			supports: block.supports || {},
+			attributes: Object.assign({}, block.attributes || {}, (existing && existing.attributes) || {}),
+			usesContext: existing && existing.usesContext && existing.usesContext.length ? existing.usesContext : (block.usesContext || []),
+			supports: Object.assign({}, block.supports || {}, (existing && existing.supports) || {}),
 			styles: existing && existing.styles ? existing.styles : undefined,
 			example: block.example || (existing && existing.example ? existing.example : undefined),
 			edit: function (props) {

@@ -872,6 +872,18 @@ Exit gate:
 - Duplicate account/gate surfaces removed from the `account-hub` theme pattern: the standalone `music-wave/music-library` block and the `[woocommerce_my_account]` shortcode (which produced a second sign-in gate for logged-out visitors) are gone; the dashboard block already provides library, orders, account, and membership panels with a single guest gate.
 - Remaining deliverables (navigation, block.json authority, conditional assets, a11y/RTL, translations) untouched — they depend on Stage 3.
 
+**Evidence (2026-08-19, second increment; all gates green):**
+
+- Deliverable 1 (native navigation default): the SPA-style persistent body swap is now opt-in (`persistent_navigation` setting / `music_wave_persistent_navigation` filter, default off) because it cannot safely reconcile every WordPress/WooCommerce page lifecycle; native navigation is the default behavior.
+- Deliverable 3 (block.json authority): the editor-side re-registration no longer discards server schema — attributes, supports, context, titles, and apiVersion from `block.json` stay authoritative and the hand-rolled config only supplies the editing experience.
+- Deliverable 4 (conditional assets, partial): the theme slider script is registered-only and enqueues at `musicwave/release-slider` render time, so slider-free routes ship no slider bytes.
+- Deliverable 5 (library pagination): new `LibraryCatalog::paged_summaries()` with accessible previous/next links preserving the active filter (`mw-library-page` query arg); items beyond the render cap are now reachable. Regression-tested.
+- Deliverable 6 (partial — route announcements): opt-in soft navigation now announces the new title through a polite live region and moves focus to the `main` landmark.
+- Deliverable 7 (partial — RTL + POT): remaining directional CSS converted to logical properties (only symmetric inset pairs remain, which are RTL-safe); all three POT files regenerated to include Stage 0–4 strings.
+- Deliverable 9 (stale sidebar): phantom `music-sidebar`/`sidebar` template parts removed from the repair allow-list; the theme ships no sidebar architecture.
+
+**Remaining for exit gate:** persistent-player deep a11y pass (queue/slider/focus audit with a screen reader), style-variation contrast audit, mapped-release Woo block (8), Core asset conditional-loading audit beyond the slider, and full keyboard/RTL/no-JS verification on the wp-env fixture.
+
 Deliverables:
 
 1. Native navigation default; persistent player feature safely scoped or deferred.

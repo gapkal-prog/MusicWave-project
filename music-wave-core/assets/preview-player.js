@@ -514,9 +514,14 @@
 
 	var navFileHref = /\.(mp3|m4a|aac|ogg|wav|flac|zip|rar|pdf)([?#]|$)/i;
 	var navSwapped = false;
+	// Native navigation is the default; the persistent body swap is opt-in
+	// because it cannot safely reconcile every WordPress/WooCommerce page
+	// lifecycle (PROJECT_PLAN.md Stage 4 deliverable 1).
+	var navEnabled = settings.persistentNav === true;
 
 	function navSupported() {
-		return Boolean(window.fetch && window.DOMParser && window.URL && window.CustomEvent)
+		return navEnabled
+			&& Boolean(window.fetch && window.DOMParser && window.URL && window.CustomEvent)
 			&& typeof document.body.replaceChildren === 'function';
 	}
 
@@ -638,9 +643,34 @@
 		}
 		navActivateScripts(document.body);
 		window.scrollTo(0, scrollY || 0);
+		navAnnounceRoute();
 		document.dispatchEvent(new window.CustomEvent('mw-page-rendered', {detail: {url: url}}));
 		if (playerController && playerController.sync) {
 			playerController.sync();
+		}
+	}
+
+	// Screen readers must hear soft navigations: announce the new title and
+	// move focus to the main landmark (PROJECT_PLAN.md Stage 4 deliverable 6).
+	function navAnnounceRoute() {
+		var region = document.getElementById('mw-route-announcer');
+		if (!region) {
+			region = document.createElement('div');
+			region.id = 'mw-route-announcer';
+			region.setAttribute('aria-live', 'polite');
+			region.setAttribute('role', 'status');
+			region.style.position = 'absolute';
+			region.style.width = '1px';
+			region.style.height = '1px';
+			region.style.overflow = 'hidden';
+			region.style.clipPath = 'inset(50%)';
+		}
+		document.body.appendChild(region);
+		region.textContent = document.title;
+		var main = document.querySelector('main');
+		if (main) {
+			main.setAttribute('tabindex', '-1');
+			main.focus({preventScroll: true});
 		}
 	}
 
