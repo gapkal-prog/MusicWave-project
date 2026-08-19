@@ -1290,6 +1290,21 @@ mw_assert_same( true, $strong_remote->allowed_url( 'https://mirror.example.net/a
 mw_assert_same( false, $strong_remote->allowed_url( 'https://attacker.example.org/a.flac' ), 'Unlisted hosts must be refused even over HTTPS.' );
 mw_assert_same( false, $strong_remote->allowed_url( 'http://cdn.example.com/a.flac' ), 'Plain HTTP redirects must always be refused.' );
 
+// Opaque asset registry and server-offload delivery (Stage 2 deliverables 2, 6, 7).
+$vip_registry = new ManaCore\MusicWave\Vip\ProtectedAssetRegistry();
+mw_assert_same( null, $vip_registry->find( 'local:album/track.flac' ), 'The registry must only resolve opaque vip: identifiers.' );
+mw_assert_same( null, $vip_registry->find( 'vip:not-a-valid-key' ), 'Malformed opaque identifiers must never resolve.' );
+mw_assert_same( false, $vip_registry->exists( 'vip:' . str_repeat( 'a', 32 ) ), 'Unknown opaque identifiers must not validate for assignment.' );
+mw_assert_same( 'audio/flac', $vip_registry->mime_type( 'x/master.FLAC' ), 'The registry MIME map must classify audio files case-insensitively.' );
+mw_assert_same( 'application/octet-stream', $vip_registry->mime_type( 'x/master.exe' ), 'Unknown extensions must fall back to a generic binary type.' );
+
+mw_assert_same( null, ManaCore\MusicWave\Vip\ProtectedFileProvider::sendfile_headers( 'none', '/p/a.flac', 'a.flac', '/mw', 'audio/flac', 'inline; filename="a.flac"' ), 'PHP streaming mode must not emit acceleration headers.' );
+$xsendfile_headers = ManaCore\MusicWave\Vip\ProtectedFileProvider::sendfile_headers( 'xsendfile', '/private/a b.flac', 'a b.flac', '', 'application/octet-stream', 'attachment; filename="a_b.flac"' );
+mw_assert_same( true, is_array( $xsendfile_headers ) && in_array( 'X-Sendfile: /private/a b.flac', $xsendfile_headers, true ), 'X-Sendfile mode must hand the absolute path to the web server.' );
+$xaccel_headers = ManaCore\MusicWave\Vip\ProtectedFileProvider::sendfile_headers( 'xaccel', '/private/album/a b.flac', 'album/a b.flac', '/musicwave-protected', 'application/octet-stream', 'attachment; filename="a_b.flac"' );
+mw_assert_same( true, is_array( $xaccel_headers ) && in_array( 'X-Accel-Redirect: /musicwave-protected/album/a%20b.flac', $xaccel_headers, true ), 'X-Accel mode must emit the URL-encoded internal redirect path.' );
+mw_assert_same( null, ManaCore\MusicWave\Vip\ProtectedFileProvider::sendfile_headers( 'xaccel', '/private/a.flac', 'a.flac', '', 'audio/flac', 'inline' ), 'X-Accel mode without an internal prefix must fall back to PHP streaming.' );
+
 $mapper = new ManaCore\MusicWave\Core\Commerce\ProductMapper();
 $mapper->sync_reverse_index( 1, array(), array( 10, 11 ) );
 mw_assert_same( array( 1 ), get_post_meta( 10, '_mw_release_ids', true ), 'Product reverse index must be created.' );

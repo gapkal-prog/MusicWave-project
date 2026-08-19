@@ -35,6 +35,8 @@ final class SettingsPage {
 		$this->field( 'remote_ttl', __( 'Remote URL lifetime', 'music-wave-vip' ), 'remote_ttl_field' );
 		$this->field( 'remote_allowed_hosts', __( 'Additional allowed redirect hosts', 'music-wave-vip' ), 'remote_allowed_hosts_field' );
 		$this->field( 'remote_key_id', __( 'Signing key ID', 'music-wave-vip' ), 'remote_key_id_field' );
+		$this->field( 'sendfile_mode', __( 'Server acceleration', 'music-wave-vip' ), 'sendfile_mode_field' );
+		$this->field( 'xaccel_prefix', __( 'X-Accel internal prefix', 'music-wave-vip' ), 'xaccel_prefix_field' );
 
 		add_settings_section( 'music_wave_vip_membership', __( 'Membership and entitlement adapters', 'music-wave-vip' ), array( $this, 'membership_section' ), 'music-wave-vip' );
 		$this->field( 'membership_sources', __( 'Membership sources', 'music-wave-vip' ), 'membership_sources_field', 'music_wave_vip_membership' );
@@ -138,6 +140,26 @@ final class SettingsPage {
 		$value = (string) VipSettings::all()['remote_key_id'];
 		echo '<input class="regular-text code" type="text" name="' . esc_attr( VipSettings::OPTION ) . '[remote_key_id]" value="' . esc_attr( $value ) . '">';
 		echo '<p class="description">' . esc_html__( 'Optional key identifier appended as the kid parameter so the remote host can rotate signing secrets without downtime.', 'music-wave-vip' ) . '</p>';
+	}
+
+	public function sendfile_mode_field(): void {
+		$value = (string) VipSettings::all()['sendfile_mode'];
+		$modes = array(
+			'none'      => __( 'PHP streaming (default)', 'music-wave-vip' ),
+			'xsendfile' => __( 'Apache/LiteSpeed X-Sendfile', 'music-wave-vip' ),
+			'xaccel'    => __( 'nginx X-Accel-Redirect', 'music-wave-vip' ),
+		);
+		echo '<select name="' . esc_attr( VipSettings::OPTION ) . '[sendfile_mode]">';
+		foreach ( $modes as $mode => $label ) {
+			echo '<option value="' . esc_attr( $mode ) . '" ' . selected( $value, $mode, false ) . '>' . esc_html( $label ) . '</option>';
+		}
+		echo '</select><p class="description">' . esc_html__( 'Offload protected-file transfers to the web server. Requires mod_xsendfile or an nginx internal location pointing at the protected directory.', 'music-wave-vip' ) . '</p>';
+	}
+
+	public function xaccel_prefix_field(): void {
+		$value = (string) VipSettings::all()['xaccel_prefix'];
+		echo '<input class="regular-text code" type="text" placeholder="/musicwave-protected" name="' . esc_attr( VipSettings::OPTION ) . '[xaccel_prefix]" value="' . esc_attr( $value ) . '">';
+		echo '<p class="description">' . esc_html__( 'nginx internal location mapped to the protected directory, for example: location /musicwave-protected/ { internal; alias /var/private/musicwave/; }', 'music-wave-vip' ) . '</p>';
 	}
 
 	public function membership_sources_field(): void {

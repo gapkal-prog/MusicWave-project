@@ -26,6 +26,8 @@ final class VipSettings {
 			'remote_ttl'             => 300,
 			'remote_allowed_hosts'   => array(),
 			'remote_key_id'          => '',
+			'sendfile_mode'          => 'none',
+			'xaccel_prefix'          => '',
 			'membership_sources'     => array( 'role', 'filter' ),
 		);
 	}
@@ -84,6 +86,10 @@ final class VipSettings {
 			)
 		);
 		$key_id          = isset( $value['remote_key_id'] ) ? sanitize_key( (string) $value['remote_key_id'] ) : '';
+		$sendfile_mode   = isset( $value['sendfile_mode'] ) ? sanitize_key( (string) $value['sendfile_mode'] ) : '';
+		$sendfile_mode   = in_array( $sendfile_mode, array( 'none', 'xsendfile', 'xaccel' ), true ) ? $sendfile_mode : 'none';
+		$xaccel_prefix   = isset( $value['xaccel_prefix'] ) && is_scalar( $value['xaccel_prefix'] ) ? trim( sanitize_text_field( (string) $value['xaccel_prefix'] ) ) : '';
+		$xaccel_prefix   = '' !== $xaccel_prefix ? '/' . trim( preg_replace( '/[^A-Za-z0-9._\/-]/', '', $xaccel_prefix ), '/' ) : '';
 		$sources         = isset( $value['membership_sources'] ) && is_array( $value['membership_sources'] ) ? $value['membership_sources'] : array();
 		$sources         = array_values( array_unique( array_filter( array_map( 'sanitize_key', $sources ) ) ) );
 		$sources         = array_values( array_intersect( $sources, array( 'role', 'filter', 'woocommerce_memberships', 'woocommerce_subscriptions' ) ) );
@@ -102,6 +108,8 @@ final class VipSettings {
 			'remote_ttl'             => $ttl >= 30 && $ttl <= 900 ? $ttl : $defaults['remote_ttl'],
 			'remote_allowed_hosts'   => $allowed_hosts,
 			'remote_key_id'          => $key_id,
+			'sendfile_mode'          => $sendfile_mode,
+			'xaccel_prefix'          => $xaccel_prefix,
 			'membership_sources'     => $sources,
 		);
 	}

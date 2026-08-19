@@ -67,14 +67,19 @@ $music_wave_vip_asset_routes->register();
 add_filter(
 	'music_wave_can_assign_download_asset',
 	static function ( $authorized, $asset_id ) use ( $music_wave_vip_storage ) {
-		if ( null !== $authorized || 0 !== strpos( (string) $asset_id, 'local:' ) ) {
+		$asset_id = (string) $asset_id;
+		$is_vip   = 0 === strpos( $asset_id, ManaCore\MusicWave\Vip\ProtectedAssetRegistry::PREFIX );
+		if ( null !== $authorized || ( ! $is_vip && 0 !== strpos( $asset_id, 'local:' ) ) ) {
 			return $authorized;
 		}
 		if ( ! current_user_can( 'manage_mw_protected_assets' ) ) {
 			return false;
 		}
+		if ( $is_vip ) {
+			return $music_wave_vip_storage->registry()->exists( $asset_id );
+		}
 
-		return false !== $music_wave_vip_storage->resolve( (string) $asset_id );
+		return false !== $music_wave_vip_storage->resolve( $asset_id );
 	},
 	10,
 	2

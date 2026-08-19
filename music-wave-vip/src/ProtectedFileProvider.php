@@ -35,6 +35,26 @@ final class ProtectedFileProvider implements DownloadProvider, StreamableDownloa
 			return false;
 		}
 
+		$settings         = VipSettings::all();
+		$sendfile_headers = self::sendfile_headers(
+			(string) $settings['sendfile_mode'],
+			$file,
+			$this->relative_to_root( $file ),
+			(string) $settings['xaccel_prefix'],
+			$inline ? $this->content_type( $file ) : 'application/octet-stream',
+			$this->content_disposition( $file, $inline )
+		);
+		if ( null !== $sendfile_headers ) {
+			// Hand the transfer to the web server: it applies its own range and
+			// length handling, freeing PHP workers for large protected files
+			// (PROJECT_PLAN.md Stage 2 deliverable 7).
+			nocache_headers();
+			foreach ( $sendfile_headers as $sendfile_header ) {
+				header( $sendfile_header );
+			}
+			exit;
+		}
+
 		$range = $this->requested_range( (int) $size );
 		nocache_headers();
 		header( 'Accept-Ranges: bytes' );
@@ -64,6 +84,50 @@ final class ProtectedFileProvider implements DownloadProvider, StreamableDownloa
 		}
 		$this->stream_file( $file, $start, $length );
 		exit;
+	}
+
+	/**
+	 * Build server-offload headers for the configured acceleration mode.
+	 *
+	 * Returns null when PHP should stream the file itself. Pure so the header
+	 * contract stays unit-testable without emitting output.
+	 *
+	 * @return array<int, string>|null
+	 */
+	public static function sendfile_headers( string $mode, string $file, string $relative, string $xaccel_prefix, string $content_type, string $disposition ): ?array {
+		$common = array(
+			'Referrer-Policy: no-referrer',
+			'X-Content-Type-Options: nosniff',
+			'Cache-Control: private, no-store, max-age=0',
+			'Content-Type: ' . $content_type,
+			'Content-Disposition: ' . $disposition,
+		);
+
+		if ( 'xsendfile' === $mode && '' !== $file ) {
+			$common[] = 'X-Sendfile: ' . $file;
+			return $common;
+		}
+		if ( 'xaccel' === $mode && '' !== $relative && '' !== $xaccel_prefix && 0 === strpos( $xaccel_prefix, '/' ) ) {
+			$encoded  = implode( '/', array_map( 'rawurlencode', explode( '/', $relative ) ) );
+			$common[] = 'X-Accel-Redirect: ' . rtrim( $xaccel_prefix, '/' ) . '/' . $encoded;
+			return $common;
+		}
+
+		return null;
+	}
+
+	/**
+	 * Compute the forward-slash relative path of a resolved protected file.
+	 */
+	private function relative_to_root( string $file ): string {
+		$root = $this->storage->root();
+		if ( false === $root || 0 !== strpos( $file, rtrim( $root, DIRECTORY_SEPARATOR ) . DIRECTORY_SEPARATOR ) ) {
+			return '';
+		}
+
+		$relative = ltrim( substr( $file, strlen( rtrim( $root, DIRECTORY_SEPARATOR ) ) ), DIRECTORY_SEPARATOR );
+
+		return str_replace( DIRECTORY_SEPARATOR, '/', $relative );
 	}
 
 	private function content_disposition( string $file, bool $inline ): string {

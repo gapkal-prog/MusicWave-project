@@ -16,6 +16,19 @@ use FilesystemIterator;
 use WP_Error;
 
 final class ProtectedAssetStorage {
+	/** @var ProtectedAssetRegistry */
+	private $registry;
+
+	public function __construct( ?ProtectedAssetRegistry $registry = null ) {
+		$this->registry = null !== $registry ? $registry : new ProtectedAssetRegistry();
+	}
+
+	/**
+	 * Expose the opaque inventory used for assignment validation.
+	 */
+	public function registry(): ProtectedAssetRegistry {
+		return $this->registry;
+	}
 	/**
 	 * Get the configured protected root when it is safe to use.
 	 *
@@ -152,6 +165,9 @@ final class ProtectedAssetStorage {
 	 * @return string|false
 	 */
 	public function resolve( string $asset_id ) {
+		if ( 0 === strpos( $asset_id, ProtectedAssetRegistry::PREFIX ) ) {
+			return $this->resolve_registered( $asset_id );
+		}
 		if ( 0 !== strpos( $asset_id, 'local:' ) ) {
 			return false;
 		}
@@ -164,6 +180,40 @@ final class ProtectedAssetStorage {
 
 		$file = realpath( $root . DIRECTORY_SEPARATOR . str_replace( array( '/', '\\' ), DIRECTORY_SEPARATOR, $relative ) );
 		if ( false === $file || ! $this->is_within( $file, $root ) || ! is_file( $file ) || ! is_readable( $file ) ) {
+			return false;
+		}
+
+		return $file;
+	}
+
+	/**
+	 * Resolve an opaque registry identifier with a delivery-time integrity check.
+	 *
+	 * The stored size fingerprint must still match the file on disk, so a
+	 * replaced or truncated master fails closed instead of being served
+	 * (PROJECT_PLAN.md Stage 2 deliverable 6).
+	 *
+	 * @return string|false
+	 */
+	private function resolve_registered( string $asset_id ) {
+		$row  = $this->registry->find( $asset_id );
+		$root = $this->root();
+		if ( null === $row || false === $root || ! isset( $row['relative_path'] ) ) {
+			return false;
+		}
+
+		$relative = (string) $row['relative_path'];
+		if ( '' === $relative || false !== strpos( $relative, '..' ) ) {
+			return false;
+		}
+
+		$file = realpath( $root . DIRECTORY_SEPARATOR . str_replace( array( '/', '\\' ), DIRECTORY_SEPARATOR, $relative ) );
+		if ( false === $file || ! $this->is_within( $file, $root ) || ! is_file( $file ) || ! is_readable( $file ) ) {
+			return false;
+		}
+
+		$size = filesize( $file );
+		if ( false === $size || (int) $size !== (int) $row['file_size'] ) {
 			return false;
 		}
 
@@ -208,8 +258,8 @@ final class ProtectedAssetStorage {
 			}
 
 			$relative   = ltrim( substr( $path, strlen( rtrim( $root, DIRECTORY_SEPARATOR ) ) ), DIRECTORY_SEPARATOR );
-			$identifier = 'local:' . str_replace( DIRECTORY_SEPARATOR, '/', $relative );
-			if ( '' !== $needle && false === strpos( strtolower( $identifier ), $needle ) ) {
+			$normalized = str_replace( DIRECTORY_SEPARATOR, '/', $relative );
+			if ( '' !== $needle && false === strpos( strtolower( $normalized ), $needle ) ) {
 				continue;
 			}
 
@@ -221,7 +271,12 @@ final class ProtectedAssetStorage {
 				break;
 			}
 
-			$assets[] = $this->asset( $identifier, $relative, $path, (int) $file->getSize() );
+			// Prefer opaque registry identifiers; unregistered files are
+			// registered on first listing so editors only ever see and assign
+			// non-guessable IDs (PROJECT_PLAN.md Stage 2 deliverable 2).
+			$opaque     = $this->registry->register( $normalized, $path );
+			$identifier = false !== $opaque ? $opaque : 'local:' . $normalized;
+			$assets[]   = $this->asset( $identifier, $relative, $path, (int) $file->getSize() );
 		}
 
 		return array(
@@ -262,7 +317,9 @@ final class ProtectedAssetStorage {
 			return new WP_Error( 'mw_protected_asset_move', __( 'The protected asset could not be stored.', 'music-wave-vip' ), array( 'status' => 500 ) );
 		}
 
-		return $this->asset( 'local:' . $filename, $filename, $destination, $size );
+		$opaque = $this->registry->register( $filename, $destination );
+
+		return $this->asset( false !== $opaque ? $opaque : 'local:' . $filename, $filename, $destination, $size );
 	}
 
 	/**
@@ -304,7 +361,9 @@ final class ProtectedAssetStorage {
 			return new WP_Error( 'mw_protected_asset_copy', __( 'The Media Library file could not be copied to protected storage.', 'music-wave-vip' ), array( 'status' => 500 ) );
 		}
 
-		return $this->asset( 'local:' . $filename, $filename, $destination, (int) $size );
+		$opaque = $this->registry->register( $filename, $destination );
+
+		return $this->asset( false !== $opaque ? $opaque : 'local:' . $filename, $filename, $destination, (int) $size );
 	}
 
 	/**

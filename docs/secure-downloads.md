@@ -44,3 +44,18 @@ WordPress when that location is still inside a publicly served tree (subdirector
 the settings screen shows structured preflight results (exists / readable / writable /
 outside web root / deny files) and provisioning writes `.htaccess`, `web.config`, and
 `index.html` deny files as defense in depth.
+
+**Opaque asset inventory.** Protected files are now inventoried in the indexed
+`{prefix}mw_vip_assets` table with random `vip:<key>` identifiers replacing path-revealing
+`local:<relative-path>` IDs. Registration records size, SHA-256 checksum, and MIME type;
+delivery re-verifies the stored size fingerprint and fails closed on replaced or truncated
+files. Files are registered automatically on first inventory listing or upload, and legacy
+`local:` identifiers keep resolving during the migration period (deprecated — new assignments
+should use `vip:` IDs only). Assignment validation accepts a `vip:` identifier only when it
+exists in the inventory and the acting user holds `manage_mw_protected_assets`.
+
+**Server-offloaded transfers.** The local provider can hand transfers to the web server via
+`X-Sendfile` (Apache/LiteSpeed) or `X-Accel-Redirect` (nginx internal location) through the
+new "Server acceleration" setting, keeping PHP workers free for large masters. The nginx
+internal location must be marked `internal;` and aliased to the protected directory; range
+handling is then performed by the server.

@@ -799,7 +799,14 @@ Exit gate:
 - Deliverable 5 (partial — remote signing): complete-payload HMAC (`url|expires|mode|key_id`), fail-closed minimum 32-char secret, optional `kid` rotation parameter, and an explicit HTTPS host allowlist that also constrains `music_wave_vip_remote_download_url` filter overrides (documented as a breaking contract change for remote verifiers in `docs/secure-downloads.md`).
 - Regression tests cover fallback replay consumption, rate-limit exhaustion, weak-key refusal, mode-covered signatures, and allowlist enforcement.
 
-**Remaining:** opaque asset registry & provider assignment contract (2), quotas/concurrency policy (4), opaque browser tickets (5), MIME/size/checksum & archive policy (6), X-Accel/X-Sendfile + object-storage interface (7), threat-model & load tests (8), and real-WordPress verification of the migration + cleanup cron in wp-env.
+**Evidence (2026-08-19, second increment; all gates green):**
+
+- Deliverable 2 (opaque asset registry): new indexed `{prefix}mw_vip_assets` inventory (lazy dbDelta) maps random `vip:<key>` identifiers to files — path-revealing, guessable `local:` IDs are no longer issued. Files auto-register on first listing/upload; legacy `local:` IDs keep resolving during migration (documented as deprecated). Assignment validation accepts `vip:` IDs only when present in the inventory plus the dedicated capability.
+- Deliverable 6 (partial — integrity validation): registration records size, SHA-256 checksum, and MIME type; delivery re-verifies the stored size fingerprint and fails closed on replaced/truncated files. Archive policy remains the existing allow-listed extensions.
+- Deliverable 7 (partial — server offload): `X-Sendfile` and nginx `X-Accel-Redirect` delivery modes with settings (`sendfile_mode`, `xaccel_prefix`), URL-encoded internal redirect paths, and a pure, unit-tested header builder.
+- Regression tests cover opaque-ID-only resolution, malformed/unknown ID rejection, MIME classification, and all three acceleration header modes.
+
+**Remaining:** quotas/concurrency policy (4), opaque browser tickets (5), archive content policy (6), object-storage/CDN provider interface (7), threat-model & load tests (8), and real-WordPress verification (registry/replay migrations, cleanup cron, sendfile paths) in wp-env.
 
 Deliverables:
 
