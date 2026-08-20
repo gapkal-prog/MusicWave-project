@@ -25,19 +25,19 @@ final class FollowNotifier {
 	public const UNSUBSCRIBE_QUERY = 'mw-unsubscribe';
 	public const MAX_RECIPIENTS = 200;
 
-	/** @var LibraryRepository */
-	private $library;
-
 	/** @var NotificationPreferences */
 	private $preferences;
 
 	/** @var ReleaseVisibility */
 	private $visibility;
 
-	public function __construct( LibraryRepository $library, NotificationPreferences $preferences, ?ReleaseVisibility $visibility = null ) {
-		$this->library     = $library;
+	/** @var FollowerDirectory */
+	private $audience;
+
+	public function __construct( LibraryRepository $library, NotificationPreferences $preferences, ?ReleaseVisibility $visibility = null, ?FollowerDirectory $audience = null ) {
 		$this->preferences = $preferences;
 		$this->visibility  = null !== $visibility ? $visibility : new ReleaseVisibility();
+		$this->audience    = null !== $audience ? $audience : new LibraryFollowerDirectory( $library );
 	}
 
 	/**
@@ -157,26 +157,32 @@ final class FollowNotifier {
 	}
 
 	/**
-	 * Listeners following any artist of one release.
+	 * Listeners who follow one release through the configured directory.
 	 *
 	 * @return array<int, int>
 	 */
 	private function followers( int $release_id ): array {
 		$followers = array();
-		$terms     = wp_get_post_terms( $release_id, 'mw_artist', array( 'fields' => 'ids' ) );
-		foreach ( is_array( $terms ) ? $terms : array() as $term_id ) {
-			$term_id = absint( $term_id );
-			if ( $term_id < 1 ) {
-				continue;
-			}
-			foreach ( $this->library->users_with( LibraryRepository::TYPE_ARTIST, $term_id ) as $user_id ) {
-				if ( ! in_array( $user_id, $followers, true ) ) {
-					$followers[] = $user_id;
-				}
+		foreach ( $this->audience->followers( $release_id ) as $user_id ) {
+			$user_id = absint( $user_id );
+			if ( $user_id > 0 && ! in_array( $user_id, $followers, true ) ) {
+				$followers[] = $user_id;
 			}
 		}
 
-		return $followers;
+		/**
+		 * Filter the audience for one release notification.
+		 *
+		 * Returned listeners still pass consent, channel preference, and
+		 * recipient-cap checks, so this filter can narrow or extend the
+		 * audience but never bypass opt-in.
+		 *
+		 * @param array<int, int> $followers  Candidate listener IDs.
+		 * @param int             $release_id Published release ID.
+		 */
+		$filtered = apply_filters( 'music_wave_release_followers', $followers, $release_id );
+
+		return is_array( $filtered ) ? $filtered : $followers;
 	}
 
 	/**

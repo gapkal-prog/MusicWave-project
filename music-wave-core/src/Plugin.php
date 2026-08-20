@@ -78,8 +78,13 @@ use ManaCore\MusicWave\Core\Modules\Foundation;
 use ManaCore\MusicWave\Core\Modules\Downloads;
 use ManaCore\MusicWave\Core\Modules\Diagnostics;
 use ManaCore\MusicWave\Core\Modules\Library;
+use ManaCore\MusicWave\Core\Modules\Notifications;
 use ManaCore\MusicWave\Core\Modules\Rendering;
 use ManaCore\MusicWave\Core\Modules\Seo;
+use ManaCore\MusicWave\Core\Notifications\FollowNotifier;
+use ManaCore\MusicWave\Core\Notifications\LibraryFollowerDirectory;
+use ManaCore\MusicWave\Core\Notifications\NotificationPreferences;
+use ManaCore\MusicWave\Core\Notifications\NotificationSettings;
 use ManaCore\MusicWave\Core\Playback\PlaybackQueueRoutes;
 use ManaCore\MusicWave\Core\Schema\ReleaseMetaRegistry;
 use ManaCore\MusicWave\Core\Schema\ReleaseMetaSchema;
@@ -155,6 +160,8 @@ final class Plugin {
 
 		$playlists = new PlaylistRepository( new DatabasePlaylistStore(), $visibility );
 
+		$notification_preferences = new NotificationPreferences();
+
 		$migration_runner = new MigrationRunner( array( new Schema020(), new Schema030(), new Schema040(), new Schema050(), new Schema070(), new Schema080(), new Schema090(), new Schema0100(), new Schema0110() ) );
 
 		$registry->add( new Foundation() );
@@ -173,6 +180,12 @@ final class Plugin {
 		$registry->add( new Admin( new ReleaseMetaBox( $schema, $releases, $mapper ), new EditorAssets(), new ReleaseReadiness( $releases ), new CollectionCandidateRoutes(), new SettingsPage( new BulkAccessManager( $releases ) ) ) );
 		$registry->add( new Commerce( $mapper, new ProductReleasePanel( $mapper ), $purchase_checker, new AccountLibrary( $policy, $releases, $library_repository ) ) );
 		$registry->add( new Library( $library_repository, new LibraryRoutes( $library_repository, $library_catalog ), new LibraryBlocks( $library_repository, $library_catalog ), new PreSaveScheduler( $library_repository ) ) );
+		$registry->add(
+			new Notifications(
+				new FollowNotifier( $library_repository, $notification_preferences, $visibility, new LibraryFollowerDirectory( $library_repository, $releases ) ),
+				new NotificationSettings( $notification_preferences )
+			)
+		);
 		$playlist_forms = new PlaylistFormHandler( $playlists );
 		$registry->add( new \ManaCore\MusicWave\Core\Modules\Playlists( $playlists, new PlaylistRoutes( $playlists ), $playlist_forms, new PlaylistBlocks( $playlists, $playlist_forms ) ) );
 		$registry->add( new Rendering( new ReleaseBlocks( $policy, $releases ), new ArtistProfileBlock(), new PreviewPlayer( $releases, $policy ), new PlaybackQueueRoutes( $policy, $releases ), new ReleaseRestVisibilityPolicy( $policy ) ) );
@@ -203,7 +216,7 @@ final class Plugin {
 		$registry->register_all();
 
 		( new \ManaCore\MusicWave\Core\Cli\Commands( $migration_runner ) )->register();
-		( new \ManaCore\MusicWave\Core\Privacy\PersonalData( $library_repository, $listening_repository, $playlists ) )->register();
+		( new \ManaCore\MusicWave\Core\Privacy\PersonalData( $library_repository, $listening_repository, $playlists, $notification_preferences ) )->register();
 
 		$this->booted = true;
 		do_action( 'music_wave_core_loaded', $this );

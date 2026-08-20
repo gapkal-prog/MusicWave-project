@@ -2,9 +2,10 @@
 /**
  * WordPress personal-data exporter and eraser for MusicWave user data.
  *
- * MusicWave stores three user-owned datasets: the personal music library
+ * MusicWave stores four user-owned datasets: the personal music library
  * (`mw_music_library` user meta, including wishlist and pre-save items),
- * consented listening activity, and playlists. Delivery audit events are emitted as hooks
+ * consented listening activity, playlists, and notification preferences.
+ * Delivery audit events are emitted as hooks
  * and only persisted by integrations, which own their retention; rate and
  * quota counters are ephemeral transients (PROJECT_PLAN.md Stage 3
  * deliverable 6).
@@ -18,6 +19,7 @@ namespace ManaCore\MusicWave\Core\Privacy;
 
 use ManaCore\MusicWave\Core\Library\LibraryRepository;
 use ManaCore\MusicWave\Core\Listening\ListeningRepository;
+use ManaCore\MusicWave\Core\Notifications\NotificationPreferences;
 use ManaCore\MusicWave\Core\Playlists\PlaylistRepository;
 
 final class PersonalData {
@@ -30,10 +32,14 @@ final class PersonalData {
 	/** @var PlaylistRepository|null */
 	private $playlists;
 
-	public function __construct( LibraryRepository $library, ?ListeningRepository $listening = null, ?PlaylistRepository $playlists = null ) {
-		$this->library   = $library;
-		$this->listening = $listening;
-		$this->playlists = $playlists;
+	/** @var NotificationPreferences|null */
+	private $notifications;
+
+	public function __construct( LibraryRepository $library, ?ListeningRepository $listening = null, ?PlaylistRepository $playlists = null, ?NotificationPreferences $notifications = null ) {
+		$this->library       = $library;
+		$this->listening     = $listening;
+		$this->playlists     = $playlists;
+		$this->notifications = $notifications;
 	}
 
 	/**
@@ -172,6 +178,24 @@ final class PersonalData {
 			}
 		}
 
+		if ( null !== $this->notifications ) {
+			$channels = array();
+			foreach ( $this->notifications->export( (int) $user->ID ) as $channel => $enabled ) {
+				$channels[] = array(
+					'name'  => $this->notifications->label( (string) $channel ),
+					'value' => $enabled ? __( 'Enabled', 'music-wave-core' ) : __( 'Disabled', 'music-wave-core' ),
+				);
+			}
+			if ( ! empty( $channels ) ) {
+				$items[] = array(
+					'group_id'    => 'music-wave-notifications',
+					'group_label' => __( 'Notification preferences', 'music-wave-core' ),
+					'item_id'     => 'music-wave-notifications',
+					'data'        => $channels,
+				);
+			}
+		}
+
 		return array(
 			'data' => $items,
 			'done' => true,
@@ -198,6 +222,9 @@ final class PersonalData {
 		}
 		if ( false !== $user && isset( $user->ID ) && null !== $this->playlists ) {
 			$removed = $this->playlists->erase( (int) $user->ID ) || $removed;
+		}
+		if ( false !== $user && isset( $user->ID ) && null !== $this->notifications ) {
+			$removed = $this->notifications->erase( (int) $user->ID ) || $removed;
 		}
 
 		return array(

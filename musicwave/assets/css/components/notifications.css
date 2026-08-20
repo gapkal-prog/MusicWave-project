@@ -1,0 +1,77 @@
+/**
+ * Notification preference panel inside the account dashboard.
+ *
+ * Logical properties only, so the layout mirrors correctly in RTL locales.
+ */
+
+.mw-notifications {
+	display: flex;
+	flex-direction: column;
+	gap: var(--wp--preset--spacing--20, 0.75rem);
+}
+
+.mw-notifications__notice {
+	margin: 0;
+	padding-block: 0.5rem;
+	padding-inline: 0.75rem;
+	border-radius: var(--mw-radius-sm, 6px);
+	background: var(--mw-color-surface-raised, rgba(255, 255, 255, 0.07));
+	font-size: var(--wp--preset--font-size--small, 0.875rem);
+}
+
+.mw-notifications__notice--error {
+	color: var(--mw-color-danger, #f87171);
+}
+
+.mw-notifications__form fieldset {
+	display: flex;
+	flex-direction: column;
+	gap: 0.5rem;
+	margin: 0;
+	padding: var(--wp--preset--spacing--20, 0.75rem);
+	border: 1px solid var(--mw-color-border, rgba(255, 255, 255, 0.12));
+	border-radius: var(--mw-radius-md, 12px);
+}
+
+.mw-notifications__form legend {
+	padding-inline: 0.35rem;
+	font-weight: 600;
+}
+
+.mw-notifications__option {
+	display: flex;
+	align-items: center;
+	gap: 0.6rem;
+	line-height: 1.4;
+}
+
+.mw-notifications__option input {
+	flex: 0 0 auto;
+	inline-size: 1.1rem;
+	block-size: 1.1rem;
+	accent-color: var(--mw-color-accent, #1db954);
+}
+
+.mw-notifications__hint {
+	margin: 0;
+	color: var(--mw-color-text-muted, rgba(255, 255, 255, 0.7));
+	font-size: var(--wp--preset--font-size--small, 0.875rem);
+}
+
+.mw-notifications__form button[type="submit"] {
+	align-self: flex-start;
+	padding-block: 0.5rem;
+	padding-inline: 1rem;
+	border: 0;
+	border-radius: var(--mw-radius-sm, 6px);
+	background: var(--mw-color-accent, #1db954);
+	color: var(--mw-color-on-accent, #06130a);
+	font-weight: 600;
+	cursor: pointer;
+	transition: background 160ms var(--mw-ease-out, ease-out);
+}
+
+.mw-notifications__form button[type="submit"]:hover,
+.mw-notifications__form button[type="submit"]:focus-visible {
+	background: var(--mw-color-accent-strong, #1ed760);
+}

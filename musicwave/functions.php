@@ -110,6 +110,10 @@ function musicwave_style_modules(): array {
 			'file'         => 'assets/css/components/playlists.css',
 			'dependencies' => array( 'musicwave-utilities' ),
 		),
+		'musicwave-notifications'   => array(
+			'file'         => 'assets/css/components/notifications.css',
+			'dependencies' => array( 'musicwave-utilities' ),
+		),
 		'musicwave-accessibility'   => array(
 			'file'         => 'assets/css/accessibility.css',
 			'dependencies' => array( 'musicwave-base' ),
