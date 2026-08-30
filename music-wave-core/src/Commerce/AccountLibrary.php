@@ -16,7 +16,8 @@ use ManaCore\MusicWave\Core\Contracts\ReleaseRepository;
 use ManaCore\MusicWave\Core\Library\LibraryRepository;
 
 final class AccountLibrary {
-	public const ENDPOINT = 'music-library';
+	public const ENDPOINT            = 'music-library';
+	public const MEMBERSHIP_ENDPOINT = 'membership';
 
 	/** @var AccessPolicyEngine */
 	private $policy;
@@ -43,11 +44,34 @@ final class AccountLibrary {
 		add_action( 'init', array( $this, 'register_dashboard_block' ), 20 );
 		add_filter( 'woocommerce_account_menu_items', array( $this, 'add_menu_item' ), 40 );
 		add_action( 'woocommerce_account_' . self::ENDPOINT . '_endpoint', array( $this, 'render' ) );
+		add_action( 'woocommerce_account_' . self::MEMBERSHIP_ENDPOINT . '_endpoint', array( $this, 'render_membership_endpoint' ) );
+		add_filter( 'pre_do_shortcode_tag', array( $this, 'skip_my_account_shortcode' ), 10, 2 );
 		add_shortcode( 'musicwave_dashboard', array( $this, 'dashboard_shortcode' ) );
+		add_shortcode( 'musicwave_membership', array( $this, 'membership_shortcode' ) );
 	}
 
 	/**
-	 * Register the portable account dashboard block.
+	 * Neutralize a pasted [woocommerce_my_account] shortcode on account pages.
+	 *
+	 * The unified dashboard renders every account section itself; the
+	 * shortcode — whether inside page content, a pattern, or a wp:shortcode
+	 * block — would draw WooCommerce's second navigation and duplicate every
+	 * panel. pre_do_shortcode_tag covers every rendering path.
+	 *
+	 * @param string|null $output Shortcode output, null by default.
+	 * @param string      $tag    Shortcode tag.
+	 * @return string|null
+	 */
+	public function skip_my_account_shortcode( $output, string $tag ) {
+		if ( 'woocommerce_my_account' === $tag && function_exists( 'is_account_page' ) && is_account_page() ) {
+			return '';
+		}
+
+		return $output;
+	}
+
+	/**
+	 * Register the portable account dashboard and membership blocks.
 	 */
 	public function register_dashboard_block(): void {
 		if ( ! function_exists( 'register_block_type' ) ) {
@@ -60,22 +84,188 @@ final class AccountLibrary {
 			array(
 				'api_version' => 3,
 				'attributes'  => array(
-					'showLibrary'    => array(
+					'showLibrary'          => array(
 						'type'    => 'boolean',
 						'default' => true,
 					),
-					'showQuickLinks' => array(
+					'showQuickLinks'       => array(
 						'type'    => 'boolean',
 						'default' => true,
 					),
-					'showStats'      => array(
+					'showStats'            => array(
 						'type'    => 'boolean',
 						'default' => true,
+					),
+					'showMembershipPanel'  => array(
+						'type'    => 'boolean',
+						'default' => true,
+					),
+					'showOrders'           => array(
+						'type'    => 'boolean',
+						'default' => true,
+					),
+					'showDownloads'        => array(
+						'type'    => 'boolean',
+						'default' => true,
+					),
+					'showAddresses'        => array(
+						'type'    => 'boolean',
+						'default' => true,
+					),
+					'showPaymentMethods'   => array(
+						'type'    => 'boolean',
+						'default' => true,
+					),
+					'showAccountDetails'   => array(
+						'type'    => 'boolean',
+						'default' => true,
+					),
+					'showSignOut'          => array(
+						'type'    => 'boolean',
+						'default' => true,
+					),
+					'introText'            => array(
+						'type'    => 'string',
+						'default' => '',
+					),
+					'membershipHeading'    => array(
+						'type'    => 'string',
+						'default' => '',
+					),
+					'libraryHeading'       => array(
+						'type'    => 'string',
+						'default' => '',
+					),
+					'ordersHeading'        => array(
+						'type'    => 'string',
+						'default' => '',
+					),
+					'downloadsHeading'     => array(
+						'type'    => 'string',
+						'default' => '',
+					),
+					'addressesHeading'     => array(
+						'type'    => 'string',
+						'default' => '',
+					),
+					'paymentHeading'       => array(
+						'type'    => 'string',
+						'default' => '',
+					),
+					'accountHeading'       => array(
+						'type'    => 'string',
+						'default' => '',
+					),
+					'playlistsHeading'     => array(
+						'type'    => 'string',
+						'default' => '',
+					),
+					'notificationsHeading' => array(
+						'type'    => 'string',
+						'default' => '',
+					),
+					'panelOrder'           => array(
+						'type'    => 'string',
+						'default' => 'default',
 					),
 				),
 				'supports'    => \ManaCore\MusicWave\Core\Blocks\BlockSupport::appearance_tools(),
 			)
 		);
+
+		\ManaCore\MusicWave\Core\Blocks\BlockSupport::register_dynamic(
+			'music-wave/membership-panel',
+			array( $this, 'render_membership_block' ),
+			array(
+				'api_version' => 3,
+				'attributes'  => array(
+					'heading'        => array(
+						'type'    => 'string',
+						'default' => '',
+					),
+					'showActive'     => array(
+						'type'    => 'boolean',
+						'default' => true,
+					),
+					'showPlans'      => array(
+						'type'    => 'boolean',
+						'default' => true,
+					),
+					'showBuyButtons' => array(
+						'type'    => 'boolean',
+						'default' => true,
+					),
+					'emptyText'      => array(
+						'type'    => 'string',
+						'default' => '',
+					),
+				),
+				'supports'    => \ManaCore\MusicWave\Core\Blocks\BlockSupport::appearance_tools(),
+			)
+		);
+	}
+
+	/**
+	 * Render the membership panel block.
+	 *
+	 * @param array<string, mixed> $attributes Block attributes.
+	 */
+	public function render_membership_block( array $attributes ): string {
+		$defaults = array(
+			'heading'        => '',
+			'showActive'     => true,
+			'showPlans'      => true,
+			'showBuyButtons' => true,
+			'emptyText'      => '',
+		);
+		$args     = array_merge( $defaults, $attributes );
+
+		return $this->membership_markup( get_current_user_id(), $args );
+	}
+
+	/**
+	 * Shortcode counterpart for the membership panel.
+	 *
+	 * @param array<string, mixed> $attributes Shortcode attributes.
+	 */
+	public function membership_shortcode( $attributes = array() ): string {
+		$attributes = is_array( $attributes ) ? $attributes : array();
+		$attributes = shortcode_atts(
+			array(
+				'heading'     => '',
+				'show_active' => 'yes',
+				'show_plans'  => 'yes',
+				'show_buy'    => 'yes',
+				'empty_text'  => '',
+			),
+			$attributes,
+			'musicwave_membership'
+		);
+
+		return $this->render_membership_block(
+			array(
+				'heading'        => $attributes['heading'],
+				'showActive'     => 'yes' === $attributes['show_active'],
+				'showPlans'      => 'yes' === $attributes['show_plans'],
+				'showBuyButtons' => 'yes' === $attributes['show_buy'],
+				'emptyText'      => $attributes['empty_text'],
+			)
+		);
+	}
+
+	/**
+	 * WooCommerce my-account membership endpoint content.
+	 *
+	 * @return void
+	 */
+	public function render_membership_endpoint(): void {
+		$user_id = get_current_user_id();
+		if ( $user_id < 1 ) {
+			echo '<p>' . esc_html__( 'Sign in to view your membership.', 'music-wave-core' ) . '</p>';
+			return;
+		}
+
+		echo $this->membership_markup( $user_id ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Composed below from fully escaped fragments.
 	}
 
 	/**
@@ -99,9 +289,21 @@ final class AccountLibrary {
 		$attributes = is_array( $attributes ) ? $attributes : array();
 		$attributes = shortcode_atts(
 			array(
-				'show_library'     => 'yes',
-				'show_quick_links' => 'yes',
-				'show_stats'       => 'yes',
+				'show_library'       => 'yes',
+				'show_quick_links'   => 'yes',
+				'show_stats'         => 'yes',
+				'show_membership'    => 'yes',
+				'show_orders'        => 'yes',
+				'show_downloads'     => 'yes',
+				'show_addresses'     => 'yes',
+				'show_payment'       => 'yes',
+				'show_account'       => 'yes',
+				'show_sign_out'      => 'yes',
+				'intro_text'         => '',
+				'membership_heading' => '',
+				'library_heading'    => '',
+				'orders_heading'     => '',
+				'panel_order'        => 'default',
 			),
 			$attributes,
 			'musicwave_dashboard'
@@ -109,9 +311,21 @@ final class AccountLibrary {
 
 		return $this->render_dashboard_block(
 			array(
-				'showLibrary'    => 'yes' === $attributes['show_library'],
-				'showQuickLinks' => 'yes' === $attributes['show_quick_links'],
-				'showStats'      => 'yes' === $attributes['show_stats'],
+				'showLibrary'         => 'yes' === $attributes['show_library'],
+				'showQuickLinks'      => 'yes' === $attributes['show_quick_links'],
+				'showStats'           => 'yes' === $attributes['show_stats'],
+				'showMembershipPanel' => 'yes' === $attributes['show_membership'],
+				'showOrders'          => 'yes' === $attributes['show_orders'],
+				'showDownloads'       => 'yes' === $attributes['show_downloads'],
+				'showAddresses'       => 'yes' === $attributes['show_addresses'],
+				'showPaymentMethods'  => 'yes' === $attributes['show_payment'],
+				'showAccountDetails'  => 'yes' === $attributes['show_account'],
+				'showSignOut'         => 'yes' === $attributes['show_sign_out'],
+				'introText'           => sanitize_text_field( (string) $attributes['intro_text'] ),
+				'membershipHeading'   => sanitize_text_field( (string) $attributes['membership_heading'] ),
+				'libraryHeading'      => sanitize_text_field( (string) $attributes['library_heading'] ),
+				'ordersHeading'       => sanitize_text_field( (string) $attributes['orders_heading'] ),
+				'panelOrder'          => sanitize_key( (string) $attributes['panel_order'] ),
 			)
 		);
 	}
@@ -133,10 +347,13 @@ final class AccountLibrary {
 			return;
 		}
 
-		$user = wp_get_current_user();
-		$name = '' !== $user->display_name ? $user->display_name : $user->user_login;
+		$user  = wp_get_current_user();
+		$name  = '' !== $user->display_name ? $user->display_name : $user->user_login;
+		$intro = isset( $attributes['introText'] ) && is_string( $attributes['introText'] ) && '' !== trim( (string) $attributes['introText'] ) ? sanitize_text_field( (string) $attributes['introText'] ) : __( 'Your account, music access, downloads, and listening shortcuts in one place.', 'music-wave-core' );
+		$style = \ManaCore\MusicWave\Core\Blocks\BlockSupport::style_variation( $attributes, array( 'tabs', 'stacked' ) );
+		$class = 'mw-user-dashboard' . ( '' !== $style ? ' ' . $style : '' );
 
-		echo '<section class="mw-user-dashboard" data-mw-dashboard><header class="mw-user-dashboard__welcome">' . get_avatar( $user_id, 88, '', '', array( 'class' => 'mw-user-dashboard__avatar' ) ) . '<div><span class="mw-user-dashboard__eyebrow">' . esc_html__( 'Welcome back', 'music-wave-core' ) . '</span><h2>' . esc_html( $name ) . '</h2><p>' . esc_html__( 'Your account, music access, downloads, and listening shortcuts in one place.', 'music-wave-core' ) . '</p></div></header>';
+		echo '<section class="' . esc_attr( $class ) . '" data-mw-dashboard><header class="mw-user-dashboard__welcome">' . get_avatar( $user_id, 88, '', '', array( 'class' => 'mw-user-dashboard__avatar' ) ) . '<div><span class="mw-user-dashboard__eyebrow">' . esc_html__( 'Welcome back', 'music-wave-core' ) . '</span><h2>' . esc_html( $name ) . '</h2><p>' . esc_html( $intro ) . '</p></div></header>';
 
 		if ( ! isset( $attributes['showStats'] ) || false !== $attributes['showStats'] ) {
 			$this->render_stats( $user_id );
@@ -153,7 +370,7 @@ final class AccountLibrary {
 			return;
 		}
 
-		$panels     = $this->dashboard_panels( $user_id, $show_entitled );
+		$panels     = $this->dashboard_panels( $user_id, $show_entitled, $attributes );
 		$logout_url = function_exists( 'wc_logout_url' ) ? wc_logout_url() : wp_logout_url( home_url( '/' ) );
 
 		echo '<nav class="mw-user-dashboard__tabs" aria-label="' . esc_attr__( 'Account sections', 'music-wave-core' ) . '">';
@@ -163,7 +380,10 @@ final class AccountLibrary {
 			// after it loads (progressive enhancement, PROJECT_PLAN.md §14).
 			echo '<button type="button" class="mw-user-dashboard__tab" data-mw-dashboard-tab="' . esc_attr( $key ) . '" aria-controls="mw-dashboard-panel-' . esc_attr( $key ) . '" aria-expanded="true"><span aria-hidden="true">' . esc_html( (string) $panel['icon'] ) . '</span><strong>' . esc_html( (string) $panel['label'] ) . '</strong><small>' . esc_html( (string) $panel['description'] ) . '</small></button>';
 		}
-		echo '<a class="mw-user-dashboard__tab mw-user-dashboard__tab--logout" href="' . esc_url( $logout_url ) . '"><span aria-hidden="true">&rarr;</span><strong>' . esc_html__( 'Sign out', 'music-wave-core' ) . '</strong><small>' . esc_html__( 'Securely close this account session.', 'music-wave-core' ) . '</small></a>';
+		$show_sign_out = ! isset( $attributes['showSignOut'] ) || false !== $attributes['showSignOut'];
+		if ( $show_sign_out ) {
+			echo '<a class="mw-user-dashboard__tab mw-user-dashboard__tab--logout" href="' . esc_url( $logout_url ) . '"><span aria-hidden="true">&rarr;</span><strong>' . esc_html__( 'Sign out', 'music-wave-core' ) . '</strong><small>' . esc_html__( 'Securely close this account session.', 'music-wave-core' ) . '</small></a>';
+		}
 		echo '</nav>';
 
 		echo '<div class="mw-user-dashboard__panels">';
@@ -179,43 +399,84 @@ final class AccountLibrary {
 	/**
 	 * Build the visible dashboard panels for the current plugin context.
 	 *
-	 * WooCommerce panels only appear while WooCommerce is active, and the
-	 * membership panel only while the MusicWave VIP plugin is active.
+	 * Every WooCommerce account section renders inside the dashboard while
+	 * WooCommerce is active; the membership panel appears while the MusicWave
+	 * VIP plugin is active. Block attributes gate each panel and override its
+	 * heading, and panelOrder re-sequences the tab bar.
 	 *
-	 * @param int  $user_id       Dashboard owner.
-	 * @param bool $show_entitled Whether the entitled secure library renders.
+	 * @param int                  $user_id       Dashboard owner.
+	 * @param bool                 $show_entitled Whether the entitled secure library renders.
+	 * @param array<string, mixed> $attributes    Dashboard display attributes.
 	 * @return array<string, array<string, string>>
 	 */
-	private function dashboard_panels( int $user_id, bool $show_entitled ): array {
-		$panels = array(
-			'library' => array(
+	private function dashboard_panels( int $user_id, bool $show_entitled, array $attributes = array() ): array {
+		$on      = static function ( string $key ) use ( $attributes ): bool {
+			return ! isset( $attributes[ $key ] ) || false !== $attributes[ $key ];
+		};
+		$heading = static function ( string $key, string $default ) use ( $attributes ): string {
+			$custom = isset( $attributes[ $key ] ) && is_string( $attributes[ $key ] ) ? sanitize_text_field( trim( (string) $attributes[ $key ] ) ) : '';
+
+			return '' !== $custom ? $custom : $default;
+		};
+
+		$panels = array();
+		if ( $on( 'showLibrary' ) || $show_entitled ) {
+			$panels['library'] = array(
 				'icon'        => '♫',
-				'label'       => __( 'Music library', 'music-wave-core' ),
+				'label'       => $heading( 'libraryHeading', __( 'Music library', 'music-wave-core' ) ),
 				'description' => __( 'Saved songs, albums, podcasts, and artists.', 'music-wave-core' ),
 				'content'     => $this->library_panel_content( $show_entitled ),
-			),
-		);
-
-		if ( class_exists( 'WooCommerce' ) ) {
-			$panels['orders']  = array(
-				'icon'        => '◎',
-				'label'       => __( 'Orders', 'music-wave-core' ),
-				'description' => __( 'Review purchases and order status.', 'music-wave-core' ),
-				'content'     => $this->orders_panel_content(),
-			);
-			$panels['account'] = array(
-				'icon'        => '●',
-				'label'       => __( 'Account details', 'music-wave-core' ),
-				'description' => __( 'Your name, email, and password.', 'music-wave-core' ),
-				'content'     => $this->account_panel_content( $user_id ),
 			);
 		}
 
-		if ( defined( 'MUSIC_WAVE_VIP_FILE' ) ) {
+		if ( class_exists( 'WooCommerce' ) ) {
+			if ( $on( 'showOrders' ) ) {
+				$panels['orders'] = array(
+					'icon'        => '◎',
+					'label'       => $heading( 'ordersHeading', __( 'Orders', 'music-wave-core' ) ),
+					'description' => __( 'Review purchases and order status.', 'music-wave-core' ),
+					'content'     => $this->orders_panel_content(),
+				);
+			}
+			if ( $on( 'showDownloads' ) && function_exists( 'woocommerce_account_downloads' ) ) {
+				$panels['downloads'] = array(
+					'icon'        => '↓',
+					'label'       => $heading( 'downloadsHeading', __( 'Downloads', 'music-wave-core' ) ),
+					'description' => __( 'Files from your WooCommerce purchases.', 'music-wave-core' ),
+					'content'     => $this->downloads_panel_content(),
+				);
+			}
+			if ( $on( 'showAddresses' ) && function_exists( 'woocommerce_account_edit_address' ) ) {
+				$panels['addresses'] = array(
+					'icon'        => '⌂',
+					'label'       => $heading( 'addressesHeading', __( 'Addresses', 'music-wave-core' ) ),
+					'description' => __( 'Billing and shipping details.', 'music-wave-core' ),
+					'content'     => $this->addresses_panel_content(),
+				);
+			}
+			if ( $on( 'showPaymentMethods' ) && function_exists( 'woocommerce_account_payment_methods' ) ) {
+				$panels['payment'] = array(
+					'icon'        => '₪',
+					'label'       => $heading( 'paymentHeading', __( 'Payment methods', 'music-wave-core' ) ),
+					'description' => __( 'Saved cards and gateways.', 'music-wave-core' ),
+					'content'     => $this->payment_panel_content(),
+				);
+			}
+			if ( $on( 'showAccountDetails' ) && function_exists( 'woocommerce_account_edit_account' ) ) {
+				$panels['account'] = array(
+					'icon'        => '●',
+					'label'       => $heading( 'accountHeading', __( 'Account details', 'music-wave-core' ) ),
+					'description' => __( 'Edit your name, email, and password.', 'music-wave-core' ),
+					'content'     => $this->account_panel_content(),
+				);
+			}
+		}
+
+		if ( defined( 'MUSIC_WAVE_VIP_FILE' ) && $on( 'showMembershipPanel' ) ) {
 			$panels['membership'] = array(
 				'icon'        => '★',
-				'label'       => __( 'Membership', 'music-wave-core' ),
-				'description' => __( 'Your VIP access levels and perks.', 'music-wave-core' ),
+				'label'       => $heading( 'membershipHeading', __( 'Membership', 'music-wave-core' ) ),
+				'description' => __( 'Your VIP access levels and purchasable plans.', 'music-wave-core' ),
 				'content'     => $this->membership_panel_content( $user_id ),
 			);
 		}
@@ -227,8 +488,206 @@ final class AccountLibrary {
 		 * @param int   $user_id Dashboard owner.
 		 */
 		$filtered = apply_filters( 'music_wave_dashboard_panels', $panels, $user_id );
+		$panels   = is_array( $filtered ) ? $filtered : $panels;
 
-		return is_array( $filtered ) ? $filtered : $panels;
+		// Filter-added panels (playlists, notifications, …) honor the same
+		// per-panel heading overrides.
+		foreach ( array( 'playlists', 'notifications' ) as $extra ) {
+			$key = $extra . 'Heading';
+			if ( isset( $panels[ $extra ] ) && isset( $attributes[ $key ] ) && is_string( $attributes[ $key ] ) && '' !== trim( (string) $attributes[ $key ] ) ) {
+				$panels[ $extra ]['label'] = sanitize_text_field( trim( (string) $attributes[ $key ] ) );
+			}
+		}
+
+		return $this->order_panels( $panels, isset( $attributes['panelOrder'] ) ? sanitize_key( (string) $attributes['panelOrder'] ) : '' );
+	}
+
+	/**
+	 * Re-sequence panels by the selected order preset.
+	 *
+	 * @param array<string, array<string, string>> $panels Panels keyed by id.
+	 * @param string                               $preset default|commerce_first|membership_first.
+	 * @return array<string, array<string, string>>
+	 */
+	private function order_panels( array $panels, string $preset ): array {
+		$order = array(
+			'library',
+			'orders',
+			'downloads',
+			'addresses',
+			'payment',
+			'account',
+			'membership',
+		);
+		if ( 'commerce_first' === $preset ) {
+			$order = array(
+				'orders',
+				'downloads',
+				'addresses',
+				'payment',
+				'account',
+				'library',
+				'membership',
+			);
+		} elseif ( 'membership_first' === $preset ) {
+			$order = array(
+				'membership',
+				'library',
+				'orders',
+				'downloads',
+				'addresses',
+				'payment',
+				'account',
+			);
+		}
+
+		$ordered = array();
+		foreach ( $order as $key ) {
+			if ( isset( $panels[ $key ] ) ) {
+				$ordered[ $key ] = $panels[ $key ];
+				unset( $panels[ $key ] );
+			}
+		}
+
+		return $ordered + $panels;
+	}
+
+	/**
+	 * Whether the WooCommerce frontend session state is initialized.
+	 *
+	 * Block-renderer REST requests (the editor live preview) never load the
+	 * cart session, so WC()->customer stays null there while the my-account
+	 * templates read it. Panels depending on that state render an
+	 * editor-safe placeholder instead of fatalling the preview.
+	 */
+	private function woo_customer_ready(): bool {
+		return class_exists( 'WooCommerce' ) && function_exists( 'WC' ) && null !== WC()->customer;
+	}
+
+	/**
+	 * Placeholder shown where live WooCommerce customer data only exists on
+	 * the frontend (editor previews, REST renders).
+	 */
+	private function woo_preview_placeholder( string $section ): string {
+		return '<p class="mw-user-dashboard__empty-panel">' . esc_html( sprintf( /* translators: %s: section name. */ __( 'Your live %s appear here on the site.', 'music-wave-core' ), $section ) ) . '</p>';
+	}
+
+	/**
+	 * Render the WooCommerce downloads table inside the dashboard panel.
+	 */
+	private function downloads_panel_content(): string {
+		if ( ! $this->woo_customer_ready() ) {
+			return $this->woo_preview_placeholder( __( 'downloads', 'music-wave-core' ) );
+		}
+		$endpoint = $this->capture_woo_endpoint( 'downloads' );
+		if ( null !== $endpoint ) {
+			return $endpoint;
+		}
+		ob_start();
+		woocommerce_account_downloads();
+
+		return (string) ob_get_clean();
+	}
+
+	/**
+	 * Render the billing and shipping address forms side by side.
+	 */
+	private function addresses_panel_content(): string {
+		if ( ! $this->woo_customer_ready() ) {
+			return $this->woo_preview_placeholder( __( 'billing and shipping addresses', 'music-wave-core' ) );
+		}
+		$endpoint = $this->capture_woo_endpoint( 'addresses' );
+		if ( null !== $endpoint ) {
+			return $endpoint;
+		}
+
+		$markup = '<div class="mw-user-dashboard__addresses">';
+		ob_start();
+		echo '<section class="mw-user-dashboard__address"><h4>' . esc_html__( 'Billing address', 'music-wave-core' ) . '</h4>';
+		woocommerce_account_edit_address( 'billing' );
+		echo '</section>';
+		$markup .= (string) ob_get_clean();
+
+		ob_start();
+		echo '<section class="mw-user-dashboard__address"><h4>' . esc_html__( 'Shipping address', 'music-wave-core' ) . '</h4>';
+		woocommerce_account_edit_address( 'shipping' );
+		echo '</section>';
+		$markup .= (string) ob_get_clean();
+
+		return $markup . '</div>';
+	}
+
+	/**
+	 * Render the saved payment methods (or the add-method form on its endpoint).
+	 */
+	private function payment_panel_content(): string {
+		if ( ! $this->woo_customer_ready() ) {
+			return $this->woo_preview_placeholder( __( 'saved payment methods', 'music-wave-core' ) );
+		}
+		$endpoint = $this->capture_woo_endpoint( 'payment' );
+		if ( null !== $endpoint ) {
+			return $endpoint;
+		}
+		ob_start();
+		woocommerce_account_payment_methods();
+
+		return (string) ob_get_clean();
+	}
+
+	/**
+	 * Render the real editable account details form.
+	 */
+	private function account_panel_content(): string {
+		$endpoint = $this->capture_woo_endpoint( 'account' );
+		if ( null !== $endpoint ) {
+			return $endpoint;
+		}
+		ob_start();
+		woocommerce_account_edit_account();
+
+		return (string) ob_get_clean();
+	}
+
+	/**
+	 * Dispatch the current WooCommerce account endpoint, if any.
+	 *
+	 * Without the classic [woocommerce_my_account] shortcode the endpoint
+	 * actions never fire on direct URL visits; replaying them here keeps the
+	 * processing hooks (saving an address, adding a payment method, viewing a
+	 * single order) and captures their rendered output for the matching panel.
+	 *
+	 * @param string $panel Panel expecting endpoint content.
+	 * @return string|null Rendered endpoint output, or null when the current
+	 *                     URL carries no endpoint for this panel.
+	 */
+	private function capture_woo_endpoint( string $panel ): ?string {
+		global $wp;
+		if ( ! function_exists( 'is_account_page' ) || ! is_account_page() || ! isset( $wp->query_vars ) || ! is_array( $wp->query_vars ) ) {
+			return null;
+		}
+
+		$panels = array(
+			'orders'    => array( 'orders', 'view-order' ),
+			'downloads' => array( 'downloads' ),
+			'addresses' => array( 'edit-address' ),
+			'payment'   => array( 'payment-methods', 'add-payment-method', 'delete-payment-method', 'set-default-payment-method' ),
+			'account'   => array( 'edit-account' ),
+		);
+		if ( ! isset( $panels[ $panel ] ) ) {
+			return null;
+		}
+
+		foreach ( $wp->query_vars as $key => $value ) {
+			if ( in_array( $key, $panels[ $panel ], true ) && has_action( 'woocommerce_account_' . $key . '_endpoint' ) ) {
+				ob_start();
+				do_action( 'woocommerce_account_' . $key . '_endpoint', $value );
+				$captured = (string) ob_get_clean();
+
+				return '' !== trim( $captured ) ? $captured : null;
+			}
+		}
+
+		return null;
 	}
 
 	/**
@@ -255,9 +714,14 @@ final class AccountLibrary {
 	}
 
 	/**
-	 * Render the WooCommerce orders table inside the dashboard panel.
+	 * Render the WooCommerce orders table (or a single order view) inside the
+	 * dashboard panel.
 	 */
 	private function orders_panel_content(): string {
+		$endpoint = $this->capture_woo_endpoint( 'orders' );
+		if ( null !== $endpoint ) {
+			return $endpoint;
+		}
 		if ( ! function_exists( 'woocommerce_account_orders' ) ) {
 			return '<p class="mw-user-dashboard__empty-panel">' . esc_html__( 'Your order history is not available right now.', 'music-wave-core' ) . '</p>';
 		}
@@ -269,50 +733,104 @@ final class AccountLibrary {
 	}
 
 	/**
-	 * Render the account details card with an edit shortcut.
-	 */
-	private function account_panel_content( int $user_id ): string {
-		$user     = wp_get_current_user();
-		$name     = '' !== $user->display_name ? $user->display_name : $user->user_login;
-		$date     = function_exists( 'date_i18n' ) ? date_i18n( (string) get_option( 'date_format' ), strtotime( (string) $user->user_registered ) ) : '';
-		$edit_url = function_exists( 'wc_get_account_endpoint_url' )
-			? wc_get_account_endpoint_url( 'edit-account' )
-			: get_edit_profile_url( $user_id );
-
-		$rows = array(
-			array( __( 'Name', 'music-wave-core' ), $name ),
-			array( __( 'Email', 'music-wave-core' ), (string) $user->user_email ),
-		);
-		if ( '' !== $date ) {
-			$rows[] = array( __( 'Member since', 'music-wave-core' ), $date );
-		}
-
-		$markup = '<dl class="mw-user-dashboard__details">';
-		foreach ( $rows as $row ) {
-			$markup .= '<div><dt>' . esc_html( $row[0] ) . '</dt><dd>' . esc_html( $row[1] ) . '</dd></div>';
-		}
-		$markup .= '</dl>';
-
-		return $markup . '<a class="wp-element-button" href="' . esc_url( $edit_url ) . '">' . esc_html__( 'Edit account details', 'music-wave-core' ) . '</a>';
-	}
-
-	/**
 	 * Render the VIP membership panel from the user's mapped levels.
 	 */
 	private function membership_panel_content( int $user_id ): string {
-		$user   = wp_get_current_user();
-		$roles  = isset( $user->roles ) && is_array( $user->roles ) ? $user->roles : array();
-		$levels = apply_filters( 'music_wave_vip_membership_levels_for_user', $roles, $user_id );
-		$levels = is_array( $levels ) ? array_values( array_filter( array_unique( array_map( 'sanitize_key', array_map( 'strval', $levels ) ) ) ) ) : array();
+		return $this->membership_markup( $user_id );
+	}
 
-		if ( empty( $levels ) ) {
-			$markup = '<p class="mw-user-dashboard__empty-panel">' . esc_html__( 'You do not have an active VIP membership yet. Unlock protected releases with a membership level.', 'music-wave-core' ) . '</p>';
-		} else {
-			$markup = '<p>' . esc_html__( 'Your active VIP membership levels:', 'music-wave-core' ) . '</p><ul class="mw-user-dashboard__levels">';
-			foreach ( $levels as $level ) {
-				$markup .= '<li>' . esc_html( $level ) . '</li>';
+	/**
+	 * Build the shared membership markup used by the dashboard panel, the
+	 * WooCommerce my-account endpoint, the shortcode, and the block.
+	 *
+	 * @param int                  $user_id Account owner.
+	 * @param array<string, mixed> $args    Display switches (heading, showActive, showPlans, showBuyButtons, emptyText).
+	 * @return string Fully escaped markup.
+	 */
+	private function membership_markup( int $user_id, array $args = array() ): string {
+		$args = shortcode_atts(
+			array(
+				'heading'        => '',
+				'showActive'     => true,
+				'showPlans'      => true,
+				'showBuyButtons' => true,
+				'emptyText'      => '',
+			),
+			$args,
+			'membership_markup'
+		);
+
+		/**
+		 * Filter the structured membership data rendered for a customer.
+		 *
+		 * MusicWave VIP supplies: module_enabled (bool), active[] items with
+		 * level/expires labels, and plans[] items with id, level, title,
+		 * price, duration, url, and cart_url. An empty array means no
+		 * membership module is present.
+		 *
+		 * @param array<string, mixed> $data    Structured membership data.
+		 * @param int                  $user_id Account owner.
+		 */
+		$data = apply_filters( 'music_wave_vip_membership_panel', array(), $user_id );
+		$data = is_array( $data ) ? $data : array();
+
+		$classes = 'mw-membership' . ( '' !== (string) $args['heading'] ? ' mw-membership--standalone' : '' );
+		$markup  = '<div class="' . esc_attr( $classes ) . '">';
+
+		if ( '' !== (string) $args['heading'] ) {
+			$markup .= '<h3 class="mw-membership__heading">' . esc_html( (string) $args['heading'] ) . '</h3>';
+		}
+
+		if ( empty( $data ) ) {
+			$empty   = '' !== (string) $args['emptyText'] ? (string) $args['emptyText'] : __( 'No membership module is active on this site. All membership content stays available.', 'music-wave-core' );
+			$markup .= '<p class="mw-membership__notice">' . esc_html( $empty ) . '</p></div>';
+			return $markup;
+		}
+
+		$module_enabled = ! isset( $data['module_enabled'] ) || (bool) $data['module_enabled'];
+		if ( ! $module_enabled ) {
+			$markup .= '<p class="mw-membership__notice mw-membership__notice--free">' . esc_html__( 'All membership content is currently free for everyone — enjoy!', 'music-wave-core' ) . '</p>';
+		}
+
+		if ( $args['showActive'] ) {
+			$active = isset( $data['active'] ) && is_array( $data['active'] ) ? $data['active'] : array();
+			if ( empty( $active ) ) {
+				$empty   = '' !== (string) $args['emptyText'] ? (string) $args['emptyText'] : __( 'You do not have an active membership yet. Pick a plan below to unlock protected releases.', 'music-wave-core' );
+				$markup .= '<p class="mw-membership__empty">' . esc_html( $empty ) . '</p>';
+			} else {
+				$markup .= '<ul class="mw-membership__levels">';
+				foreach ( $active as $entry ) {
+					if ( ! is_array( $entry ) || empty( $entry['level'] ) ) {
+						continue;
+					}
+					$expires = isset( $entry['expires'] ) && '' !== (string) $entry['expires'] ? ' · ' . (string) $entry['expires'] : '';
+					$markup .= '<li class="mw-membership__level"><span class="mw-membership__level-name">' . esc_html( sanitize_key( (string) $entry['level'] ) ) . '</span>' . esc_html( $expires ) . '</li>';
+				}
+				$markup .= '</ul>';
 			}
-			$markup .= '</ul>';
+		}
+
+		if ( $args['showPlans'] ) {
+			$plans = isset( $data['plans'] ) && is_array( $data['plans'] ) ? $data['plans'] : array();
+			if ( ! empty( $plans ) ) {
+				$markup .= '<ul class="mw-membership__plans">';
+				foreach ( $plans as $plan ) {
+					if ( ! is_array( $plan ) || empty( $plan['title'] ) ) {
+						continue;
+					}
+					$duration = isset( $plan['duration'] ) && '' !== (string) $plan['duration'] ? '<span class="mw-membership__plan-duration">' . esc_html( (string) $plan['duration'] ) . '</span>' : '';
+					$price    = isset( $plan['price'] ) && '' !== (string) $plan['price'] ? '<span class="mw-membership__plan-price">' . esc_html( (string) $plan['price'] ) . '</span>' : '';
+					$markup  .= '<li class="mw-membership__plan"><div class="mw-membership__plan-details"><strong>' . esc_html( (string) $plan['title'] ) . '</strong>' . $duration . $price . '</div>';
+					if ( $args['showBuyButtons'] ) {
+						$cart = isset( $plan['cart_url'] ) && is_string( $plan['cart_url'] ) && '' !== $plan['cart_url'] ? $plan['cart_url'] : ( isset( $plan['url'] ) ? (string) $plan['url'] : '' );
+						if ( '' !== $cart ) {
+							$markup .= '<a class="wp-element-button mw-membership__buy" href="' . esc_url( $cart ) . '">' . esc_html__( 'Get this plan', 'music-wave-core' ) . '</a>';
+						}
+					}
+					$markup .= '</li>';
+				}
+				$markup .= '</ul>';
+			}
 		}
 
 		/**
@@ -326,7 +844,7 @@ final class AccountLibrary {
 			$markup .= '<a class="wp-element-button" href="' . esc_url( $cta_url ) . '">' . esc_html__( 'Manage membership', 'music-wave-core' ) . '</a>';
 		}
 
-		return $markup;
+		return $markup . '</div>';
 	}
 
 	/**
@@ -355,6 +873,7 @@ final class AccountLibrary {
 	 */
 	public static function register_endpoint(): void {
 		add_rewrite_endpoint( self::ENDPOINT, EP_ROOT | EP_PAGES );
+		add_rewrite_endpoint( self::MEMBERSHIP_ENDPOINT, EP_ROOT | EP_PAGES );
 	}
 
 	/**
@@ -368,7 +887,8 @@ final class AccountLibrary {
 
 		$logout = isset( $items['customer-logout'] ) ? $items['customer-logout'] : '';
 		unset( $items['customer-logout'] );
-		$items[ self::ENDPOINT ] = __( 'My music library', 'music-wave-core' );
+		$items[ self::ENDPOINT ]            = __( 'My music library', 'music-wave-core' );
+		$items[ self::MEMBERSHIP_ENDPOINT ] = __( 'Membership', 'music-wave-core' );
 		if ( '' !== $logout ) {
 			$items['customer-logout'] = $logout;
 		}

@@ -5,6 +5,8 @@
 /.phpcs-cache
 /.phpstan-cache/
 /.staging/
+/.kilo/
+/.zcode/
 /build/
 /dist/
 *.log

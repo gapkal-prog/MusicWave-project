@@ -86,6 +86,24 @@ final class AccessPolicyEngine {
 	}
 
 	private function membership_access( int $release_id, AccessSubject $subject, string $mode ): AccessDecision {
+		// No membership module installed: membership gating is the monetization
+		// layer, so an absent provider opens the gate instead of locking every
+		// membership release behind an unsatisfiable check. Operators that
+		// prefer deny-by-default can switch the behavior per filter or setting.
+		if ( $this->membership_provider instanceof NullMembershipProvider ) {
+			/**
+			 * Filter how membership releases behave while no membership module
+			 * (e.g. MusicWave VIP) provides decisions.
+			 *
+			 * @param string $behavior 'allow' (default, content stays usable) or 'deny'.
+			 */
+			$absent = sanitize_key( (string) apply_filters( 'music_wave_membership_absent_behavior', 'allow' ) );
+
+			return 'deny' === $absent
+				? AccessDecision::deny( 'membership_provider_absent', $mode )
+				: AccessDecision::allow( 'membership_provider_absent', $mode );
+		}
+
 		$levels = $this->repository->get( $release_id, 'mw_membership_levels' );
 		$levels = is_array( $levels ) ? array_values( array_filter( array_map( 'sanitize_key', $levels ) ) ) : array();
 		if ( $subject->user_id() > 0 && ! empty( $levels ) && $this->membership_provider->has_access( $subject->user_id(), $levels ) ) {

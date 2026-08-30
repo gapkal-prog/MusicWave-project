@@ -91,4 +91,16 @@ interface PlaylistStore {
 	 * @return void
 	 */
 	public function purge_release( int $release_id ): void;
+
+	/**
+	 * Public playlists, most recently updated first.
+	 *
+	 * @return array<int, array<string, mixed>>
+	 */
+	public function public_playlists( int $limit = 24, int $offset = 0, string $search = '', string $orderby = 'updated_at' ): array;
+
+	/**
+	 * Count public playlists, optionally filtered by search.
+	 */
+	public function count_public( string $search = '' ): int;
 }

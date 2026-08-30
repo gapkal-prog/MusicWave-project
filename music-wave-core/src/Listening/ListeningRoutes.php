@@ -80,10 +80,17 @@ final class ListeningRoutes {
 		return new WP_Error( 'mw_authentication_required', __( 'Sign in to use listening features.', 'music-wave-core' ), array( 'status' => 401 ) );
 	}
 
-	/** @return WP_REST_Response */
-	public function consent( WP_REST_Request $request ): WP_REST_Response {
-		$consent = (bool) $request->get_param( 'consent' );
-		$this->repository->set_consent( get_current_user_id(), $consent );
+	/** @return WP_REST_Response|WP_Error */
+	public function consent( WP_REST_Request $request ) {
+		// The flag is required and parsed explicitly: withdrawing consent
+		// erases the listening history, so neither a missing parameter nor a
+		// form-encoded "false" string may silently flip the decision.
+		$raw = $request->get_param( 'consent' );
+		if ( null === $raw ) {
+			return new WP_Error( 'mw_consent_flag_required', __( 'The consent flag is required.', 'music-wave-core' ), array( 'status' => 400 ) );
+		}
+		$consent = function_exists( 'rest_sanitize_boolean' ) ? rest_sanitize_boolean( $raw ) : filter_var( $raw, FILTER_VALIDATE_BOOLEAN );
+		$this->repository->set_consent( get_current_user_id(), (bool) $consent );
 
 		return new WP_REST_Response( array( 'consent' => $this->repository->has_consent( get_current_user_id() ) ), 200 );
 	}

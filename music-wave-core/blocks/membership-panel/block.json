@@ -1,0 +1,33 @@
+{
+	"apiVersion": 3,
+	"name": "music-wave/membership-panel",
+	"title": "Membership & plans",
+	"category": "music-wave",
+	"description": "Shows the customer's active membership levels with expiry and the purchasable VIP plan products.",
+	"keywords": [ "membership", "vip", "plans", "subscription" ],
+	"textdomain": "music-wave-core",
+	"icon": "awards",
+	"attributes": {
+		"heading": { "type": "string", "default": "" },
+		"showActive": { "type": "boolean", "default": true },
+		"showPlans": { "type": "boolean", "default": true },
+		"showBuyButtons": { "type": "boolean", "default": true },
+		"emptyText": { "type": "string", "default": "" }
+	},
+	"supports": {
+		"anchor": true,
+		"align": [ "wide", "full" ],
+		"border": { "color": true, "radius": true, "style": true, "width": true },
+		"color": { "background": true, "link": true, "text": true },
+		"spacing": { "blockGap": true, "margin": true, "padding": true },
+		"typography": { "fontSize": true, "lineHeight": true }
+	},
+	"example": {
+		"attributes": {
+			"heading": "Membership",
+			"showActive": true,
+			"showPlans": true,
+			"showBuyButtons": true
+		}
+	}
+}

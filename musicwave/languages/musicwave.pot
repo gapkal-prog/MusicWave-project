@@ -8,80 +8,127 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Domain: musicwave\n"
 
-#: functions.php:1019
+#: functions.php:856
 #, php-format
 msgid "%d customized MusicWave template records were moved to the Trash. The validated theme files are active again."
 msgstr ""
 
-#: functions.php:679
+#: functions.php:1289
+#, php-format
+msgid "%d track"
+msgid_plural "%d tracks"
+msgstr[0] ""
+msgstr[1] ""
+
+#: functions.php:543
 msgid "A configurable grid, horizontal shelf, or compact list of releases."
 msgstr ""
 
-#: functions.php:579
+#: functions.php:542
 msgid "A responsive, accessible slider for featured or recent releases."
 msgstr ""
 
-#: assets/editor-blocks.js:248
+#: patterns/hero-centered.php:16
+msgid "A store that feels like a record room"
+msgstr ""
+
+#: functions.php:344
+msgid "Accent line"
+msgstr ""
+
+#: assets/editor-blocks.js:453
 msgid "Action label"
 msgstr ""
 
-#: assets/editor-blocks.js:397
+#: assets/editor-blocks.js:702
 msgid "Add published releases or enable this block to display its live preview."
 msgstr ""
 
-#: assets/editor-blocks.js:52
+#: assets/editor-blocks.js:90 patterns/footer-widget-columns.php:29
 msgid "All releases"
 msgstr ""
 
-#: assets/editor-blocks.js:53
+#: functions.php:400
+msgid "Appears in the Footer widgets template part (Appearance → Editor → Template Parts → Footer widgets). Drag any block or legacy widget — colors follow global Styles."
+msgstr ""
+
+#: functions.php:409
+msgid "Appears in the Shop sidebar template part (Template Parts → Shop sidebar). Use WooCommerce filters, categories, or any block."
+msgstr ""
+
+#: functions.php:391
+msgid "Appears in the Sidebar template part (Appearance → Editor → Template Parts → Sidebar). Add any block or legacy widget here. Fully editable visually — no code required."
+msgstr ""
+
+#: patterns/widget-rich-sidebar.php:41
+msgid "Archives"
+msgstr ""
+
+#: assets/editor-blocks.js:91
 msgid "Artist"
 msgstr ""
 
-#: assets/editor-blocks.js:231
+#: patterns/footer-widget-columns.php:29
+msgid "Artists"
+msgstr ""
+
+#: assets/editor-blocks.js:425
 msgid "Artwork shape"
 msgstr ""
 
-#: assets/editor-blocks.js:44
+#: assets/editor-blocks.js:76
 msgid "Ascending"
 msgstr ""
 
-#: assets/editor-blocks.js:146
+#: assets/editor-blocks.js:230
 msgid "Autoplay"
 msgstr ""
 
-#: assets/editor-blocks.js:152
+#: assets/editor-blocks.js:239
 msgid "Autoplay interval (milliseconds)"
 msgstr ""
 
-#: assets/editor-blocks.js:315
+#: assets/editor-blocks.js:571
 msgid "Body text color (hex)"
+msgstr ""
+
+#: patterns/footer-widget-columns.php:27
+msgid "Browse"
 msgstr ""
 
 #: patterns/browse-categories.php:13
 msgid "Browse by mood and genre"
 msgstr ""
 
+#: patterns/cta-banner.php:23
+msgid "Browse catalog"
+msgstr ""
+
+#: patterns/hero-centered.php:23
+msgid "Browse moods"
+msgstr ""
+
 #: patterns/music-service-callout.php:18
 msgid "Build a library that sounds like you."
 msgstr ""
 
-#: assets/editor-blocks.js:340
+#: assets/editor-blocks.js:616
 msgid "Button background (hex)"
 msgstr ""
 
-#: assets/editor-blocks.js:352
+#: assets/editor-blocks.js:638
 msgid "Button corner radius (px)"
 msgstr ""
 
-#: assets/editor-blocks.js:325
+#: assets/editor-blocks.js:588
 msgid "Button label"
 msgstr ""
 
-#: assets/editor-blocks.js:330
+#: assets/editor-blocks.js:595
 msgid "Button style"
 msgstr ""
 
-#: assets/editor-blocks.js:346
+#: assets/editor-blocks.js:627
 msgid "Button text color (hex)"
 msgstr ""
 
@@ -89,7 +136,7 @@ msgstr ""
 msgid "CURATED FOR YOU"
 msgstr ""
 
-#: assets/editor-blocks.js:323
+#: assets/editor-blocks.js:584
 msgid "Call-to-action button"
 msgstr ""
 
@@ -97,48 +144,80 @@ msgstr ""
 msgid "Calm selections for work and rest."
 msgstr ""
 
-#: functions.php:1098
+#: patterns/footer-widget-columns.php:35
+msgid "Cart & checkout"
+msgstr ""
+
+#: patterns/widget-rich-sidebar.php:36 patterns/widget-search.php:20
+msgid "Categories"
+msgstr ""
+
+#: functions.php:359
+msgid "Checklist"
+msgstr ""
+
+#: functions.php:935
 msgid "Checkout"
 msgstr ""
 
-#: assets/editor-blocks.js:237
+#: assets/editor-blocks.js:437 functions.php:354
 msgid "Circle"
 msgstr ""
 
-#: assets/editor-blocks.js:218
+#: functions.php:1210
+msgid "Community playlists"
+msgstr ""
+
+#: assets/editor-blocks.js:403
 msgid "Compact list"
+msgstr ""
+
+#: patterns/footer-widget-columns.php:35
+msgid "Contact"
+msgstr ""
+
+#: assets/editor-blocks.js:283
+msgid "Content source"
 msgstr ""
 
 #: patterns/browse-categories.php:24
 msgid "Continuous listening for every moment."
 msgstr ""
 
-#: assets/editor-blocks.js:74
+#: patterns/cta-banner.php:19
+msgid "Curate your catalog, share releases, and sell with confidence — all visually editable."
+msgstr ""
+
+#: functions.php:1213
+msgid "Curated by listeners"
+msgstr ""
+
+#: assets/editor-blocks.js:132
 msgid "Curated release IDs"
 msgstr ""
 
-#: functions.php:1032
+#: functions.php:869
 #, php-format
 msgid "Customized built-in template overrides found: %d"
 msgstr ""
 
-#: assets/editor-blocks.js:43
+#: assets/editor-blocks.js:75
 msgid "Descending"
 msgstr ""
 
-#: assets/editor-blocks.js:196
+#: assets/editor-blocks.js:318
 msgid "Description"
 msgstr ""
 
-#: assets/editor-blocks.js:224
+#: assets/editor-blocks.js:416
 msgid "Desktop columns"
 msgstr ""
 
-#: assets/editor-blocks.js:40
+#: assets/editor-blocks.js:72
 msgid "Direction"
 msgstr ""
 
-#: assets/editor-blocks.js:14
+#: assets/editor-blocks.js:30
 msgid "Disabled"
 msgstr ""
 
@@ -146,16 +225,28 @@ msgstr ""
 msgid "Discover the next track you will love."
 msgstr ""
 
+#: patterns/footer-widget-columns.php:41
+msgid "Drag any block here — search, newsletter, recent releases, categories, legacy widget, or custom HTML — it just works."
+msgstr ""
+
+#: patterns/hero-centered.php:20
+msgid "Drop this hero anywhere — front page, landing, or page-wide. Every color, font, and spacing is editable in Styles."
+msgstr ""
+
 #: patterns/editorial-feature.php:16
 msgid "EDITORIAL"
 msgstr ""
 
-#: assets/editor-blocks.js:219 assets/editor-blocks.js:255
+#: assets/editor-blocks.js:407 assets/editor-blocks.js:464
 msgid "Editorial feature"
 msgstr ""
 
-#: assets/editor-blocks.js:13
+#: assets/editor-blocks.js:29
 msgid "Enabled"
+msgstr ""
+
+#: patterns/hero-centered.php:22
+msgid "Enter catalog"
 msgstr ""
 
 #: patterns/user-dashboard.php:18
@@ -170,23 +261,31 @@ msgstr ""
 msgid "Explore releases, artists, albums, and exclusive downloads in one focused experience."
 msgstr ""
 
-#: assets/editor-blocks.js:104 assets/editor-blocks.js:186
+#: patterns/widget-search.php:15
+msgid "Explore the catalog"
+msgstr ""
+
+#: assets/editor-blocks.js:171 assets/editor-blocks.js:304
 msgid "Eyebrow"
 msgstr ""
 
-#: assets/editor-blocks.js:264
+#: functions.php:285 patterns/section-heading.php:16
+msgid "Featured"
+msgstr ""
+
+#: assets/editor-blocks.js:480
 msgid "Featured body"
 msgstr ""
 
-#: assets/editor-blocks.js:257
+#: assets/editor-blocks.js:468
 msgid "Featured release ID (0 = first result)"
 msgstr ""
 
-#: functions.php:1238 patterns/featured-release-slider.php:12
+#: functions.php:1070 patterns/featured-release-slider.php:12
 msgid "Featured releases"
 msgstr ""
 
-#: assets/editor-blocks.js:49
+#: assets/editor-blocks.js:83
 msgid "Filter taxonomy"
 msgstr ""
 
@@ -198,24 +297,36 @@ msgstr ""
 msgid "Fresh releases and emerging sounds."
 msgstr ""
 
-#: assets/editor-blocks.js:54
+#: assets/editor-blocks.js:92
 msgid "Genre"
 msgstr ""
 
-#: assets/editor-blocks.js:335
+#: patterns/footer-widget-columns.php:29
+msgid "Genres & moods"
+msgstr ""
+
+#: patterns/newsletter-signup.php:18
+msgid "Get new releases and editorial picks. Replace this with your newsletter block, form, or legacy widget — no code needed."
+msgstr ""
+
+#: assets/editor-blocks.js:607
 msgid "Ghost"
 msgstr ""
 
-#: functions.php:181
+#: functions.php:226
 #, php-format
 msgid "Go to slide group %d"
 msgstr ""
 
-#: assets/editor-blocks.js:109 assets/editor-blocks.js:191
+#: assets/editor-blocks.js:178 assets/editor-blocks.js:311
 msgid "Heading"
 msgstr ""
 
-#: assets/editor-blocks.js:300
+#: patterns/footer-widget-columns.php:35
+msgid "Help & FAQs"
+msgstr ""
+
+#: assets/editor-blocks.js:547
 msgid "Hero title"
 msgstr ""
 
@@ -223,43 +334,47 @@ msgstr ""
 msgid "Highlight memberships, exclusive releases, downloads, or a curated playlist with this editable callout."
 msgstr ""
 
-#: assets/editor-blocks.js:217
+#: assets/editor-blocks.js:399
 msgid "Horizontal shelf"
 msgstr ""
 
-#: assets/editor-blocks.js:57
+#: assets/editor-blocks.js:49
+msgid "How releases are sorted before they are displayed."
+msgstr ""
+
+#: assets/editor-blocks.js:98
 msgid "Label"
 msgstr ""
 
-#: assets/editor-blocks.js:235
+#: assets/editor-blocks.js:430
 msgid "Landscape"
 msgstr ""
 
-#: functions.php:1093
+#: functions.php:930
 msgid "Latest releases"
 msgstr ""
 
-#: assets/editor-blocks.js:213
+#: assets/editor-blocks.js:391
 msgid "Layout"
 msgstr ""
 
-#: assets/editor-blocks.js:211
+#: assets/editor-blocks.js:387
 msgid "Layout and artwork"
 msgstr ""
 
-#: assets/editor-blocks.js:63
-msgid "Leave empty to include every term."
-msgstr ""
-
-#: assets/editor-blocks.js:341
+#: assets/editor-blocks.js:617
 msgid "Leave empty to use theme accent color."
 msgstr ""
 
-#: assets/editor-blocks.js:347
+#: assets/editor-blocks.js:628
 msgid "Leave empty to use theme default."
 msgstr ""
 
-#: assets/editor-blocks.js:147
+#: assets/editor-blocks.js:84
+msgid "Limit the shelf/slider to one taxonomy, or leave on All releases."
+msgstr ""
+
+#: assets/editor-blocks.js:231
 msgid "Loop"
 msgstr ""
 
@@ -267,112 +382,188 @@ msgstr ""
 msgid "MADE FOR YOU"
 msgstr ""
 
-#: functions.php:1237
+#: functions.php:1069
 msgid "Made for you"
 msgstr ""
 
-#: assets/editor-blocks.js:32
+#: patterns/widget-rich-sidebar.php:20
+msgid "Main column — add paragraphs, images, releases, or any block. The sidebar on the right is fully editable piece-by-piece."
+msgstr ""
+
+#: assets/editor-blocks.js:60
 msgid "Modified date"
 msgstr ""
 
-#: assets/editor-blocks.js:55
+#: assets/editor-blocks.js:93
 msgid "Mood"
 msgstr ""
 
-#: functions.php:1549
+#: functions.php:1531
 msgid "More releases"
 msgstr ""
 
-#: assets/editor-blocks.js:35
+#: assets/editor-blocks.js:65
 msgid "Most viewed"
 msgstr ""
 
-#: functions.php:218
+#: patterns/hero-centered.php:18
+msgid "Music with room to breathe."
+msgstr ""
+
+#: functions.php:284
 msgid "MusicWave"
 msgstr ""
 
-#: functions.php:571
+#: functions.php:292
+msgid "MusicWave Call to Action"
+msgstr ""
+
+#: functions.php:291
+msgid "MusicWave Cards"
+msgstr ""
+
+#: functions.php:289
+msgid "MusicWave Footers"
+msgstr ""
+
+#: functions.php:290
+msgid "MusicWave Headers"
+msgstr ""
+
+#: functions.php:286
+msgid "MusicWave Hero"
+msgstr ""
+
+#: functions.php:287
+msgid "MusicWave Shelves"
+msgstr ""
+
+#: functions.php:288
+msgid "MusicWave Widgets"
+msgstr ""
+
+#: functions.php:534
 msgid "MusicWave display preference"
 msgstr ""
 
-#: functions.php:1204
+#: functions.php:398
+msgid "MusicWave footer widgets"
+msgstr ""
+
+#: functions.php:416
+msgid "MusicWave header widgets"
+msgstr ""
+
+#: functions.php:1036
 msgid "MusicWave release"
 msgstr ""
 
-#: functions.php:678
+#: functions.php:536
 msgid "MusicWave release shelf"
 msgstr ""
 
-#: functions.php:578
+#: functions.php:535
 msgid "MusicWave release slider"
 msgstr ""
 
-#: functions.php:860 functions.php:861 functions.php:1012
+#: functions.php:407
+msgid "MusicWave shop sidebar"
+msgstr ""
+
+#: functions.php:389
+msgid "MusicWave sidebar"
+msgstr ""
+
+#: functions.php:579 functions.php:580 functions.php:849
 msgid "MusicWave template repair"
 msgstr ""
 
-#: functions.php:551
+#: functions.php:533
 msgid "MusicWave template text"
 msgstr ""
 
-#: functions.php:1099
+#: functions.php:936 patterns/cta-banner.php:24 patterns/footer-widget-columns.php:35
 msgid "My account"
 msgstr ""
 
-#: assets/editor-blocks.js:149
+#: assets/editor-blocks.js:236
 msgid "Navigation arrows"
 msgstr ""
 
-#: patterns/browse-categories.php:18
+#: patterns/browse-categories.php:18 patterns/footer-widget-columns.php:29
 msgid "New music"
 msgstr ""
 
-#: functions.php:1240
+#: assets/editor-blocks.js:359
+msgid "Newest first"
+msgstr ""
+
+#: functions.php:1072
 msgid "Next releases"
 msgstr ""
 
-#: assets/editor-blocks.js:269
+#: assets/editor-blocks.js:495
 msgid "No body text"
 msgstr ""
 
-#: functions.php:1049
+#: functions.php:886
 msgid "No database overrides were found. WordPress is already using the bundled template files."
 msgstr ""
 
-#: functions.php:1094
+#: functions.php:931
 msgid "No music was found."
 msgstr ""
 
-#: functions.php:1095
+#: functions.php:932
 msgid "Nothing playing here."
 msgstr ""
 
-#: functions.php:1376
+#: functions.php:1286 functions.php:1358
 #, php-format
 msgid "Open %s"
 msgstr ""
 
-#: functions.php:1351 functions.php:1468
+#: functions.php:1329 functions.php:1450
 msgid "Open release"
 msgstr ""
 
-#: assets/editor-blocks.js:75
-msgid "Optional. Comma-separated release IDs override the query and preserve this exact order."
+#: assets/editor-blocks.js:106
+msgid "Optional. Copy the slug from WordPress → MusicWave → Artists / Genres / Moods list (the slug column). Leave empty to include every term. Example: pop or lo-fi."
 msgstr ""
 
-#: assets/editor-blocks.js:69
-msgid "Optional. Filter by a release type term slug, e.g. album, single, podcast_show."
+#: assets/editor-blocks.js:118
+msgid "Optional. Filter by a release-type slug such as album, single, ep, podcast_show, podcast_episode. Leave empty to include all types. Found under MusicWave → Release Types."
 msgstr ""
 
-#: assets/editor-blocks.js:28
+#: assets/editor-blocks.js:373
+msgid "Optional. Only show public playlists whose title matches this text."
+msgstr ""
+
+#: assets/editor-blocks.js:133
+msgid "Optional. Paste comma-separated release IDs to fix an exact order (e.g. 12, 45, 78). Find the ID by hovering a release title in MusicWave → Releases — the ID shows in the link preview. Overrides all other filters."
+msgstr ""
+
+#: functions.php:418
+msgid "Optional: small widget area for the header (e.g., announcement, language switcher). Add blocks under Appearance → Widgets or directly in the Header template part."
+msgstr ""
+
+#: assets/editor-blocks.js:48
 msgid "Order by"
 msgstr ""
 
-#: assets/editor-blocks.js:334
+#: assets/editor-blocks.js:346
+msgid "Order playlists by"
+msgstr ""
+
+#: assets/editor-blocks.js:603
 msgid "Outline"
 msgstr ""
 
-#: assets/editor-blocks.js:274
+#: functions.php:324
+msgid "Outline accent"
+msgstr ""
+
+#: assets/editor-blocks.js:504
 msgid "Overlay darkness"
 msgstr ""
 
@@ -380,31 +571,68 @@ msgstr ""
 msgid "PREMIUM LISTENING"
 msgstr ""
 
-#: assets/editor-blocks.js:150
+#: patterns/sidebar-content.php:18
+msgid "Page title"
+msgstr ""
+
+#: assets/editor-blocks.js:237
 msgid "Pagination dots"
 msgstr ""
 
-#: assets/editor-blocks.js:148
+#: assets/editor-blocks.js:234
 msgid "Pause on hover or focus"
 msgstr ""
 
-#: assets/editor-blocks.js:236
+#: functions.php:319
+msgid "Pill (MusicWave)"
+msgstr ""
+
+#: functions.php:1283
+#, php-format
+msgid "Play all tracks in %s"
+msgstr ""
+
+#: assets/editor-blocks.js:342
+msgid "Playlist query"
+msgstr ""
+
+#: assets/editor-blocks.js:372
+msgid "Playlist search filter"
+msgstr ""
+
+#: patterns/footer-widget-columns.php:29
+msgid "Playlists"
+msgstr ""
+
+#: assets/editor-blocks.js:328
+msgid "Playlists to show"
+msgstr ""
+
+#: patterns/widget-rich-sidebar.php:31
+msgid "Popular"
+msgstr ""
+
+#: assets/editor-blocks.js:434
 msgid "Portrait"
 msgstr ""
 
-#: functions.php:1100
+#: functions.php:937
 msgid "Powered by MusicWave."
 msgstr ""
 
-#: functions.php:1240
+#: functions.php:1072
 msgid "Previous releases"
 msgstr ""
 
-#: assets/editor-blocks.js:31
+#: assets/editor-blocks.js:295 functions.php:736
+msgid "Public playlists"
+msgstr ""
+
+#: assets/editor-blocks.js:56
 msgid "Published date"
 msgstr ""
 
-#: assets/editor-blocks.js:26
+#: assets/editor-blocks.js:44
 msgid "Query and filtering"
 msgstr ""
 
@@ -412,116 +640,144 @@ msgstr ""
 msgid "Radio and mixes"
 msgstr ""
 
-#: assets/editor-blocks.js:34
+#: functions.php:334
+msgid "Raised surface"
+msgstr ""
+
+#: assets/editor-blocks.js:64
 msgid "Random"
 msgstr ""
 
-#: assets/editor-blocks.js:56
+#: assets/editor-blocks.js:352
+msgid "Recently updated"
+msgstr ""
+
+#: assets/editor-blocks.js:95
 msgid "Release type"
 msgstr ""
 
-#: assets/editor-blocks.js:68
+#: assets/editor-blocks.js:117
 msgid "Release type (slug)"
 msgstr ""
 
-#: assets/editor-blocks.js:114
+#: assets/editor-blocks.js:291
+msgid "Releases"
+msgstr ""
+
+#: assets/editor-blocks.js:185
 msgid "Releases loaded"
 msgstr ""
 
-#: assets/editor-blocks.js:201
+#: assets/editor-blocks.js:329
 msgid "Releases to show"
 msgstr ""
 
-#: assets/editor-blocks.js:216
+#: assets/editor-blocks.js:395
 msgid "Responsive grid"
 msgstr ""
 
-#: functions.php:1046
+#: functions.php:883
 msgid "Restore validated theme templates"
 msgstr ""
 
-#: assets/editor-blocks.js:361
+#: functions.php:349
+msgid "Rounded"
+msgstr ""
+
+#: assets/editor-blocks.js:660
 msgid "Section link"
 msgstr ""
 
-#: functions.php:1404
+#: patterns/section-heading.php:18
+msgid "Section title goes here"
+msgstr ""
+
+#: functions.php:1386
 msgid "See all"
 msgstr ""
 
-#: assets/editor-blocks.js:184
+#: functions.php:1208
+msgid "See all playlists"
+msgstr ""
+
+#: assets/editor-blocks.js:279
 msgid "Shelf content"
 msgstr ""
 
-#: assets/editor-blocks.js:246
+#: patterns/section-heading.php:20
+msgid "Short description that explains the section. Edit the eyebrow, heading, and text colors, spacing, and typography in the Site Editor without code."
+msgstr ""
+
+#: assets/editor-blocks.js:451
 msgid "Show action link"
 msgstr ""
 
-#: assets/editor-blocks.js:126 assets/editor-blocks.js:243
+#: assets/editor-blocks.js:201 assets/editor-blocks.js:448
 msgid "Show artist"
 msgstr ""
 
-#: assets/editor-blocks.js:241
+#: assets/editor-blocks.js:443
 msgid "Show artwork"
 msgstr ""
 
-#: assets/editor-blocks.js:131 assets/editor-blocks.js:244
+#: assets/editor-blocks.js:208 assets/editor-blocks.js:449
 msgid "Show date"
 msgstr ""
 
-#: assets/editor-blocks.js:245
+#: assets/editor-blocks.js:450
 msgid "Show excerpt"
 msgstr ""
 
-#: assets/editor-blocks.js:121
+#: assets/editor-blocks.js:194
 msgid "Show excerpts"
 msgstr ""
 
-#: assets/editor-blocks.js:242
+#: assets/editor-blocks.js:446
 msgid "Show play affordance"
 msgstr ""
 
-#: assets/editor-blocks.js:281
+#: assets/editor-blocks.js:519
 msgid "Show rank numbers"
 msgstr ""
 
-#: assets/editor-blocks.js:136 assets/editor-blocks.js:286
+#: assets/editor-blocks.js:215 assets/editor-blocks.js:526
 msgid "Show view count"
 msgstr ""
 
-#: assets/editor-blocks.js:291
+#: assets/editor-blocks.js:533
 msgid "Side column width (px)"
 msgstr ""
 
-#: functions.php:1026
+#: functions.php:863
 msgid "Site Editor customizations are stored in the database and override updated theme files. Use this tool only when a MusicWave template reports an unavailable template part or invalid block content."
 msgstr ""
 
-#: functions.php:183
+#: functions.php:228
 #, php-format
 msgid "Slide group %1$d of %2$d"
 msgstr ""
 
-#: assets/editor-blocks.js:144
+#: assets/editor-blocks.js:226
 msgid "Slider behavior"
 msgstr ""
 
-#: assets/editor-blocks.js:102
+#: assets/editor-blocks.js:167
 msgid "Slider content"
 msgstr ""
 
-#: functions.php:1241
+#: functions.php:1073
 msgid "Slider pagination"
 msgstr ""
 
-#: assets/editor-blocks.js:145
+#: assets/editor-blocks.js:229
 msgid "Slider visibility"
 msgstr ""
 
-#: assets/editor-blocks.js:333
+#: assets/editor-blocks.js:599
 msgid "Solid fill"
 msgstr ""
 
-#: assets/editor-blocks.js:234
+#: assets/editor-blocks.js:428
 msgid "Square"
 msgstr ""
 
@@ -529,31 +785,79 @@ msgstr ""
 msgid "Start listening"
 msgstr ""
 
+#: patterns/cta-banner.php:17
+msgid "Start listening today"
+msgstr ""
+
 #: patterns/catalog-heading.php:16
 msgid "Start with what moves you"
 msgstr ""
 
-#: assets/editor-blocks.js:62
+#: patterns/sidebar-content.php:20
+msgid "Start writing. In the Site Editor you can add, reorder, or remove any block here — and edit the sidebar separately under Template Parts → Sidebar."
+msgstr ""
+
+#: patterns/newsletter-signup.php:16
+msgid "Stay in the loop"
+msgstr ""
+
+#: patterns/footer-widget-columns.php:39
+msgid "Stay tuned"
+msgstr ""
+
+#: patterns/footer-widget-columns.php:33
+msgid "Support"
+msgstr ""
+
+#: functions.php:329
+msgid "Surface card"
+msgstr ""
+
+#: assets/editor-blocks.js:284
+msgid "Switch the shelf between catalog releases and community public playlists."
+msgstr ""
+
+#: assets/editor-blocks.js:105
 msgid "Term slug"
 msgstr ""
 
-#: functions.php:1096
+#: functions.php:933
 msgid "The page may have moved. Try searching the catalog."
 msgstr ""
 
-#: functions.php:1027
+#: functions.php:864
 msgid "This does not delete releases, pages, menus, media, plugin settings, or global styles."
 msgstr ""
 
-#: assets/editor-blocks.js:33
+#: patterns/sidebar-content.php:24
+msgid "This two-column layout uses the reusable Sidebar template part. Update it once and every page using this pattern reflects the change instantly — perfect for non-technical store owners."
+msgstr ""
+
+#: functions.php:339
+msgid "Tight gap"
+msgstr ""
+
+#: patterns/widget-rich-sidebar.php:24
+msgid "Tip for buyers: open Site Editor → Template Parts → Sidebar to change widgets globally, or detach this columns block to edit the sidebar only on this page."
+msgstr ""
+
+#: patterns/newsletter-signup.php:22
+msgid "Tip: Swap the Search block above with a Mailchimp, Jetpack, or HTML block. Colors follow global Styles."
+msgstr ""
+
+#: patterns/footer-widget-columns.php:46
+msgid "Tip: change colors, fonts, and spacing in Styles → no code required."
+msgstr ""
+
+#: assets/editor-blocks.js:63 assets/editor-blocks.js:363
 msgid "Title"
 msgstr ""
 
-#: assets/editor-blocks.js:302
+#: assets/editor-blocks.js:551
 msgid "Title color (hex)"
 msgstr ""
 
-#: assets/editor-blocks.js:308
+#: assets/editor-blocks.js:559
 msgid "Title font size (px, 0 = default)"
 msgstr ""
 
@@ -561,27 +865,27 @@ msgstr ""
 msgid "Top picks this week"
 msgstr ""
 
-#: functions.php:193
+#: functions.php:238
 msgid "Use dark theme"
 msgstr ""
 
-#: assets/editor-blocks.js:268
+#: assets/editor-blocks.js:488
 msgid "Use description field"
 msgstr ""
 
-#: assets/editor-blocks.js:267
+#: assets/editor-blocks.js:484
 msgid "Use excerpt"
 msgstr ""
 
-#: assets/editor-blocks.js:12
+#: assets/editor-blocks.js:28
 msgid "Use global setting"
 msgstr ""
 
-#: functions.php:192
+#: functions.php:237
 msgid "Use light theme"
 msgstr ""
 
-#: functions.php:191 functions.php:1590
+#: functions.php:236 functions.php:1577
 msgid "Use system theme"
 msgstr ""
 
@@ -589,24 +893,32 @@ msgstr ""
 msgid "Use this editable heading above a Query Loop, playlist, artist collection, or any custom block."
 msgstr ""
 
-#: assets/editor-blocks.js:368
+#: assets/editor-blocks.js:671
 msgid "View-all label"
 msgstr ""
 
-#: assets/editor-blocks.js:363
+#: assets/editor-blocks.js:664
 msgid "View-all link"
+msgstr ""
+
+#: patterns/widget-search.php:23
+msgid "Works with any block — replace categories with tag cloud, latest releases, or a legacy widget. No code needed."
 msgstr ""
 
 #: patterns/account-hub.php:15 patterns/user-dashboard.php:15
 msgid "YOUR MUSIC"
 msgstr ""
 
-#: functions.php:1062
+#: functions.php:899
 msgid "You are not allowed to repair theme templates."
 msgstr ""
 
-#: functions.php:1097
+#: functions.php:934
 msgid "Your cart"
+msgstr ""
+
+#: patterns/widget-rich-sidebar.php:18
+msgid "Your page content"
 msgstr ""
 
 #: patterns/account-hub.php:19
@@ -617,15 +929,31 @@ msgstr ""
 msgid "Your sound, beautifully organized"
 msgstr ""
 
-#: assets/editor-blocks.js:316
+#: patterns/footer-widget-columns.php:20
+msgid "Your sound, beautifully organized. Edit this footer in Appearance → Editor → Template Parts → Footer widgets — no code needed."
+msgstr ""
+
+#: assets/editor-blocks.js:572
 msgid "e.g. #cccccc"
 msgstr ""
 
-#: assets/editor-blocks.js:303
+#: assets/editor-blocks.js:552
 msgid "e.g. #ffffff"
 msgstr ""
 
-#: functions.php:1215 functions.php:1495
+#: assets/editor-blocks.js:137
+msgid "e.g. 12, 45, 78"
+msgstr ""
+
+#: assets/editor-blocks.js:122
+msgid "e.g. album, single, podcast_show"
+msgstr ""
+
+#: assets/editor-blocks.js:110
+msgid "e.g. pop, lo-fi, hip-hop"
+msgstr ""
+
+#: functions.php:1047 functions.php:1477
 msgid "views"
 msgstr ""
 

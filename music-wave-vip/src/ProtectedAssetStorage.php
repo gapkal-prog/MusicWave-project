@@ -36,7 +36,7 @@ final class ProtectedAssetStorage {
 	 */
 	public function root() {
 		$settings        = VipSettings::all();
-		$configured_root = defined( 'MUSIC_WAVE_VIP_PROTECTED_ROOT' ) ? (string) MUSIC_WAVE_VIP_PROTECTED_ROOT : (string) $settings['protected_root'];
+		$configured_root = defined( 'MUSIC_WAVE_VIP_PROTECTED_ROOT' ) ? (string) constant( 'MUSIC_WAVE_VIP_PROTECTED_ROOT' ) : (string) $settings['protected_root'];
 		$root            = '' === $configured_root ? $this->default_root() : realpath( $configured_root );
 
 		if ( false === $root || ! is_dir( $root ) || ! is_readable( $root ) || $this->is_web_reachable( $root ) ) {
@@ -60,7 +60,18 @@ final class ProtectedAssetStorage {
 			return true;
 		}
 
-		$document_root = isset( $_SERVER['DOCUMENT_ROOT'] ) && is_string( $_SERVER['DOCUMENT_ROOT'] ) && '' !== $_SERVER['DOCUMENT_ROOT'] ? realpath( sanitize_text_field( wp_unslash( $_SERVER['DOCUMENT_ROOT'] ) ) ) : false;
+		$doc_root_raw       = isset( $_SERVER['DOCUMENT_ROOT'] ) && is_string( $_SERVER['DOCUMENT_ROOT'] ) ? (string) $_SERVER['DOCUMENT_ROOT'] : ''; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput
+		$doc_root_unslashed = function_exists( 'wp_unslash' ) ? wp_unslash( $doc_root_raw ) : $doc_root_raw; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+		if ( '' !== $doc_root_raw && false !== strpos( $doc_root_raw, '\\' ) && false === strpos( $doc_root_unslashed, '\\' ) && false === strpos( $doc_root_unslashed, '/' ) ) {
+			$doc_root_unslashed = $doc_root_raw;
+		}
+		$doc_root_sanitized = function_exists( 'sanitize_text_field' ) ? sanitize_text_field( $doc_root_unslashed ) : $doc_root_unslashed;
+		if ( function_exists( 'wp_normalize_path' ) ) {
+			$doc_root_sanitized = wp_normalize_path( $doc_root_sanitized );
+		} else {
+			$doc_root_sanitized = str_replace( '\\', '/', $doc_root_sanitized );
+		}
+		$document_root = '' !== $doc_root_sanitized ? realpath( $doc_root_sanitized ) : false;
 		if ( false !== $document_root && ( $directory === $document_root || $this->is_within( $directory, $document_root ) ) ) {
 			return true;
 		}
@@ -78,7 +89,7 @@ final class ProtectedAssetStorage {
 	 */
 	public function preflight(): array {
 		$settings        = VipSettings::all();
-		$configured_root = defined( 'MUSIC_WAVE_VIP_PROTECTED_ROOT' ) ? (string) MUSIC_WAVE_VIP_PROTECTED_ROOT : (string) $settings['protected_root'];
+		$configured_root = defined( 'MUSIC_WAVE_VIP_PROTECTED_ROOT' ) ? (string) constant( 'MUSIC_WAVE_VIP_PROTECTED_ROOT' ) : (string) $settings['protected_root'];
 		$candidate       = '' === $configured_root ? $this->default_root() : realpath( $configured_root );
 
 		$exists      = false !== $candidate && is_dir( $candidate );
@@ -217,6 +228,17 @@ final class ProtectedAssetStorage {
 			return false;
 		}
 
+		// A same-size swap still fails closed when a checksum was recorded.
+		// Rows without one predate checksum registration and keep size-only
+		// verification until they are re-registered.
+		$checksum = isset( $row['checksum'] ) ? (string) $row['checksum'] : '';
+		if ( '' !== $checksum ) {
+			$actual = hash_file( 'sha256', $file );
+			if ( ! is_string( $actual ) || ! hash_equals( $checksum, $actual ) ) {
+				return false;
+			}
+		}
+
 		return $file;
 	}
 
@@ -259,6 +281,16 @@ final class ProtectedAssetStorage {
 
 			$relative   = ltrim( substr( $path, strlen( rtrim( $root, DIRECTORY_SEPARATOR ) ) ), DIRECTORY_SEPARATOR );
 			$normalized = str_replace( DIRECTORY_SEPARATOR, '/', $relative );
+			// Skip hardening stubs and non-allowed types — editors should only
+			// see assignable audio/ZIP assets, not defense-in-depth files.
+			$filename = $file->getFilename();
+			if ( in_array( $filename, array( '.htaccess', 'web.config', 'index.html' ), true ) ) {
+				continue;
+			}
+			$extension = strtolower( pathinfo( $filename, PATHINFO_EXTENSION ) );
+			if ( '' !== $extension && ! in_array( $extension, $this->allowed_extensions(), true ) ) {
+				continue;
+			}
 			if ( '' !== $needle && false === strpos( strtolower( $normalized ), $needle ) ) {
 				continue;
 			}
@@ -311,10 +343,52 @@ final class ProtectedAssetStorage {
 			return new WP_Error( 'mw_protected_asset_type', __( 'The asset type or size is not allowed.', 'music-wave-vip' ), array( 'status' => 400 ) );
 		}
 
+		// MIME hardening: verify actual file content via finfo, not just extension.
+		// Prevents spoofed extensions (e.g. .mp3 containing PHP) and limits ZIP bombs.
+		if ( function_exists( 'finfo_open' ) ) {
+			$finfo = finfo_open( FILEINFO_MIME_TYPE );
+			if ( false !== $finfo ) {
+				$mime = finfo_file( $finfo, $file['tmp_name'] );
+				finfo_close( $finfo );
+				$mime          = is_string( $mime ) ? strtolower( $mime ) : '';
+				$allowed_mimes = array(
+					'mp3'  => array( 'audio/mpeg', 'audio/mp3' ),
+					'm4a'  => array( 'audio/mp4', 'audio/m4a', 'audio/x-m4a' ),
+					'aac'  => array( 'audio/aac' ),
+					'ogg'  => array( 'audio/ogg', 'audio/x-ogg' ),
+					'wav'  => array( 'audio/wav', 'audio/x-wav' ),
+					'flac' => array( 'audio/flac', 'audio/x-flac' ),
+					'zip'  => array( 'application/zip', 'application/x-zip-compressed' ),
+				);
+				if ( isset( $allowed_mimes[ $extension ] ) && '' !== $mime && ! in_array( $mime, $allowed_mimes[ $extension ], true ) && 0 !== strpos( $mime, 'audio/' ) && 'application/octet-stream' !== $mime ) {
+					// Strict for ZIP, permissive for audio (some hosts report generic types).
+					if ( 'zip' === $extension ) {
+						return new WP_Error( 'mw_protected_asset_mime', __( 'The file content does not match its extension.', 'music-wave-vip' ), array( 'status' => 400 ) );
+					}
+				}
+			}
+		}
+		// Reject files with double extensions or null bytes.
+		if ( false !== strpos( $original_name, "\0" ) || preg_match( '/\.(php|phtml|phar|exe|sh)\./i', $original_name ) ) {
+			return new WP_Error( 'mw_protected_asset_type', __( 'The file name is not allowed.', 'music-wave-vip' ), array( 'status' => 400 ) );
+		}
+
 		$filename    = wp_unique_filename( $root, $original_name );
 		$destination = $root . DIRECTORY_SEPARATOR . $filename;
 		if ( ! move_uploaded_file( $file['tmp_name'], $destination ) ) {
 			return new WP_Error( 'mw_protected_asset_move', __( 'The protected asset could not be stored.', 'music-wave-vip' ), array( 'status' => 500 ) );
+		}
+		// Post-move MIME re-check to prevent race / tmp spoof.
+		if ( function_exists( 'finfo_open' ) && 'zip' === $extension ) {
+			$finfo = finfo_open( FILEINFO_MIME_TYPE );
+			if ( false !== $finfo ) {
+				$dest_mime = finfo_file( $finfo, $destination );
+				finfo_close( $finfo );
+				if ( is_string( $dest_mime ) && 0 === stripos( $dest_mime, 'text/' ) ) {
+					unlink( $destination ); // phpcs:ignore WordPress.WP.AlternativeFunctions.unlink_unlink
+					return new WP_Error( 'mw_protected_asset_mime', __( 'The file content is not a valid ZIP archive.', 'music-wave-vip' ), array( 'status' => 400 ) );
+				}
+			}
 		}
 
 		$opaque = $this->registry->register( $filename, $destination );

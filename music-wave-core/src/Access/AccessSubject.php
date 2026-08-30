@@ -14,18 +14,13 @@ final class AccessSubject {
 	private $user_id;
 
 	/** @var array<int, string> */
-	private $roles;
-
-	/** @var array<int, string> */
 	private $capabilities;
 
 	/**
-	 * @param array<int, string> $roles
 	 * @param array<int, string> $capabilities
 	 */
-	public function __construct( int $user_id = 0, array $roles = array(), array $capabilities = array() ) {
+	public function __construct( int $user_id = 0, array $capabilities = array() ) {
 		$this->user_id      = max( 0, $user_id );
-		$this->roles        = array_values( array_unique( array_map( 'sanitize_key', $roles ) ) );
 		$this->capabilities = array_values( array_unique( array_map( 'sanitize_key', $capabilities ) ) );
 	}
 
@@ -39,14 +34,19 @@ final class AccessSubject {
 
 	/** @return self */
 	public static function current(): self {
-		$user_id = get_current_user_id();
+		return self::for_user( get_current_user_id() );
+	}
+
+	/** @return self */
+	public static function for_user( int $user_id ): self {
+		$user_id = max( 0, $user_id );
 		if ( $user_id <= 0 ) {
 			return new self();
 		}
 
 		$user = get_userdata( $user_id );
 		if ( false === $user ) {
-			return new self();
+			return new self( $user_id );
 		}
 
 		$capabilities = array();
@@ -56,6 +56,6 @@ final class AccessSubject {
 			}
 		}
 
-		return new self( $user_id, (array) $user->roles, $capabilities );
+		return new self( $user_id, $capabilities );
 	}
 }

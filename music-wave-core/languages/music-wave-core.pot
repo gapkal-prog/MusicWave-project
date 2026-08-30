@@ -8,7 +8,17 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Domain: music-wave-core\n"
 
-#: src/Admin/SettingsPage.php:228
+#: src/Admin/DiagnosticsPage.php:164
+#, php-format
+msgid "%1$d of %2$d environment checks passed."
+msgstr ""
+
+#: src/Admin/DiagnosticsPage.php:174
+#, php-format
+msgid "%1$d of %2$d environment checks passed. Resolve the items marked “Required” below before launching the store."
+msgstr ""
+
+#: src/Admin/SettingsPage.php:254
 #, php-format
 msgid "%1$d updated, %2$d skipped. Continue to process the next secure batch."
 msgstr ""
@@ -58,15 +68,29 @@ msgstr ""
 msgid "%1$s is an album by %2$s."
 msgstr ""
 
-#: src/Blocks/ReleaseBlocks.php:1919
+#: src/Blocks/ReleaseBlocks.php:1933
 #, php-format
 msgid "%1$s: %2$s"
 msgstr ""
 
-#: src/Blocks/ReleaseBlocks.php:1269
+#: src/Blocks/ReleaseBlocks.php:1284
 #, php-format
 msgid "%d catalog suggestions available."
 msgstr ""
+
+#: src/Blocks/ListeningBlocks.php:302 src/Blocks/PlaylistBlocks.php:476
+#, php-format
+msgid "%d day ago"
+msgid_plural "%d days ago"
+msgstr[0] ""
+msgstr[1] ""
+
+#: src/Blocks/ListeningBlocks.php:299 src/Blocks/PlaylistBlocks.php:473
+#, php-format
+msgid "%d hour ago"
+msgid_plural "%d hours ago"
+msgstr[0] ""
+msgstr[1] ""
 
 #: src/Admin/ReleaseReadiness.php:100
 #, php-format
@@ -75,33 +99,85 @@ msgid_plural "%d items"
 msgstr[0] ""
 msgstr[1] ""
 
-#: src/Blocks/PlaylistBlocks.php:193
+#: src/Blocks/ListeningBlocks.php:296 src/Blocks/PlaylistBlocks.php:470
+#, php-format
+msgid "%d minute ago"
+msgid_plural "%d minutes ago"
+msgstr[0] ""
+msgstr[1] ""
+
+#: src/Admin/DiagnosticsPage.php:167
+#, php-format
+msgid "%d optional recommendation still needs review."
+msgstr ""
+
+#: src/Blocks/PlaylistBlocks.php:199
+#, php-format
+msgid "%d playlists"
+msgstr ""
+
+#: src/Blocks/PlaylistBlocks.php:291
+#, php-format
+msgid "%d public playlists"
+msgstr ""
+
+#: src/Blocks/QueueBlock.php:179
+#, php-format
+msgid "%d queued"
+msgstr ""
+
+#: src/Blocks/PlaylistBlocks.php:650
 #, php-format
 msgid "%d release"
 msgid_plural "%d releases"
 msgstr[0] ""
 msgstr[1] ""
 
-#: src/Blocks/ArtistProfileBlock.php:187
+#: src/Admin/DiagnosticsPage.php:172
+#, php-format
+msgid "%d required checks need attention"
+msgstr ""
+
+#: src/Blocks/PlaylistBlocks.php:396 src/Blocks/PlaylistBlocks.php:583
+#, php-format
+msgid "%d track"
+msgid_plural "%d tracks"
+msgstr[0] ""
+msgstr[1] ""
+
+#: src/Notifications/FollowNotifier.php:229
+#, php-format
+msgid "%s is out now"
+msgstr ""
+
+#: src/Blocks/ArtistProfileBlock.php:187 src/Blocks/ArtistShelfBlock.php:357 src/Blocks/TaxonomyShelfBlock.php:261 src/Blocks/TermHeroBlock.php:250
 #, php-format
 msgid "%s release"
 msgid_plural "%s releases"
 msgstr[0] ""
 msgstr[1] ""
 
-#: src/Blocks/ReleaseBlocks.php:1324
+#: src/Blocks/ReleaseBlocks.php:1343
 #, php-format
 msgid "%s release found"
 msgid_plural "%s releases found"
 msgstr[0] ""
 msgstr[1] ""
 
-#: assets/blocks.js:519
+#: assets/blocks.js:2841
 msgid "0 keeps the full biography. Any other value shows a trimmed excerpt."
 msgstr ""
 
-#: assets/editor.js:638
+#: assets/blocks.js:1933
+msgid "0 keeps the full description. Any other value shows a trimmed excerpt."
+msgstr ""
+
+#: assets/editor.js:956
 msgid "1 download quality"
+msgstr ""
+
+#: src/Blocks/PlaylistBlocks.php:140
+msgid "1 track"
 msgstr ""
 
 #: src/Support/SiteHealth.php:87
@@ -112,7 +188,7 @@ msgstr ""
 msgid "A focused electronic demo track for testing catalog cards, metadata, and previews."
 msgstr ""
 
-#: assets/editor.js:289
+#: assets/editor.js:439
 msgid "A new downloadable file was added. Add more qualities to it when needed, then save all changes."
 msgstr ""
 
@@ -120,8 +196,16 @@ msgstr ""
 msgid "A provider can stream opaque protected assets after access checks pass."
 msgstr ""
 
-#: assets/editor.js:274
+#: src/Admin/DiagnosticsPage.php:401
+msgid "A provider streams opaque protected assets after access checks pass."
+msgstr ""
+
+#: assets/editor.js:416
 msgid "A quality was added to the selected downloadable file. Review it, then save all changes."
+msgstr ""
+
+#: src/Admin/DiagnosticsPage.php:413
+msgid "A recognized SEO plugin is active, so MusicWave JSON-LD stays disabled by default to prevent duplicate schema."
 msgstr ""
 
 #: src/Support/SiteHealth.php:149
@@ -140,23 +224,23 @@ msgstr ""
 msgid "A short editorial biography displayed on the public artist archive."
 msgstr ""
 
-#: assets/editor.js:91
+#: assets/editor.js:138
 msgid "AAC 256 kbps"
 msgstr ""
 
-#: assets/blocks.js:540
+#: assets/blocks.js:2875
 msgid "Accent color"
 msgstr ""
 
-#: src/Admin/ReleaseReadiness.php:78 src/Admin/SettingsPage.php:111
+#: src/Admin/ReleaseReadiness.php:78 src/Admin/SettingsPage.php:126
 msgid "Access"
 msgstr ""
 
-#: src/Blocks/ReleaseBlocks.php:817
+#: src/Blocks/ReleaseBlocks.php:832
 msgid "Access granted"
 msgstr ""
 
-#: assets/blocks.js:57 src/Admin/SettingsPage.php:249
+#: assets/blocks.js:240 src/Admin/SettingsPage.php:280
 msgid "Access granted message"
 msgstr ""
 
@@ -164,27 +248,39 @@ msgstr ""
 msgid "Access mode"
 msgstr ""
 
-#: src/Commerce/AccountLibrary.php:132
+#: src/Commerce/AccountLibrary.php:346
 msgid "Access purchases, protected downloads, account details, and your personal music library."
 msgstr ""
 
-#: src/Commerce/AccountLibrary.php:208
+#: src/Admin/SettingsPage.php:472
+msgid "Access — membership fallback behavior, customer-facing messages, and bulk access tools."
+msgstr ""
+
+#: src/Commerce/AccountLibrary.php:468
 msgid "Account details"
 msgstr ""
 
-#: src/Commerce/AccountLibrary.php:159
+#: assets/blocks.js:1144
+msgid "Account details heading"
+msgstr ""
+
+#: assets/blocks.js:1017
+msgid "Account details panel"
+msgstr ""
+
+#: src/Commerce/AccountLibrary.php:376
 msgid "Account sections"
 msgstr ""
 
-#: assets/blocks.js:221
+#: assets/blocks.js:895
 msgid "Action link label"
 msgstr ""
 
-#: src/Admin/DiagnosticsPage.php:69
-msgid "Activate MusicWave VIP and configure a protected directory before enabling private downloads."
+#: src/Admin/DiagnosticsPage.php:207
+msgid "Activate MusicWave VIP and set a protected directory before enabling private downloads."
 msgstr ""
 
-#: src/Support/SiteHealth.php:135
+#: src/Admin/DiagnosticsPage.php:404 src/Support/SiteHealth.php:135
 msgid "Activate MusicWave VIP before assigning protected download assets to releases."
 msgstr ""
 
@@ -192,19 +288,36 @@ msgstr ""
 msgid "Activate WooCommerce to map products."
 msgstr ""
 
-#: src/Admin/SettingsPage.php:340
+#: src/Admin/SettingsPage.php:398
 msgid "Active"
 msgstr ""
 
-#: src/Blocks/ReleaseBlocks.php:1331
+#: src/Blocks/ReleaseBlocks.php:1350
 msgid "Active catalog filters"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:140
+#: assets/blocks.js:969
+msgid "Active levels with expiry and purchasable VIP plan products. Appears only while MusicWave VIP is active."
+msgstr ""
+
+#: assets/blocks.js:2567
+msgid "Active membership levels with expiry and the configured VIP plan products appear here for signed-in visitors. Requires MusicWave VIP."
+msgstr ""
+
+#: src/Admin/SettingsPage.php:162
 msgid "Active theme"
 msgstr ""
 
-#: src/Blocks/PlaylistBlocks.php:159
+#: src/Admin/DiagnosticsPage.php:380
+#, php-format
+msgid "Active theme: %s. Activate the MusicWave companion theme for the intended catalog presentation."
+msgstr ""
+
+#: src/Admin/SettingsPage.php:310
+msgid "Activity older than this window is deleted automatically."
+msgstr ""
+
+#: src/Blocks/PlaylistBlocks.php:602
 msgid "Add"
 msgstr ""
 
@@ -216,7 +329,7 @@ msgstr ""
 msgid "Add a membership level for membership access."
 msgstr ""
 
-#: src/Admin/SettingsPage.php:145
+#: src/Admin/SettingsPage.php:167
 msgid "Add a release"
 msgstr ""
 
@@ -224,27 +337,31 @@ msgstr ""
 msgid "Add a release date."
 msgstr ""
 
-#: assets/blocks.js:328
+#: assets/blocks.js:2547
 msgid "Add a secure HTTPS preview URL to the selected release to display the play button."
 msgstr ""
 
-#: assets/blocks.js:324
+#: assets/blocks.js:2531
 msgid "Add a secure HTTPS preview URL to the selected release to display the player."
 msgstr ""
 
-#: assets/editor.js:718
+#: src/Admin/DiagnosticsPage.php:189
+msgid "Add a track, album, or podcast with artwork, preview audio, and pricing."
+msgstr ""
+
+#: assets/editor.js:1141
 msgid "Add as a quality for…"
 msgstr ""
 
-#: assets/editor.js:713
+#: assets/editor.js:1129
 msgid "Add as new downloadable file"
 msgstr ""
 
-#: assets/blocks.js:320
+#: assets/blocks.js:2515
 msgid "Add at least one credit in the release details to display the credits section."
 msgstr ""
 
-#: assets/blocks.js:325
+#: assets/blocks.js:2535
 msgid "Add at least one protected download file and preview this block as an eligible signed-in user."
 msgstr ""
 
@@ -252,7 +369,7 @@ msgstr ""
 msgid "Add at least one track or episode to this collection."
 msgstr ""
 
-#: assets/blocks.js:318
+#: assets/blocks.js:2507
 msgid "Add catalog number, release date, duration, BPM, key, artist, or genre to the selected release."
 msgstr ""
 
@@ -260,11 +377,11 @@ msgstr ""
 msgid "Add cover artwork."
 msgstr ""
 
-#: assets/editor.js:677
+#: assets/editor.js:1044
 msgid "Add manual downloadable file"
 msgstr ""
 
-#: assets/editor.js:677
+#: assets/editor.js:1043
 msgid "Add manual quality"
 msgstr ""
 
@@ -277,43 +394,79 @@ msgstr ""
 msgid "Add new release"
 msgstr ""
 
-#: assets/editor.js:670
+#: assets/editor.js:1016
 msgid "Add next file to"
 msgstr ""
 
-#: assets/editor.js:919
+#: assets/editor.js:1473
 msgid "Add to collection"
 msgstr ""
 
-#: assets/blocks.js:280 src/Library/LibraryButton.php:135
+#: assets/blocks.js:2108
+msgid "Add to end of queue"
+msgstr ""
+
+#: assets/blocks.js:1334 src/Library/LibraryButton.php:149
 msgid "Add to library"
 msgstr ""
 
-#: src/Modules/Rendering.php:863
+#: src/Modules/Rendering.php:1326
 msgid "Add to library button"
 msgstr ""
 
-#: src/Blocks/PlaylistBlocks.php:125 src/Modules/Rendering.php:887
+#: src/Blocks/PlaylistBlocks.php:123 src/Blocks/PlaylistBlocks.php:526 src/Modules/Rendering.php:1350
 msgid "Add to playlist"
 msgstr ""
 
-#: assets/blocks.js:281 src/Library/LibraryButton.php:129
+#: src/Blocks/QueueBlock.php:112 src/Modules/Rendering.php:1183
+msgid "Add to queue"
+msgstr ""
+
+#: assets/blocks.js:1338 src/Library/LibraryButton.php:143
 msgid "Add to wishlist"
 msgstr ""
 
-#: assets/blocks.js:321
+#: assets/blocks.js:2519
 msgid "Add tracks or episodes to the selected collection to display its ordered track list."
 msgstr ""
 
-#: src/Playlists/PlaylistFormHandler.php:147
+#: src/Blocks/PlaylistBlocks.php:132
+msgid "Added"
+msgstr ""
+
+#: src/Blocks/PlaylistBlocks.php:124 src/Playlists/PlaylistFormHandler.php:147
 msgid "Added to the playlist."
 msgstr ""
 
-#: src/Blocks/ReleaseBlocks.php:925
+#: src/Listening/QueueFormHandler.php:195
+msgid "Added to your queue."
+msgstr ""
+
+#: src/Blocks/ReleaseBlocks.php:940
 msgid "Additional credits"
 msgstr ""
 
-#: src/Modules/Rendering.php:888
+#: src/Commerce/AccountLibrary.php:452
+msgid "Addresses"
+msgstr ""
+
+#: assets/blocks.js:1132
+msgid "Addresses heading"
+msgstr ""
+
+#: assets/blocks.js:997
+msgid "Addresses panel"
+msgstr ""
+
+#: assets/blocks.js:1191
+msgid "Adds an add-to-cart button to every plan product."
+msgstr ""
+
+#: src/Modules/Rendering.php:1184
+msgid "Adds the current or pinned release to the listener's play queue — next in line or at the end — without JavaScript."
+msgstr ""
+
+#: src/Modules/Rendering.php:1351
 msgid "Adds the current release to one of the listener's playlists."
 msgstr ""
 
@@ -329,56 +482,72 @@ msgstr ""
 msgid "All"
 msgstr ""
 
-#: src/Blocks/ReleaseBlocks.php:1186 src/Catalog/ReleaseTaxonomies.php:70
+#: src/Blocks/ReleaseBlocks.php:1201 src/Catalog/ReleaseTaxonomies.php:70
 #, php-format
 msgid "All %s"
+msgstr ""
+
+#: assets/blocks.js:1462
+msgid "All catalog artists"
+msgstr ""
+
+#: src/Commerce/AccountLibrary.php:792
+msgid "All membership content is currently free for everyone — enjoy!"
+msgstr ""
+
+#: src/Notifications/NotificationSettings.php:87
+msgid "All notifications are off until you turn them on. Every email includes a one-click unsubscribe link."
 msgstr ""
 
 #: src/Catalog/ReleasePostType.php:50
 msgid "All releases"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:206
+#: assets/blocks.js:1724
+msgid "All terms in use"
+msgstr ""
+
+#: src/Listening/QueueFormHandler.php:197
+msgid "Already in your queue."
+msgstr ""
+
+#: src/Admin/SettingsPage.php:232
 msgid "Always enabled"
 msgstr ""
 
-#: assets/blocks.js:171 assets/blocks.js:176
+#: assets/blocks.js:688 assets/blocks.js:707
 msgid "Always show"
 msgstr ""
 
-#: src/Admin/DiagnosticsPage.php:182
-msgid "An SEO plugin is active, so MusicWave JSON-LD is disabled by default to prevent duplicate schema."
-msgstr ""
-
-#: src/Blocks/ReleaseBlocks.php:843
+#: src/Blocks/ReleaseBlocks.php:858
 msgid "An eligible membership is required to access this release."
 msgstr ""
 
-#: src/Admin/SettingsPage.php:277
+#: src/Admin/SettingsPage.php:335
 msgid "Any active status"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:272
+#: src/Admin/SettingsPage.php:330
 msgid "Any mode"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:286
+#: src/Admin/SettingsPage.php:344
 msgid "Any release type"
 msgstr ""
 
-#: src/Blocks/PlaylistBlocks.php:388
+#: src/Blocks/PlaylistBlocks.php:916
 msgid "Anyone with the link"
 msgstr ""
 
-#: src/Blocks/PlaylistBlocks.php:325
+#: src/Blocks/PlaylistBlocks.php:855
 msgid "Anyone with this link can open the playlist. Switch the playlist back to private to revoke it."
 msgstr ""
 
-#: assets/blocks.js:136 assets/blocks.js:230
+#: assets/blocks.js:557 assets/blocks.js:910
 msgid "Appearance"
 msgstr ""
 
-#: assets/blocks.js:95
+#: assets/blocks.js:383
 msgid "Applies when every track has a disc number and the collection spans multiple discs."
 msgstr ""
 
@@ -386,19 +555,23 @@ msgstr ""
 msgid "Apply"
 msgstr ""
 
-#: assets/blocks.js:121
+#: assets/blocks.js:511
 msgid "Apply button label"
 msgstr ""
 
-#: src/Blocks/ReleaseBlocks.php:1228
+#: src/Blocks/ReleaseBlocks.php:1243
 msgid "Apply filters"
 msgstr ""
 
-#: src/Blocks/ReleaseBlocks.php:1295 src/Modules/Metadata.php:105
+#: src/Blocks/ReleaseBlocks.php:1314 src/Modules/Metadata.php:105
 msgid "Applying…"
 msgstr ""
 
-#: src/Blocks/ReleaseBlocks.php:706 src/Blocks/ReleaseBlocks.php:1158 src/Blocks/ReleaseBlocks.php:1272 src/Blocks/ReleaseBlocks.php:1886 src/Catalog/ReleaseTaxonomies.php:23 src/Library/LibraryCatalog.php:258 src/Modules/Metadata.php:112
+#: src/Modules/Rendering.php:1166
+msgid "Archive header for artist, genre, mood, and label pages: cover banner or compact row with name, description, release count, and follow."
+msgstr ""
+
+#: assets/blocks.js:1971 src/Blocks/ReleaseBlocks.php:661 src/Blocks/ReleaseBlocks.php:1173 src/Blocks/ReleaseBlocks.php:1287 src/Blocks/ReleaseBlocks.php:1900 src/Blocks/TermHeroBlock.php:212 src/Catalog/ReleaseTaxonomies.php:23 src/Library/LibraryCatalog.php:258 src/Modules/Metadata.php:112
 msgid "Artist"
 msgstr ""
 
@@ -410,31 +583,51 @@ msgstr ""
 msgid "Artist image"
 msgstr ""
 
-#: src/Blocks/ArtistProfileBlock.php:299 src/Modules/Rendering.php:823
+#: src/Blocks/ArtistProfileBlock.php:299 src/Modules/Rendering.php:1138
 msgid "Artist profile"
 msgstr ""
 
-#: assets/blocks.js:327
+#: assets/blocks.js:2543
 msgid "Artist profile content is displayed on an artist archive after an image, biography, or official URL is added to that artist."
 msgstr ""
 
-#: assets/blocks.js:292
+#: assets/blocks.js:1385
 msgid "Artist target"
 msgstr ""
 
-#: assets/blocks.js:293 assets/blocks.js:418
+#: assets/blocks.js:1390 assets/blocks.js:2710
 msgid "Artist term ID"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:384 src/Catalog/ReleaseTaxonomies.php:24 src/Library/LibraryCatalog.php:160
+#: assets/blocks.js:1500
+msgid "Artist term IDs"
+msgstr ""
+
+#: src/Admin/SettingsPage.php:441 src/Catalog/ReleaseTaxonomies.php:24 src/Library/LibraryCatalog.php:160
 msgid "Artists"
 msgstr ""
 
-#: assets/blocks.js:207
+#: assets/blocks.js:1469
+msgid "Artists behind one genre"
+msgstr ""
+
+#: assets/blocks.js:1476
+msgid "Artists behind one mood"
+msgstr ""
+
+#: src/Blocks/ArtistShelfBlock.php:444 src/Modules/Rendering.php:1147
+msgid "Artists shelf"
+msgstr ""
+
+#: assets/blocks.js:2579
+msgid "Artists with published releases appear automatically. Assign artist images in the release editor for the best presentation."
+msgstr ""
+
+#: assets/blocks.js:837 assets/blocks.js:2240 assets/blocks.js:2433
 msgid "Artwork shape"
 msgstr ""
 
-#: assets/blocks.js:194
+#: assets/blocks.js:783
 msgid "Ascending"
 msgstr ""
 
@@ -442,7 +635,7 @@ msgstr ""
 msgid "Assign a release type."
 msgstr ""
 
-#: src/Blocks/ReleaseBlocks.php:1364
+#: src/Blocks/ReleaseBlocks.php:1383
 msgid "Audio preview"
 msgstr ""
 
@@ -450,60 +643,117 @@ msgstr ""
 msgid "Auto-fill metadata & cover art"
 msgstr ""
 
-#: assets/blocks.js:395
+#: src/Admin/SettingsPage.php:302
+msgid "Autocomplete, filters, and recommendations are public endpoints. These limits keep them fast and resistant to abuse."
+msgstr ""
+
+#: assets/blocks.js:1964
+msgid "Automatic (current archive)"
+msgstr ""
+
+#: assets/blocks.js:2678
 msgid "Automatic / current release"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:205
+#: src/Admin/SettingsPage.php:231
 msgid "Automatic conflict detection"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:209
+#: src/Admin/SettingsPage.php:235
 msgid "Automatic mode disables Core JSON-LD when a recognized SEO plugin is active."
 msgstr ""
 
-#: src/Admin/SettingsPage.php:190
+#: src/Admin/SettingsPage.php:212
 msgid "Autoplay"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:195
+#: src/Admin/SettingsPage.php:217
 msgid "Autoplay interval"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:190
+#: src/Admin/SettingsPage.php:212
 msgid "Autoplay is automatically disabled for visitors who prefer reduced motion."
 msgstr ""
 
-#: src/Commerce/AccountLibrary.php:445
+#: src/Commerce/AccountLibrary.php:965
 msgid "Available downloads"
 msgstr ""
 
-#: src/Blocks/ReleaseBlocks.php:688 src/Schema/ReleaseMetaSchema.php:108
+#: assets/blocks.js:1581
+msgid "Avatar shape"
+msgstr ""
+
+#: src/Blocks/ReleaseBlocks.php:643 src/Schema/ReleaseMetaSchema.php:108
 msgid "BPM"
 msgstr ""
 
-#: assets/blocks.js:51
+#: src/Admin/DiagnosticsPage.php:431
+msgid "Background processing"
+msgstr ""
+
+#: assets/blocks.js:1852
+msgid "Banner (full-width cover)"
+msgstr ""
+
+#: assets/blocks.js:208
 msgid "Banner (message and action in one row)"
+msgstr ""
+
+#: assets/blocks.js:1869
+msgid "Banner height"
 msgstr ""
 
 #: src/Discovery/Recommendations.php:95
 msgid "Because of genres you listened to recently."
 msgstr ""
 
-#: assets/blocks.js:518
+#: src/Commerce/AccountLibrary.php:606
+msgid "Billing address"
+msgstr ""
+
+#: src/Commerce/AccountLibrary.php:453
+msgid "Billing and shipping details."
+msgstr ""
+
+#: assets/blocks.js:1632 assets/blocks.js:2840
 msgid "Biography length (words)"
 msgstr ""
 
-#: assets/editor.js:578
+#: assets/editor.js:846
 msgid "Bitrate (kbps)"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:321
+#: src/Admin/SettingsPage.php:379
 msgid "Block templates, styles, patterns, and visual editing."
 msgstr ""
 
-#: assets/editor.js:700
+#: src/Admin/SettingsPage.php:295
+msgid "Bound token issuance and file delivery per visitor. Download links stay signed, short-lived, and single-use regardless of these limits."
+msgstr ""
+
+#: src/Blocks/TermHeroBlock.php:221
+msgid "Browse"
+msgstr ""
+
+#: src/Blocks/TaxonomyShelfBlock.php:267
+#, php-format
+msgid "Browse %s"
+msgstr ""
+
+#: src/Modules/Rendering.php:1370
+msgid "Browse and play community public playlists with search and pagination."
+msgstr ""
+
+#: assets/blocks.js:2563
+msgid "Browse community public playlists â€” searchable, paginated, and playable in one click."
+msgstr ""
+
+#: assets/editor.js:1102
 msgid "Browse protected files"
+msgstr ""
+
+#: src/Blocks/TaxonomyShelfBlock.php:289
+msgid "Browse the catalog"
 msgstr ""
 
 #: src/Admin/BulkAccessManager.php:147
@@ -516,27 +766,27 @@ msgstr ""
 msgid "Bulk access is still running: %1$d releases updated and %2$d skipped so far."
 msgstr ""
 
-#: src/Admin/SettingsPage.php:224
+#: src/Admin/SettingsPage.php:250
 msgid "Bulk access job in progress"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:266
+#: src/Admin/SettingsPage.php:324
 msgid "Bulk access mode"
 msgstr ""
 
-#: assets/blocks.js:278
+#: assets/blocks.js:1325
 msgid "Button"
 msgstr ""
 
-#: assets/blocks.js:134 assets/blocks.js:228 assets/blocks.js:284
+#: assets/blocks.js:553 assets/blocks.js:906 assets/blocks.js:1356 assets/blocks.js:2122
 msgid "Button label"
 msgstr ""
 
-#: assets/blocks.js:137 assets/blocks.js:231 assets/blocks.js:286
+#: assets/blocks.js:562 assets/blocks.js:915 assets/blocks.js:1368
 msgid "Button style"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:235
+#: src/Admin/SettingsPage.php:261
 msgid "Cancel job"
 msgstr ""
 
@@ -544,23 +794,31 @@ msgstr ""
 msgid "Canonical artist URL"
 msgstr ""
 
-#: assets/blocks.js:431
+#: assets/blocks.js:2726
 msgid "Card"
 msgstr ""
 
-#: assets/blocks.js:214
+#: assets/blocks.js:854
 msgid "Card content"
 msgstr ""
 
-#: src/Privacy/PersonalData.php:108 src/Privacy/PersonalData.php:131
+#: assets/blocks.js:2291
+msgid "Card details"
+msgstr ""
+
+#: src/Modules/Rendering.php:180
+msgid "Cards (surface)"
+msgstr ""
+
+#: src/Privacy/PersonalData.php:114 src/Privacy/PersonalData.php:137
 msgid "Catalog ID"
 msgstr ""
 
-#: src/Privacy/PersonalData.php:163
+#: src/Privacy/PersonalData.php:169
 msgid "Catalog IDs"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:176
+#: src/Admin/SettingsPage.php:198
 msgid "Catalog archive"
 msgstr ""
 
@@ -568,39 +826,43 @@ msgstr ""
 msgid "Catalog data is independent from WooCommerce. Products only sell or grant access to this release."
 msgstr ""
 
-#: src/Modules/Rendering.php:775
+#: src/Modules/Rendering.php:1090
 msgid "Catalog filters"
 msgstr ""
 
-#: assets/blocks.js:322
+#: assets/blocks.js:2523
 msgid "Catalog filters are generated from your artist, genre, mood, and release-type terms on the public archive."
 msgstr ""
 
-#: src/Blocks/ReleaseBlocks.php:685 src/Schema/ReleaseMetaSchema.php:26
+#: src/Blocks/ReleaseBlocks.php:640 src/Schema/ReleaseMetaSchema.php:26
 msgid "Catalog number"
 msgstr ""
 
-#: src/Modules/Rendering.php:784
+#: src/Modules/Rendering.php:1099
 msgid "Catalog results"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:152
+#: src/Admin/SettingsPage.php:174
 msgid "Catalog schema"
 msgstr ""
 
-#: src/Admin/DiagnosticsPage.php:70
-msgid "Check"
+#: src/Admin/SettingsPage.php:301
+msgid "Catalog search & discovery"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:146
+#: assets/blocks.js:1060
+msgid "Changes the tab sequence only; every enabled panel stays available. Switch Tabs vs Stacked from the Styles panel."
+msgstr ""
+
+#: src/Admin/SettingsPage.php:168
 msgid "Check readiness and access status."
 msgstr ""
 
-#: assets/editor.js:686
+#: assets/editor.js:1072
 msgid "Choose a file from Media Library"
 msgstr ""
 
-#: assets/editor.js:686
+#: assets/editor.js:1068
 msgid "Choose a quality from Media Library"
 msgstr ""
 
@@ -616,19 +878,39 @@ msgstr ""
 msgid "Choose a valid target access mode."
 msgstr ""
 
-#: assets/blocks.js:211 assets/blocks.js:460
+#: src/Notifications/NotificationSettings.php:55
+msgid "Choose which release emails you want."
+msgstr ""
+
+#: assets/blocks.js:848 assets/blocks.js:1583 assets/blocks.js:1885 assets/blocks.js:2251 assets/blocks.js:2436 assets/blocks.js:2774
 msgid "Circle"
 msgstr ""
 
-#: src/Blocks/PreviewPlayer.php:120 src/Blocks/PreviewPlayer.php:289
+#: src/Blocks/PlaylistBlocks.php:315
+msgid "Clear"
+msgstr ""
+
+#: src/Blocks/QueueBlock.php:331
+msgid "Clear queue"
+msgstr ""
+
+#: src/Blocks/PlaylistBlocks.php:324
+msgid "Clear search"
+msgstr ""
+
+#: src/Blocks/PlaylistBlocks.php:544 src/Blocks/PlaylistBlocks.php:587
+msgid "Close"
+msgstr ""
+
+#: src/Blocks/PreviewPlayer.php:121 src/Blocks/PreviewPlayer.php:290
 msgid "Close player"
 msgstr ""
 
-#: src/Blocks/PreviewPlayer.php:286
+#: src/Blocks/PreviewPlayer.php:287
 msgid "Close queue"
 msgstr ""
 
-#: assets/editor.js:766
+#: assets/editor.js:1222
 msgid "Collection items could not be loaded."
 msgstr ""
 
@@ -636,63 +918,119 @@ msgstr ""
 msgid "Collection items must be an array."
 msgstr ""
 
-#: assets/editor.js:825
+#: assets/editor.js:1307
 msgid "Collection items saved."
 msgstr ""
 
-#: src/Modules/Rendering.php:765
+#: src/Modules/Rendering.php:1080
 msgid "Collection track list"
+msgstr ""
+
+#: assets/blocks.js:1816
+msgid "Colorful (curated hues)"
 msgstr ""
 
 #: src/Library/LibraryCatalog.php:162 src/Library/LibraryCatalog.php:202
 msgid "Coming soon"
 msgstr ""
 
-#: assets/blocks.js:661
+#: assets/blocks.js:1053
+msgid "Commerce first"
+msgstr ""
+
+#: src/Blocks/PlaylistBlocks.php:222
+msgid "Community curations"
+msgstr ""
+
+#: src/Blocks/PlaylistBlocks.php:220
+msgid "Community playlists"
+msgstr ""
+
+#: assets/blocks.js:1859
+msgid "Compact (small row)"
+msgstr ""
+
+#: assets/blocks.js:1879
+msgid "Compact art shape"
+msgstr ""
+
+#: assets/blocks.js:3013
 msgid "Compact display"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:163
+#: assets/blocks.js:1561
+msgid "Compact list"
+msgstr ""
+
+#: src/Admin/SettingsPage.php:185
 msgid "Companion block theme"
 msgstr ""
 
-#: src/Admin/DiagnosticsPage.php:64
-msgid "Complete these checks before importing catalog data or opening the store to customers."
+#: src/Admin/SettingsPage.php:298
+msgid "Completed file deliveries allowed per visitor per day. Set 0 for no daily cap."
 msgstr ""
 
-#: src/Admin/SettingsPage.php:386
+#: src/Admin/SettingsPage.php:443
 msgid "Configure canonical catalog and taxonomy URL structure."
+msgstr ""
+
+#: src/Admin/DiagnosticsPage.php:206
+msgid "Configure protected delivery"
+msgstr ""
+
+#: src/Admin/DiagnosticsPage.php:195
+msgid "Confirm the classifications and artist profiles used across the catalog."
+msgstr ""
+
+#: src/Admin/DiagnosticsPage.php:89
+msgid "Confirm the environment is ready before importing catalog data or opening the store to customers."
+msgstr ""
+
+#: assets/blocks.js:2494
+msgid "Consent button label"
+msgstr ""
+
+#: assets/blocks.js:2489
+msgid "Consent panel text"
 msgstr ""
 
 #: src/Schema/ReleaseMetaSchema.php:132
 msgid "Contains explicit content"
 msgstr ""
 
-#: assets/blocks.js:70 assets/blocks.js:88
+#: assets/blocks.js:291 assets/blocks.js:340 assets/blocks.js:1892
 msgid "Content"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:110
+#: src/Admin/SettingsPage.php:125
 msgid "Content & display"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:234
+#: src/Admin/SettingsPage.php:471
+msgid "Content & display — new release defaults, archive behavior, sliders, playback, and structured data."
+msgstr ""
+
+#: src/Blocks/ListeningBlocks.php:273 src/Modules/Rendering.php:1463
+msgid "Continue listening"
+msgstr ""
+
+#: src/Admin/SettingsPage.php:260
 msgid "Continue next batch"
 msgstr ""
 
-#: assets/blocks.js:310
+#: assets/blocks.js:2077 assets/blocks.js:2092
 msgid "Control"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:177
+#: src/Admin/SettingsPage.php:199
 msgid "Controls the public MusicWave archive only."
 msgstr ""
 
-#: assets/editor.js:361
+#: assets/editor.js:564
 msgid "Copy to protected storage"
 msgstr ""
 
-#: assets/editor.js:372
+#: assets/editor.js:581
 msgid "Copying the Media Library file to protected storage…"
 msgstr ""
 
@@ -700,7 +1038,7 @@ msgstr ""
 msgid "Core catalog, access, and delivery checks are complete for this release."
 msgstr ""
 
-#: src/Admin/SettingsPage.php:141
+#: src/Admin/SettingsPage.php:163
 msgid "Core version"
 msgstr ""
 
@@ -714,132 +1052,172 @@ msgstr ""
 msgid "Could not create the demo term %s."
 msgstr ""
 
-#: assets/blocks.js:243
+#: assets/blocks.js:1075
 msgid "Counts available downloads, saved releases, and followed artists."
+msgstr ""
+
+#: assets/blocks.js:1525
+msgid "Counts cover published releases only."
 msgstr ""
 
 #: src/Catalog/ReleasePostType.php:52
 msgid "Cover artwork"
 msgstr ""
 
-#: assets/editor.js:666
+#: src/Blocks/PlaylistBlocks.php:127 src/Blocks/PlaylistBlocks.php:548 src/Blocks/PlaylistBlocks.php:592
+msgid "Create & add"
+msgstr ""
+
+#: assets/editor.js:1005
 msgid "Create a downloadable file for every song, episode, or bundle. Then add all available qualities to that file. This keeps albums and podcasts organized without uploading the same audio again."
 msgstr ""
 
-#: assets/editor.js:672
+#: assets/editor.js:1020
 msgid "Create a new downloadable file"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:145
+#: src/Admin/SettingsPage.php:167
 msgid "Create and configure catalog content."
 msgstr ""
 
-#: src/Admin/DiagnosticsPage.php:107
+#: src/Admin/DiagnosticsPage.php:285
 msgid "Create four public sample releases: a track, album, podcast show, and podcast episode. The importer never modifies existing merchant releases and skips any conflicting URL slug."
 msgstr ""
 
-#: src/Blocks/PlaylistBlocks.php:143 src/Blocks/PlaylistBlocks.php:336
+#: src/Blocks/PlaylistBlocks.php:126 src/Blocks/PlaylistBlocks.php:543 src/Blocks/PlaylistBlocks.php:557 src/Blocks/PlaylistBlocks.php:866
 msgid "Create playlist"
 msgstr ""
 
-#: src/Admin/DiagnosticsPage.php:66
+#: src/Admin/DiagnosticsPage.php:178 src/Admin/DiagnosticsPage.php:188
 msgid "Create the first release"
+msgstr ""
+
+#: src/Blocks/PlaylistBlocks.php:544
+msgid "Create your first playlist"
+msgstr ""
+
+#: src/Blocks/PlaylistBlocks.php:196
+msgid "Create, order, and share your personal collections — separate from your Music Library. Play any playlist with one click."
 msgstr ""
 
 #: src/Modules/Playlists.php:54
 msgid "Create, order, and share your playlists."
 msgstr ""
 
-#: src/Privacy/PersonalData.php:167
+#: src/Privacy/PersonalData.php:173
 msgid "Created"
 msgstr ""
 
-#: src/Blocks/ReleaseBlocks.php:898
+#: src/Blocks/ReleaseBlocks.php:913
 msgid "Credits"
 msgstr ""
 
-#: assets/blocks.js:77
+#: assets/blocks.js:325
 msgid "Credits layout"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:272
+#: src/Admin/SettingsPage.php:330
 msgid "Current mode"
 msgstr ""
 
-#: assets/blocks.js:394
+#: assets/blocks.js:2677
 msgid "Current release"
 msgstr ""
 
-#: assets/editor.js:87
+#: assets/editor.js:110
 msgid "Custom / detected"
 msgstr ""
 
-#: assets/editor.js:564
+#: assets/editor.js:832
 msgid "Customer label"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:241
+#: src/Admin/SettingsPage.php:272
 msgid "Customer-facing access messages"
 msgstr ""
 
-#: assets/blocks.js:170 assets/blocks.js:175
+#: src/Admin/SettingsPage.php:298
+msgid "Daily delivery quota"
+msgstr ""
+
+#: src/Admin/DiagnosticsPage.php:267
+msgid "Database schema"
+msgstr ""
+
+#: assets/blocks.js:681 assets/blocks.js:700
 msgid "Default (global setting)"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:172
+#: src/Admin/SettingsPage.php:194
 msgid "Default access mode"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:173
+#: src/Admin/SettingsPage.php:195
 msgid "Default preview duration"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:178
+#: src/Admin/SettingsPage.php:200
 msgid "Default sorting"
 msgstr ""
 
-#: src/Blocks/PlaylistBlocks.php:292
+#: src/Blocks/PlaylistBlocks.php:822
 msgid "Delete"
 msgstr ""
 
-#: src/Blocks/PlaylistBlocks.php:296
+#: src/Blocks/PlaylistBlocks.php:826
 #, php-format
 msgid "Delete playlist: %s"
 msgstr ""
 
-#: src/Admin/DiagnosticsPage.php:107
+#: src/Blocks/PlaylistBlocks.php:137
+msgid "Delete this playlist permanently?"
+msgstr ""
+
+#: src/Blocks/ReleaseBlocks.php:1458
+msgid "Delivered through signed, expiring links. Direct file URLs are never exposed."
+msgstr ""
+
+#: src/Admin/SettingsPage.php:127
+msgid "Delivery & privacy"
+msgstr ""
+
+#: src/Admin/SettingsPage.php:473
+msgid "Delivery & privacy — download and search rate limits, delivery quotas, caching, and listening-history retention."
+msgstr ""
+
+#: src/Admin/DiagnosticsPage.php:284
 msgid "Demo catalog"
 msgstr ""
 
-#: src/Admin/DiagnosticsPage.php:86
+#: src/Admin/DiagnosticsPage.php:109
 msgid "Demo catalog imported."
 msgstr ""
 
-#: src/Admin/DiagnosticsPage.php:95
+#: src/Admin/DiagnosticsPage.php:118
 msgid "Demo catalog removed."
 msgstr ""
 
-#: src/Admin/DiagnosticsPage.php:116
+#: src/Admin/DiagnosticsPage.php:301
 msgid "Demo releases contain no protected asset, product, customer, or membership data. Removing them preserves any terms that you may already be using."
 msgstr ""
 
-#: assets/blocks.js:193
+#: assets/blocks.js:781
 msgid "Descending"
 msgstr ""
 
-#: src/Admin/DiagnosticsPage.php:70
-msgid "Details"
+#: assets/blocks.js:1927
+msgid "Description length (words)"
 msgstr ""
 
-#: assets/editor.js:615
+#: assets/editor.js:905
 msgid "Detected:"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:181 src/Admin/SettingsPage.php:207
+#: src/Admin/SettingsPage.php:203 src/Admin/SettingsPage.php:233 src/Privacy/PersonalData.php:186
 msgid "Disabled"
 msgstr ""
 
-#: src/Blocks/ReleaseBlocks.php:1107
+#: src/Blocks/ReleaseBlocks.php:1122
 #, php-format
 msgid "Disc %d"
 msgstr ""
@@ -848,127 +1226,143 @@ msgstr ""
 msgid "Discogs"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:372
-msgid "Discogs consumer secret"
-msgstr ""
-
-#: src/Admin/SettingsPage.php:371
+#: src/Admin/SettingsPage.php:429
 msgid "Discogs personal access token"
 msgstr ""
 
-#: src/Blocks/PreviewPlayer.php:129 src/Blocks/PreviewPlayer.php:287
+#: src/Blocks/PlaylistBlocks.php:221
+msgid "Discover playlists curated by fellow listeners. Every public playlist can be played in one click."
+msgstr ""
+
+#: src/Blocks/PreviewPlayer.php:130 src/Blocks/PreviewPlayer.php:288
 msgid "Dismiss notice"
 msgstr ""
 
-#: assets/blocks.js:49
+#: assets/blocks.js:199 assets/blocks.js:2019
 msgid "Display"
 msgstr ""
 
-#: assets/blocks.js:510
+#: assets/blocks.js:2829
 msgid "Displays a badge with the number of published releases assigned to this artist."
 msgstr ""
 
-#: src/Modules/Rendering.php:907
+#: src/Modules/Rendering.php:1546
 msgid "Displays a release audio preview button."
 msgstr ""
 
-#: src/Modules/Rendering.php:833
-msgid "Displays account shortcuts, statistics, and the secure personal music library."
-msgstr ""
-
-#: src/Modules/Rendering.php:794
+#: src/Modules/Rendering.php:1109
 msgid "Displays an audio preview player for a release."
 msgstr ""
 
-#: src/Modules/Rendering.php:804
+#: src/Modules/Rendering.php:1119
 msgid "Displays authorized download actions for a release."
 msgstr ""
 
-#: src/Modules/Rendering.php:766
+#: src/Modules/Rendering.php:1148
+msgid "Displays catalog artists as a responsive grid, horizontal scroll shelf, or compact list with follow buttons and release counts."
+msgstr ""
+
+#: src/Modules/Rendering.php:1081
 msgid "Displays child releases in a collection."
 msgstr ""
 
-#: src/Modules/Rendering.php:814
+#: src/Modules/Rendering.php:1157
+msgid "Displays genres, moods, or labels as tappable browse tiles with release counts, in a grid, rail, or list."
+msgstr ""
+
+#: src/Modules/Rendering.php:1129
 msgid "Displays related MusicWave releases."
 msgstr ""
 
-#: src/Modules/Rendering.php:776
+#: src/Modules/Rendering.php:1091
 msgid "Displays release catalog filters."
 msgstr ""
 
-#: src/Modules/Rendering.php:756
+#: src/Modules/Rendering.php:1071
 msgid "Displays release credits."
 msgstr ""
 
-#: src/Modules/Rendering.php:736
+#: src/Modules/Rendering.php:1051
 msgid "Displays release metadata from MusicWave Core."
 msgstr ""
 
-#: src/Modules/Rendering.php:824
+#: src/Modules/Rendering.php:1139
 msgid "Displays the artist taxonomy profile on archive pages or any other template."
 msgstr ""
 
-#: src/Modules/Rendering.php:785
+#: src/Modules/Rendering.php:1100
 msgid "Displays the current catalog result summary."
 msgstr ""
 
-#: src/Modules/Rendering.php:746
+#: src/Modules/Rendering.php:1061
 msgid "Displays the current release access state and actions."
 msgstr ""
 
-#: assets/blocks.js:268
+#: assets/blocks.js:1299
 msgid "Displays the song, album, podcast, or artist label."
 msgstr ""
 
-#: src/Modules/Rendering.php:855
+#: src/Modules/Rendering.php:1318
 msgid "Displays the visitor's saved songs, albums, podcasts, and followed artists."
 msgstr ""
 
-#: assets/editor.js:113 assets/editor.js:314 assets/editor.js:461
+#: assets/editor.js:205 assets/editor.js:483
 msgid "Download"
 msgstr ""
 
-#: assets/blocks.js:159
+#: assets/blocks.js:645
 msgid "Download button label"
 msgstr ""
 
-#: assets/editor.js:307 src/Commerce/AccountLibrary.php:602
+#: assets/editor.js:469 src/Commerce/AccountLibrary.php:1122
 msgid "Download file"
 msgstr ""
 
-#: src/Downloads/DownloadAssetRoutes.php:90
+#: src/Downloads/DownloadAssetRoutes.php:93
 msgid "Download qualities must be an array."
 msgstr ""
 
-#: src/Commerce/AccountLibrary.php:610
+#: src/Commerce/AccountLibrary.php:1130
 msgid "Download quality"
 msgstr ""
 
-#: assets/blocks.js:156
+#: assets/blocks.js:624
 msgid "Download rows"
 msgstr ""
 
-#: src/Blocks/ReleaseBlocks.php:1417
+#: src/Blocks/ReleaseBlocks.php:1434
 msgid "Download this release"
 msgstr ""
 
-#: assets/editor.js:649
+#: assets/editor.js:978
 msgid "Downloadable file title"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:279
+#: src/Commerce/AccountLibrary.php:444
+msgid "Downloads"
+msgstr ""
+
+#: assets/blocks.js:1126
+msgid "Downloads heading"
+msgstr ""
+
+#: assets/blocks.js:987
+msgid "Downloads panel"
+msgstr ""
+
+#: src/Admin/SettingsPage.php:337
 msgid "Draft"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:139
+#: src/Admin/SettingsPage.php:155
 msgid "Draft releases"
 msgstr ""
 
-#: assets/blocks.js:113
+#: assets/blocks.js:460
 msgid "Dropdowns without published terms are hidden automatically."
 msgstr ""
 
-#: src/Blocks/ReleaseBlocks.php:687
+#: src/Blocks/ReleaseBlocks.php:642
 msgid "Duration"
 msgstr ""
 
@@ -980,12 +1374,20 @@ msgstr ""
 msgid "EP"
 msgstr ""
 
-#: assets/blocks.js:129
+#: assets/blocks.js:543
 msgid "Each chip links back to the catalog without that filter."
 msgstr ""
 
-#: assets/editor.js:513
+#: assets/blocks.js:2575
+msgid "Each listener sees this rail after they opt in and play something. Guests see a sign-in prompt and opted-out listeners see a one-click consent panel."
+msgstr ""
+
+#: assets/editor.js:738
 msgid "Each quality needs a unique technical key, customer label, and secure non-public asset ID."
+msgstr ""
+
+#: src/Admin/SettingsPage.php:476
+msgid "Each tab saves independently; settings on the other tabs are preserved."
 msgstr ""
 
 #: src/Catalog/ReleaseTaxonomies.php:71
@@ -993,11 +1395,7 @@ msgstr ""
 msgid "Edit %s"
 msgstr ""
 
-#: src/Commerce/AccountLibrary.php:296
-msgid "Edit account details"
-msgstr ""
-
-#: src/Admin/SettingsPage.php:384
+#: src/Admin/SettingsPage.php:441
 msgid "Edit artist biographies, images, and canonical URLs."
 msgstr ""
 
@@ -1005,39 +1403,51 @@ msgstr ""
 msgid "Edit release"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:380
+#: src/Admin/SettingsPage.php:437
 msgid "Edit templates, template parts, header, footer, and global styles."
+msgstr ""
+
+#: src/Commerce/AccountLibrary.php:469
+msgid "Edit your name, email, and password."
+msgstr ""
+
+#: assets/blocks.js:999
+msgid "Editable billing and shipping address forms."
 msgstr ""
 
 #: src/Catalog/DemoContentImporter.php:182
 msgid "Electronic"
 msgstr ""
 
-#: src/Commerce/AccountLibrary.php:284
-msgid "Email"
+#: src/Notifications/NotificationSettings.php:86
+msgid "Email me about"
 msgstr ""
 
-#: assets/blocks.js:256
+#: assets/blocks.js:1199 assets/blocks.js:1244 assets/blocks.js:1542 assets/blocks.js:1773 assets/blocks.js:2063 assets/blocks.js:2183 assets/blocks.js:2479
 msgid "Empty state message"
 msgstr ""
 
-#: src/Listening/ListeningRoutes.php:99
+#: src/Listening/ListeningRoutes.php:106
 msgid "Enable listening history in your account to save playback progress."
 msgstr ""
 
-#: src/Admin/SettingsPage.php:180
+#: src/Admin/SettingsPage.php:202 src/Privacy/PersonalData.php:186
 msgid "Enabled"
 msgstr ""
 
-#: assets/blocks.js:419
+#: src/Blocks/ListeningBlocks.php:76
+msgid "Enabling listening history…"
+msgstr ""
+
+#: assets/blocks.js:2711
 msgid "Enter a numeric artist taxonomy ID to pin this block to that artist on any page. Leave 0 to use the currently viewed artist archive."
 msgstr ""
 
-#: assets/editor.js:326
+#: assets/editor.js:502
 msgid "Enter a secure provider asset ID for the new downloadable file."
 msgstr ""
 
-#: assets/editor.js:326
+#: assets/editor.js:498
 msgid "Enter a secure provider asset ID for this file quality."
 msgstr ""
 
@@ -1050,11 +1460,11 @@ msgstr ""
 msgid "Enter at least %d characters to search the catalog."
 msgstr ""
 
-#: src/Admin/DiagnosticsPage.php:70
-msgid "Environment checks"
+#: src/Admin/DiagnosticsPage.php:467
+msgid "Environment checks — required items block launch; recommended items are advisory."
 msgstr ""
 
-#: assets/editor.js:757
+#: assets/editor.js:1204
 msgid "Episode"
 msgstr ""
 
@@ -1066,15 +1476,23 @@ msgstr ""
 msgid "Episode one of the public sample podcast."
 msgstr ""
 
-#: src/Privacy/PersonalData.php:127
+#: src/Privacy/PersonalData.php:133
 msgid "Event"
 msgstr ""
 
-#: src/Blocks/LibraryBlocks.php:193
+#: assets/blocks.js:2066
+msgid "Every control is a plain form post, so the queue works with JavaScript disabled."
+msgstr ""
+
+#: src/Blocks/LibraryBlocks.php:189
 msgid "Every song, album, podcast, and artist you save appears here. Add items with the “Add to library” button on any release or artist page."
 msgstr ""
 
-#: assets/editor.js:94
+#: assets/blocks.js:1412 assets/blocks.js:1663 assets/blocks.js:2141
+msgid "Eyebrow"
+msgstr ""
+
+#: assets/editor.js:159
 msgid "FLAC lossless"
 msgstr ""
 
@@ -1083,55 +1501,63 @@ msgstr ""
 msgid "Failing providers: %s. Provider outages and bad credentials are reported here instead of being silently treated as “no results”."
 msgstr ""
 
-#: src/Admin/SettingsPage.php:188
+#: src/Admin/SettingsPage.php:210
 msgid "Featured release slider"
 msgstr ""
 
-#: assets/blocks.js:311
+#: assets/blocks.js:2082
 msgid "Field label"
 msgstr ""
 
-#: assets/blocks.js:23
+#: assets/blocks.js:48
 msgid "Fields"
 msgstr ""
 
-#: assets/blocks.js:34
+#: assets/blocks.js:132
 msgid "Fields without a value on the selected release are hidden automatically."
 msgstr ""
 
-#: assets/editor.js:246
+#: assets/editor.js:378
 msgid "File details were read, but release duration could not be saved automatically."
 msgstr ""
 
-#: assets/editor.js:587
+#: assets/editor.js:859
 msgid "File duration in seconds"
 msgstr ""
 
-#: assets/editor.js:596
+#: assets/editor.js:875
 msgid "File size in bytes"
 msgstr ""
 
-#: assets/editor.js:902
+#: assets/editor.js:1438
 msgid "File:"
 msgstr ""
 
-#: assets/editor.js:665
+#: assets/editor.js:1000
 msgid "Files and download qualities"
 msgstr ""
 
-#: assets/editor.js:546
+#: assets/blocks.js:989
+msgid "Files attached to WooCommerce purchases."
+msgstr ""
+
+#: src/Commerce/AccountLibrary.php:445
+msgid "Files from your WooCommerce purchases."
+msgstr ""
+
+#: assets/editor.js:809
 msgid "Fills the technical key, customer label, format, and bitrate."
 msgstr ""
 
-#: assets/blocks.js:105
+#: assets/blocks.js:415
 msgid "Filter fields"
 msgstr ""
 
-#: assets/blocks.js:115
+#: assets/blocks.js:471
 msgid "Filters layout"
 msgstr ""
 
-#: assets/editor.js:691
+#: assets/editor.js:1087
 msgid "Find files already in protected storage"
 msgstr ""
 
@@ -1143,36 +1569,44 @@ msgstr ""
 msgid "Focus"
 msgstr ""
 
-#: src/Library/LibraryButton.php:126
+#: src/Library/LibraryButton.php:140
 msgid "Follow artist"
 msgstr ""
 
-#: src/Commerce/AccountLibrary.php:447
+#: src/Commerce/AccountLibrary.php:967
 msgid "Followed artists"
 msgstr ""
 
-#: src/Library/LibraryButton.php:126
+#: src/Library/LibraryButton.php:140
 msgid "Following"
 msgstr ""
 
-#: assets/editor.js:571
+#: assets/editor.js:839
 msgid "Format"
 msgstr ""
 
-#: assets/blocks.js:447
+#: assets/blocks.js:1602 assets/blocks.js:2754
 msgid "Full"
 msgstr ""
 
-#: assets/blocks.js:237
+#: assets/blocks.js:938
 msgid "Full width button"
 msgstr ""
 
-#: src/Blocks/ReleaseBlocks.php:707 src/Blocks/ReleaseBlocks.php:1159 src/Blocks/ReleaseBlocks.php:1273 src/Blocks/ReleaseBlocks.php:1887 src/Catalog/ReleaseTaxonomies.php:29
+#: assets/blocks.js:1975 src/Blocks/ReleaseBlocks.php:662 src/Blocks/ReleaseBlocks.php:1174 src/Blocks/ReleaseBlocks.php:1288 src/Blocks/ReleaseBlocks.php:1901 src/Blocks/TermHeroBlock.php:214 src/Catalog/ReleaseTaxonomies.php:29
 msgid "Genre"
 msgstr ""
 
-#: src/Catalog/ReleaseTaxonomies.php:30
+#: assets/blocks.js:1490
+msgid "Genre or mood slug"
+msgstr ""
+
+#: assets/blocks.js:1708 src/Catalog/ReleaseTaxonomies.php:30
 msgid "Genres"
+msgstr ""
+
+#: assets/blocks.js:2583
+msgid "Genres, moods, or labels assigned to releases appear here automatically as tappable browse tiles."
 msgstr ""
 
 #: src/Metadata/MetadataResolver.php:310
@@ -1180,7 +1614,11 @@ msgstr ""
 msgid "Genres: %s."
 msgstr ""
 
-#: assets/blocks.js:140 assets/blocks.js:234 assets/blocks.js:289 src/Modules/Rendering.php:113 src/Modules/Rendering.php:123
+#: src/Commerce/AccountLibrary.php:827
+msgid "Get this plan"
+msgstr ""
+
+#: assets/blocks.js:569 assets/blocks.js:922 assets/blocks.js:1375 src/Modules/Rendering.php:137 src/Modules/Rendering.php:158
 msgid "Ghost"
 msgstr ""
 
@@ -1192,51 +1630,63 @@ msgstr ""
 msgid "Glass Current is a short public demo track included with MusicWave. Replace it with licensed catalog content before launch."
 msgstr ""
 
-#: src/Admin/SettingsPage.php:189
+#: src/Admin/SettingsPage.php:211
 msgid "Globally enables or disables MusicWave release sliders. Individual blocks can still inherit or override this setting."
 msgstr ""
 
-#: assets/blocks.js:79 assets/blocks.js:202 assets/blocks.js:261
+#: assets/blocks.js:328 assets/blocks.js:814 assets/blocks.js:1262 assets/blocks.js:1554 assets/blocks.js:1785 assets/blocks.js:2216 assets/blocks.js:2404
 msgid "Grid"
 msgstr ""
 
-#: assets/blocks.js:37
+#: assets/blocks.js:147
 msgid "Grid (cards of label and value)"
 msgstr ""
 
-#: assets/blocks.js:206 assets/blocks.js:263
+#: assets/blocks.js:828 assets/blocks.js:1268 assets/blocks.js:1572 assets/blocks.js:1803 assets/blocks.js:2231 assets/blocks.js:2415
 msgid "Grid columns"
 msgstr ""
 
-#: assets/blocks.js:74
+#: assets/blocks.js:314
 msgid "Group credits by role"
 msgstr ""
 
-#: assets/blocks.js:95
+#: assets/blocks.js:381
 msgid "Group tracks by disc"
+msgstr ""
+
+#: assets/blocks.js:2484
+msgid "Guest prompt"
 msgstr ""
 
 #: src/Schema/ReleaseMetaSchema.php:143
 msgid "HTTPS preview URL"
 msgstr ""
 
-#: assets/blocks.js:150 assets/blocks.js:250
+#: assets/blocks.js:1483 assets/blocks.js:1728
+msgid "Hand-picked list"
+msgstr ""
+
+#: assets/blocks.js:595 assets/blocks.js:1068 assets/blocks.js:1205 assets/blocks.js:1407 assets/blocks.js:1658 assets/blocks.js:2136 assets/blocks.js:2333
 msgid "Header"
 msgstr ""
 
-#: assets/blocks.js:302
+#: assets/blocks.js:2000
 msgid "Heading"
 msgstr ""
 
-#: assets/blocks.js:41
+#: src/Admin/DiagnosticsPage.php:475 src/Admin/SettingsPage.php:482
+msgid "Help & diagnostics"
+msgstr ""
+
+#: assets/blocks.js:177
 msgid "Hidden labels stay available to screen readers."
 msgstr ""
 
-#: assets/blocks.js:172 assets/blocks.js:177
+#: assets/blocks.js:690 assets/blocks.js:709
 msgid "Hide"
 msgstr ""
 
-#: src/Blocks/PlaylistBlocks.php:182
+#: src/Blocks/PlaylistBlocks.php:144 src/Blocks/PlaylistBlocks.php:388 src/Blocks/PlaylistBlocks.php:633
 msgid "Hide tracks"
 msgstr ""
 
@@ -1248,11 +1698,27 @@ msgstr ""
 msgid "Horizon Parade is a public sample album. It connects to a sample track through MusicWave collection relationships."
 msgstr ""
 
-#: assets/blocks.js:203
+#: assets/blocks.js:1788
+msgid "Horizontal rail"
+msgstr ""
+
+#: assets/blocks.js:817
 msgid "Horizontal scroll"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:293
+#: assets/blocks.js:1557 assets/blocks.js:2219 assets/blocks.js:2402
+msgid "Horizontal shelf"
+msgstr ""
+
+#: assets/blocks.js:2223
+msgid "Horizontal shelf matches the MusicWave release shelf behavior."
+msgstr ""
+
+#: src/Admin/SettingsPage.php:305
+msgid "How long suggestion and filter results are cached. Longer values reduce database load; catalog changes appear later."
+msgstr ""
+
+#: src/Admin/SettingsPage.php:351
 msgid "I understand this changes access policy for every matching release."
 msgstr ""
 
@@ -1260,15 +1726,19 @@ msgstr ""
 msgid "ISRC"
 msgstr ""
 
-#: assets/blocks.js:455
+#: src/Admin/SettingsPage.php:484
+msgid "If something does not behave as expected, start with the environment checks and the quick-start guide, then review the WordPress Site Health screen."
+msgstr ""
+
+#: assets/blocks.js:2762
 msgid "Image shape"
 msgstr ""
 
-#: assets/blocks.js:441
+#: assets/blocks.js:1594 assets/blocks.js:2742
 msgid "Image size"
 msgstr ""
 
-#: src/Admin/DiagnosticsPage.php:110
+#: src/Admin/DiagnosticsPage.php:295
 msgid "Import demo catalog"
 msgstr ""
 
@@ -1276,53 +1746,70 @@ msgstr ""
 msgid "Imported cover"
 msgstr ""
 
-#: src/Library/LibraryButton.php:135
+#: src/Library/LibraryButton.php:149
 msgid "In your library"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:340
+#: src/Blocks/QueueBlock.php:105
+msgid "In your queue"
+msgstr ""
+
+#: assets/blocks.js:2366
+msgid "In-progress releases"
+msgstr ""
+
+#: src/Admin/SettingsPage.php:398
 msgid "Inactive"
 msgstr ""
 
-#: assets/blocks.js:80 src/Modules/Rendering.php:129
+#: assets/blocks.js:329 src/Modules/Rendering.php:164
 msgid "Inline"
 msgstr ""
 
-#: assets/blocks.js:38
+#: assets/blocks.js:154
 msgid "Inline (one flowing row)"
 msgstr ""
 
-#: assets/blocks.js:40
+#: assets/blocks.js:167
 msgid "Inline and Stacked rows are also available in the block Styles panel."
 msgstr ""
 
-#: assets/blocks.js:116
+#: assets/blocks.js:475
 msgid "Inline bar"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:147
+#: src/Admin/SettingsPage.php:169
 msgid "Inspect schema, delivery, SEO, and environment health."
 msgstr ""
 
-#: src/Admin/SettingsPage.php:307
+#: src/Admin/DiagnosticsPage.php:394 src/Admin/SettingsPage.php:365
 msgid "Install WooCommerce"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:156
+#: src/Admin/SettingsPage.php:178
 #, php-format
 msgid "Installed %1$s; required %2$s"
 msgstr ""
 
-#: src/Admin/DiagnosticsPage.php:154
+#: src/Admin/DiagnosticsPage.php:351
 #, php-format
-msgid "Installed schema: %1$s; required: %2$s."
+msgid "Installed schema %1$s is current with the plugin (requires %2$s)."
 msgstr ""
 
-#: src/Admin/SettingsPage.php:112
+#: src/Admin/DiagnosticsPage.php:357
+#, php-format
+msgid "Installed schema: %1$s; required: %2$s. Updates run automatically the next time an administrator loads the dashboard."
+msgstr ""
+
+#: src/Admin/SettingsPage.php:128
 msgid "Integrations"
 msgstr ""
 
-#: assets/blocks.js:252
+#: src/Admin/SettingsPage.php:474
+msgid "Integrations — WooCommerce, MusicWave VIP, the block theme, and metadata provider keys."
+msgstr ""
+
+#: assets/blocks.js:1216 assets/blocks.js:1427 assets/blocks.js:1678 assets/blocks.js:2153 assets/blocks.js:2348
 msgid "Intro text"
 msgstr ""
 
@@ -1331,31 +1818,39 @@ msgstr ""
 msgid "It appears on the album %s."
 msgstr ""
 
-#: assets/blocks.js:266
+#: assets/blocks.js:1286
 msgid "Item display"
 msgstr ""
 
-#: src/Privacy/PersonalData.php:104
+#: src/Privacy/PersonalData.php:110
 msgid "Item type"
 msgstr ""
 
-#: assets/blocks.js:264
+#: assets/blocks.js:1277 assets/blocks.js:2257
 msgid "Items per page"
 msgstr ""
 
-#: assets/blocks.js:185
+#: assets/blocks.js:748
 msgid "Items per section"
 msgstr ""
 
-#: src/Blocks/ReleaseBlocks.php:689
+#: src/Blocks/ListeningBlocks.php:293 src/Blocks/PlaylistBlocks.php:467
+msgid "Just now"
+msgstr ""
+
+#: src/Admin/SettingsPage.php:222
+msgid "Keep playing across pages"
+msgstr ""
+
+#: src/Blocks/ReleaseBlocks.php:644
 msgid "Key"
 msgstr ""
 
-#: src/Catalog/ReleaseTaxonomies.php:41
+#: assets/blocks.js:1980 src/Blocks/TermHeroBlock.php:218 src/Catalog/ReleaseTaxonomies.php:41
 msgid "Label"
 msgstr ""
 
-#: src/Catalog/ReleaseTaxonomies.php:42
+#: assets/blocks.js:1713 src/Catalog/ReleaseTaxonomies.php:42
 msgid "Labels"
 msgstr ""
 
@@ -1364,113 +1859,145 @@ msgstr ""
 msgid "Labels: %s."
 msgstr ""
 
-#: assets/blocks.js:209
+#: assets/blocks.js:842 assets/blocks.js:2245 assets/blocks.js:2439
 msgid "Landscape"
 msgstr ""
 
-#: assets/blocks.js:446
+#: assets/blocks.js:1601 assets/blocks.js:2753
 msgid "Large"
 msgstr ""
 
-#: assets/blocks.js:35 assets/blocks.js:76 assets/blocks.js:200 assets/blocks.js:201 assets/blocks.js:258 assets/blocks.js:428
+#: assets/blocks.js:138 assets/blocks.js:320 assets/blocks.js:807 assets/blocks.js:812 assets/blocks.js:1254 assets/blocks.js:1547 assets/blocks.js:1552 assets/blocks.js:1783 assets/blocks.js:1843 assets/blocks.js:1848 assets/blocks.js:2209 assets/blocks.js:2214 assets/blocks.js:2393 assets/blocks.js:2398 assets/blocks.js:2723
 msgid "Layout"
 msgstr ""
 
-#: assets/blocks.js:114
+#: assets/blocks.js:466
 msgid "Layout and labels"
 msgstr ""
 
-#: assets/blocks.js:294
+#: assets/blocks.js:1394
 msgid "Leave 0 to target the selected release. Enter a numeric artist taxonomy ID to follow that artist instead."
 msgstr ""
 
-#: src/Admin/SettingsPage.php:242
+#: src/Admin/SettingsPage.php:273
 msgid "Leave a field blank to use the translated MusicWave default. Custom text is escaped before output."
 msgstr ""
 
-#: assets/blocks.js:162
+#: assets/blocks.js:1160
+msgid "Leave a field empty to use the translated MusicWave default label."
+msgstr ""
+
+#: assets/blocks.js:661
 msgid "Leave a label empty to use the translated default."
 msgstr ""
 
-#: assets/blocks.js:680
+#: assets/blocks.js:2201 assets/blocks.js:3037
 msgid "Leave empty to inherit the translated MusicWave default label."
 msgstr ""
 
-#: assets/blocks.js:530
+#: assets/blocks.js:2124
+msgid "Leave empty to use the default Play next or Add to queue label."
+msgstr ""
+
+#: assets/blocks.js:2857
 msgid "Leave empty to use the default label."
 msgstr ""
 
-#: assets/blocks.js:64
+#: assets/blocks.js:280
 msgid "Leave empty to use the global MusicWave message or setting."
 msgstr ""
 
-#: assets/blocks.js:123
+#: assets/blocks.js:2340
+msgid "Leave empty to use the state-aware default: Continue listening or Recently played."
+msgstr ""
+
+#: assets/blocks.js:1419 assets/blocks.js:1670
+msgid "Leave empty to use the translated default heading."
+msgstr ""
+
+#: assets/blocks.js:521
 msgid "Leave labels empty to use the translated defaults. The default sort follows the MusicWave archive setting."
 msgstr ""
 
-#: assets/blocks.js:257
+#: assets/blocks.js:1990
+msgid "Leave term ID at 0 to render the currently viewed archive automatically."
+msgstr ""
+
+#: assets/blocks.js:1248
 msgid "Leave texts empty to use the translated defaults."
 msgstr ""
 
-#: assets/blocks.js:410
+#: assets/blocks.js:2699
 msgid "Leave this automatic in release templates and Query Loops. Select a fixed release only when the block should always show that release."
 msgstr ""
 
-#: src/Modules/Rendering.php:874
+#: src/Admin/SettingsPage.php:304
+msgid "Length of the fixed window used by the discovery rate limit."
+msgstr ""
+
+#: src/Admin/SettingsPage.php:297
+msgid "Length of the fixed window used by the token rate limit."
+msgstr ""
+
+#: src/Modules/Rendering.php:1337
 msgid "Lets signed-in listeners create, order, share, and delete their playlists."
 msgstr ""
 
-#: src/Modules/Rendering.php:864
+#: src/Modules/Rendering.php:1327
 msgid "Lets visitors save a release, wishlist it, pre-save an upcoming release, or follow an artist."
 msgstr ""
 
-#: assets/blocks.js:501
+#: assets/blocks.js:2817
 msgid "Lets visitors save this artist to their personal music library."
 msgstr ""
 
-#: src/Blocks/LibraryBlocks.php:376
+#: src/Blocks/LibraryBlocks.php:372
 msgid "Library filters"
 msgstr ""
 
-#: assets/blocks.js:259
+#: assets/blocks.js:1259
 msgid "Library layout"
 msgstr ""
 
-#: src/Blocks/LibraryBlocks.php:410
+#: src/Blocks/LibraryBlocks.php:406
 #, php-format
 msgid "Library page %d"
 msgstr ""
 
-#: src/Blocks/LibraryBlocks.php:412
+#: src/Blocks/LibraryBlocks.php:408
 msgid "Library pages"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:185
+#: src/Admin/SettingsPage.php:207
 msgid "Limits each related section to a predictable, low-cost query."
 msgstr ""
 
-#: assets/blocks.js:119
+#: assets/blocks.js:496
 msgid "Limits how many terms each dropdown lists."
 msgstr ""
 
-#: assets/blocks.js:42
+#: assets/blocks.js:185
 msgid "Link artists, genres, moods, and types to their archives"
 msgstr ""
 
-#: assets/blocks.js:529
+#: assets/blocks.js:2856
 msgid "Link button label"
 msgstr ""
 
-#: assets/blocks.js:181
+#: assets/blocks.js:729
 msgid "Links the same-artist section to the artist archive and the similar section to the catalog."
 msgstr ""
 
-#: assets/blocks.js:78 assets/blocks.js:204 assets/blocks.js:260
+#: assets/blocks.js:327 assets/blocks.js:822 assets/blocks.js:1261 assets/blocks.js:2221 assets/blocks.js:2405
 msgid "List"
 msgstr ""
 
-#: assets/blocks.js:432
+#: assets/blocks.js:2728
 msgid "List (side-by-side)"
+msgstr ""
+
+#: assets/blocks.js:1792
+msgid "List rows"
 msgstr ""
 
 #: src/Seo/ReleaseMetadata.php:181
@@ -1483,15 +2010,39 @@ msgstr ""
 msgid "Listen to %1$s on %2$s."
 msgstr ""
 
-#: assets/blocks.js:304
+#: assets/blocks.js:2009
 msgid "Listeners manage playlists here. Every control works without JavaScript."
 msgstr ""
 
-#: src/Privacy/PersonalData.php:123
+#: src/Admin/SettingsPage.php:160
+msgid "Listening events"
+msgstr ""
+
+#: src/Admin/SettingsPage.php:308 src/Privacy/PersonalData.php:129
 msgid "Listening history"
 msgstr ""
 
-#: assets/editor.js:734
+#: src/Blocks/ListeningBlocks.php:78
+msgid "Listening history could not be enabled. Try again."
+msgstr ""
+
+#: src/Blocks/ListeningBlocks.php:77
+msgid "Listening history is on. Play something to fill this rail."
+msgstr ""
+
+#: assets/blocks.js:2497
+msgid "Listening history records nothing until each listener opts in; withdrawing consent erases stored history immediately."
+msgstr ""
+
+#: assets/blocks.js:1182
+msgid "Lists the configured WooCommerce VIP plan products."
+msgstr ""
+
+#: assets/blocks.js:1173
+msgid "Lists the viewer's current membership grants."
+msgstr ""
+
+#: assets/editor.js:1175
 msgid "Load more files"
 msgstr ""
 
@@ -1499,7 +2050,7 @@ msgstr ""
 msgid "Loading lookup tools…"
 msgstr ""
 
-#: src/Blocks/PreviewPlayer.php:124
+#: src/Blocks/PlaylistBlocks.php:138 src/Blocks/PreviewPlayer.php:125
 msgid "Loading…"
 msgstr ""
 
@@ -1507,63 +2058,63 @@ msgstr ""
 msgid "Lookup failed. Try again."
 msgstr ""
 
-#: src/Admin/SettingsPage.php:191
+#: src/Admin/SettingsPage.php:213
 msgid "Loop"
 msgstr ""
 
-#: assets/editor.js:92
+#: assets/editor.js:145
 msgid "M4A 256 kbps"
 msgstr ""
 
-#: assets/editor.js:88
+#: assets/editor.js:117
 msgid "MP3 128 kbps"
 msgstr ""
 
-#: assets/editor.js:89
+#: assets/editor.js:124
 msgid "MP3 192 kbps"
 msgstr ""
 
-#: assets/editor.js:90
+#: assets/editor.js:131
 msgid "MP3 320 kbps"
 msgstr ""
 
-#: assets/editor.js:136 src/Blocks/ReleaseBlocks.php:1781 src/Commerce/AccountLibrary.php:569
+#: assets/editor.js:232 src/Blocks/ReleaseBlocks.php:1795 src/Commerce/AccountLibrary.php:1089
 msgid "Main download"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:343
+#: src/Admin/SettingsPage.php:401
 msgid "Manage"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:387
+#: src/Admin/SettingsPage.php:444
 msgid "Manage administrators, editors, customers, and membership roles."
 msgstr ""
 
-#: src/Admin/SettingsPage.php:81
-msgid "Manage catalog defaults, access behavior, integrations, and the WordPress screens that control presentation."
+#: src/Admin/SettingsPage.php:93
+msgid "Manage catalog defaults, access behavior, delivery limits, integrations, and the WordPress screens that control presentation."
 msgstr ""
 
-#: src/Admin/SettingsPage.php:383
+#: src/Admin/SettingsPage.php:440
 msgid "Manage cover artwork and public preview media."
 msgstr ""
 
-#: src/Commerce/AccountLibrary.php:326
+#: src/Commerce/AccountLibrary.php:844
 msgid "Manage membership"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:382
+#: src/Admin/SettingsPage.php:439
 msgid "Manage navigation blocks and menus."
 msgstr ""
 
-#: src/Admin/SettingsPage.php:385
+#: src/Admin/SettingsPage.php:442
 msgid "Manage the classification used by tracks, albums, and podcasts."
 msgstr ""
 
-#: src/Admin/SettingsPage.php:381
+#: src/Admin/SettingsPage.php:438
 msgid "Manage widget areas when the active theme or plugin registers them."
 msgstr ""
 
-#: src/Admin/SettingsPage.php:113
+#: src/Admin/SettingsPage.php:129
 msgid "Management links"
 msgstr ""
 
@@ -1571,87 +2122,127 @@ msgstr ""
 msgid "Map at least one WooCommerce product for purchase access."
 msgstr ""
 
-#: assets/blocks.js:196
+#: assets/blocks.js:789
 msgid "Match shared genres"
 msgstr ""
 
-#: assets/blocks.js:197
+#: assets/blocks.js:795
 msgid "Match shared moods"
 msgstr ""
 
-#: assets/blocks.js:198
+#: assets/blocks.js:801
 msgid "Match the release type"
 msgstr ""
 
-#: assets/editor.js:904
+#: assets/editor.js:1444
 msgid "Matched release title"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:196
+#: assets/blocks.js:1533
+msgid "Maximum artists"
+msgstr ""
+
+#: src/Admin/SettingsPage.php:303
+msgid "Maximum discovery requests one visitor can make before being throttled."
+msgstr ""
+
+#: src/Admin/SettingsPage.php:296
+msgid "Maximum download or stream tokens one visitor can request before being throttled."
+msgstr ""
+
+#: assets/blocks.js:2424
+msgid "Maximum items"
+msgstr ""
+
+#: src/Admin/SettingsPage.php:218
 msgid "Maximum number of release cards queried by each slider."
 msgstr ""
 
-#: src/Admin/SettingsPage.php:383
+#: assets/blocks.js:1764
+msgid "Maximum tiles"
+msgstr ""
+
+#: src/Admin/SettingsPage.php:440
 msgid "Media Library"
 msgstr ""
 
-#: assets/blocks.js:445
+#: assets/blocks.js:1600 assets/blocks.js:1872 assets/blocks.js:2750
 msgid "Medium"
 msgstr ""
 
-#: src/Commerce/AccountLibrary.php:287
-msgid "Member since"
-msgstr ""
-
-#: src/Admin/ReleaseReadiness.php:113 src/Commerce/AccountLibrary.php:217
+#: src/Admin/ReleaseReadiness.php:113 src/Commerce/AccountLibrary.php:478 src/Commerce/AccountLibrary.php:891
 msgid "Membership"
 msgstr ""
 
-#: assets/blocks.js:63
+#: src/Modules/Rendering.php:1287
+msgid "Membership & plans"
+msgstr ""
+
+#: assets/blocks.js:276
 msgid "Membership button URL"
 msgstr ""
 
-#: assets/blocks.js:62 src/Admin/SettingsPage.php:246
+#: assets/blocks.js:270 src/Admin/SettingsPage.php:277
 msgid "Membership button label"
+msgstr ""
+
+#: assets/blocks.js:1057
+msgid "Membership first"
+msgstr ""
+
+#: assets/blocks.js:1114
+msgid "Membership heading"
 msgstr ""
 
 #: src/Schema/ReleaseMetaSchema.php:269
 msgid "Membership level keys"
 msgstr ""
 
-#: assets/blocks.js:61 src/Admin/SettingsPage.php:245
+#: assets/blocks.js:264 src/Admin/SettingsPage.php:276
 msgid "Membership message"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:247
+#: src/Admin/SettingsPage.php:268
+msgid "Membership module behavior"
+msgstr ""
+
+#: src/Admin/SettingsPage.php:278
 msgid "Membership page URL"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:162
+#: assets/blocks.js:967
+msgid "Membership panel"
+msgstr ""
+
+#: src/Admin/SettingsPage.php:184
 msgid "Membership provider"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:456 src/Schema/ReleaseMetaSchema.php:246
+#: src/Admin/SettingsPage.php:550 src/Schema/ReleaseMetaSchema.php:246
 msgid "Membership required"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:162
+#: src/Admin/SettingsPage.php:184
 msgid "Membership-based access decisions"
 msgstr ""
 
-#: assets/blocks.js:56
+#: assets/blocks.js:235
 msgid "Message overrides"
+msgstr ""
+
+#: assets/blocks.js:2474
+msgid "Messages"
 msgstr ""
 
 #: src/Metadata/MetadataTaxonomyMapper.php:340
 msgid "Metadata aliases"
 msgstr ""
 
-#: src/Metadata/MetadataLookupRoutes.php:381
+#: src/Metadata/MetadataLookupRoutes.php:422
 msgid "Metadata applied to this release."
 msgstr ""
 
-#: src/Metadata/MetadataLookupRoutes.php:382
+#: src/Metadata/MetadataLookupRoutes.php:423
 msgid "Metadata applied with some warnings."
 msgstr ""
 
@@ -1659,27 +2250,39 @@ msgstr ""
 msgid "Metadata applied."
 msgstr ""
 
-#: assets/blocks.js:36
+#: assets/blocks.js:143
 msgid "Metadata layout"
+msgstr ""
+
+#: src/Metadata/MetadataLookupRoutes.php:240 src/Metadata/MetadataLookupRoutes.php:269
+msgid "Metadata lookup is rate limited. Try again in a minute."
 msgstr ""
 
 #: src/Catalog/DemoContentImporter.php:179
 msgid "Midnight Signal"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:195
+#: src/Admin/SettingsPage.php:217
 msgid "Milliseconds between automatic movements."
+msgstr ""
+
+#: src/Modules/Rendering.php:185
+msgid "Minimal (no surface)"
+msgstr ""
+
+#: assets/blocks.js:2191
+msgid "Mirrors the release shelf header link. Leave empty to hide it."
 msgstr ""
 
 #: src/Catalog/ReleaseTaxonomies.php:102
 msgid "Mix"
 msgstr ""
 
-#: src/Blocks/ReleaseBlocks.php:708 src/Blocks/ReleaseBlocks.php:1160 src/Blocks/ReleaseBlocks.php:1274 src/Blocks/ReleaseBlocks.php:1888 src/Catalog/ReleaseTaxonomies.php:35
+#: assets/blocks.js:1977 src/Blocks/ReleaseBlocks.php:663 src/Blocks/ReleaseBlocks.php:1175 src/Blocks/ReleaseBlocks.php:1289 src/Blocks/ReleaseBlocks.php:1902 src/Blocks/TermHeroBlock.php:216 src/Catalog/ReleaseTaxonomies.php:35
 msgid "Mood"
 msgstr ""
 
-#: src/Catalog/ReleaseTaxonomies.php:36
+#: assets/blocks.js:1710 src/Catalog/ReleaseTaxonomies.php:36
 msgid "Moods"
 msgstr ""
 
@@ -1688,35 +2291,61 @@ msgstr ""
 msgid "Moods: %s."
 msgstr ""
 
-#: src/Admin/SettingsPage.php:183
+#: src/Admin/SettingsPage.php:205
 msgid "More from the same artist"
 msgstr ""
 
-#: src/Blocks/ReleaseBlocks.php:1465
+#: src/Blocks/ReleaseBlocks.php:1492
 msgid "More from this artist"
 msgstr ""
 
-#: src/Blocks/PlaylistBlocks.php:230
+#: assets/blocks.js:1514 assets/blocks.js:1749
+msgid "Most releases first"
+msgstr ""
+
+#: src/Blocks/QueueBlock.php:241
+#, php-format
+msgid "Move %s down"
+msgstr ""
+
+#: src/Blocks/QueueBlock.php:239
+#, php-format
+msgid "Move %s up"
+msgstr ""
+
+#: src/Blocks/PlaylistBlocks.php:759
 msgid "Move down"
 msgstr ""
 
-#: src/Blocks/PlaylistBlocks.php:227
+#: src/Blocks/PlaylistBlocks.php:756
 msgid "Move up"
 msgstr ""
 
-#: src/Commerce/AccountLibrary.php:193
+#: assets/blocks.js:1046
+msgid "Music first (default)"
+msgstr ""
+
+#: src/Commerce/AccountLibrary.php:426
 msgid "Music library"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:367
+#: assets/blocks.js:1108
+msgid "Music library heading"
+msgstr ""
+
+#: assets/blocks.js:957
+msgid "Music library panel"
+msgstr ""
+
+#: src/Admin/SettingsPage.php:425
 msgid "Music metadata auto-fill"
 msgstr ""
 
-#: src/Blocks/PreviewPlayer.php:289
+#: src/Blocks/PreviewPlayer.php:290
 msgid "Music preview player"
 msgstr ""
 
-#: src/Admin/DiagnosticsPage.php:180 src/Admin/SettingsPage.php:202
+#: src/Admin/DiagnosticsPage.php:409 src/Admin/SettingsPage.php:228
 msgid "Music structured data"
 msgstr ""
 
@@ -1724,23 +2353,27 @@ msgstr ""
 msgid "MusicBrainz + Cover Art Archive"
 msgstr ""
 
-#: src/Catalog/ReleasePostType.php:55 src/Modules/Rendering.php:83 src/Support/SiteHealth.php:162
+#: src/Catalog/ReleasePostType.php:55 src/Modules/Rendering.php:107 src/Support/SiteHealth.php:162
 msgid "MusicWave"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:311
+#: src/Admin/DiagnosticsPage.php:266
+msgid "MusicWave Core"
+msgstr ""
+
+#: src/Admin/SettingsPage.php:369
 msgid "MusicWave VIP"
 msgstr ""
 
-#: src/Admin/DiagnosticsPage.php:172
-msgid "MusicWave VIP is required when any release uses private files."
+#: src/Admin/DiagnosticsPage.php:403
+msgid "MusicWave VIP is active but no delivery provider is registered yet. Save the VIP delivery settings to enable protected downloads."
 msgstr ""
 
-#: assets/blocks.js:720
+#: assets/blocks.js:3088
 msgid "MusicWave block settings"
 msgstr ""
 
-#: src/Admin/DiagnosticsPage.php:175
+#: src/Admin/DiagnosticsPage.php:373
 msgid "MusicWave block theme"
 msgstr ""
 
@@ -1748,8 +2381,8 @@ msgstr ""
 msgid "MusicWave can emit MusicRecording, MusicAlbum, and Podcast schema from public catalog fields."
 msgstr ""
 
-#: src/Admin/DiagnosticsPage.php:182
-msgid "MusicWave can emit public release JSON-LD. Enable it through the documented filter only when no other plugin emits equivalent Music schema."
+#: src/Admin/DiagnosticsPage.php:414
+msgid "MusicWave can emit MusicRecording, MusicAlbum, and Podcast schema. Enable it through the documented filter when no other plugin emits equivalent Music schema."
 msgstr ""
 
 #: src/Admin/ReleaseMetaBox.php:134
@@ -1768,12 +2401,20 @@ msgstr ""
 msgid "MusicWave content metadata is ready for the installed plugin version."
 msgstr ""
 
-#: src/Admin/SettingsPage.php:80
+#: src/Admin/SettingsPage.php:92
 msgid "MusicWave control center"
 msgstr ""
 
-#: assets/blocks.js:822
+#: src/Admin/DiagnosticsPage.php:162
+msgid "MusicWave core requirements are met"
+msgstr ""
+
+#: assets/blocks.js:3227
 msgid "MusicWave could not load this preview. Check that MusicWave Core is active and the selected release still exists."
+msgstr ""
+
+#: src/Admin/DiagnosticsPage.php:345
+msgid "MusicWave database schema"
 msgstr ""
 
 #: src/Support/SiteHealth.php:34 src/Support/SiteHealth.php:105
@@ -1788,11 +2429,15 @@ msgstr ""
 msgid "MusicWave integration providers are healthy"
 msgstr ""
 
+#: src/Playlists/PlaylistRepository.php:565
+msgid "MusicWave listener"
+msgstr ""
+
 #: src/Support/SiteHealth.php:119
 msgid "MusicWave needs pretty permalinks"
 msgstr ""
 
-#: src/Privacy/PersonalData.php:57 src/Privacy/PersonalData.php:72
+#: src/Privacy/PersonalData.php:63 src/Privacy/PersonalData.php:78
 msgid "MusicWave personal library"
 msgstr ""
 
@@ -1824,19 +2469,15 @@ msgstr ""
 msgid "MusicWave releases"
 msgstr ""
 
-#: src/Admin/DiagnosticsPage.php:150
-msgid "MusicWave schema"
-msgstr ""
-
-#: src/Admin/SettingsPage.php:37 src/Admin/SettingsPage.php:115
+#: src/Admin/SettingsPage.php:47 src/Admin/SettingsPage.php:131 src/Admin/SettingsPage.php:467
 msgid "MusicWave settings"
 msgstr ""
 
-#: src/Admin/DiagnosticsPage.php:44
+#: src/Admin/DiagnosticsPage.php:47
 msgid "MusicWave setup"
 msgstr ""
 
-#: src/Admin/DiagnosticsPage.php:63
+#: src/Admin/DiagnosticsPage.php:88
 msgid "MusicWave setup & diagnostics"
 msgstr ""
 
@@ -1848,11 +2489,11 @@ msgstr ""
 msgid "MusicWave structured data is protected from duplicates"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:163
+#: src/Admin/SettingsPage.php:185
 msgid "MusicWave templates and styles"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:319
+#: src/Admin/SettingsPage.php:377
 msgid "MusicWave theme"
 msgstr ""
 
@@ -1864,23 +2505,23 @@ msgstr ""
 msgid "Musical key"
 msgstr ""
 
-#: src/Blocks/LibraryBlocks.php:192 src/Commerce/AccountLibrary.php:371 src/Commerce/AccountLibrary.php:399
+#: src/Blocks/LibraryBlocks.php:188 src/Commerce/AccountLibrary.php:890 src/Commerce/AccountLibrary.php:919
 msgid "My music library"
 msgstr ""
 
-#: src/Commerce/AccountLibrary.php:283
-msgid "Name"
+#: assets/blocks.js:1519 assets/blocks.js:1754
+msgid "Name A–Z"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:382
+#: src/Admin/SettingsPage.php:439
 msgid "Navigation"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:193
+#: src/Admin/SettingsPage.php:215
 msgid "Navigation arrows"
 msgstr ""
 
-#: src/Admin/DiagnosticsPage.php:72
+#: src/Admin/DiagnosticsPage.php:250
 msgid "Needs attention"
 msgstr ""
 
@@ -1888,43 +2529,60 @@ msgstr ""
 msgid "Needs attention before launch"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:271
+#: src/Admin/SettingsPage.php:329
 msgid "New access mode"
 msgstr ""
 
-#: assets/editor.js:535
+#: assets/editor.js:793
 msgid "New download quality"
 msgstr ""
 
-#: assets/editor.js:142
+#: assets/editor.js:242
 msgid "New downloadable file"
+msgstr ""
+
+#: src/Notifications/NotificationPreferences.php:51
+msgid "New episodes of podcasts I follow"
 msgstr ""
 
 #: src/Discovery/Recommendations.php:98
 msgid "New in the catalog."
 msgstr ""
 
-#: src/Blocks/PlaylistBlocks.php:141 src/Blocks/PlaylistBlocks.php:334
+#: src/Blocks/PlaylistBlocks.php:128 src/Blocks/PlaylistBlocks.php:547 src/Blocks/PlaylistBlocks.php:555 src/Blocks/PlaylistBlocks.php:591 src/Blocks/PlaylistBlocks.php:864
 msgid "New playlist name"
+msgstr ""
+
+#: src/Blocks/PlaylistBlocks.php:592
+msgid "New playlist…"
 msgstr ""
 
 #: src/Catalog/ReleasePostType.php:45
 msgid "New release"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:170
+#: src/Admin/SettingsPage.php:192
 msgid "New release defaults"
 msgstr ""
 
-#: src/Blocks/LibraryBlocks.php:403
+#: src/Notifications/FollowNotifier.php:234
+#, php-format
+msgid "New release: %s"
+msgstr ""
+
+#: src/Notifications/NotificationPreferences.php:49
+msgid "New releases from artists I follow"
+msgstr ""
+
+#: src/Blocks/LibraryBlocks.php:399
 msgid "Newer items"
 msgstr ""
 
-#: src/Catalog/ReleaseArchiveQuery.php:138
+#: assets/blocks.js:2274 src/Catalog/ReleaseArchiveQuery.php:138
 msgid "Newest first"
 msgstr ""
 
-#: src/Blocks/PreviewPlayer.php:119 src/Blocks/PreviewPlayer.php:289
+#: src/Blocks/PreviewPlayer.php:120 src/Blocks/PreviewPlayer.php:290
 msgid "Next preview"
 msgstr ""
 
@@ -1932,11 +2590,19 @@ msgstr ""
 msgid "No artist selected yet. Enter an artist term ID in the block sidebar to pin an artist, or preview this block on an artist archive page."
 msgstr ""
 
-#: src/Blocks/ReleaseBlocks.php:1267
+#: src/Blocks/ArtistShelfBlock.php:65
+msgid "No artists to show yet."
+msgstr ""
+
+#: src/Blocks/ArtistShelfBlock.php:447
+msgid "No artists with published releases were found yet. Assign artists to releases and they appear here automatically."
+msgstr ""
+
+#: src/Blocks/ReleaseBlocks.php:1282
 msgid "No catalog matches found."
 msgstr ""
 
-#: assets/editor.js:843
+#: assets/editor.js:1345
 msgid "No compatible releases could be found."
 msgstr ""
 
@@ -1948,12 +2614,32 @@ msgstr ""
 msgid "No matches found. Try a different title or artist spelling."
 msgstr ""
 
+#: src/Blocks/ArtistShelfBlock.php:446
+msgid "No matching artists were found. Check the selected artist IDs."
+msgstr ""
+
+#: src/Blocks/TaxonomyShelfBlock.php:333
+msgid "No matching terms were found. Check the selected term IDs."
+msgstr ""
+
+#: src/Commerce/AccountLibrary.php:785
+msgid "No membership module is active on this site. All membership content stays available."
+msgstr ""
+
 #: src/Support/SiteHealth.php:90
 msgid "No membership, metadata, or delivery provider reported a failure."
 msgstr ""
 
-#: src/Commerce/AccountLibrary.php:401
+#: src/Blocks/PlaylistBlocks.php:145
+msgid "No playlists found."
+msgstr ""
+
+#: src/Commerce/AccountLibrary.php:921
 msgid "No protected releases are currently available in your library."
+msgstr ""
+
+#: src/Blocks/PlaylistBlocks.php:226
+msgid "No public playlists yet. Be the first to share one!"
 msgstr ""
 
 #: src/Admin/ProductReleasePanel.php:34
@@ -1968,15 +2654,51 @@ msgstr ""
 msgid "No releases found."
 msgstr ""
 
-#: src/Commerce/AccountLibrary.php:251
+#: src/Blocks/TaxonomyShelfBlock.php:334
+msgid "No terms with published releases were found yet. Assign this taxonomy to releases and they appear here automatically."
+msgstr ""
+
+#: src/Blocks/ListeningBlocks.php:284
+msgid "Nothing in progress. Start any release and resume it here later."
+msgstr ""
+
+#: src/Commerce/AccountLibrary.php:710
 msgid "Nothing is available in your library yet. Save releases with the “Add to library” button or unlock protected music."
 msgstr ""
 
-#: src/Blocks/LibraryBlocks.php:228
+#: src/Blocks/ListeningBlocks.php:283
+msgid "Nothing played yet. Press play on any release and it shows up here."
+msgstr ""
+
+#: src/Blocks/LibraryBlocks.php:224
 msgid "Nothing saved in this collection yet."
 msgstr ""
 
-#: assets/editor.js:93
+#: src/Blocks/TaxonomyShelfBlock.php:64
+msgid "Nothing to browse yet."
+msgstr ""
+
+#: src/Privacy/PersonalData.php:192
+msgid "Notification preferences"
+msgstr ""
+
+#: src/Notifications/NotificationSettings.php:151
+msgid "Notification settings could not be saved."
+msgstr ""
+
+#: src/Notifications/NotificationSettings.php:150
+msgid "Notification settings saved."
+msgstr ""
+
+#: src/Notifications/NotificationSettings.php:54
+msgid "Notifications"
+msgstr ""
+
+#: assets/blocks.js:1156
+msgid "Notifications heading"
+msgstr ""
+
+#: assets/editor.js:152
 msgid "OGG 320 kbps"
 msgstr ""
 
@@ -1984,7 +2706,7 @@ msgstr ""
 msgid "Official artist page"
 msgstr ""
 
-#: src/Blocks/LibraryBlocks.php:406
+#: src/Blocks/LibraryBlocks.php:402
 msgid "Older items"
 msgstr ""
 
@@ -1992,8 +2714,16 @@ msgstr ""
 msgid "Oldest first"
 msgstr ""
 
-#: src/Library/LibraryButton.php:129
+#: assets/blocks.js:2587
+msgid "On artist, genre, mood, and label archives this header renders automatically. Pin a term ID to use it anywhere else."
+msgstr ""
+
+#: src/Library/LibraryButton.php:143
 msgid "On your wishlist"
+msgstr ""
+
+#: assets/blocks.js:2114
+msgid "Once queued, the button turns into an in-queue badge."
 msgstr ""
 
 #: src/Metadata/MetadataTaxonomyMapper.php:342
@@ -2008,161 +2738,298 @@ msgstr ""
 msgid "Only MusicWave sample releases were removed. Existing taxonomy terms were intentionally preserved."
 msgstr ""
 
-#: src/Blocks/ReleaseBlocks.php:1708
+#: src/Blocks/ArtistShelfBlock.php:323 src/Blocks/ListeningBlocks.php:238 src/Blocks/ReleaseBlocks.php:1735
 #, php-format
 msgid "Open %s"
+msgstr ""
+
+#: src/Admin/DiagnosticsPage.php:406
+msgid "Open MusicWave VIP settings"
+msgstr ""
+
+#: src/Admin/DiagnosticsPage.php:99
+msgid "Open MusicWave control center"
 msgstr ""
 
 #: src/Support/SiteHealth.php:166
 msgid "Open MusicWave setup"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:323
+#: src/Admin/DiagnosticsPage.php:406
+msgid "Open Plugins screen"
+msgstr ""
+
+#: src/Admin/SettingsPage.php:485
+msgid "Open Setup & diagnostics"
+msgstr ""
+
+#: src/Admin/SettingsPage.php:381
 msgid "Open Site Editor"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:307
+#: src/Admin/DiagnosticsPage.php:478 src/Admin/SettingsPage.php:485
+msgid "Open Site Health"
+msgstr ""
+
+#: src/Admin/SettingsPage.php:365
 msgid "Open WooCommerce settings"
 msgstr ""
 
-#: src/Admin/DiagnosticsPage.php:75
+#: src/Admin/DiagnosticsPage.php:98
 msgid "Open WordPress Site Health"
 msgstr ""
 
-#: src/Blocks/ReleaseBlocks.php:1567
+#: src/Admin/SettingsPage.php:270
+msgid "Open access — membership releases stay free (recommended)"
+msgstr ""
+
+#: src/Admin/DiagnosticsPage.php:478
+msgid "Open control center"
+msgstr ""
+
+#: src/Admin/DiagnosticsPage.php:370
+msgid "Open permalink settings"
+msgstr ""
+
+#: src/Blocks/ReleaseBlocks.php:1594
 msgid "Open release"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:315
+#: src/Admin/SettingsPage.php:373
 msgid "Open standalone settings"
+msgstr ""
+
+#: src/Admin/DiagnosticsPage.php:384
+msgid "Open theme browser"
 msgstr ""
 
 #: src/Catalog/ArtistTermMeta.php:191
 msgid "Optional official artist or label URL. HTTPS only."
 msgstr ""
 
-#: assets/blocks.js:119
+#: assets/blocks.js:493
 msgid "Options per filter"
 msgstr ""
 
-#: assets/blocks.js:192
+#: assets/blocks.js:777
 msgid "Order"
 msgstr ""
 
-#: assets/blocks.js:186
+#: assets/blocks.js:760 assets/blocks.js:1510 assets/blocks.js:1745 assets/blocks.js:2266
 msgid "Order by"
 msgstr ""
 
-#: src/Commerce/AccountLibrary.php:202
+#: src/Commerce/AccountLibrary.php:436
 msgid "Orders"
 msgstr ""
 
-#: assets/blocks.js:139 assets/blocks.js:233 assets/blocks.js:288 src/Modules/Rendering.php:109 src/Modules/Rendering.php:119
+#: assets/blocks.js:1120
+msgid "Orders heading"
+msgstr ""
+
+#: assets/blocks.js:977
+msgid "Orders panel"
+msgstr ""
+
+#: assets/blocks.js:567 assets/blocks.js:920 assets/blocks.js:1373 src/Modules/Rendering.php:133 src/Modules/Rendering.php:154
 msgid "Outline"
 msgstr ""
 
-#: assets/blocks.js:548
+#: assets/blocks.js:2887
 msgid "Overrides the theme accent for the name and link. Clear it to use the default."
 msgstr ""
 
-#: src/Admin/SettingsPage.php:109
+#: src/Admin/SettingsPage.php:124
 msgid "Overview"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:194
+#: src/Admin/DiagnosticsPage.php:269
+msgid "PHP"
+msgstr ""
+
+#: src/Admin/DiagnosticsPage.php:419
+msgid "PHP version"
+msgstr ""
+
+#: src/Admin/SettingsPage.php:216
 msgid "Pagination dots"
 msgstr ""
 
-#: assets/blocks.js:50
+#: assets/blocks.js:1103
+msgid "Panel headings"
+msgstr ""
+
+#: assets/blocks.js:204
 msgid "Panel layout"
 msgstr ""
 
-#: src/Blocks/ReleaseBlocks.php:1405 src/Blocks/ReleaseBlocks.php:1841
+#: assets/blocks.js:1042
+msgid "Panel order"
+msgstr ""
+
+#: assets/blocks.js:1037
+msgid "Panel order & style"
+msgstr ""
+
+#: src/Blocks/ReleaseBlocks.php:1422 src/Blocks/ReleaseBlocks.php:1855
 msgid "Pause"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:192
+#: src/Admin/SettingsPage.php:214
 msgid "Pause on hover or focus"
 msgstr ""
 
-#: src/Blocks/PreviewPlayer.php:117
+#: src/Blocks/PreviewPlayer.php:118
 msgid "Pause preview"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:280
+#: src/Commerce/AccountLibrary.php:460
+msgid "Payment methods"
+msgstr ""
+
+#: assets/blocks.js:1138
+msgid "Payment methods heading"
+msgstr ""
+
+#: assets/blocks.js:1007
+msgid "Payment methods panel"
+msgstr ""
+
+#: src/Admin/SettingsPage.php:338
 msgid "Pending review"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:386
+#: src/Admin/SettingsPage.php:443
 msgid "Permalinks"
 msgstr ""
 
-#: src/Modules/Rendering.php:854 src/Privacy/PersonalData.php:100
+#: src/Admin/SettingsPage.php:221
+msgid "Persistent playback"
+msgstr ""
+
+#: src/Modules/Rendering.php:1317 src/Privacy/PersonalData.php:106
 msgid "Personal music library"
 msgstr ""
 
-#: src/Blocks/ReleaseBlocks.php:1404 src/Blocks/ReleaseBlocks.php:1843
+#: src/Blocks/PlaylistBlocks.php:194
+msgid "Personal playlists"
+msgstr ""
+
+#: src/Blocks/PlaylistBlocks.php:545
+msgid "Pick a name and we’ll add this release for you."
+msgstr ""
+
+#: assets/blocks.js:1955
+msgid "Pin a term"
+msgstr ""
+
+#: assets/blocks.js:1823
+msgid "Plain (quiet surface)"
+msgstr ""
+
+#: src/Blocks/ReleaseBlocks.php:1421 src/Blocks/ReleaseBlocks.php:1857
 msgid "Play"
 msgstr ""
 
-#: src/Blocks/PreviewPlayer.php:131 src/Blocks/PreviewPlayer.php:164
+#: src/Blocks/PlaylistBlocks.php:152 src/Blocks/PlaylistBlocks.php:435 src/Blocks/PreviewPlayer.php:132 src/Blocks/PreviewPlayer.php:165
 #, php-format
 msgid "Play %s"
 msgstr ""
 
-#: src/Blocks/ReleaseBlocks.php:1420
+#: src/Blocks/PlaylistBlocks.php:121 src/Blocks/PlaylistBlocks.php:383 src/Blocks/PlaylistBlocks.php:725
+msgid "Play all"
+msgstr ""
+
+#: src/Blocks/PlaylistBlocks.php:150 src/Blocks/PlaylistBlocks.php:383 src/Blocks/PlaylistBlocks.php:719
+#, php-format
+msgid "Play all tracks in %s"
+msgstr ""
+
+#: src/Blocks/ReleaseBlocks.php:1437
 msgid "Play an available audio file or download your preferred quality."
 msgstr ""
 
-#: assets/blocks.js:160
+#: assets/blocks.js:651
 msgid "Play button label"
 msgstr ""
 
-#: src/Blocks/PreviewPlayer.php:116 src/Blocks/PreviewPlayer.php:269 src/Blocks/PreviewPlayer.php:289 src/Blocks/ReleaseBlocks.php:1355
+#: src/Blocks/QueueBlock.php:113
+msgid "Play next"
+msgstr ""
+
+#: assets/blocks.js:2101
+msgid "Play next (after current)"
+msgstr ""
+
+#: src/Blocks/PreviewPlayer.php:117 src/Blocks/PreviewPlayer.php:270 src/Blocks/PreviewPlayer.php:290 src/Blocks/ReleaseBlocks.php:1374
 msgid "Play preview"
 msgstr ""
 
-#: src/Blocks/PreviewPlayer.php:125
+#: src/Admin/SettingsPage.php:309
+msgid "Playback activity is stored only for visitors who consented to listening history. Older entries are pruned during the daily cleanup, and users can erase their own history from their account."
+msgstr ""
+
+#: src/Blocks/PreviewPlayer.php:126
 msgid "Playback could not be started."
 msgstr ""
 
-#: src/Listening/ListeningRoutes.php:102
+#: src/Listening/ListeningRoutes.php:109
 msgid "Playback progress could not be saved."
 msgstr ""
 
-#: src/Catalog/ReleaseTaxonomies.php:103 src/Privacy/PersonalData.php:155
+#: src/Modules/Rendering.php:1174
+msgid "Playback queue"
+msgstr ""
+
+#: src/Blocks/PlaylistBlocks.php:122
+msgid "Playing…"
+msgstr ""
+
+#: src/Catalog/ReleaseTaxonomies.php:103 src/Privacy/PersonalData.php:161
 msgid "Playlist"
 msgstr ""
 
-#: src/Playlists/PlaylistFormHandler.php:141
+#: src/Blocks/PlaylistBlocks.php:125 src/Playlists/PlaylistFormHandler.php:141
 msgid "Playlist created."
 msgstr ""
 
-#: src/Playlists/PlaylistFormHandler.php:145
+#: src/Blocks/PlaylistBlocks.php:134 src/Playlists/PlaylistFormHandler.php:145
 msgid "Playlist deleted."
 msgstr ""
 
-#: src/Blocks/PlaylistBlocks.php:282
+#: src/Blocks/PlaylistBlocks.php:812
 msgid "Playlist name"
 msgstr ""
 
-#: src/Playlists/PlaylistFormHandler.php:151
+#: src/Blocks/PlaylistBlocks.php:136 src/Playlists/PlaylistFormHandler.php:151
 msgid "Playlist order updated."
 msgstr ""
 
-#: src/Playlists/PlaylistFormHandler.php:143
+#: src/Blocks/PlaylistBlocks.php:133 src/Playlists/PlaylistFormHandler.php:143
 msgid "Playlist updated."
 msgstr ""
 
-#: src/Modules/Playlists.php:53 src/Modules/Rendering.php:873 src/Privacy/PersonalData.php:151
+#: src/Blocks/PlaylistBlocks.php:502 src/Modules/Playlists.php:53 src/Modules/Rendering.php:1336 src/Privacy/PersonalData.php:157
 msgid "Playlists"
+msgstr ""
+
+#: src/Blocks/PlaylistBlocks.php:189
+msgid "Playlists are private to you and separate from your Music Library."
+msgstr ""
+
+#: assets/blocks.js:1150
+msgid "Playlists heading"
+msgstr ""
+
+#: src/Playlists/PlaylistRoutes.php:191
+msgid "Please enter a playlist name."
 msgstr ""
 
 #: src/Catalog/ReleaseTaxonomies.php:105
 msgid "Podcast episode"
 msgstr ""
 
-#: assets/editor.js:876
+#: assets/editor.js:1390
 msgid "Podcast episodes"
 msgstr ""
 
@@ -2170,47 +3037,51 @@ msgstr ""
 msgid "Podcast show"
 msgstr ""
 
-#: assets/blocks.js:210
+#: src/Blocks/ArtistShelfBlock.php:402
+msgid "Popular artists"
+msgstr ""
+
+#: assets/blocks.js:846 assets/blocks.js:2249 assets/blocks.js:2443
 msgid "Portrait"
 msgstr ""
 
-#: src/Privacy/PersonalData.php:135
+#: src/Privacy/PersonalData.php:141
 msgid "Position (seconds)"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:275
+#: src/Admin/SettingsPage.php:333
 msgid "Post status"
 msgstr ""
 
-#: src/Library/LibraryButton.php:132
+#: src/Library/LibraryButton.php:146
 msgid "Pre-save"
 msgstr ""
 
-#: assets/blocks.js:282
+#: assets/blocks.js:1342
 msgid "Pre-save (upcoming releases only)"
 msgstr ""
 
-#: assets/blocks.js:283
+#: assets/blocks.js:1348
 msgid "Pre-save buttons only render while the release date is still in the future."
 msgstr ""
 
-#: src/Library/LibraryButton.php:132
+#: src/Library/LibraryButton.php:146
 msgid "Pre-saved"
 msgstr ""
 
-#: src/Admin/DiagnosticsPage.php:160
+#: src/Admin/DiagnosticsPage.php:365
 msgid "Pretty permalinks"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:192
+#: src/Admin/SettingsPage.php:214
 msgid "Prevents automatic movement while a visitor is interacting with the slider."
 msgstr ""
 
-#: src/Blocks/PreviewPlayer.php:123 src/Blocks/PreviewPlayer.php:269 src/Blocks/ReleaseBlocks.php:1134
+#: src/Blocks/PreviewPlayer.php:124 src/Blocks/PreviewPlayer.php:270 src/Blocks/ReleaseBlocks.php:1149
 msgid "Preview"
 msgstr ""
 
-#: src/Modules/Rendering.php:906
+#: src/Modules/Rendering.php:1545
 msgid "Preview button"
 msgstr ""
 
@@ -2218,43 +3089,55 @@ msgstr ""
 msgid "Preview duration in seconds"
 msgstr ""
 
-#: src/Blocks/PreviewPlayer.php:289
+#: src/Blocks/PreviewPlayer.php:290
 msgid "Preview progress"
 msgstr ""
 
-#: src/Blocks/PreviewPlayer.php:121 src/Blocks/PreviewPlayer.php:289
+#: src/Blocks/PreviewPlayer.php:122 src/Blocks/PreviewPlayer.php:290
 msgid "Preview queue"
 msgstr ""
 
-#: assets/blocks.js:404
+#: assets/blocks.js:2691
 msgid "Preview release"
 msgstr ""
 
-#: src/Blocks/PreviewPlayer.php:118 src/Blocks/PreviewPlayer.php:289
+#: assets/blocks.js:2595
+msgid "Preview this block on a release, or pin one with the release picker. Signed-in listeners queue it instantly."
+msgstr ""
+
+#: src/Blocks/PreviewPlayer.php:119 src/Blocks/PreviewPlayer.php:290
 msgid "Previous preview"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:281 src/Blocks/PlaylistBlocks.php:391
+#: src/Admin/SettingsPage.php:339 src/Blocks/PlaylistBlocks.php:919
 msgid "Private"
 msgstr ""
 
-#: assets/editor.js:615
+#: assets/editor.js:908
 msgid "Private editor reference only."
 msgstr ""
 
-#: src/Admin/SettingsPage.php:161
+#: src/Admin/SettingsPage.php:183
 msgid "Private files and secure downloads"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:149
+#: src/Admin/SettingsPage.php:171
 msgid "Product mapping and purchase access"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:305
+#: src/Admin/DiagnosticsPage.php:391
+msgid "Product mapping, purchase ownership, and checkout are available."
+msgstr ""
+
+#: src/Admin/SettingsPage.php:363
 msgid "Products, purchase ownership, checkout, and customer library."
 msgstr ""
 
-#: src/Admin/DiagnosticsPage.php:170 src/Admin/SettingsPage.php:161
+#: src/Blocks/ReleaseBlocks.php:1457
+msgid "Protected by MusicWave VIP: files stream from a protected directory through signed, expiring links. Direct file URLs are never exposed."
+msgstr ""
+
+#: src/Admin/DiagnosticsPage.php:397 src/Admin/SettingsPage.php:183
 msgid "Protected delivery"
 msgstr ""
 
@@ -2262,31 +3145,44 @@ msgstr ""
 msgid "Protected files and download qualities"
 msgstr ""
 
-#: assets/editor.js:524
+#: assets/editor.js:761
 msgid "Protected files and download qualities saved."
 msgstr ""
 
-#: assets/editor.js:228 assets/editor.js:403
+#: assets/editor.js:346 assets/editor.js:631
 msgid "Protected files are unavailable."
 msgstr ""
 
-#: src/Admin/SettingsPage.php:313
+#: src/Admin/SettingsPage.php:371
 msgid "Protected local files and role-based membership adapter."
 msgstr ""
 
-#: assets/editor.js:606
+#: assets/editor.js:889
 msgid "Protected provider asset ID"
 msgstr ""
 
-#: src/Admin/ReleaseReadiness.php:111 src/Admin/SettingsPage.php:454 src/Blocks/PlaylistBlocks.php:385 src/Schema/ReleaseMetaSchema.php:244
+#: src/Admin/ReleaseReadiness.php:111 src/Admin/SettingsPage.php:548 src/Blocks/PlaylistBlocks.php:913 src/Schema/ReleaseMetaSchema.php:244
 msgid "Public"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:278
+#: src/Admin/SettingsPage.php:157 src/Modules/Rendering.php:1369
+msgid "Public playlists"
+msgstr ""
+
+#: src/Blocks/PlaylistBlocks.php:459
+#, php-format
+msgid "Public playlists page %1$d of %2$d"
+msgstr ""
+
+#: src/Blocks/PlaylistBlocks.php:146 src/Blocks/PlaylistBlocks.php:461
+msgid "Public playlists pages"
+msgstr ""
+
+#: src/Admin/SettingsPage.php:336
 msgid "Published"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:138
+#: src/Admin/SettingsPage.php:154
 msgid "Published releases"
 msgstr ""
 
@@ -2294,59 +3190,87 @@ msgstr ""
 msgid "Purchase"
 msgstr ""
 
-#: assets/blocks.js:60 src/Admin/SettingsPage.php:244
+#: assets/blocks.js:258 src/Admin/SettingsPage.php:275
 msgid "Purchase button label"
 msgstr ""
 
-#: assets/blocks.js:59 src/Admin/SettingsPage.php:243
+#: assets/blocks.js:252 src/Admin/SettingsPage.php:274
 msgid "Purchase message"
 msgstr ""
 
-#: src/Admin/ReleaseReadiness.php:114 src/Admin/SettingsPage.php:457 src/Schema/ReleaseMetaSchema.php:247
+#: src/Admin/ReleaseReadiness.php:114 src/Admin/SettingsPage.php:551 src/Schema/ReleaseMetaSchema.php:247
 msgid "Purchase or membership"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:455 src/Schema/ReleaseMetaSchema.php:245
+#: src/Admin/SettingsPage.php:549 src/Schema/ReleaseMetaSchema.php:245
 msgid "Purchase required"
 msgstr ""
 
-#: src/Playback/PlaybackQueueRoutes.php:267
+#: src/Playback/PlaybackQueueRoutes.php:267 src/Playlists/PlaylistRoutes.php:602
 msgid "Purchase this release to unlock full playback."
 msgstr ""
 
-#: src/Blocks/ReleaseBlocks.php:829
+#: src/Blocks/ReleaseBlocks.php:844
 msgid "Purchase this release to unlock the full experience."
 msgstr ""
 
-#: src/Blocks/ReleaseBlocks.php:1835
+#: src/Blocks/ReleaseBlocks.php:1849
 msgid "Quality"
 msgstr ""
 
-#: assets/editor.js:545
+#: assets/editor.js:808
 msgid "Quality preset"
 msgstr ""
 
-#: assets/blocks.js:184
+#: assets/blocks.js:743
 msgid "Query"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:144
+#: src/Modules/Listening.php:97
+msgid "Queue"
+msgstr ""
+
+#: src/Listening/QueueFormHandler.php:202
+msgid "Queue cleared."
+msgstr ""
+
+#: src/Listening/QueueFormHandler.php:200
+msgid "Queue order updated."
+msgstr ""
+
+#: src/Admin/SettingsPage.php:166
 msgid "Quick actions"
 msgstr ""
 
-#: src/Admin/DiagnosticsPage.php:65
+#: src/Admin/DiagnosticsPage.php:213
 msgid "Quick start"
 msgstr ""
 
-#: assets/blocks.js:190
+#: src/Admin/DiagnosticsPage.php:466
+msgid "Quick start — the four first steps: create a release, review taxonomy, save permalinks, configure protected delivery."
+msgstr ""
+
+#: assets/blocks.js:771
 msgid "Random"
+msgstr ""
+
+#: assets/blocks.js:1522 assets/blocks.js:1757
+msgid "Random shuffle"
+msgstr ""
+
+#: src/Admin/SettingsPage.php:297 src/Admin/SettingsPage.php:304
+msgid "Rate limit window (seconds)"
 msgstr ""
 
 #: src/Admin/ReleaseReadiness.php:77
 msgid "Readiness"
 msgstr ""
 
-#: src/Admin/DiagnosticsPage.php:72 src/Admin/ReleaseReadiness.php:94 src/Admin/SettingsPage.php:436
+#: src/Admin/DiagnosticsPage.php:465
+msgid "Readiness summary — whether every required environment check passes."
+msgstr ""
+
+#: src/Admin/DiagnosticsPage.php:247 src/Admin/ReleaseReadiness.php:94 src/Admin/SettingsPage.php:530
 msgid "Ready"
 msgstr ""
 
@@ -2354,31 +3278,48 @@ msgstr ""
 msgid "Ready for review"
 msgstr ""
 
-#: assets/blocks.js:188
+#: src/Blocks/ListeningBlocks.php:272
+msgid "Recently played"
+msgstr ""
+
+#: assets/blocks.js:2373
+msgid "Recently played releases"
+msgstr ""
+
+#: assets/blocks.js:768 assets/blocks.js:2270
 msgid "Recently updated"
+msgstr ""
+
+#: src/Admin/DiagnosticsPage.php:225
+msgid "Recommended checks"
 msgstr ""
 
 #: src/Modules/Metadata.php:111
 msgid "Refine search"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:185
+#: src/Admin/SettingsPage.php:207
 msgid "Related items per section"
 msgstr ""
 
-#: src/Modules/Rendering.php:813
+#: src/Modules/Rendering.php:1128
 msgid "Related releases"
 msgstr ""
 
-#: assets/blocks.js:326
+#: assets/blocks.js:2539
 msgid "Related sections appear when the selected release shares artists, genres, moods, or release types with other releases."
 msgstr ""
 
-#: src/Blocks/ReleaseBlocks.php:1271 src/Commerce/AccountLibrary.php:488 src/Library/LibraryCatalog.php:192
+#: src/Blocks/ReleaseBlocks.php:1286 src/Commerce/AccountLibrary.php:1008 src/Library/LibraryCatalog.php:192
 msgid "Release"
 msgstr ""
 
-#: src/Modules/Rendering.php:745
+#: src/Blocks/PlaylistBlocks.php:155
+#, php-format
+msgid "Release #%d"
+msgstr ""
+
+#: src/Modules/Rendering.php:1060
 msgid "Release access panel"
 msgstr ""
 
@@ -2386,31 +3327,35 @@ msgstr ""
 msgid "Release archives"
 msgstr ""
 
-#: src/Modules/Rendering.php:755
+#: src/Modules/Rendering.php:1070
 msgid "Release credits"
 msgstr ""
 
-#: assets/blocks.js:187 src/Blocks/ReleaseBlocks.php:686 src/Schema/ReleaseMetaSchema.php:61
+#: assets/blocks.js:764 src/Blocks/ReleaseBlocks.php:641 src/Schema/ReleaseMetaSchema.php:61
 msgid "Release date"
 msgstr ""
 
-#: assets/editor.js:244
+#: src/Blocks/ReleaseBlocks.php:717
+msgid "Release details"
+msgstr ""
+
+#: assets/editor.js:370
 msgid "Release duration was filled from the protected file. Review it before publishing."
 msgstr ""
 
-#: assets/editor.js:625
+#: assets/editor.js:928
 msgid "Release duration was set from this file."
 msgstr ""
 
-#: src/Admin/SettingsPage.php:368
+#: src/Admin/SettingsPage.php:426
 msgid "Release editors can auto-fill title, official description, artist, album, year, genres, moods, labels, and cover art. Searches adapt to tracks, albums, playlists, and podcasts. No key is required: the built-in MusicBrainz and Cover Art Archive lookup works out of the box. Optional Spotify or Discogs credentials can provide additional catalog details; rate limits fall back automatically."
 msgstr ""
 
-#: src/Modules/Rendering.php:735
+#: src/Modules/Rendering.php:1050
 msgid "Release metadata"
 msgstr ""
 
-#: src/Modules/Rendering.php:793
+#: src/Modules/Rendering.php:1108
 msgid "Release preview player"
 msgstr ""
 
@@ -2418,11 +3363,11 @@ msgstr ""
 msgid "Release readiness"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:292 src/Blocks/ReleaseBlocks.php:709 src/Blocks/ReleaseBlocks.php:1161 src/Blocks/ReleaseBlocks.php:1275 src/Blocks/ReleaseBlocks.php:1889 src/Catalog/ReleaseTaxonomies.php:47
+#: src/Admin/SettingsPage.php:350 src/Blocks/ReleaseBlocks.php:664 src/Blocks/ReleaseBlocks.php:1176 src/Blocks/ReleaseBlocks.php:1290 src/Blocks/ReleaseBlocks.php:1903 src/Catalog/ReleaseTaxonomies.php:47
 msgid "Release type"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:385 src/Catalog/ReleaseTaxonomies.php:48
+#: src/Admin/SettingsPage.php:442 src/Catalog/ReleaseTaxonomies.php:48
 msgid "Release types"
 msgstr ""
 
@@ -2435,7 +3380,7 @@ msgstr ""
 msgid "Release year: %s."
 msgstr ""
 
-#: src/Admin/DiagnosticsPage.php:162
+#: src/Admin/DiagnosticsPage.php:368
 msgid "Release, artist, and catalog URLs need a non-default permalink structure."
 msgstr ""
 
@@ -2443,24 +3388,29 @@ msgstr ""
 msgid "Release, artist, and taxonomy archives can use readable canonical URLs."
 msgstr ""
 
-#: src/Admin/SettingsPage.php:196
+#: src/Admin/SettingsPage.php:218
 msgid "Releases loaded"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:177
+#: src/Admin/SettingsPage.php:199
 msgid "Releases per page"
 msgstr ""
 
-#: assets/editor.js:542 assets/editor.js:948 src/Blocks/PlaylistBlocks.php:232
+#: assets/editor.js:804 assets/editor.js:1544 src/Blocks/PlaylistBlocks.php:761
 msgid "Remove"
 msgstr ""
 
-#: src/Blocks/LibraryBlocks.php:322
+#: src/Blocks/LibraryBlocks.php:318
 #, php-format
 msgid "Remove %s from library"
 msgstr ""
 
-#: src/Admin/DiagnosticsPage.php:114
+#: src/Blocks/QueueBlock.php:243
+#, php-format
+msgid "Remove %s from the queue"
+msgstr ""
+
+#: src/Admin/DiagnosticsPage.php:299
 msgid "Remove MusicWave demo releases"
 msgstr ""
 
@@ -2468,11 +3418,11 @@ msgstr ""
 msgid "Remove cover artwork"
 msgstr ""
 
-#: assets/editor.js:646
+#: assets/editor.js:974
 msgid "Remove file"
 msgstr ""
 
-#: src/Blocks/ReleaseBlocks.php:1973
+#: src/Blocks/ReleaseBlocks.php:1987
 msgid "Remove filter"
 msgstr ""
 
@@ -2480,83 +3430,148 @@ msgstr ""
 msgid "Remove image"
 msgstr ""
 
-#: src/Playlists/PlaylistFormHandler.php:149
+#: src/Blocks/PlaylistBlocks.php:135 src/Playlists/PlaylistFormHandler.php:149
 msgid "Removed from the playlist."
 msgstr ""
 
-#: assets/blocks.js:245
-msgid "Renders the secure library with entitled downloads."
+#: src/Listening/QueueFormHandler.php:198
+msgid "Removed from the queue."
 msgstr ""
 
-#: src/Admin/DiagnosticsPage.php:167
-msgid "Required for product mapping, purchase ownership, and paid releases."
+#: assets/blocks.js:1947
+msgid "Renders for artists only; genres, moods, and labels stay clean."
 msgstr ""
 
-#: src/Blocks/ReleaseBlocks.php:1231
+#: src/Modules/Listening.php:98
+msgid "Reorder, shuffle, and clear your play queue."
+msgstr ""
+
+#: src/Blocks/QueueBlock.php:312
+msgid "Repeat mode"
+msgstr ""
+
+#: src/Listening/QueueFormHandler.php:206
+msgid "Repeat preference updated."
+msgstr ""
+
+#: src/Blocks/QueueBlock.php:315
+msgid "Repeat: all"
+msgstr ""
+
+#: src/Blocks/QueueBlock.php:314
+msgid "Repeat: off"
+msgstr ""
+
+#: src/Blocks/QueueBlock.php:316
+msgid "Repeat: one"
+msgstr ""
+
+#: src/Admin/SettingsPage.php:303
+msgid "Requests per window"
+msgstr ""
+
+#: src/Admin/DiagnosticsPage.php:224
+msgid "Required checks"
+msgstr ""
+
+#: src/Admin/DiagnosticsPage.php:392
+msgid "Required to sell releases. Free public catalog content works without it."
+msgstr ""
+
+#: src/Blocks/ReleaseBlocks.php:1246
 msgid "Reset"
 msgstr ""
 
-#: assets/blocks.js:122
+#: assets/blocks.js:517
 msgid "Reset link label"
+msgstr ""
+
+#: src/Admin/SettingsPage.php:270
+msgid "Restrict — deny access until a membership module is active"
 msgstr ""
 
 #: src/Admin/ReleaseReadiness.php:115 src/Admin/ReleaseReadiness.php:117
 msgid "Restricted"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:458 src/Schema/ReleaseMetaSchema.php:248
+#: src/Admin/SettingsPage.php:552 src/Schema/ReleaseMetaSchema.php:248
 msgid "Restricted / unavailable"
 msgstr ""
 
-#: assets/blocks.js:58 src/Admin/SettingsPage.php:248
+#: assets/blocks.js:246 src/Admin/SettingsPage.php:279
 msgid "Restricted message"
 msgstr ""
 
-#: assets/editor.js:881
+#: assets/editor.js:1409
 msgid "Results update while typing. Enter at least 2 characters."
 msgstr ""
 
-#: src/Admin/SettingsPage.php:191
+#: src/Admin/SettingsPage.php:310
+msgid "Retention period (days)"
+msgstr ""
+
+#: src/Admin/SettingsPage.php:213
 msgid "Returns to the beginning after the final group of releases."
 msgstr ""
 
-#: src/Admin/SettingsPage.php:146
+#: assets/blocks.js:1646
+msgid "Reuses the personal library follow button, so followers stay in sync everywhere."
+msgstr ""
+
+#: assets/blocks.js:1564 assets/blocks.js:1795 assets/blocks.js:2407
+msgid "Reuses the shared release-shelf chrome, so it matches every other shelf."
+msgstr ""
+
+#: src/Admin/DiagnosticsPage.php:253
+msgid "Review"
+msgstr ""
+
+#: src/Admin/SettingsPage.php:168
 msgid "Review all releases"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:315
+#: src/Admin/DiagnosticsPage.php:180
+msgid "Review in Site Health"
+msgstr ""
+
+#: src/Admin/SettingsPage.php:373
 msgid "Review plugins"
 msgstr ""
 
-#: src/Commerce/AccountLibrary.php:203
+#: src/Commerce/AccountLibrary.php:437
 msgid "Review purchases and order status."
 msgstr ""
 
-#: src/Admin/DiagnosticsPage.php:67
+#: src/Admin/DiagnosticsPage.php:194
 msgid "Review release types and artists"
 msgstr ""
 
-#: assets/blocks.js:458
+#: assets/blocks.js:1586 assets/blocks.js:1883 assets/blocks.js:2766
 msgid "Rounded corners"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:199
+#: src/Admin/DiagnosticsPage.php:424
+#, php-format
+msgid "Running PHP %s. MusicWave requires 7.4 or newer; 8.0 or newer is recommended for security updates and performance."
+msgstr ""
+
+#: src/Admin/SettingsPage.php:225
 msgid "SEO and structured data"
 msgstr ""
 
-#: assets/blocks.js:179
+#: assets/blocks.js:715
 msgid "Same-artist heading"
 msgstr ""
 
-#: assets/blocks.js:169
+#: assets/blocks.js:677
 msgid "Same-artist section"
 msgstr ""
 
-#: src/Blocks/PlaylistBlocks.php:286
+#: src/Blocks/PlaylistBlocks.php:816
 msgid "Save"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:251
+#: src/Admin/SettingsPage.php:282
 msgid "Save access messages"
 msgstr ""
 
@@ -2564,55 +3579,83 @@ msgstr ""
 msgid "Save any non-default permalink structure to support predictable catalog and artist URLs."
 msgstr ""
 
-#: src/Admin/SettingsPage.php:212
+#: src/Admin/SettingsPage.php:238
 msgid "Save content settings"
 msgstr ""
 
-#: assets/editor.js:687
+#: src/Admin/SettingsPage.php:313
+msgid "Save delivery & privacy settings"
+msgstr ""
+
+#: assets/editor.js:1080
 msgid "Save downloadable files"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:374
+#: src/Admin/SettingsPage.php:431
 msgid "Save metadata provider keys"
 msgstr ""
 
-#: src/Admin/DiagnosticsPage.php:68
+#: src/Notifications/NotificationSettings.php:88
+msgid "Save notification settings"
+msgstr ""
+
+#: src/Admin/DiagnosticsPage.php:200
 msgid "Save permalink settings"
+msgstr ""
+
+#: src/Blocks/QueueBlock.php:319
+msgid "Save repeat"
 msgstr ""
 
 #: src/Admin/ReleaseMetaBox.php:87
 msgid "Save this release once to add protected files and collection items."
 msgstr ""
 
-#: src/Privacy/PersonalData.php:112
+#: assets/blocks.js:1009
+msgid "Saved cards and gateway methods."
+msgstr ""
+
+#: src/Commerce/AccountLibrary.php:461
+msgid "Saved cards and gateways."
+msgstr ""
+
+#: src/Privacy/PersonalData.php:118
 msgid "Saved on"
 msgstr ""
 
-#: src/Commerce/AccountLibrary.php:446
+#: src/Commerce/AccountLibrary.php:966
 msgid "Saved releases"
 msgstr ""
 
-#: src/Commerce/AccountLibrary.php:194
+#: assets/blocks.js:959
+msgid "Saved releases plus every protected download the visitor is entitled to."
+msgstr ""
+
+#: src/Commerce/AccountLibrary.php:427
 msgid "Saved songs, albums, podcasts, and artists."
 msgstr ""
 
-#: assets/blocks.js:285
+#: assets/blocks.js:1362
 msgid "Saved state label"
 msgstr ""
 
-#: assets/editor.js:817
+#: assets/editor.js:1293
 msgid "Saving collection items…"
 msgstr ""
 
-#: assets/editor.js:517
+#: assets/editor.js:747
 msgid "Saving protected files and download qualities…"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:282
+#: src/Admin/SettingsPage.php:340
 msgid "Scheduled"
 msgstr ""
 
-#: assets/editor.js:891 src/Modules/Metadata.php:102
+#: src/Admin/DiagnosticsPage.php:436
+msgid "Scheduled cleanup, notification, and maintenance events can run."
+msgstr ""
+
+#: assets/editor.js:1425 src/Blocks/PlaylistBlocks.php:314 src/Modules/Metadata.php:102
 msgid "Search"
 msgstr ""
 
@@ -2621,7 +3664,7 @@ msgstr ""
 msgid "Search %s"
 msgstr ""
 
-#: assets/editor.js:877
+#: assets/editor.js:1396
 msgid "Search by release title or the protected file name already attached to a Track, Single, or Episode. Add it once to reuse its preview and secure downloads."
 msgstr ""
 
@@ -2629,23 +3672,39 @@ msgstr ""
 msgid "Search by title, artist, album, or podcast. Applying a result can fill the description and connect Artists, Genres, Moods, and Labels using stable provider IDs and multilingual aliases."
 msgstr ""
 
+#: src/Admin/SettingsPage.php:305
+msgid "Search cache lifetime (seconds)"
+msgstr ""
+
 #: src/Admin/ReleaseMetaBox.php:256
 msgid "Search for a product…"
 msgstr ""
 
-#: assets/blocks.js:120
+#: assets/blocks.js:505 assets/blocks.js:2177
 msgid "Search placeholder"
 msgstr ""
 
-#: assets/editor.js:880
+#: src/Blocks/PlaylistBlocks.php:312
+msgid "Search playlists"
+msgstr ""
+
+#: src/Blocks/PlaylistBlocks.php:227
+msgid "Search playlists…"
+msgstr ""
+
+#: src/Blocks/PlaylistBlocks.php:311
+msgid "Search public playlists"
+msgstr ""
+
+#: assets/editor.js:1405
 msgid "Search release or file name"
 msgstr ""
 
-#: src/Blocks/ReleaseBlocks.php:1202 src/Blocks/ReleaseBlocks.php:1206 src/Catalog/ReleasePostType.php:47
+#: src/Blocks/ReleaseBlocks.php:1217 src/Blocks/ReleaseBlocks.php:1221 src/Catalog/ReleasePostType.php:47
 msgid "Search releases"
 msgstr ""
 
-#: src/Blocks/ReleaseBlocks.php:1898
+#: src/Blocks/ReleaseBlocks.php:1912
 #, php-format
 msgid "Search: %s"
 msgstr ""
@@ -2658,47 +3717,75 @@ msgstr ""
 msgid "Season number"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:173
+#: src/Admin/SettingsPage.php:195
 msgid "Seconds; each release can override this value."
 msgstr ""
 
-#: assets/blocks.js:152
+#: assets/blocks.js:606
 msgid "Section description"
 msgstr ""
 
-#: assets/blocks.js:71 assets/blocks.js:89 assets/blocks.js:151 assets/blocks.js:251 assets/blocks.js:303
+#: assets/blocks.js:296 assets/blocks.js:345 assets/blocks.js:600 assets/blocks.js:1198 assets/blocks.js:1210 assets/blocks.js:1417 assets/blocks.js:1668 assets/blocks.js:2005 assets/blocks.js:2024 assets/blocks.js:2147 assets/blocks.js:2338
 msgid "Section heading"
 msgstr ""
 
-#: assets/blocks.js:182
+#: assets/blocks.js:737
 msgid "Section link label"
 msgstr ""
 
-#: assets/blocks.js:168
+#: assets/blocks.js:672 assets/blocks.js:952
 msgid "Sections"
 msgstr ""
 
-#: src/Blocks/ReleaseBlocks.php:1430 src/Blocks/ReleaseBlocks.php:1809 src/Commerce/AccountLibrary.php:499 src/Modules/Rendering.php:803
+#: src/Blocks/ReleaseBlocks.php:1447 src/Blocks/ReleaseBlocks.php:1823 src/Commerce/AccountLibrary.php:1019 src/Modules/Rendering.php:1118
 msgid "Secure download"
 msgstr ""
 
-#: src/Blocks/PreviewPlayer.php:126 src/Blocks/ReleaseBlocks.php:1402
+#: src/Admin/SettingsPage.php:294
+msgid "Secure downloads"
+msgstr ""
+
+#: src/Blocks/PreviewPlayer.php:127 src/Blocks/ReleaseBlocks.php:1419
 msgid "Secure playback could not be started."
 msgstr ""
 
-#: src/Commerce/AccountLibrary.php:166
+#: src/Downloads/DownloadRoutes.php:124
+msgid "Secure playback is not available for this file type. Try downloading instead."
+msgstr ""
+
+#: src/Commerce/AccountLibrary.php:385
 msgid "Securely close this account session."
 msgstr ""
 
-#: src/Blocks/ReleaseBlocks.php:1468
+#: src/Blocks/ListeningBlocks.php:185 src/Blocks/ReleaseBlocks.php:1495
 msgid "See all"
+msgstr ""
+
+#: src/Blocks/ArtistShelfBlock.php:408
+msgid "See all artists"
+msgstr ""
+
+#: src/Blocks/PlaylistBlocks.php:259
+msgid "See all playlists"
+msgstr ""
+
+#: src/Blocks/TaxonomyShelfBlock.php:295
+msgid "See everything"
+msgstr ""
+
+#: assets/blocks.js:1438 assets/blocks.js:1689 assets/blocks.js:2189 assets/blocks.js:2383
+msgid "See-all link URL"
+msgstr ""
+
+#: assets/blocks.js:1448 assets/blocks.js:1694 assets/blocks.js:2199 assets/blocks.js:2388
+msgid "See-all link label"
 msgstr ""
 
 #: src/Admin/ReleaseReadiness.php:158
 msgid "Select a protected download asset for this gated release."
 msgstr ""
 
-#: assets/editor.js:360
+#: assets/editor.js:559
 msgid "Select an audio file from Media Library"
 msgstr ""
 
@@ -2710,275 +3797,416 @@ msgstr ""
 msgid "Select image"
 msgstr ""
 
-#: src/Playlists/PlaylistRoutes.php:213
+#: src/Playlists/PlaylistRoutes.php:312
 msgid "Send the playlist order as a list of release IDs."
+msgstr ""
+
+#: src/Blocks/PlaylistBlocks.php:194
+msgid "Separate from Music Library"
 msgstr ""
 
 #: src/Catalog/ReleasePostType.php:53
 msgid "Set cover artwork"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:38
+#: src/Admin/SettingsPage.php:48
 msgid "Settings & overview"
 msgstr ""
 
-#: src/Admin/DiagnosticsPage.php:45 src/Admin/SettingsPage.php:147
+#: src/Admin/DiagnosticsPage.php:48 src/Admin/SettingsPage.php:169
 msgid "Setup & diagnostics"
 msgstr ""
 
-#: src/Blocks/PlaylistBlocks.php:323
+#: src/Admin/DiagnosticsPage.php:461
+msgid "Setup guide"
+msgstr ""
+
+#: src/Blocks/PlaylistBlocks.php:853
 msgid "Share link"
 msgstr ""
 
-#: assets/blocks.js:27
+#: src/Commerce/AccountLibrary.php:612
+msgid "Shipping address"
+msgstr ""
+
+#: assets/blocks.js:1871
+msgid "Short"
+msgstr ""
+
+#: assets/blocks.js:71
 msgid "Show BPM"
 msgstr ""
 
-#: assets/blocks.js:244
-msgid "Show account shortcuts"
-msgstr ""
-
-#: assets/blocks.js:243
-msgid "Show account statistics"
-msgstr ""
-
-#: assets/blocks.js:220
+#: assets/blocks.js:889
 msgid "Show action link"
 msgstr ""
 
-#: assets/blocks.js:129
+#: assets/blocks.js:541
 msgid "Show active filter chips"
 msgstr ""
 
-#: assets/blocks.js:33
-msgid "Show add-to-library button"
-msgstr ""
-
-#: assets/blocks.js:29 assets/blocks.js:216
-msgid "Show artist"
+#: assets/blocks.js:1171
+msgid "Show active levels and expiry"
 msgstr ""
 
 #: assets/blocks.js:107
+msgid "Show add-to-library button"
+msgstr ""
+
+#: assets/blocks.js:83 assets/blocks.js:865
+msgid "Show artist"
+msgstr ""
+
+#: assets/blocks.js:426
 msgid "Show artist filter"
 msgstr ""
 
-#: assets/blocks.js:468
+#: assets/blocks.js:2784
 msgid "Show artist image"
 msgstr ""
 
-#: assets/blocks.js:267 assets/blocks.js:476
+#: assets/blocks.js:1291 assets/blocks.js:1614 assets/blocks.js:2792
 msgid "Show artist name"
 msgstr ""
 
-#: assets/blocks.js:215
+#: assets/blocks.js:2042 assets/blocks.js:2456
+msgid "Show artist names"
+msgstr ""
+
+#: assets/blocks.js:859 assets/blocks.js:2030 assets/blocks.js:2450
 msgid "Show artwork"
 msgstr ""
 
-#: assets/blocks.js:484
+#: assets/blocks.js:1608
+msgid "Show avatar"
+msgstr ""
+
+#: assets/blocks.js:2800
 msgid "Show biography"
 msgstr ""
 
-#: assets/blocks.js:24
+#: assets/blocks.js:1626
+msgid "Show biography excerpt"
+msgstr ""
+
+#: assets/blocks.js:53
 msgid "Show catalog number"
 msgstr ""
 
-#: assets/blocks.js:73
+#: assets/blocks.js:2057
+msgid "Show clear-queue button"
+msgstr ""
+
+#: assets/blocks.js:2296
+msgid "Show cover art grid"
+msgstr ""
+
+#: assets/blocks.js:1897
+msgid "Show cover media"
+msgstr ""
+
+#: assets/blocks.js:308
 msgid "Show credit roles"
 msgstr ""
 
-#: assets/blocks.js:154
+#: assets/blocks.js:2317
+msgid "Show curator name"
+msgstr ""
+
+#: assets/blocks.js:618 assets/blocks.js:1921
 msgid "Show description"
 msgstr ""
 
-#: assets/blocks.js:26
+#: assets/blocks.js:65
 msgid "Show duration"
 msgstr ""
 
-#: assets/blocks.js:218
+#: assets/blocks.js:877
 msgid "Show excerpt"
 msgstr ""
 
-#: assets/blocks.js:492
+#: assets/blocks.js:2808
 msgid "Show external link"
 msgstr ""
 
-#: assets/blocks.js:41
+#: assets/blocks.js:175
 msgid "Show field labels"
 msgstr ""
 
-#: assets/blocks.js:254
+#: assets/blocks.js:1228
 msgid "Show filter tabs"
 msgstr ""
 
-#: assets/blocks.js:500
+#: assets/blocks.js:1641 assets/blocks.js:1942 assets/blocks.js:2816
 msgid "Show follow-artist button"
 msgstr ""
 
-#: assets/blocks.js:30
+#: assets/blocks.js:89
 msgid "Show genre"
 msgstr ""
 
-#: assets/blocks.js:108
+#: assets/blocks.js:432
 msgid "Show genre filter"
 msgstr ""
 
-#: assets/blocks.js:153 assets/blocks.js:253
+#: assets/blocks.js:612 assets/blocks.js:1222 assets/blocks.js:1432 assets/blocks.js:1683 assets/blocks.js:2159 assets/blocks.js:2353
 msgid "Show heading"
 msgstr ""
 
-#: assets/blocks.js:255
+#: assets/blocks.js:1238
 msgid "Show item counts"
 msgstr ""
 
-#: assets/blocks.js:31
+#: assets/blocks.js:125
+msgid "Show library and playlist actions"
+msgstr ""
+
+#: assets/blocks.js:95
 msgid "Show mood"
 msgstr ""
 
-#: assets/blocks.js:109
+#: assets/blocks.js:438
 msgid "Show mood filter"
 msgstr ""
 
-#: assets/blocks.js:28
+#: assets/blocks.js:77
 msgid "Show musical key"
 msgstr ""
 
-#: assets/blocks.js:245
-msgid "Show personal music library"
+#: assets/blocks.js:1909
+msgid "Show name heading"
 msgstr ""
 
-#: assets/blocks.js:142 assets/blocks.js:236
+#: assets/blocks.js:2285
+msgid "Show pagination"
+msgstr ""
+
+#: assets/blocks.js:1180
+msgid "Show plan products"
+msgstr ""
+
+#: assets/blocks.js:2302
+msgid "Show play button"
+msgstr ""
+
+#: assets/blocks.js:579 assets/blocks.js:932
 msgid "Show play icon"
 msgstr ""
 
-#: assets/blocks.js:219
+#: assets/blocks.js:2468
+msgid "Show play overlay"
+msgstr ""
+
+#: assets/blocks.js:2462
+msgid "Show played-ago time"
+msgstr ""
+
+#: assets/blocks.js:2171
+msgid "Show playlist total"
+msgstr ""
+
+#: assets/blocks.js:2036
+msgid "Show position numbers"
+msgstr ""
+
+#: assets/blocks.js:883
 msgid "Show preview button"
 msgstr ""
 
-#: assets/blocks.js:98
+#: assets/blocks.js:396
 msgid "Show preview buttons"
 msgstr ""
 
-#: assets/blocks.js:157
+#: assets/blocks.js:1189
+msgid "Show purchase buttons"
+msgstr ""
+
+#: assets/blocks.js:629
 msgid "Show quality selector"
 msgstr ""
 
-#: assets/blocks.js:509
+#: assets/blocks.js:1620 assets/blocks.js:1915 assets/blocks.js:2828
 msgid "Show release count"
 msgstr ""
 
-#: assets/blocks.js:25 assets/blocks.js:217
+#: assets/blocks.js:1833
+msgid "Show release counts"
+msgstr ""
+
+#: assets/blocks.js:59 assets/blocks.js:871
 msgid "Show release date"
 msgstr ""
 
-#: assets/blocks.js:32
+#: assets/blocks.js:101
 msgid "Show release type"
 msgstr ""
 
-#: assets/blocks.js:110
+#: assets/blocks.js:444
 msgid "Show release type filter"
 msgstr ""
 
-#: assets/blocks.js:269
+#: assets/blocks.js:1307
 msgid "Show release year"
 msgstr ""
 
-#: assets/blocks.js:270
+#: assets/blocks.js:1313
 msgid "Show remove buttons"
 msgstr ""
 
-#: assets/blocks.js:112
+#: assets/blocks.js:456
 msgid "Show reset link"
 msgstr ""
 
-#: assets/blocks.js:128
+#: assets/blocks.js:532
 msgid "Show result count"
 msgstr ""
 
-#: assets/blocks.js:106
+#: assets/blocks.js:2165
+msgid "Show search"
+msgstr ""
+
+#: assets/blocks.js:420
 msgid "Show search field"
 msgstr ""
 
-#: assets/blocks.js:72 assets/blocks.js:90
+#: assets/blocks.js:302 assets/blocks.js:351
 msgid "Show section heading"
 msgstr ""
 
-#: assets/blocks.js:181
+#: assets/blocks.js:727
 msgid "Show section link"
 msgstr ""
 
-#: assets/blocks.js:99
+#: assets/blocks.js:402
 msgid "Show secure download buttons"
 msgstr ""
 
-#: assets/blocks.js:158
+#: assets/blocks.js:639
 msgid "Show secure play buttons"
 msgstr ""
 
-#: assets/blocks.js:111
+#: assets/blocks.js:2048
+msgid "Show shuffle and repeat controls"
+msgstr ""
+
+#: assets/blocks.js:450
 msgid "Show sort selector"
 msgstr ""
 
-#: assets/blocks.js:54
+#: assets/blocks.js:116
+msgid "Show taxonomy chips"
+msgstr ""
+
+#: assets/blocks.js:1903
+msgid "Show taxonomy eyebrow"
+msgstr ""
+
+#: assets/blocks.js:225
 msgid "Show the granted state"
 msgstr ""
 
-#: assets/blocks.js:94
+#: assets/blocks.js:2308
+msgid "Show the track list toggle"
+msgstr ""
+
+#: assets/blocks.js:375
 msgid "Show total running time"
 msgstr ""
 
-#: assets/blocks.js:92
+#: assets/blocks.js:363
 msgid "Show track artwork"
 msgstr ""
 
-#: assets/blocks.js:93
+#: assets/blocks.js:369
 msgid "Show track duration"
 msgstr ""
 
-#: assets/blocks.js:91
+#: assets/blocks.js:357
 msgid "Show track numbers"
 msgstr ""
 
-#: src/Blocks/PlaylistBlocks.php:182
+#: src/Blocks/PlaylistBlocks.php:143 src/Blocks/PlaylistBlocks.php:388 src/Blocks/PlaylistBlocks.php:633
 msgid "Show tracks"
 msgstr ""
 
-#: assets/blocks.js:268
+#: assets/blocks.js:1297
 msgid "Show type badge"
 msgstr ""
 
-#: assets/blocks.js:128
+#: assets/blocks.js:2323
+msgid "Show updated date"
+msgstr ""
+
+#: src/Blocks/PlaylistBlocks.php:148
+#, php-format
+msgid "Showing %1$d of %2$d playlists"
+msgstr ""
+
+#: assets/blocks.js:1095
+msgid "Shown under the customer name. Leave empty for the default greeting."
+msgstr ""
+
+#: src/Modules/Rendering.php:1464
+msgid "Shows each listener their recently played and in-progress releases, with a consent-first opt-in for visitors who have not enabled listening history."
+msgstr ""
+
+#: assets/blocks.js:534
 msgid "Shows how many releases match the current filters."
 msgstr ""
 
-#: src/Admin/SettingsPage.php:183
+#: src/Admin/SettingsPage.php:205
 msgid "Shows other published releases sharing an artist on single release pages."
 msgstr ""
 
-#: src/Admin/SettingsPage.php:193
+#: src/Admin/SettingsPage.php:215
 msgid "Shows previous and next controls."
 msgstr ""
 
-#: src/Admin/SettingsPage.php:194
+#: src/Admin/SettingsPage.php:216
 msgid "Shows the current slide group and direct navigation controls."
 msgstr ""
 
-#: src/Blocks/LibraryBlocks.php:196 src/Blocks/PlaylistBlocks.php:89 src/Commerce/AccountLibrary.php:132 src/Playback/PlaybackQueueRoutes.php:307
+#: src/Modules/Rendering.php:1288
+msgid "Shows the customer's active membership levels with expiry and the purchasable VIP plan products."
+msgstr ""
+
+#: src/Listening/QueueFormHandler.php:204
+msgid "Shuffle preference updated."
+msgstr ""
+
+#: src/Blocks/QueueBlock.php:302
+msgid "Shuffle: off"
+msgstr ""
+
+#: src/Blocks/QueueBlock.php:302
+msgid "Shuffle: on"
+msgstr ""
+
+#: src/Blocks/LibraryBlocks.php:192 src/Blocks/ListeningBlocks.php:114 src/Blocks/PlaylistBlocks.php:175 src/Blocks/QueueBlock.php:218 src/Commerce/AccountLibrary.php:346 src/Playback/PlaybackQueueRoutes.php:307 src/Playlists/PlaylistRoutes.php:590 src/Playlists/PlaylistRoutes.php:639
 msgid "Sign in"
 msgstr ""
 
-#: src/Blocks/PlaylistBlocks.php:88
+#: src/Blocks/PlaylistBlocks.php:174
 msgid "Sign in to build playlists from your catalog."
 msgstr ""
 
-#: src/Blocks/LibraryBlocks.php:196
+#: src/Blocks/LibraryBlocks.php:192
 msgid "Sign in to build your personal library: save songs, albums, podcasts, and follow your favorite artists."
 msgstr ""
 
-#: src/Blocks/ReleaseBlocks.php:1389
-msgid "Sign in to download"
+#: src/Blocks/QueueBlock.php:217
+msgid "Sign in to keep a play queue across pages and visits."
 msgstr ""
 
-#: src/Playlists/PlaylistRoutes.php:104
+#: src/Blocks/ListeningBlocks.php:109
+msgid "Sign in to keep track of what you play and pick up right where you left off."
+msgstr ""
+
+#: src/Notifications/NotificationSettings.php:67
+msgid "Sign in to manage notifications."
+msgstr ""
+
+#: src/Playlists/PlaylistRoutes.php:167
 msgid "Sign in to manage playlists."
 msgstr ""
 
@@ -2986,19 +4214,35 @@ msgstr ""
 msgid "Sign in to manage your personal music library."
 msgstr ""
 
-#: src/Commerce/AccountLibrary.php:132
+#: src/Listening/QueueFormHandler.php:209
+msgid "Sign in to manage your queue."
+msgstr ""
+
+#: src/Commerce/AccountLibrary.php:346
 msgid "Sign in to open your music dashboard"
+msgstr ""
+
+#: src/Blocks/QueueBlock.php:98
+msgid "Sign in to queue"
 msgstr ""
 
 #: src/Listening/ListeningRoutes.php:80
 msgid "Sign in to use listening features."
 msgstr ""
 
-#: src/Commerce/AccountLibrary.php:166
+#: src/Commerce/AccountLibrary.php:264
+msgid "Sign in to view your membership."
+msgstr ""
+
+#: src/Commerce/AccountLibrary.php:385
 msgid "Sign out"
 msgstr ""
 
-#: assets/blocks.js:161
+#: assets/blocks.js:1027
+msgid "Sign out shortcut"
+msgstr ""
+
+#: assets/blocks.js:657
 msgid "Sign-in button label"
 msgstr ""
 
@@ -3010,23 +4254,27 @@ msgstr ""
 msgid "Signal After Midnight is a public sample podcast show. It demonstrates how MusicWave groups episodes into an ordered collection."
 msgstr ""
 
-#: assets/blocks.js:332
+#: assets/blocks.js:2571
 msgid "Signed-in listeners can add the selected release to one of their playlists."
 msgstr ""
 
-#: assets/blocks.js:331
+#: assets/blocks.js:2591
+msgid "Signed-in listeners see their durable play queue here; guests see a sign-in prompt."
+msgstr ""
+
+#: assets/blocks.js:2559
 msgid "Signed-in listeners see their playlists here, with create, rename, share, reorder, and delete controls."
 msgstr ""
 
-#: src/Admin/SettingsPage.php:184 src/Blocks/ReleaseBlocks.php:1466
+#: src/Admin/SettingsPage.php:206 src/Blocks/ReleaseBlocks.php:1493
 msgid "Similar releases"
 msgstr ""
 
-#: assets/blocks.js:180
+#: assets/blocks.js:721
 msgid "Similar releases heading"
 msgstr ""
 
-#: assets/blocks.js:174
+#: assets/blocks.js:696
 msgid "Similar releases section"
 msgstr ""
 
@@ -3034,7 +4282,7 @@ msgstr ""
 msgid "Single"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:380
+#: src/Admin/SettingsPage.php:437
 msgid "Site Editor"
 msgstr ""
 
@@ -3043,15 +4291,15 @@ msgstr ""
 msgid "Skipped demo release %s because a merchant release already uses its URL slug."
 msgstr ""
 
-#: src/Admin/SettingsPage.php:189
+#: src/Admin/SettingsPage.php:211
 msgid "Slider"
 msgstr ""
 
-#: assets/blocks.js:433
+#: assets/blocks.js:2732
 msgid "Slider / featured"
 msgstr ""
 
-#: assets/blocks.js:138 assets/blocks.js:232 assets/blocks.js:287
+#: assets/blocks.js:564 assets/blocks.js:917 assets/blocks.js:1370
 msgid "Solid"
 msgstr ""
 
@@ -3059,11 +4307,11 @@ msgstr ""
 msgid "Sora Vale"
 msgstr ""
 
-#: src/Blocks/ReleaseBlocks.php:1221
+#: src/Blocks/ReleaseBlocks.php:1236
 msgid "Sort releases"
 msgstr ""
 
-#: src/Modules/Metadata.php:109
+#: assets/blocks.js:1453 assets/blocks.js:1699 src/Modules/Metadata.php:109
 msgid "Source"
 msgstr ""
 
@@ -3075,80 +4323,132 @@ msgstr ""
 msgid "Spotify"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:369
+#: src/Admin/SettingsPage.php:427
 msgid "Spotify client ID"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:370
+#: src/Admin/SettingsPage.php:428
 msgid "Spotify client secret"
 msgstr ""
 
-#: assets/blocks.js:208 assets/blocks.js:459
+#: assets/blocks.js:839 assets/blocks.js:1588 assets/blocks.js:1886 assets/blocks.js:2242 assets/blocks.js:2435 assets/blocks.js:2770
 msgid "Square"
 msgstr ""
 
-#: src/Modules/Rendering.php:139
+#: src/Modules/Rendering.php:174
 msgid "Stacked"
 msgstr ""
 
-#: assets/blocks.js:52
+#: assets/blocks.js:215
 msgid "Stacked (action below the message)"
 msgstr ""
 
-#: assets/blocks.js:117
+#: src/Modules/Rendering.php:148
+msgid "Stacked (all sections visible)"
+msgstr ""
+
+#: assets/blocks.js:479
 msgid "Stacked full-width rows"
 msgstr ""
 
-#: assets/blocks.js:118
+#: assets/blocks.js:485
 msgid "Stacked is also available in the block Styles panel."
 msgstr ""
 
-#: src/Modules/Rendering.php:133
+#: src/Modules/Rendering.php:168
 msgid "Stacked rows"
 msgstr ""
 
-#: assets/blocks.js:39
+#: assets/blocks.js:161
 msgid "Stacked rows (label beside value)"
 msgstr ""
 
-#: src/Blocks/ReleaseBlocks.php:1988 src/Commerce/AccountLibrary.php:533 src/Downloads/DownloadAssetRoutes.php:193
+#: src/Blocks/ReleaseBlocks.php:2002 src/Commerce/AccountLibrary.php:1053 src/Downloads/DownloadAssetRoutes.php:200
 msgid "Standard download"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:294
+#: src/Admin/SettingsPage.php:352
 msgid "Start bulk update"
 msgstr ""
 
-#: src/Admin/DiagnosticsPage.php:70
-msgid "Status"
+#: assets/blocks.js:1073
+msgid "Statistics row"
 msgstr ""
 
 #: src/Admin/ReleaseMetaBox.php:197
 msgid "Store a provider asset identifier such as local:album/track.zip, never a public download URL."
 msgstr ""
 
-#: assets/editor.js:614
+#: assets/editor.js:903
 msgid "Stored file name"
 msgstr ""
 
-#: assets/blocks.js:237
+#: assets/blocks.js:940
 msgid "Stretches the button to fill its container."
 msgstr ""
 
-#: src/Playback/PlaybackQueueRoutes.php:284
+#: src/Playback/PlaybackQueueRoutes.php:284 src/Playlists/PlaylistRoutes.php:621
 msgid "Subscribe to listen to full tracks without limits."
 msgstr ""
 
-#: src/Admin/SettingsPage.php:148
+#: src/Admin/SettingsPage.php:222
+msgid "Swaps page content in the background so the music preview player keeps playing while visitors browse. Cart, checkout, and admin screens are never intercepted."
+msgstr ""
+
+#: src/Admin/DiagnosticsPage.php:272
+msgid "System snapshot"
+msgstr ""
+
+#: src/Admin/DiagnosticsPage.php:468
+msgid "System snapshot and demo catalog — versions at a glance and safe sample content for testing."
+msgstr ""
+
+#: src/Admin/SettingsPage.php:170
 msgid "System status"
 msgstr ""
 
-#: assets/blocks.js:254
+#: assets/blocks.js:1083
+msgid "Tab bar"
+msgstr ""
+
+#: src/Modules/Rendering.php:143
+msgid "Tabs (one section at a time)"
+msgstr ""
+
+#: assets/blocks.js:1230
 msgid "Tabs group saved items by release type and followed artists."
 msgstr ""
 
-#: assets/editor.js:557
+#: assets/blocks.js:1873
+msgid "Tall"
+msgstr ""
+
+#: assets/blocks.js:1960
+msgid "Taxonomy"
+msgstr ""
+
+#: src/Blocks/TaxonomyShelfBlock.php:331 src/Modules/Rendering.php:1156
+msgid "Taxonomy shelf"
+msgstr ""
+
+#: assets/editor.js:825
 msgid "Technical key"
+msgstr ""
+
+#: assets/blocks.js:1987
+msgid "Term ID"
+msgstr ""
+
+#: assets/blocks.js:1735
+msgid "Term IDs"
+msgstr ""
+
+#: src/Blocks/TermHeroBlock.php:318 src/Modules/Rendering.php:1165
+msgid "Term hero"
+msgstr ""
+
+#: src/Playlists/PlaylistRoutes.php:273
+msgid "That item is not a release and cannot be added to a playlist."
 msgstr ""
 
 #: src/Playlists/PlaylistFormHandler.php:142
@@ -3163,31 +4463,47 @@ msgstr ""
 msgid "That playlist could not be updated."
 msgstr ""
 
-#: src/Playlists/PlaylistRoutes.php:224
+#: src/Playlists/PlaylistRoutes.php:474
 msgid "That playlist is not available."
 msgstr ""
 
-#: src/Playlists/PlaylistFormHandler.php:153
+#: src/Blocks/PlaylistBlocks.php:130 src/Playlists/PlaylistFormHandler.php:153
 msgid "That playlist request was not valid. Try again."
 msgstr ""
 
-#: src/Playlists/PlaylistFormHandler.php:148 src/Playlists/PlaylistRoutes.php:190
+#: src/Listening/QueueFormHandler.php:208
+msgid "That queue request was not valid. Try again."
+msgstr ""
+
+#: src/Playlists/PlaylistFormHandler.php:148 src/Playlists/PlaylistRoutes.php:262 src/Playlists/PlaylistRoutes.php:289
 msgid "That release could not be added to the playlist."
 msgstr ""
 
-#: src/Playlists/PlaylistFormHandler.php:150 src/Playlists/PlaylistRoutes.php:202
+#: src/Listening/QueueFormHandler.php:196
+msgid "That release could not be added to the queue."
+msgstr ""
+
+#: src/Playlists/PlaylistRoutes.php:276
+msgid "That release is not available for playlists right now."
+msgstr ""
+
+#: src/Playlists/PlaylistFormHandler.php:150 src/Playlists/PlaylistRoutes.php:301
 msgid "That release is not in this playlist."
 msgstr ""
 
-#: assets/editor.js:383
+#: src/Listening/QueueFormHandler.php:199
+msgid "That release is not in your queue."
+msgstr ""
+
+#: assets/editor.js:601
 msgid "The Media Library file could not be copied to protected storage."
 msgstr ""
 
-#: assets/editor.js:355
+#: assets/editor.js:550
 msgid "The WordPress Media Library is unavailable on this screen."
 msgstr ""
 
-#: src/Metadata/MetadataLookupRoutes.php:320
+#: src/Metadata/MetadataLookupRoutes.php:361
 msgid "The artists could not be connected to this release."
 msgstr ""
 
@@ -3199,23 +4515,31 @@ msgstr ""
 msgid "The bulk access job was cancelled."
 msgstr ""
 
-#: assets/blocks.js:330
+#: assets/blocks.js:2555
 msgid "The button saves the selected release to a visitor's personal library, or follows an artist when an artist term ID is set."
 msgstr ""
 
-#: assets/editor.js:827
+#: assets/editor.js:1314
 msgid "The collection items could not be saved."
 msgstr ""
 
-#: src/Admin/DiagnosticsPage.php:177
-msgid "The companion theme provides the catalog, artist, and commerce presentation."
+#: src/Admin/DiagnosticsPage.php:377
+msgid "The companion block theme provides the catalog, artist, and commerce presentation."
+msgstr ""
+
+#: src/Listening/ListeningRoutes.php:90
+msgid "The consent flag is required."
+msgstr ""
+
+#: src/Admin/SettingsPage.php:469
+msgid "The control center groups MusicWave configuration by concern:"
 msgstr ""
 
 #: src/Metadata/MetadataResolver.php:151
 msgid "The cover URL is invalid."
 msgstr ""
 
-#: src/Blocks/ReleaseBlocks.php:1401 src/Commerce/AccountLibrary.php:515
+#: src/Blocks/ReleaseBlocks.php:1418 src/Commerce/AccountLibrary.php:1035
 msgid "The download could not be started."
 msgstr ""
 
@@ -3231,44 +4555,44 @@ msgstr ""
 msgid "The downloaded cover is not a supported image."
 msgstr ""
 
-#: src/Metadata/MetadataLookupRoutes.php:323
+#: src/Metadata/MetadataLookupRoutes.php:364
 msgid "The genres could not be connected to this release."
 msgstr ""
 
-#: assets/blocks.js:142
+#: assets/blocks.js:581
 msgid "The icon stays available to assistive technology when hidden."
 msgstr ""
 
-#: src/Metadata/MetadataLookupRoutes.php:326
+#: src/Metadata/MetadataLookupRoutes.php:367
 msgid "The labels could not be connected to this release."
 msgstr ""
 
-#: src/Metadata/MetadataLookupRoutes.php:376
+#: src/Metadata/MetadataLookupRoutes.php:417
 msgid "The metadata was saved, but the cover could not be imported."
 msgstr ""
 
-#: src/Metadata/MetadataLookupRoutes.php:373
+#: src/Metadata/MetadataLookupRoutes.php:414
 #, php-format
 msgid "The metadata was saved, but the cover could not be imported: %s"
 msgstr ""
 
-#: src/Metadata/MetadataLookupRoutes.php:329
+#: src/Metadata/MetadataLookupRoutes.php:370
 msgid "The moods could not be connected to this release."
 msgstr ""
 
-#: assets/blocks.js:329
+#: assets/blocks.js:2551
 msgid "The personal library lists every song, album, podcast, and artist a signed-in visitor saves with the add-to-library button."
 msgstr ""
 
-#: src/Listening/ListeningRoutes.php:143
+#: src/Listening/ListeningRoutes.php:150
 msgid "The playback queue could not be saved."
 msgstr ""
 
-#: src/Listening/ListeningRoutes.php:140
+#: src/Listening/ListeningRoutes.php:147
 msgid "The playback queue payload must be an object."
 msgstr ""
 
-#: src/Playlists/PlaylistRoutes.php:130
+#: src/Playlists/PlaylistRoutes.php:200
 msgid "The playlist could not be created. Check the name and your playlist limit."
 msgstr ""
 
@@ -3276,19 +4600,31 @@ msgstr ""
 msgid "The playlist order could not be changed."
 msgstr ""
 
-#: assets/editor.js:348
+#: assets/editor.js:538
 msgid "The protected file could not be uploaded."
 msgstr ""
 
-#: assets/editor.js:526
+#: assets/editor.js:771
 msgid "The protected files could not be saved."
 msgstr ""
 
-#: assets/blocks.js:319
+#: assets/blocks.js:2511
 msgid "The public access mode intentionally has no panel. Choose a protected, purchase, or membership release to preview this block."
 msgstr ""
 
-#: src/Metadata/MetadataLookupRoutes.php:296
+#: src/Listening/QueueFormHandler.php:203
+msgid "The queue could not be cleared."
+msgstr ""
+
+#: src/Listening/QueueFormHandler.php:201
+msgid "The queue order could not be changed."
+msgstr ""
+
+#: assets/blocks.js:1019
+msgid "The real editable name, email, and password form."
+msgstr ""
+
+#: src/Metadata/MetadataLookupRoutes.php:337
 msgid "The release title or description could not be updated."
 msgstr ""
 
@@ -3296,19 +4632,27 @@ msgstr ""
 msgid "The release was saved but the submitted collection items were rejected and the previous relations were restored."
 msgstr ""
 
-#: assets/blocks.js:323
+#: src/Listening/QueueFormHandler.php:207
+msgid "The repeat preference could not be saved."
+msgstr ""
+
+#: assets/blocks.js:2527
 msgid "The result summary appears when the public catalog has an active search, filter, or sort option."
 msgstr ""
 
-#: assets/blocks.js:141 assets/blocks.js:235
+#: assets/blocks.js:571 assets/blocks.js:924
 msgid "The same choices are available in the block Styles panel."
 msgstr ""
 
-#: src/Downloads/DownloadRoutes.php:141
+#: src/Admin/DiagnosticsPage.php:477
+msgid "The same environment checks also run in the WordPress Site Health screen, together with MusicWave integration provider health reports."
+msgstr ""
+
+#: src/Downloads/DownloadRoutes.php:163
 msgid "The secure download link is invalid or has expired."
 msgstr ""
 
-#: src/Downloads/DownloadRoutes.php:156
+#: src/Downloads/DownloadRoutes.php:178
 msgid "The secure playback link is invalid or has expired."
 msgstr ""
 
@@ -3316,11 +4660,27 @@ msgstr ""
 msgid "The selected artist was not found or has no public profile content yet. Add an artist term ID in the block sidebar."
 msgstr ""
 
-#: src/Admin/SettingsPage.php:171
+#: src/Blocks/TermHeroBlock.php:320
+msgid "The selected term was not found. Check the taxonomy and term ID in the block sidebar."
+msgstr ""
+
+#: src/Listening/QueueFormHandler.php:205
+msgid "The shuffle preference could not be saved."
+msgstr ""
+
+#: src/Modules/Rendering.php:1175
+msgid "The signed-in listener's durable play queue with reorder, remove, clear, shuffle, and repeat controls that work without JavaScript."
+msgstr ""
+
+#: src/Modules/Rendering.php:1194
+msgid "The unified account area: music library, orders, downloads, addresses, payment methods, membership, and playlists in one navigation."
+msgstr ""
+
+#: src/Admin/SettingsPage.php:193
 msgid "These values are stored when a new release is created. Existing releases are never silently rewritten."
 msgstr ""
 
-#: assets/blocks.js:768
+#: assets/blocks.js:3155
 msgid "This block is ready and will render when its required MusicWave data is available."
 msgstr ""
 
@@ -3328,15 +4688,35 @@ msgstr ""
 msgid "This checklist does not block drafts or publishing. It makes missing catalog data visible during editorial review."
 msgstr ""
 
-#: src/Downloads/DownloadRoutes.php:108
+#: src/Downloads/DownloadRoutes.php:130
 msgid "This file is unavailable or your account does not have access to it."
+msgstr ""
+
+#: src/Blocks/TermHeroBlock.php:321
+msgid "This header renders automatically on artist, genre, mood, and label archives."
 msgstr ""
 
 #: src/Library/LibraryRoutes.php:106
 msgid "This item could not be added to your library."
 msgstr ""
 
-#: src/Blocks/PlaylistBlocks.php:214
+#: src/Blocks/PlaylistBlocks.php:129 src/Playlists/PlaylistRoutes.php:346 src/Playlists/PlaylistRoutes.php:378
+msgid "This playlist has no playable audio right now."
+msgstr ""
+
+#: src/Playlists/PlaylistRoutes.php:285
+msgid "This playlist has reached the maximum of 500 tracks."
+msgstr ""
+
+#: src/Blocks/PlaylistBlocks.php:153
+msgid "This playlist is empty or not playable."
+msgstr ""
+
+#: src/Blocks/PlaylistBlocks.php:424
+msgid "This playlist is empty."
+msgstr ""
+
+#: src/Blocks/PlaylistBlocks.php:139 src/Blocks/PlaylistBlocks.php:738
 msgid "This playlist is empty. Use “Add to playlist” on any release."
 msgstr ""
 
@@ -3352,20 +4732,36 @@ msgstr ""
 msgid "This release is not available for playback."
 msgstr ""
 
-#: src/Blocks/ReleaseBlocks.php:826 src/Playback/PlaybackQueueRoutes.php:291
+#: src/Blocks/ReleaseBlocks.php:841 src/Playback/PlaybackQueueRoutes.php:291 src/Playlists/PlaylistRoutes.php:628
 msgid "This release is not currently available."
 msgstr ""
 
-#: assets/editor.js:650
+#: src/Admin/DiagnosticsPage.php:463
+msgid "This screen walks through launching a MusicWave store:"
+msgstr ""
+
+#: assets/editor.js:979
 msgid "This title groups all versions of the same song, episode, or bonus file."
 msgstr ""
 
-#: assets/blocks.js:444
+#: assets/blocks.js:1598 assets/blocks.js:2746
 msgid "Thumbnail"
 msgstr ""
 
-#: assets/blocks.js:189
+#: assets/blocks.js:1812
+msgid "Tile style"
+msgstr ""
+
+#: assets/blocks.js:1778
+msgid "Tiles"
+msgstr ""
+
+#: assets/blocks.js:770
 msgid "Title"
+msgstr ""
+
+#: assets/blocks.js:2278
+msgid "Title A–Z"
 msgstr ""
 
 #: src/Catalog/ReleaseArchiveQuery.php:140
@@ -3376,15 +4772,19 @@ msgstr ""
 msgid "Title: Z to A"
 msgstr ""
 
+#: src/Admin/SettingsPage.php:296
+msgid "Token requests per window"
+msgstr ""
+
 #: src/Discovery/DiscoveryRoutes.php:135
 msgid "Too many catalog searches. Try again in a moment."
 msgstr ""
 
-#: src/Downloads/DownloadRoutes.php:92
+#: src/Downloads/DownloadRoutes.php:99
 msgid "Too many download requests. Wait a moment and try again."
 msgstr ""
 
-#: src/Blocks/ReleaseBlocks.php:1001
+#: src/Blocks/ReleaseBlocks.php:1016
 #, php-format
 msgid "Total length: %s"
 msgstr ""
@@ -3393,15 +4793,15 @@ msgstr ""
 msgid "Track"
 msgstr ""
 
-#: assets/editor.js:757
+#: assets/editor.js:1205
 msgid "Track / single"
 msgstr ""
 
-#: assets/blocks.js:97
+#: assets/blocks.js:391
 msgid "Track actions"
 msgstr ""
 
-#: src/Blocks/ReleaseBlocks.php:993
+#: src/Blocks/ReleaseBlocks.php:1008
 msgid "Track list"
 msgstr ""
 
@@ -3413,11 +4813,19 @@ msgstr ""
 msgid "Track, artist, or album…"
 msgstr ""
 
-#: assets/editor.js:876
+#: assets/editor.js:1391
 msgid "Tracks and singles"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:436
+#: src/Blocks/ListeningBlocks.php:125
+msgid "Turn on listening history"
+msgstr ""
+
+#: src/Blocks/ListeningBlocks.php:124
+msgid "Turn on listening history to see your recently played releases here. You stay in control — history is private and can be erased anytime."
+msgstr ""
+
+#: src/Admin/SettingsPage.php:530
 msgid "Unavailable"
 msgstr ""
 
@@ -3425,43 +4833,55 @@ msgstr ""
 msgid "Unknown artist"
 msgstr ""
 
-#: assets/editor.js:415
+#: src/Blocks/ArtistShelfBlock.php:321
+msgid "Unnamed artist"
+msgstr ""
+
+#: src/Blocks/TaxonomyShelfBlock.php:254 src/Blocks/TermHeroBlock.php:241
+msgid "Untitled"
+msgstr ""
+
+#: assets/editor.js:648
 msgid "Untitled downloadable file"
 msgstr ""
 
-#: src/Blocks/PlaylistBlocks.php:222 src/Commerce/AccountLibrary.php:489 src/Library/LibraryCatalog.php:208
+#: src/Blocks/ListeningBlocks.php:221 src/Blocks/PlaylistBlocks.php:430 src/Blocks/PlaylistBlocks.php:746 src/Blocks/QueueBlock.php:236 src/Commerce/AccountLibrary.php:1009 src/Library/LibraryCatalog.php:208
 msgid "Untitled release"
 msgstr ""
 
-#: src/Blocks/PreviewPlayer.php:122 src/Blocks/PreviewPlayer.php:286
+#: src/Blocks/PreviewPlayer.php:123 src/Blocks/PreviewPlayer.php:287 src/Blocks/QueueBlock.php:167 src/Blocks/QueueBlock.php:212 src/Modules/Listening.php:99
 msgid "Up next"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:267
+#: src/Admin/SettingsPage.php:325
 msgid "Update releases in batches of 200. Purchase and membership modes are applied only when each release already has the required product or level mapping; incomplete releases are skipped."
 msgstr ""
 
-#: src/Privacy/PersonalData.php:139
+#: src/Privacy/PersonalData.php:145
 msgid "Updated"
 msgstr ""
 
-#: assets/editor.js:679
+#: assets/editor.js:1057
 msgid "Upload a new file"
 msgstr ""
 
-#: assets/editor.js:679
+#: assets/editor.js:1056
 msgid "Upload a quality"
 msgstr ""
 
-#: assets/editor.js:337
+#: assets/editor.js:518
 msgid "Uploading protected file and reading its metadata…"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:172
+#: src/Admin/SettingsPage.php:194
 msgid "Use Restricted when new releases should never become public accidentally."
 msgstr ""
 
-#: assets/editor.js:607
+#: src/Admin/DiagnosticsPage.php:201
+msgid "Use a non-default structure for readable catalog, artist, and archive URLs."
+msgstr ""
+
+#: assets/editor.js:893
 msgid "Use an opaque ID such as local:album/track.flac. Public URLs are blocked."
 msgstr ""
 
@@ -3469,43 +4889,63 @@ msgstr ""
 msgid "Use artist image"
 msgstr ""
 
-#: assets/editor.js:715
+#: assets/editor.js:1133
 msgid "Use as a quality for"
 msgstr ""
 
-#: assets/blocks.js:291
+#: assets/blocks.js:1379
 msgid "Use the artist term ID to turn this into a follow-artist button for a fixed artist."
 msgstr ""
 
-#: assets/blocks.js:666
+#: assets/blocks.js:3018
 msgid "Use the denser layout for cards, lists, and sidebars."
 msgstr ""
 
-#: assets/editor.js:627
+#: assets/editor.js:935
 msgid "Use this file duration"
 msgstr ""
 
-#: src/Modules/Rendering.php:832
+#: assets/blocks.js:1492
+msgid "Used by the genre and mood sources. Example: pop."
+msgstr ""
+
+#: assets/blocks.js:1502 assets/blocks.js:1737
+msgid "Used by the hand-picked source. Comma-separated numeric IDs keep your exact order."
+msgstr ""
+
+#: src/Modules/Rendering.php:1193
 msgid "User music dashboard"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:387
+#: src/Admin/SettingsPage.php:444
 msgid "Users"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:184
+#: src/Admin/SettingsPage.php:206
 msgid "Uses shared genre, mood, and release type terms without exposing private access metadata."
 msgstr ""
 
-#: assets/blocks.js:185
+#: assets/blocks.js:751
 msgid "Uses the global default until changed."
 msgstr ""
 
-#: src/Blocks/ReleaseBlocks.php:849 src/Playback/PlaybackQueueRoutes.php:286
+#: assets/blocks.js:1440
+msgid "Usually the catalog page or an artist directory page."
+msgstr ""
+
+#: src/Blocks/ReleaseBlocks.php:1459
+msgid "VIP protected"
+msgstr ""
+
+#: src/Downloads/DownloadRoutes.php:117
+msgid "VIP protected downloads are currently unavailable. The VIP module is disabled or its storage is not configured. Please contact the site administrator or use a purchase-based option if available."
+msgstr ""
+
+#: src/Blocks/ReleaseBlocks.php:864 src/Playback/PlaybackQueueRoutes.php:286 src/Playlists/PlaylistRoutes.php:623
 msgid "View membership options"
 msgstr ""
 
-#: src/Blocks/ReleaseBlocks.php:830 src/Playback/PlaybackQueueRoutes.php:269
+#: src/Blocks/ReleaseBlocks.php:845 src/Playback/PlaybackQueueRoutes.php:269 src/Playlists/PlaylistRoutes.php:604
 msgid "View purchase options"
 msgstr ""
 
@@ -3513,7 +4953,7 @@ msgstr ""
 msgid "View release"
 msgstr ""
 
-#: src/Privacy/PersonalData.php:159
+#: src/Privacy/PersonalData.php:165
 msgid "Visibility"
 msgstr ""
 
@@ -3521,39 +4961,79 @@ msgstr ""
 msgid "Visit the MusicWave setup page as an administrator to run the pending schema migration."
 msgstr ""
 
-#: src/Admin/SettingsPage.php:178
+#: src/Admin/SettingsPage.php:200
 msgid "Visitors can still choose another sorting mode."
 msgstr ""
 
-#: src/Blocks/PreviewPlayer.php:128 src/Blocks/PreviewPlayer.php:289
+#: src/Blocks/PreviewPlayer.php:129 src/Blocks/PreviewPlayer.php:290
 msgid "Volume"
 msgstr ""
 
-#: assets/editor.js:95
+#: assets/editor.js:166
 msgid "WAV lossless"
 msgstr ""
 
-#: src/Commerce/AccountLibrary.php:139
+#: src/Admin/DiagnosticsPage.php:435
+msgid "WP-Cron is disabled. MusicWave schedules download cleanup, release notifications, and membership maintenance, so ensure a real cron job calls wp-cron.php."
+msgstr ""
+
+#: src/Commerce/AccountLibrary.php:356
 msgid "Welcome back"
 msgstr ""
 
-#: assets/blocks.js:279
+#: assets/blocks.js:1093
+msgid "Welcome text"
+msgstr ""
+
+#: assets/blocks.js:1330
 msgid "What the button saves"
 msgstr ""
 
-#: assets/blocks.js:157
+#: assets/blocks.js:631
 msgid "When hidden, each file downloads its first listed quality."
 msgstr ""
 
-#: assets/blocks.js:54
+#: src/Admin/SettingsPage.php:269
+msgid "When no membership module (such as MusicWave VIP) is active, membership-gated releases can stay usable for everyone or deny access until a module returns. Switching the VIP master switch off opens the gate the same way while secure delivery keeps running."
+msgstr ""
+
+#: assets/blocks.js:227
 msgid "When off, the block stays hidden for visitors who already have access."
 msgstr ""
 
-#: src/Blocks/PlaylistBlocks.php:284
+#: src/Notifications/NotificationPreferences.php:50
+msgid "When something I pre-saved is out"
+msgstr ""
+
+#: assets/blocks.js:2097
+msgid "Where it lands"
+msgstr ""
+
+#: assets/blocks.js:2359
+msgid "Which activity feeds the rail"
+msgstr ""
+
+#: assets/blocks.js:1458
+msgid "Which artists appear"
+msgstr ""
+
+#: assets/blocks.js:1704
+msgid "Which taxonomy to browse"
+msgstr ""
+
+#: assets/blocks.js:1720
+msgid "Which terms appear"
+msgstr ""
+
+#: src/Admin/SettingsPage.php:270
+msgid "While no membership module is active"
+msgstr ""
+
+#: src/Blocks/PlaylistBlocks.php:814
 msgid "Who can see it"
 msgstr ""
 
-#: src/Admin/SettingsPage.php:381
+#: src/Admin/SettingsPage.php:438
 msgid "Widgets"
 msgstr ""
 
@@ -3561,23 +5041,35 @@ msgstr ""
 msgid "Wishlist"
 msgstr ""
 
-#: src/Admin/DiagnosticsPage.php:165 src/Admin/SettingsPage.php:149 src/Admin/SettingsPage.php:303
+#: assets/blocks.js:1085
+msgid "With the tab bar hidden, panels render as one continuous page (ideal with the Stacked style)."
+msgstr ""
+
+#: src/Admin/DiagnosticsPage.php:387 src/Admin/SettingsPage.php:171 src/Admin/SettingsPage.php:361
 msgid "WooCommerce"
 msgstr ""
 
-#: assets/blocks.js:244
-msgid "WooCommerce and VIP sections appear only while their plugins are active."
+#: assets/blocks.js:979
+msgid "WooCommerce order history and single-order views."
+msgstr ""
+
+#: assets/blocks.js:1031
+msgid "WooCommerce panels appear only while WooCommerce is active; the membership panel needs MusicWave VIP."
 msgstr ""
 
 #: src/Schema/ReleaseMetaSchema.php:258
 msgid "WooCommerce products"
 msgstr ""
 
+#: src/Admin/DiagnosticsPage.php:268
+msgid "WordPress"
+msgstr ""
+
 #: src/Modules/Metadata.php:114
 msgid "Year"
 msgstr ""
 
-#: src/Playback/PlaybackQueueRoutes.php:300
+#: src/Playback/PlaybackQueueRoutes.php:300 src/Playlists/PlaylistRoutes.php:588 src/Playlists/PlaylistRoutes.php:637
 msgid "You are listening to a limited preview. Get access to enjoy full playback."
 msgstr ""
 
@@ -3585,12 +5077,16 @@ msgstr ""
 msgid "You are not allowed to change MusicWave access settings."
 msgstr ""
 
-#: src/Admin/DiagnosticsPage.php:121
+#: src/Admin/DiagnosticsPage.php:306
 msgid "You are not allowed to manage MusicWave demo content."
 msgstr ""
 
-#: src/Downloads/DownloadAssetRoutes.php:146
+#: src/Downloads/DownloadAssetRoutes.php:153
 msgid "You are not authorized to assign this protected asset."
+msgstr ""
+
+#: src/Notifications/FollowNotifier.php:239
+msgid "You are receiving this because you enabled these notifications."
 msgstr ""
 
 #: src/Infrastructure/CollectionRestPolicy.php:63
@@ -3601,7 +5097,7 @@ msgstr ""
 msgid "You cannot edit this collection."
 msgstr ""
 
-#: src/Metadata/MetadataLookupRoutes.php:240
+#: src/Metadata/MetadataLookupRoutes.php:281
 msgid "You cannot edit this release."
 msgstr ""
 
@@ -3609,219 +5105,366 @@ msgstr ""
 msgid "You cannot reference one of the selected releases."
 msgstr ""
 
-#: src/Commerce/AccountLibrary.php:309
-msgid "You do not have an active VIP membership yet. Unlock protected releases with a membership level."
+#: src/Commerce/AccountLibrary.php:798
+msgid "You do not have an active membership yet. Pick a plan below to unlock protected releases."
 msgstr ""
 
-#: src/Blocks/PlaylistBlocks.php:102
+#: src/Blocks/PlaylistBlocks.php:189
 msgid "You have no playlists yet. Create your first one below."
 msgstr ""
 
-#: src/Commerce/AccountLibrary.php:132
+#: src/Playlists/PlaylistRoutes.php:194
+msgid "You have reached the maximum of 50 playlists."
+msgstr ""
+
+#: src/Commerce/AccountLibrary.php:346
 msgid "Your MusicWave"
 msgstr ""
 
-#: src/Commerce/AccountLibrary.php:218
-msgid "Your VIP access levels and perks."
+#: src/Commerce/AccountLibrary.php:479
+msgid "Your VIP access levels and purchasable plans."
 msgstr ""
 
-#: src/Commerce/AccountLibrary.php:139
+#: src/Commerce/AccountLibrary.php:352
 msgid "Your account, music access, downloads, and listening shortcuts in one place."
 msgstr ""
 
-#: src/Commerce/AccountLibrary.php:311
-msgid "Your active VIP membership levels:"
-msgstr ""
-
-#: src/Blocks/LibraryBlocks.php:196
+#: src/Blocks/LibraryBlocks.php:192
 msgid "Your collection"
 msgstr ""
 
-#: src/Commerce/AccountLibrary.php:399
+#: src/Commerce/AccountLibrary.php:919
 msgid "Your currently available protected releases appear here. Access is checked again when each download starts."
 msgstr ""
 
-#: src/Library/LibraryButton.php:103
+#: src/Library/LibraryButton.php:117
 msgid "Your library could not be updated. Try again."
 msgstr ""
 
-#: src/Blocks/LibraryBlocks.php:227
+#: src/Blocks/LibraryBlocks.php:223
 msgid "Your library is empty. Open any release or artist page and use the “Add to library” button to save it here."
 msgstr ""
 
-#: src/Commerce/AccountLibrary.php:209
-msgid "Your name, email, and password."
+#: src/Commerce/AccountLibrary.php:572
+#, php-format
+msgid "Your live %s appear here on the site."
 msgstr ""
 
-#: src/Commerce/AccountLibrary.php:262
+#: src/Commerce/AccountLibrary.php:726
 msgid "Your order history is not available right now."
 msgstr ""
 
-#: src/Blocks/PlaylistBlocks.php:83 src/Modules/Playlists.php:55
+#: src/Blocks/PlaylistBlocks.php:168 src/Blocks/PlaylistBlocks.php:172 src/Blocks/PlaylistBlocks.php:588 src/Modules/Playlists.php:55
 msgid "Your playlists"
 msgstr ""
 
-#: src/Blocks/PreviewPlayer.php:127 src/Blocks/ReleaseBlocks.php:1403 src/Commerce/AccountLibrary.php:516 src/Library/LibraryButton.php:104
+#: src/Blocks/QueueBlock.php:183
+msgid "Your queue is empty. Use “Play next” on any release to build it."
+msgstr ""
+
+#: src/Blocks/PlaylistBlocks.php:131 src/Blocks/PreviewPlayer.php:128 src/Blocks/ReleaseBlocks.php:1420 src/Commerce/AccountLibrary.php:1036 src/Library/LibraryButton.php:118
 msgid "Your session has expired. Refresh the page or sign in again."
 msgstr ""
 
-#: src/Downloads/DownloadRoutes.php:78
+#: src/Downloads/DownloadRoutes.php:85
 msgid "Your session has expired. Sign in again to download this release."
 msgstr ""
 
-#: assets/editor.js:96
+#: assets/editor.js:173
 msgid "ZIP bundle"
 msgstr ""
 
-#: src/Modules/Rendering.php:835
+#: src/Modules/Rendering.php:1196
 msgid "account"
 msgstr ""
 
-#: src/Modules/Rendering.php:787
+#: src/Modules/Rendering.php:1102
 msgid "active filters"
 msgstr ""
 
-#: src/Modules/Rendering.php:778
+#: src/Modules/Rendering.php:1186
+msgid "add"
+msgstr ""
+
+#: src/Modules/Rendering.php:1093 src/Modules/Rendering.php:1168
 msgid "archive"
 msgstr ""
 
-#: src/Modules/Rendering.php:826
+#: src/Modules/Rendering.php:1141 src/Modules/Rendering.php:1168
 msgid "artist"
 msgstr ""
 
-#: src/Modules/Rendering.php:796
+#: src/Modules/Rendering.php:1150
+msgid "artists"
+msgstr ""
+
+#: src/Modules/Rendering.php:1111
 msgid "audio"
 msgstr ""
 
-#: src/Modules/Rendering.php:826
+#: src/Modules/Rendering.php:1168
+msgid "banner"
+msgstr ""
+
+#: src/Commerce/AccountLibrary.php:597
+msgid "billing and shipping addresses"
+msgstr ""
+
+#: src/Modules/Rendering.php:1141
 msgid "biography"
 msgstr ""
 
-#: src/Modules/Rendering.php:738
+#: src/Modules/Rendering.php:1053
 msgid "bpm"
 msgstr ""
 
-#: src/Modules/Rendering.php:738
+#: src/Modules/Rendering.php:1159
+msgid "browse"
+msgstr ""
+
+#: src/Modules/Rendering.php:1053
 msgid "catalog number"
 msgstr ""
 
-#: src/Modules/Rendering.php:857 src/Modules/Rendering.php:876
+#: src/Modules/Rendering.php:1159
+msgid "categories"
+msgstr ""
+
+#: src/Modules/Rendering.php:1320 src/Modules/Rendering.php:1339
 msgid "collection"
 msgstr ""
 
-#: src/Modules/Rendering.php:787
+#: src/Modules/Rendering.php:1372
+msgid "community"
+msgstr ""
+
+#: src/Modules/Rendering.php:1466
+msgid "continue"
+msgstr ""
+
+#: src/Modules/Rendering.php:1102
 msgid "count"
 msgstr ""
 
-#: src/Modules/Rendering.php:738
+#: src/Modules/Rendering.php:1053
 msgid "details"
 msgstr ""
 
-#: src/Modules/Rendering.php:768
+#: src/Modules/Rendering.php:1083
 msgid "discs"
 msgstr ""
 
-#: assets/editor.js:638
+#: assets/editor.js:959
 msgid "download qualities"
 msgstr ""
 
-#: src/Modules/Rendering.php:768
+#: src/Commerce/AccountLibrary.php:580
+msgid "downloads"
+msgstr ""
+
+#: src/Blocks/PlaylistBlocks.php:548 src/Blocks/PlaylistBlocks.php:865
+msgid "e.g. Late night drives"
+msgstr ""
+
+#: src/Modules/Rendering.php:1083
 msgid "episodes"
 msgstr ""
 
-#: src/Modules/Rendering.php:866
+#: src/Modules/Rendering.php:1329
 msgid "favorite"
 msgstr ""
 
-#: src/Modules/Rendering.php:857
+#: src/Modules/Rendering.php:1320
 msgid "favorites"
 msgstr ""
 
-#: src/Modules/Rendering.php:806
+#: src/Modules/Rendering.php:1121
 msgid "files"
 msgstr ""
 
-#: src/Modules/Rendering.php:866
+#: src/Modules/Rendering.php:1150 src/Modules/Rendering.php:1329
 msgid "follow"
 msgstr ""
 
-#: src/Modules/Rendering.php:835
+#: src/Modules/Rendering.php:1168
+msgid "genre"
+msgstr ""
+
+#: src/Modules/Rendering.php:1159
+msgid "genres"
+msgstr ""
+
+#: src/Modules/Rendering.php:1150
+msgid "grid"
+msgstr ""
+
+#: src/Modules/Rendering.php:1168
+msgid "header"
+msgstr ""
+
+#: src/Modules/Rendering.php:1168
+msgid "hero"
+msgstr ""
+
+#: src/Modules/Rendering.php:1466
+msgid "history"
+msgstr ""
+
+#: src/Modules/Rendering.php:1159
+msgid "labels"
+msgstr ""
+
+#: src/Modules/Rendering.php:1196
 msgid "library"
 msgstr ""
 
-#: src/Modules/Rendering.php:796 src/Modules/Rendering.php:909
+#: src/Modules/Rendering.php:1111 src/Modules/Rendering.php:1548
 msgid "listen"
 msgstr ""
 
-#: src/Modules/Rendering.php:748
+#: src/Modules/Rendering.php:1466
+msgid "listening"
+msgstr ""
+
+#: src/Modules/Rendering.php:1063 src/Modules/Rendering.php:1290
 msgid "membership"
 msgstr ""
 
-#: src/Modules/Rendering.php:909
+#: src/Modules/Rendering.php:1159
+msgid "moods"
+msgstr ""
+
+#: src/Blocks/PlaylistBlocks.php:589
+msgid "or"
+msgstr ""
+
+#: src/Modules/Rendering.php:1290
+msgid "plans"
+msgstr ""
+
+#: src/Modules/Rendering.php:1548
 msgid "play"
 msgstr ""
 
-#: src/Modules/Rendering.php:876 src/Modules/Rendering.php:890
+#: src/Modules/Rendering.php:1186
+msgid "play next"
+msgstr ""
+
+#: src/Modules/Rendering.php:1177 src/Modules/Rendering.php:1186
+msgid "player"
+msgstr ""
+
+#: src/Modules/Rendering.php:1339 src/Modules/Rendering.php:1353 src/Modules/Rendering.php:1372
 msgid "playlist"
 msgstr ""
 
-#: src/Modules/Rendering.php:758
+#: src/Blocks/PlaylistBlocks.php:199
+msgid "playlist"
+msgid_plural "playlists"
+msgstr[0] ""
+msgstr[1] ""
+
+#: src/Modules/Rendering.php:1073
 msgid "producers"
 msgstr ""
 
-#: src/Modules/Rendering.php:748
+#: src/Modules/Rendering.php:1372
+msgid "public"
+msgstr ""
+
+#: src/Modules/Rendering.php:1063
 msgid "purchase"
 msgstr ""
 
-#: src/Modules/Rendering.php:806
+#: src/Modules/Rendering.php:1121
 msgid "quality"
 msgstr ""
 
-#: src/Modules/Rendering.php:876 src/Modules/Rendering.php:890
+#: src/Modules/Rendering.php:1177 src/Modules/Rendering.php:1186 src/Modules/Rendering.php:1339 src/Modules/Rendering.php:1353
 msgid "queue"
 msgstr ""
 
-#: src/Modules/Rendering.php:748
+#: src/Modules/Rendering.php:1466
+msgid "recently played"
+msgstr ""
+
+#: src/Modules/Rendering.php:1177
+msgid "repeat"
+msgstr ""
+
+#: src/Modules/Rendering.php:1063
 msgid "restricted"
 msgstr ""
 
-#: src/Modules/Rendering.php:758
+#: src/Modules/Rendering.php:1466
+msgid "resume"
+msgstr ""
+
+#: src/Modules/Rendering.php:1073
 msgid "roles"
 msgstr ""
 
-#: src/Modules/Rendering.php:816
+#: src/Modules/Rendering.php:1131
 msgid "same artist"
 msgstr ""
 
-#: src/Modules/Rendering.php:866 src/Modules/Rendering.php:890
+#: src/Modules/Rendering.php:1329 src/Modules/Rendering.php:1353
 msgid "save"
 msgstr ""
 
-#: src/Modules/Rendering.php:857
+#: src/Modules/Rendering.php:1320
 msgid "saved"
 msgstr ""
 
-#: src/Modules/Rendering.php:778
+#: src/Commerce/AccountLibrary.php:625
+msgid "saved payment methods"
+msgstr ""
+
+#: src/Modules/Rendering.php:1093
 msgid "search"
 msgstr ""
 
-#: src/Modules/Rendering.php:816
+#: src/Modules/Rendering.php:1131 src/Modules/Rendering.php:1150 src/Modules/Rendering.php:1159
 msgid "shelf"
 msgstr ""
 
-#: src/Modules/Rendering.php:816
+#: src/Modules/Rendering.php:1177
+msgid "shuffle"
+msgstr ""
+
+#: src/Modules/Rendering.php:1131
 msgid "similar"
 msgstr ""
 
-#: src/Modules/Rendering.php:806
+#: src/Modules/Rendering.php:1150
+msgid "singers"
+msgstr ""
+
+#: src/Modules/Rendering.php:1121
 msgid "stream"
 msgstr ""
 
-#: src/Modules/Rendering.php:768
+#: src/Modules/Rendering.php:1290
+msgid "subscription"
+msgstr ""
+
+#: src/Blocks/PlaylistBlocks.php:141
+msgid "track"
+msgstr ""
+
+#: src/Blocks/PlaylistBlocks.php:142 src/Modules/Rendering.php:1083
 msgid "tracks"
 msgstr ""
 
-#: src/Blocks/PlaylistBlocks.php:252
+#: src/Modules/Rendering.php:1177
+msgid "up next"
+msgstr ""
+
+#: src/Modules/Rendering.php:1290
+msgid "vip"
+msgstr ""
+
+#: src/Blocks/PlaylistBlocks.php:782
 #, php-format
 msgctxt "playlist item action"
 msgid "%1$s: %2$s"

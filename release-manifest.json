@@ -2,13 +2,13 @@
   "$schema_note": "Single source of truth for MusicWave package versions and compatibility ranges. Update in the same change that bumps any package version or the data schema (PROJECT_PLAN.md, Stage 0).",
   "product": "MusicWave",
   "manifest_version": "1.0.0",
-  "updated": "2026-08-19",
+  "updated": "2026-08-27",
   "license": "GPL-2.0-or-later",
   "packages": {
     "music-wave-core": {
-      "version": "0.9.0",
+      "version": "0.11.0",
       "type": "wordpress-plugin",
-      "schema_version": "0.10.0",
+      "schema_version": "0.11.0",
       "requires": {
         "wordpress": ">=6.6",
         "php": ">=7.4"
@@ -21,7 +21,7 @@
       }
     },
     "music-wave-vip": {
-      "version": "0.3.3",
+      "version": "0.5.0",
       "type": "wordpress-plugin",
       "requires": {
         "wordpress": ">=6.6",
@@ -30,10 +30,13 @@
       },
       "tested_up_to": {
         "wordpress": "6.8"
+      },
+      "optional_dependencies": {
+        "woocommerce": ">=9.0 (VIP plan products; role/filter adapters are standalone)"
       }
     },
     "musicwave": {
-      "version": "0.5.0",
+      "version": "0.7.1",
       "type": "wordpress-theme",
       "requires": {
         "wordpress": ">=6.6",

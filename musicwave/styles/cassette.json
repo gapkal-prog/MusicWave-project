@@ -1,5 +1,5 @@
 {
-  "$schema": "https://schemas.wp.org/wp/6.6/theme.json",
+  "$schema": "https://schemas.wp.org/trunk/theme.json",
   "version": 3,
   "title": "Cassette",
   "settings": {
@@ -11,7 +11,19 @@
         { "slug": "text", "name": "Text", "color": "#2a211d" },
         { "slug": "muted", "name": "Muted text", "color": "#75645b" },
         { "slug": "accent", "name": "Accent", "color": "#bd3f32" },
-        { "slug": "accent-strong", "name": "Accent strong", "color": "#8d2b24" }
+        { "slug": "accent-strong", "name": "Accent strong", "color": "#8d2b24" },
+        { "slug": "editorial", "name": "Editorial rose", "color": "#b91c1c" },
+        { "slug": "on-accent", "name": "On accent", "color": "#fff7ed" }
+      ],
+      "gradients": [
+        { "slug": "accent-wash", "name": "Accent wash", "gradient": "radial-gradient(circle at 16% 18%, rgba(189,63,50,0.18), transparent 56%), linear-gradient(180deg, #fffaf2, #f6f0e6)" },
+        { "slug": "editorial-rose", "name": "Editorial rose", "gradient": "linear-gradient(135deg, #bd3f32, #7a2d12 55%, #3e1a0a)" }
+      ]
+    },
+    "shadow": {
+      "presets": [
+        { "slug": "card", "name": "Card", "shadow": "0 14px 36px rgb(60 40 20 / 14%)" },
+        { "slug": "floating", "name": "Floating", "shadow": "0 22px 56px rgb(60 40 20 / 18%)" }
       ]
     }
   },
@@ -25,15 +37,12 @@
     },
     "elements": {
       "button": {
-        "border": { "radius": "0.25rem" },
-        "color": {
-          "background": "var:preset|color|accent",
-          "text": "var:preset|color|canvas"
-        }
+        "border": { "radius": "0.35rem" },
+        "color": { "background": "var:preset|color|accent", "text": "var:preset|color|on-accent" },
+        "typography": { "fontWeight": "700" }
       },
-      "link": {
-        "color": { "text": "var:preset|color|accent-strong" }
-      }
+      "heading": { "typography": { "fontFamily": "var:preset|font-family|serif", "fontWeight": "700", "letterSpacing": "-0.015em" } },
+      "link": { "color": { "text": "var:preset|color|accent-strong" } }
     }
   }
 }

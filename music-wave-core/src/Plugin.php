@@ -19,7 +19,10 @@ use ManaCore\MusicWave\Core\Admin\EditorAssets;
 use ManaCore\MusicWave\Core\Admin\DiagnosticsPage;
 use ManaCore\MusicWave\Core\Blocks\ReleaseBlocks;
 use ManaCore\MusicWave\Core\Blocks\ArtistProfileBlock;
+use ManaCore\MusicWave\Core\Blocks\ArtistShelfBlock;
 use ManaCore\MusicWave\Core\Blocks\LibraryBlocks;
+use ManaCore\MusicWave\Core\Blocks\TaxonomyShelfBlock;
+use ManaCore\MusicWave\Core\Blocks\TermHeroBlock;
 use ManaCore\MusicWave\Core\Blocks\PreviewPlayer;
 use ManaCore\MusicWave\Core\Admin\ReleaseMetaBox;
 use ManaCore\MusicWave\Core\Admin\ReleaseReadiness;
@@ -137,19 +140,32 @@ final class Plugin {
 		if ( ! $manual_provider instanceof ManualAccessProvider ) {
 			$manual_provider = new NullManualAccessProvider();
 		}
-		$policy            = new AccessPolicyEngine( $releases, $purchase_checker, $membership_provider, $manual_provider );
+		$policy = new AccessPolicyEngine( $releases, $purchase_checker, $membership_provider, $manual_provider );
+		// Membership gating is a monetization layer: when no membership module
+		// (e.g. MusicWave VIP) is active, the configured absent-behavior decides
+		// whether membership releases stay usable (default) or deny closed.
+		add_filter(
+			'music_wave_membership_absent_behavior',
+			static function ( $behavior ): string {
+				$setting = \ManaCore\MusicWave\Core\Support\Settings::get( 'membership_absent_behavior' );
+
+				return in_array( $setting, array( 'allow', 'deny' ), true ) ? $setting : $behavior;
+			}
+		);
+		( new \ManaCore\MusicWave\Core\Support\SettingsFilters() )->register();
 		$download_provider = apply_filters( 'music_wave_download_provider', new NullDownloadProvider() );
 		if ( ! $download_provider instanceof \ManaCore\MusicWave\Core\Downloads\DownloadProvider ) {
 			$download_provider = new NullDownloadProvider();
 		}
 		$download_secret = function_exists( 'wp_salt' ) ? wp_salt( 'auth' ) : hash( 'sha256', MUSIC_WAVE_CORE_FILE );
 		$replay_store    = new DatabaseReplayStore( new TransientReplayStore() );
-		$downloads       = new DownloadResolver( $releases, $policy, new DownloadTokenService( $download_secret ), $replay_store, $download_provider );
+		$ticket_store    = new \ManaCore\MusicWave\Core\Downloads\OpaqueTicketStore();
+		$downloads       = new DownloadResolver( $releases, $policy, new DownloadTokenService( $download_secret ), $replay_store, $download_provider, $ticket_store );
 
 		$metadata_resolver   = new MetadataResolver(
 			array(
 				new SpotifyProvider( (string) \ManaCore\MusicWave\Core\Support\Settings::get( 'spotify_client_id' ), (string) \ManaCore\MusicWave\Core\Support\Settings::get( 'spotify_client_secret' ) ),
-				new DiscogsProvider( (string) \ManaCore\MusicWave\Core\Support\Settings::get( 'discogs_token' ), (string) \ManaCore\MusicWave\Core\Support\Settings::get( 'discogs_secret' ) ),
+				new DiscogsProvider( (string) \ManaCore\MusicWave\Core\Support\Settings::get( 'discogs_token' ) ),
 				new MusicBrainzProvider(),
 			)
 		);
@@ -159,6 +175,8 @@ final class Plugin {
 		$library_catalog    = new LibraryCatalog( $library_repository, $visibility );
 
 		$playlists = new PlaylistRepository( new DatabasePlaylistStore(), $visibility );
+
+		$listening_repository = new \ManaCore\MusicWave\Core\Listening\ListeningRepository( $visibility );
 
 		$notification_preferences = new NotificationPreferences();
 
@@ -177,9 +195,9 @@ final class Plugin {
 				new ReleaseDefaults( $releases )
 			)
 		);
-		$registry->add( new Admin( new ReleaseMetaBox( $schema, $releases, $mapper ), new EditorAssets(), new ReleaseReadiness( $releases ), new CollectionCandidateRoutes(), new SettingsPage( new BulkAccessManager( $releases ) ) ) );
-		$registry->add( new Commerce( $mapper, new ProductReleasePanel( $mapper ), $purchase_checker, new AccountLibrary( $policy, $releases, $library_repository ) ) );
-		$registry->add( new Library( $library_repository, new LibraryRoutes( $library_repository, $library_catalog ), new LibraryBlocks( $library_repository, $library_catalog ), new PreSaveScheduler( $library_repository ) ) );
+		$registry->add( new Admin( new ReleaseMetaBox( $schema, $releases, $mapper ), new EditorAssets(), new ReleaseReadiness( $releases ), new CollectionCandidateRoutes(), new SettingsPage( new BulkAccessManager( $releases ), $playlists, $listening_repository ) ) );
+		$registry->add( new Commerce( $mapper, new ProductReleasePanel( $mapper ), new AccountLibrary( $policy, $releases, $library_repository ) ) );
+		$registry->add( new Library( $library_repository, new LibraryRoutes( $library_repository, $library_catalog ), new LibraryBlocks( $library_catalog ), new PreSaveScheduler( $library_repository ) ) );
 		$registry->add(
 			new Notifications(
 				new FollowNotifier( $library_repository, $notification_preferences, $visibility, new LibraryFollowerDirectory( $library_repository, $releases ) ),
@@ -187,11 +205,11 @@ final class Plugin {
 			)
 		);
 		$playlist_forms = new PlaylistFormHandler( $playlists );
-		$registry->add( new \ManaCore\MusicWave\Core\Modules\Playlists( $playlists, new PlaylistRoutes( $playlists ), $playlist_forms, new PlaylistBlocks( $playlists, $playlist_forms ) ) );
-		$registry->add( new Rendering( new ReleaseBlocks( $policy, $releases ), new ArtistProfileBlock(), new PreviewPlayer( $releases, $policy ), new PlaybackQueueRoutes( $policy, $releases ), new ReleaseRestVisibilityPolicy( $policy ) ) );
-		$registry->add( new Downloads( new DownloadRoutes( $downloads ), new DownloadAssetRoutes( $releases ), $replay_store ) );
+		$registry->add( new \ManaCore\MusicWave\Core\Modules\Playlists( $playlists, new PlaylistRoutes( $playlists, $policy, $releases ), $playlist_forms, new PlaylistBlocks( $playlists, $playlist_forms ) ) );
+		$registry->add( new Rendering( new ReleaseBlocks( $policy, $releases ), new ArtistProfileBlock(), new PreviewPlayer( $releases, $policy ), new PlaybackQueueRoutes( $policy, $releases ), new ReleaseRestVisibilityPolicy( $policy ), new ArtistShelfBlock(), new TaxonomyShelfBlock(), new TermHeroBlock() ) );
+		$registry->add( new Downloads( new DownloadRoutes( $downloads ), new DownloadAssetRoutes( $releases ), $replay_store, $ticket_store ) );
 		$registry->add( new Diagnostics( new DiagnosticsPage( new DemoContentImporter( $releases ) ), new SiteHealth() ) );
-		$listening_repository = new \ManaCore\MusicWave\Core\Listening\ListeningRepository( $visibility );
+		$queue_forms = new \ManaCore\MusicWave\Core\Listening\QueueFormHandler( $listening_repository );
 		$registry->add(
 			new \ManaCore\MusicWave\Core\Modules\Listening(
 				$listening_repository,
@@ -200,7 +218,10 @@ final class Plugin {
 					new \ManaCore\MusicWave\Core\Discovery\Recommendations( $listening_repository, $visibility ),
 					new \ManaCore\MusicWave\Core\Discovery\CatalogSearch( $visibility ),
 					new \ManaCore\MusicWave\Core\Discovery\DiscoveryRateLimiter()
-				)
+				),
+				new \ManaCore\MusicWave\Core\Blocks\ListeningBlocks( $listening_repository ),
+				$queue_forms,
+				new \ManaCore\MusicWave\Core\Blocks\QueueBlock( $listening_repository, $queue_forms )
 			)
 		);
 		$registry->add( new Seo( new ReleaseJsonLd( $releases, $visibility ), new ReleaseMetadata( $releases ) ) );

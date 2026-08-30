@@ -1,0 +1,149 @@
+/* ================================================================
+   Artists shelf block
+   Layouts: grid | horizontal scroll | compact list
+   Reuses the shared .mw-release-shelf chrome for the responsive
+   grid columns, header, and scroll behavior; only artist-card
+   specifics live here. All properties are logical (RTL-safe).
+   ================================================================ */
+
+.mw-artists-shelf__item {
+	display: flex;
+	flex-direction: column;
+	gap: 0;
+	text-align: center;
+}
+
+.mw-artists-shelf__avatar {
+	align-self: center;
+	aspect-ratio: 1;
+	background:
+		radial-gradient(circle at 25% 20%, color-mix(in srgb, var(--wp--preset--color--accent, #fa2d48) 45%, transparent), transparent 50%),
+		var(--mw-color-surface-raised, #242733);
+	block-size: auto;
+	box-shadow: 0 .75rem 2rem rgb(0 0 0 / 16%);
+	display: flex;
+	inline-size: min(100%, 11rem);
+	overflow: hidden;
+	position: relative;
+}
+
+.mw-artists-shelf__avatar--circle { border-radius: 50%; }
+.mw-artists-shelf__avatar--rounded { border-radius: var(--mw-radius-lg, 1rem); }
+.mw-artists-shelf__avatar--square { border-radius: 0; }
+
+.mw-artists-shelf__image,
+.mw-artists-shelf__initial {
+	block-size: 100%;
+	inline-size: 100%;
+	object-fit: cover;
+	transition: transform .35s ease;
+}
+
+.mw-artists-shelf__initial {
+	align-items: center;
+	color: var(--mw-color-text, #fff);
+	display: flex;
+	font-size: clamp(2.25rem, 6vw, 3.5rem);
+	font-weight: 800;
+	justify-content: center;
+}
+
+.mw-artists-shelf__avatar:is(:hover, :focus-visible) .mw-artists-shelf__image,
+.mw-artists-shelf__avatar:is(:hover, :focus-visible) .mw-artists-shelf__initial {
+	transform: scale(1.05);
+}
+
+.mw-artists-shelf__body {
+	display: grid;
+	gap: .2rem;
+	padding-block-start: .75rem;
+}
+
+.mw-artists-shelf__name {
+	font-size: 1rem;
+	line-height: 1.25;
+	margin: 0;
+}
+
+.mw-artists-shelf__name a {
+	color: inherit;
+	text-decoration: none;
+}
+
+.mw-artists-shelf__name a:is(:hover, :focus-visible) {
+	color: var(--wp--preset--color--accent, #fa2d48);
+}
+
+.mw-artists-shelf__count {
+	color: var(--mw-color-muted, #9ca3af);
+	font-size: .8125rem;
+	margin: 0;
+}
+
+.mw-artists-shelf__bio {
+	color: var(--mw-color-muted, #9ca3af);
+	display: -webkit-box;
+	-webkit-box-orient: vertical;
+	-webkit-line-clamp: 2;
+	font-size: .8125rem;
+	line-height: 1.55;
+	margin: .15rem 0 0;
+	overflow: hidden;
+}
+
+.mw-artists-shelf__follow {
+	display: flex;
+	justify-content: center;
+	margin-block-start: .35rem;
+}
+
+/* ---- Compact list layout ---- */
+.mw-release-shelf--list .mw-artists-shelf__item {
+	align-items: center;
+	border-block-end: 1px solid color-mix(in srgb, currentColor 12%, transparent);
+	display: grid;
+	gap: clamp(.75rem, 2vw, 1.25rem);
+	grid-template-columns: 4rem minmax(0, 1fr) auto;
+	padding-block: .65rem;
+	text-align: start;
+}
+
+.mw-release-shelf--list .mw-artists-shelf__avatar {
+	inline-size: 4rem;
+}
+
+.mw-release-shelf--list .mw-artists-shelf__body {
+	padding: 0;
+}
+
+.mw-release-shelf--list .mw-artists-shelf__follow {
+	margin-block-start: 0;
+}
+
+.mw-release-shelf--list .mw-artists-shelf__initial {
+	font-size: 1.25rem;
+}
+
+@media (max-width: 34rem) {
+	.mw-release-shelf--list .mw-artists-shelf__item {
+		grid-template-columns: 3.5rem minmax(0, 1fr);
+	}
+
+	.mw-release-shelf--list .mw-artists-shelf__follow {
+		grid-column: 2;
+		justify-content: start;
+	}
+}
+
+/* ---- Empty state ---- */
+.mw-artists-shelf__empty {
+	color: var(--mw-color-muted, #9ca3af);
+	margin: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.mw-artists-shelf__image,
+	.mw-artists-shelf__initial {
+		transition: none;
+	}
+}

@@ -21,9 +21,12 @@ use ManaCore\MusicWave\Core\Catalog\ReleaseVisibility;
 use ManaCore\MusicWave\Core\Library\LibraryRepository;
 
 final class FollowNotifier {
-	public const EVENT          = 'music_wave_notify_release';
+	public const EVENT             = 'music_wave_notify_release';
 	public const UNSUBSCRIBE_QUERY = 'mw-unsubscribe';
-	public const MAX_RECIPIENTS = 200;
+	public const MAX_RECIPIENTS    = 200;
+
+	/** Post meta marking a release as announced; republishes never re-notify. */
+	public const ANNOUNCED_META = 'mw_follow_announced_at';
 
 	/** @var NotificationPreferences */
 	private $preferences;
@@ -45,7 +48,7 @@ final class FollowNotifier {
 	 */
 	public function register(): void {
 		add_action( 'transition_post_status', array( $this, 'handle_transition' ), 20, 3 );
-		add_action( self::EVENT, array( $this, 'notify_release' ) );
+		add_action( self::EVENT, array( $this, 'notify_release' ), 10, 2 );
 		add_action( 'music_wave_presave_fulfilled', array( $this, 'notify_presave' ), 10, 2 );
 		add_action( 'template_redirect', array( $this, 'handle_unsubscribe' ) );
 	}
@@ -67,6 +70,11 @@ final class FollowNotifier {
 		}
 
 		$release_id = (int) $post->ID;
+		// A release is announced exactly once in its lifetime: republish
+		// cycles (publish → draft → publish) must not re-blast followers.
+		if ( '' !== (string) get_post_meta( $release_id, self::ANNOUNCED_META, true ) ) {
+			return;
+		}
 		if ( ! function_exists( 'wp_schedule_single_event' ) ) {
 			$this->notify_release( $release_id );
 
@@ -83,20 +91,31 @@ final class FollowNotifier {
 	/**
 	 * Notify followers of one newly published release.
 	 *
+	 * Audiences larger than MAX_RECIPIENTS are paged: each batch schedules the
+	 * next one with an offset so no follower is dropped by the cap.
+	 *
+	 * @param int $release_id Published release ID.
+	 * @param int $offset     Audience offset for continuation batches.
 	 * @return int Number of notifications sent.
 	 */
-	public function notify_release( int $release_id ): int {
+	public function notify_release( int $release_id, int $offset = 0 ): int {
 		if ( ! $this->visibility->is_public( $release_id ) ) {
+			return 0;
+		}
+		if ( $offset < 1 && '' !== (string) get_post_meta( $release_id, self::ANNOUNCED_META, true ) ) {
 			return 0;
 		}
 
 		$channel   = $this->is_podcast_episode( $release_id ) ? NotificationPreferences::CHANNEL_PODCAST : NotificationPreferences::CHANNEL_ARTIST_RELEASE;
+		$followers = array_values( $this->followers( $release_id ) );
 		$sent      = 0;
 		$notified  = array();
-		foreach ( $this->followers( $release_id ) as $user_id ) {
+		$processed = max( 0, $offset );
+		foreach ( array_slice( $followers, $processed ) as $user_id ) {
 			if ( count( $notified ) >= self::MAX_RECIPIENTS ) {
 				break;
 			}
+			++$processed;
 			if ( isset( $notified[ $user_id ] ) || ! $this->preferences->enabled( $user_id, $channel ) ) {
 				continue;
 			}
@@ -104,6 +123,14 @@ final class FollowNotifier {
 			if ( $this->send( $user_id, $release_id, $channel ) ) {
 				++$sent;
 			}
+		}
+
+		if ( $processed < count( $followers ) && function_exists( 'wp_schedule_single_event' ) ) {
+			// Continuation batch for the remaining audience.
+			wp_schedule_single_event( time() + 60, self::EVENT, array( $release_id, $processed ) );
+		}
+		if ( $offset < 1 ) {
+			update_post_meta( $release_id, self::ANNOUNCED_META, time() );
 		}
 
 		return $sent;

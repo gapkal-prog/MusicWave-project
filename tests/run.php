@@ -38,6 +38,9 @@ $GLOBALS['mw_test_term_queries']  = array(
 	'post'   => 0,
 );
 $GLOBALS['mw_test_synth_terms']   = array();
+$GLOBALS['mw_test_orders']        = array();
+$GLOBALS['mw_test_filters']       = array();
+$GLOBALS['mw_test_titles']        = array();
 
 final class WP_Post {
 	/** @var int */
@@ -67,6 +70,12 @@ final class WP_Term {
 
 	/** @var string */
 	public $slug;
+
+	/** @var int Published-object total maintained by core term counting. */
+	public $count = 0;
+
+	/** @var string Archive description stored on the term row. */
+	public $description = '';
 
 	public function __construct( int $term_id, string $taxonomy, string $name, string $slug ) {
 		$this->term_id  = $term_id;
@@ -187,7 +196,10 @@ function add_shortcode( string $tag, callable $callback ): void {
 }
 
 function apply_filters( string $hook, $value ) {
-	unset( $hook );
+	if ( isset( $GLOBALS['mw_test_filters'][ $hook ] ) ) {
+		return $GLOBALS['mw_test_filters'][ $hook ];
+	}
+
 	return $value;
 }
 
@@ -257,6 +269,10 @@ function check_admin_referer( string $action = '', string $name = '_wpnonce' ): 
 
 function wp_get_referer() {
 	return 'https://example.test/account/';
+}
+
+function did_action( string $hook ): int {
+	return 'plugins_loaded' === $hook ? 1 : 0;
 }
 
 function wp_safe_redirect( string $location, int $status = 302 ): bool {
@@ -348,6 +364,24 @@ function wp_trim_words( string $value, int $count, string $more = '…' ): strin
 	return implode( ' ', array_slice( $words, 0, $count ) ) . $more;
 }
 
+function sanitize_hex_color( $color ) {
+	if ( ! is_string( $color ) ) {
+		return '';
+	}
+	$color = trim( $color );
+	return 1 === preg_match( '/^#([A-Fa-f0-9]{3}){1,2}$/', $color ) ? $color : '';
+}
+
+function wpautop( string $text ): string {
+	$paragraphs = array_filter( array_map( 'trim', preg_split( '/\n{2,}/', (string) preg_replace( '/\r\n/', "\n", $text ) ) ) ?: array() );
+	return '<p>' . implode( "</p>\n<p>", $paragraphs ) . '</p>';
+}
+
+function term_description( $term, $taxonomy = '' ): string {
+	unset( $taxonomy );
+	return $term instanceof WP_Term && isset( $term->description ) ? (string) $term->description : '';
+}
+
 function absint( $value ): int {
 	return abs( (int) $value );
 }
@@ -365,6 +399,20 @@ function get_post_type( int $post_id ): string {
 	return isset( $GLOBALS['mw_test_types'][ $post_id ] ) ? $GLOBALS['mw_test_types'][ $post_id ] : '';
 }
 
+function post_type_exists( string $post_type ): bool {
+	return 'product' === $post_type || 'mw_release' === $post_type;
+}
+
+function wp_insert_post( array $post, bool $wp_error = false ) {
+	static $next_id      = 9000;
+	$post_id             = $next_id++;
+	$GLOBALS['mw_test_types'][ $post_id ] = isset( $post['post_type'] ) ? (string) $post['post_type'] : 'post';
+	$GLOBALS['mw_test_titles'][ $post_id ] = isset( $post['post_title'] ) ? (string) $post['post_title'] : '';
+	$GLOBALS['mw_test_statuses'][ $post_id ] = isset( $post['post_status'] ) ? (string) $post['post_status'] : 'draft';
+
+	return $post_id;
+}
+
 function get_post_status( int $post_id ) {
 	if ( '' === get_post_type( $post_id ) ) {
 		return false;
@@ -379,6 +427,10 @@ function current_user_can( string $capability, ...$arguments ): bool {
 }
 
 function get_the_title( int $post_id ): string {
+	if ( isset( $GLOBALS['mw_test_titles'][ $post_id ] ) ) {
+		return $GLOBALS['mw_test_titles'][ $post_id ];
+	}
+
 	return '' !== get_post_type( $post_id ) ? 'Release ' . $post_id : '';
 }
 
@@ -472,6 +524,10 @@ function esc_attr( string $value ): string {
 
 function esc_url( string $url ): string {
 	return $url;
+}
+
+function number_format_i18n( float $number, int $decimals = 0 ): string {
+	return number_format( $number, absint( $decimals ) );
 }
 
 function sanitize_html_class( string $value ): string {
@@ -570,6 +626,10 @@ function get_term_by( string $field, string $value, string $taxonomy ) {
 	return false;
 }
 
+function get_queried_object() {
+	return isset( $GLOBALS['mw_test_queried_object'] ) ? $GLOBALS['mw_test_queried_object'] : null;
+}
+
 function get_terms( array $arguments = array() ) {
 	$taxonomy = isset( $arguments['taxonomy'] ) ? (string) $arguments['taxonomy'] : '';
 	$include  = isset( $arguments['include'] ) && is_array( $arguments['include'] ) ? array_map( 'absint', $arguments['include'] ) : array();
@@ -592,6 +652,19 @@ function get_terms( array $arguments = array() ) {
 				}
 			)
 		);
+	}
+	if ( ! empty( $include ) && isset( $arguments['orderby'] ) && 'include' === $arguments['orderby'] ) {
+		$by_id = array();
+		foreach ( $terms as $term ) {
+			$by_id[ $term->term_id ] = $term;
+		}
+		$ordered = array();
+		foreach ( $include as $included_id ) {
+			if ( isset( $by_id[ $included_id ] ) ) {
+				$ordered[] = $by_id[ $included_id ];
+			}
+		}
+		$terms = $ordered;
 	}
 	if ( isset( $arguments['number'] ) ) {
 		$terms = array_slice( $terms, 0, (int) $arguments['number'] );
@@ -692,6 +765,26 @@ function get_user_meta( int $user_id, string $key, bool $single = false ) {
 }
 
 function update_user_meta( int $user_id, string $key, $value ) {
+	if ( isset( $GLOBALS['mw_test_meta_write_hook'] ) && is_callable( $GLOBALS['mw_test_meta_write_hook'] ) ) {
+		$hooked = call_user_func( $GLOBALS['mw_test_meta_write_hook'], 'update', $user_id, $key, $value );
+		if ( null !== $hooked ) {
+			return (bool) $hooked;
+		}
+	}
+	$GLOBALS['mw_test_user_meta'][ $user_id ][ $key ] = $value;
+	return true;
+}
+
+function add_user_meta( int $user_id, string $key, $value, bool $unique = false ): bool {
+	if ( isset( $GLOBALS['mw_test_meta_write_hook'] ) && is_callable( $GLOBALS['mw_test_meta_write_hook'] ) ) {
+		$hooked = call_user_func( $GLOBALS['mw_test_meta_write_hook'], 'add', $user_id, $key, $value );
+		if ( null !== $hooked ) {
+			return (bool) $hooked;
+		}
+	}
+	if ( $unique && isset( $GLOBALS['mw_test_user_meta'][ $user_id ][ $key ] ) ) {
+		return false;
+	}
 	$GLOBALS['mw_test_user_meta'][ $user_id ][ $key ] = $value;
 	return true;
 }
@@ -705,6 +798,56 @@ function wc_customer_bought_product( string $email, int $user_id, int $product_i
 	unset( $email );
 	$key = $user_id . ':' . $product_id;
 	return ! empty( $GLOBALS['mw_test_purchases'][ $key ] );
+}
+
+final class TestWcOrderItem {
+	/** @var int */
+	private $product_id;
+
+	/** @var int */
+	private $variation_id;
+
+	public function __construct( int $product_id, int $variation_id = 0 ) {
+		$this->product_id   = $product_id;
+		$this->variation_id = $variation_id;
+	}
+
+	public function get_product_id(): int {
+		return $this->product_id;
+	}
+
+	public function get_variation_id(): int {
+		return $this->variation_id;
+	}
+}
+
+final class TestWcOrder {
+	/** @var int */
+	private $customer_id;
+
+	/** @var array<int, TestWcOrderItem> */
+	private $items;
+
+	/**
+	 * @param array<int, TestWcOrderItem> $items Order line items.
+	 */
+	public function __construct( int $customer_id, array $items ) {
+		$this->customer_id = $customer_id;
+		$this->items       = $items;
+	}
+
+	public function get_customer_id(): int {
+		return $this->customer_id;
+	}
+
+	/** @return array<int, TestWcOrderItem> */
+	public function get_items(): array {
+		return $this->items;
+	}
+}
+
+function wc_get_order( int $order_id ) {
+	return isset( $GLOBALS['mw_test_orders'][ $order_id ] ) ? $GLOBALS['mw_test_orders'][ $order_id ] : false;
 }
 
 require dirname( __DIR__ ) . '/music-wave-core/src/Support/Autoloader.php';
@@ -1018,6 +1161,32 @@ final class TestPlaylistStore implements ManaCore\MusicWave\Core\Playlists\Playl
 			$this->replace_items( (int) $playlist_id, $kept );
 		}
 	}
+
+	/** @return array<int, array<string, mixed>> */
+	public function public_playlists( int $limit = 24, int $offset = 0, string $search = '', string $orderby = 'updated_at' ): array {
+		$rows = array();
+		foreach ( $this->rows as $row ) {
+			if ( 'public' !== ( $row['visibility'] ?? '' ) ) {
+				continue;
+			}
+			if ( '' !== $search && false === stripos( (string) ( $row['title'] ?? '' ), $search ) ) {
+				continue;
+			}
+			$rows[] = $row;
+		}
+		if ( 'title' === $orderby ) {
+			usort( $rows, static function ( $a, $b ): int { return strcmp( (string) ( $a['title'] ?? '' ), (string) ( $b['title'] ?? '' ) ); } );
+		} elseif ( 'created_at' === $orderby ) {
+			usort( $rows, static function ( $a, $b ): int { return (int) ( $b['created_at'] ?? 0 ) <=> (int) ( $a['created_at'] ?? 0 ); } );
+		} else {
+			usort( $rows, static function ( $a, $b ): int { return (int) ( $b['updated_at'] ?? 0 ) <=> (int) ( $a['updated_at'] ?? 0 ); } );
+		}
+		return array_slice( $rows, $offset, $limit );
+	}
+
+	public function count_public( string $search = '' ): int {
+		return count( $this->public_playlists( 1000, 0, $search ) );
+	}
 }
 
 final class TestMigration implements ManaCore\MusicWave\Core\Contracts\Migration {
@@ -1196,6 +1365,41 @@ $settings_update = ManaCore\MusicWave\Core\Support\Settings::sanitize(
 mw_assert_same( 'restricted', $settings_update['default_access_mode'], 'Saving one settings tab must preserve values from other tabs.' );
 mw_assert_same( 36, $settings_update['archive_per_page'], 'Settings updates must sanitize and apply the submitted value.' );
 mw_assert_same( 'Existing purchase message', $settings_update['purchase_message'], 'Partial settings submissions must preserve customer-facing messages.' );
+$GLOBALS['mw_test_options'][ ManaCore\MusicWave\Core\Support\Settings::OPTION ] = array();
+mw_assert_same( 30, ManaCore\MusicWave\Core\Support\Settings::all()['download_rate_limit'], 'Download rate limiting must default to the documented limit.' );
+mw_assert_same( 0, ManaCore\MusicWave\Core\Support\Settings::all()['download_daily_quota'], 'The daily delivery quota must stay disabled by default.' );
+mw_assert_same( 300, ManaCore\MusicWave\Core\Support\Settings::all()['discovery_cache_ttl'], 'Catalog discovery caching must default to five minutes.' );
+mw_assert_same( 180, ManaCore\MusicWave\Core\Support\Settings::all()['listening_retention_days'], 'Listening history must default to 180 days of retention.' );
+$delivery_out_of_bounds = ManaCore\MusicWave\Core\Support\Settings::sanitize(
+	array(
+		'download_rate_limit'      => 0,
+		'download_rate_window'     => 5,
+		'download_daily_quota'     => 99999,
+		'discovery_rate_limit'     => 999999,
+		'discovery_rate_window'    => 999999,
+		'discovery_cache_ttl'      => 10,
+		'listening_retention_days' => 0,
+	)
+);
+mw_assert_same( 30, $delivery_out_of_bounds['download_rate_limit'], 'Out-of-bounds download rate limits must fall back to the default.' );
+mw_assert_same( 60, $delivery_out_of_bounds['download_rate_window'], 'Out-of-bounds download rate windows must fall back to the default.' );
+mw_assert_same( 0, $delivery_out_of_bounds['download_daily_quota'], 'Out-of-bounds delivery quotas must fall back to the default.' );
+mw_assert_same( 60, $delivery_out_of_bounds['discovery_rate_limit'], 'Out-of-bounds discovery rate limits must fall back to the default.' );
+mw_assert_same( 60, $delivery_out_of_bounds['discovery_rate_window'], 'Out-of-bounds discovery rate windows must fall back to the default.' );
+mw_assert_same( 300, $delivery_out_of_bounds['discovery_cache_ttl'], 'Out-of-bounds discovery cache lifetimes must fall back to the default.' );
+mw_assert_same( 180, $delivery_out_of_bounds['listening_retention_days'], 'A zero retention window must fall back to the default.' );
+$delivery_valid = ManaCore\MusicWave\Core\Support\Settings::sanitize(
+	array(
+		'download_rate_limit'      => 60,
+		'download_daily_quota'     => 25,
+		'discovery_cache_ttl'      => 600,
+		'listening_retention_days' => 90,
+	)
+);
+mw_assert_same( 60, $delivery_valid['download_rate_limit'], 'A configured download rate limit must be stored.' );
+mw_assert_same( 25, $delivery_valid['download_daily_quota'], 'A configured daily delivery quota must be stored.' );
+mw_assert_same( 600, $delivery_valid['discovery_cache_ttl'], 'A configured discovery cache lifetime must be stored.' );
+mw_assert_same( 90, $delivery_valid['listening_retention_days'], 'A configured retention window must be stored.' );
 $GLOBALS['mw_test_options'][ ManaCore\MusicWave\Core\Support\Settings::OPTION ] = array();
 
 $GLOBALS['mw_test_types'][4] = 'mw_release';
@@ -1583,7 +1787,6 @@ mw_assert_same( false, $database_replays->consume( 'stage2-token', time() + 60 )
 
 // Token issuance rate limiting.
 $rate_limiter = new ManaCore\MusicWave\Core\Downloads\DownloadRateLimiter();
-mw_assert_same( false, $rate_limiter->allow( 0 ), 'Anonymous users must never pass the download rate limiter.' );
 $rate_allowed = 0;
 for ( $i = 0; $i < ManaCore\MusicWave\Core\Downloads\DownloadRateLimiter::DEFAULT_LIMIT + 5; $i++ ) {
 	if ( $rate_limiter->allow( 7 ) ) {
@@ -1989,7 +2192,7 @@ $membership        = new TestMembershipProvider();
 $engine            = new ManaCore\MusicWave\Core\Access\AccessPolicyEngine( $policy_repository, $checker, $membership );
 $anonymous         = new ManaCore\MusicWave\Core\Access\AccessSubject();
 $customer          = new ManaCore\MusicWave\Core\Access\AccessSubject( 7 );
-$administrator     = new ManaCore\MusicWave\Core\Access\AccessSubject( 1, array( 'administrator' ), array( 'manage_options' ) );
+$administrator     = new ManaCore\MusicWave\Core\Access\AccessSubject( 1, array( 'manage_options' ) );
 mw_assert_same( true, $engine->decide( 1, $anonymous )->is_allowed(), 'Public releases must allow anonymous visitors.' );
 $policy_repository->values['mw_access_mode'] = 'restricted';
 mw_assert_same( false, $engine->decide( 1, $anonymous )->is_allowed(), 'Restricted releases must deny anonymous visitors.' );
@@ -2193,6 +2396,586 @@ $GLOBALS['mw_test_meta'][3]['mw_release_date'] = gmdate( 'Y-m-d', time() - 86400
 mw_assert_same( '', ManaCore\MusicWave\Core\Library\LibraryButton::markup( 'presave', 3 ), 'A released item must not render a pre-save button.' );
 mw_assert_same( true, false !== strpos( ManaCore\MusicWave\Core\Library\LibraryButton::markup( 'wishlist', 4 ), 'data-mw-library-type="wishlist"' ), 'The wishlist button must post the wishlist item type.' );
 $GLOBALS['mw_test_current_user'] = 0;
+
+// --- Artists shelf and continue-listening presentation surfaces ---
+
+if ( ! defined( 'HOUR_IN_SECONDS' ) ) {
+	define( 'HOUR_IN_SECONDS', 3600 );
+}
+if ( ! defined( 'DAY_IN_SECONDS' ) ) {
+	define( 'DAY_IN_SECONDS', 86400 );
+}
+
+$shelf_terms_backup   = $GLOBALS['mw_test_terms'];
+$shelf_term_meta_bak  = isset( $GLOBALS['mw_test_term_meta'] ) ? $GLOBALS['mw_test_term_meta'] : array();
+$artists_shelf        = new ManaCore\MusicWave\Core\Blocks\ArtistShelfBlock();
+$shelf_aria           = wp_insert_term( 'Aria', 'mw_artist', array( 'slug' => 'aria' ) );
+$shelf_bo             = wp_insert_term( 'Bo', 'mw_artist', array( 'slug' => 'bo' ) );
+$shelf_caius          = wp_insert_term( 'Caius', 'mw_artist', array( 'slug' => 'cai' ) );
+$GLOBALS['mw_test_terms'][ $shelf_aria['term_id'] ]->count  = 12;
+$GLOBALS['mw_test_terms'][ $shelf_bo['term_id'] ]->count    = 3;
+$GLOBALS['mw_test_terms'][ $shelf_caius['term_id'] ]->count = 7;
+update_term_meta( (int) $shelf_aria['term_id'], 'mw_artist_biography', '<strong>Aria</strong> sings over waves of synth.' );
+
+$GLOBALS['mw_test_current_user'] = 9;
+$shelf_markup                    = $artists_shelf->render(
+	array(
+		'source'     => 'all',
+		'heading'    => 'Popular artists',
+		'imageShape' => 'circle',
+	)
+);
+$GLOBALS['mw_test_current_user'] = 0;
+mw_assert_same( true, false !== strpos( $shelf_markup, 'mw-artists-shelf mw-release-shelf mw-release-shelf--grid mw-release-shelf--columns-4' ), 'The artists shelf must reuse the shared release-shelf chrome with grid columns.' );
+mw_assert_same( true, false !== strpos( $shelf_markup, '>Popular artists</h2>' ), 'The artists shelf must render its heading chrome.' );
+foreach ( array( 'Aria', 'Bo', 'Caius' ) as $shelf_name ) {
+	mw_assert_same( true, false !== strpos( $shelf_markup, '>' . $shelf_name . '</a>' ), 'The artists shelf must render the artist name ' . $shelf_name . '.' );
+}
+mw_assert_same( true, false !== strpos( $shelf_markup, 'https://example.test/artist/' . $shelf_aria['term_id'] ), 'Artist cards must link to their archive pages.' );
+mw_assert_same( true, false !== strpos( $shelf_markup, 'mw-artists-shelf__avatar--circle' ), 'The avatar shape attribute must reach the markup.' );
+mw_assert_same( true, false !== strpos( $shelf_markup, 'mw-artists-shelf__initial' ), 'Artists without images must fall back to an initial-letter avatar.' );
+mw_assert_same( true, false !== strpos( $shelf_markup, 'data-mw-library-type="artist"' ), 'Every artist card must expose the shared follow-artist button.' );
+mw_assert_same( true, false !== strpos( $shelf_markup, '12 releases' ), 'Release counts must render from core term counts.' );
+mw_assert_same( true, false !== strpos( $shelf_markup, 'Aria sings over waves of synth.' ), 'Biography excerpts must strip inline tags.' );
+
+$limited_shelf = $artists_shelf->render( array( 'source' => 'all', 'itemsToShow' => 2, 'showFollowButton' => false, 'showHeading' => false ) );
+mw_assert_same( false, false !== strpos( $limited_shelf, '>Caius</a>' ), 'itemsToShow must bound how many artists render.' );
+mw_assert_same( false, false !== strpos( $limited_shelf, 'data-mw-library-type="artist"' ), 'Disabling the follow button must remove it from every card.' );
+
+$manual_shelf = $artists_shelf->render( array( 'source' => 'manual', 'artistIds' => $shelf_caius['term_id'] . ', ' . $shelf_aria['term_id'] . ', not-an-id', 'orderBy' => 'name' ) );
+mw_assert_same( true, strpos( $manual_shelf, '>Caius</a>' ) < strpos( $manual_shelf, '>Aria</a>' ), 'Hand-picked shelves must preserve the editor-chosen order.' );
+
+$GLOBALS['mw_test_filters']['music_wave_artists_shelf_terms'] = array( 'junk-not-a-term' );
+$junk_filtered = $artists_shelf->render( array() );
+mw_assert_same( true, false !== strpos( $junk_filtered, 'mw-artists-shelf__empty' ), 'Filtered-out junk must leave the shelf empty instead of fataling.' );
+mw_assert_same( true, false !== strpos( $junk_filtered, 'No artists to show yet.' ), 'The empty state must carry a translated default message.' );
+$GLOBALS['mw_test_filters']['music_wave_artists_shelf_terms'] = array();
+$_GET['context']                                              = 'edit';
+$shelf_placeholder                                            = $artists_shelf->render( array() );
+mw_assert_same( true, false !== strpos( $shelf_placeholder, 'mw-artists-shelf--placeholder' ), 'The editor must receive a placeholder instead of an error notice.' );
+unset( $_GET['context'], $GLOBALS['mw_test_filters']['music_wave_artists_shelf_terms'] );
+
+$taxonomy_shelf                      = new ManaCore\MusicWave\Core\Blocks\TaxonomyShelfBlock();
+$shelf_pop                           = wp_insert_term( 'Pop', 'mw_genre', array( 'slug' => 'pop' ) );
+$shelf_rock                          = wp_insert_term( 'Rock', 'mw_genre', array( 'slug' => 'rock' ) );
+$GLOBALS['mw_test_terms'][ $shelf_pop['term_id'] ]->count  = 21;
+$GLOBALS['mw_test_terms'][ $shelf_rock['term_id'] ]->count = 4;
+
+$terms_markup = $taxonomy_shelf->render(
+	array(
+		'taxonomy'  => 'mw_genre',
+		'source'    => 'all',
+		'heading'   => 'Explore every genre',
+		'cardStyle' => 'colorful',
+	)
+);
+mw_assert_same( true, false !== strpos( $terms_markup, 'mw-terms-shelf mw-release-shelf mw-release-shelf--grid mw-release-shelf--columns-4' ), 'The taxonomy shelf must reuse the shared release-shelf chrome.' );
+mw_assert_same( true, false !== strpos( $terms_markup, '>Pop</span>' ), 'The taxonomy shelf must render term names.' );
+mw_assert_same( true, false !== strpos( $terms_markup, '21 releases' ), 'The taxonomy shelf must render release counts from term counts.' );
+mw_assert_same( true, false !== strpos( $terms_markup, 'mw-terms-shelf__tile--hue-1' ) && false !== strpos( $terms_markup, 'mw-terms-shelf__tile--hue-2' ), 'Colorful tiles must cycle through curated hues deterministically.' );
+mw_assert_same( true, false !== strpos( $terms_markup, 'aria-label="Browse Pop"' ), 'Tiles must carry accessible browse labels.' );
+mw_assert_same( true, false !== strpos( $terms_markup, 'https://example.test/artist/' ) || false !== strpos( $terms_markup, 'href=' ), 'Tiles must link to their archives.' );
+
+$shelf_calm = wp_insert_term( 'Calm', 'mw_mood', array( 'slug' => 'calm' ) );
+$GLOBALS['mw_test_terms'][ $shelf_calm['term_id'] ]->count = 9;
+$plain_terms = $taxonomy_shelf->render( array( 'taxonomy' => 'mw_mood', 'cardStyle' => 'plain', 'showCount' => false, 'itemsToShow' => 24, 'layout' => 'scroll' ) );
+mw_assert_same( true, false !== strpos( $plain_terms, '>Calm</span>' ), 'The taxonomy attribute must scope which terms render.' );
+mw_assert_same( true, false !== strpos( $plain_terms, 'mw-terms-shelf__tile--style-plain' ), 'The plain tile style must reach the markup.' );
+mw_assert_same( false, false !== strpos( $plain_terms, '>Rock</span>' ), 'Genre terms must never leak into mood shelves.' );
+mw_assert_same( false, false !== strpos( $plain_terms, 'mw-terms-shelf__count' ), 'Disabling counts must remove them from tiles.' );
+
+$manual_terms = $taxonomy_shelf->render( array( 'taxonomy' => 'mw_genre', 'source' => 'manual', 'termIds' => $shelf_rock['term_id'] . ', ' . $shelf_pop['term_id'], 'layout' => 'list', 'cardStyle' => 'plain' ) );
+mw_assert_same( true, strpos( $manual_terms, '>Rock</span>' ) < strpos( $manual_terms, '>Pop</span>' ), 'Hand-picked taxonomy shelves must preserve editor order.' );
+mw_assert_same( true, false !== strpos( $manual_terms, 'mw-release-shelf--list' ), 'List layout must apply its modifier class.' );
+
+$GLOBALS['mw_test_filters']['music_wave_terms_shelf_terms'] = array();
+$empty_terms                                                = $taxonomy_shelf->render( array( 'emptyMessage' => 'No genres yet.', 'taxonomy' => 'mw_label' ) );
+mw_assert_same( true, false !== strpos( $empty_terms, 'mw-terms-shelf__empty' ), 'Empty taxonomy shelves must render an empty state.' );
+mw_assert_same( true, false !== strpos( $empty_terms, 'No genres yet.' ), 'The empty-state override must apply to taxonomy shelves.' );
+unset( $GLOBALS['mw_test_filters']['music_wave_terms_shelf_terms'] );
+
+$term_hero = new ManaCore\MusicWave\Core\Blocks\TermHeroBlock();
+$hero_aria = $GLOBALS['mw_test_terms'][ $shelf_aria['term_id'] ];
+update_term_meta( (int) $shelf_aria['term_id'], 'mw_artist_biography', 'Aria sings over deep synth waves every night on stage.' );
+
+// Archive mode: the queried artist term drives the banner automatically.
+$GLOBALS['mw_test_queried_object'] = $hero_aria;
+$GLOBALS['mw_test_current_user']   = 9;
+$hero_markup                       = $term_hero->render( array( 'layout' => 'banner', 'size' => 'tall' ) );
+$GLOBALS['mw_test_current_user']   = 0;
+mw_assert_same( true, false !== strpos( $hero_markup, 'mw-term-hero mw-term-hero--banner mw-term-hero--size-tall' ), 'The term hero must render its banner layout classes.' );
+mw_assert_same( true, false !== strpos( $hero_markup, '<h1 class="mw-term-hero__name">Aria</h1>' ), 'The hero must render the term name as the page heading.' );
+mw_assert_same( true, false !== strpos( $hero_markup, '>Artist</p>' ), 'The taxonomy eyebrow must be translated and rendered.' );
+mw_assert_same( true, false !== strpos( $hero_markup, '12 releases' ), 'The hero must carry the release count badge.' );
+mw_assert_same( true, false !== strpos( $hero_markup, 'Aria sings over deep synth waves every night on stage.' ), 'Artist biography must feed the description.' );
+mw_assert_same( true, false !== strpos( $hero_markup, 'data-mw-library-type="artist"' ), 'Artist heroes must expose the follow control.' );
+
+$GLOBALS['mw_test_current_user'] = 9;
+$hero_follow                     = $term_hero->render( array() );
+$GLOBALS['mw_test_current_user'] = 0;
+mw_assert_same( true, false !== strpos( $hero_follow, 'aria-pressed=' ), 'The hero follow button must expose its pressed state for signed-in listeners.' );
+
+$hero_excerpt = $term_hero->render( array( 'descriptionLength' => 5 ) );
+mw_assert_same( true, false !== strpos( $hero_excerpt, 'Aria sings over deep synth…' ), 'Description length must trim long biographies.' );
+
+// Genre heroes: no biography meta, no follow button, hue fallback media.
+$GLOBALS['mw_test_queried_object'] = $GLOBALS['mw_test_terms'][ $shelf_pop['term_id'] ];
+$hero_pop                          = $term_hero->render( array() );
+mw_assert_same( true, is_string( $hero_pop ) && false !== strpos( (string) $hero_pop, '>Genre</p>' ), 'Genre heroes must use the genre eyebrow.' );
+mw_assert_same( true, false === strpos( (string) $hero_pop, 'data-mw-library-type="artist"' ), 'Non-artist terms must not render a follow control.' );
+mw_assert_same( true, false !== strpos( (string) $hero_pop, 'mw-term-hero--hue-' ), 'Terms without cover art must fall back to curated hues.' );
+
+// Pinned term anywhere: explicit taxonomy + ID resolve off-archive.
+unset( $GLOBALS['mw_test_queried_object'] );
+$hero_pinned = $term_hero->render( array( 'taxonomy' => 'mw_artist', 'termId' => $shelf_aria['term_id'], 'layout' => 'compact' ) );
+mw_assert_same( true, false !== strpos( $hero_pinned, 'mw-term-hero--compact' ), 'The compact layout must render when selected.' );
+mw_assert_same( true, false !== strpos( $hero_pinned, '<h1 class="mw-term-hero__name">Aria</h1>' ), 'Pinned heroes must resolve their term by ID.' );
+
+// Silence on unrelated routes keeps other templates intact.
+mw_assert_same( '', $term_hero->render( array() ), 'Without a supported queried term the hero must stay silent on the frontend.' );
+$_GET['context']      = 'edit';
+$hero_placeholder     = $term_hero->render( array() );
+mw_assert_same( true, false !== strpos( $hero_placeholder, 'mw-term-hero--placeholder' ), 'The editor must receive a placeholder instead of an empty preview.' );
+unset( $_GET['context'] );
+
+// --- Playback queue: no-JS manager over the durable listening queue ---
+
+$queue_repo   = new ManaCore\MusicWave\Core\Listening\ListeningRepository( $visibility );
+$queue_forms  = new ManaCore\MusicWave\Core\Listening\QueueFormHandler( $queue_repo );
+$queue_block  = new ManaCore\MusicWave\Core\Blocks\QueueBlock( $queue_repo, $queue_forms );
+
+mw_assert_same( 'guest', $queue_forms->run( 'clear', 0 ), 'Signed-out visitors must receive the guest notice code.' );
+
+$GLOBALS['mw_test_current_user'] = 7;
+$queue_repo->save_queue(
+	7,
+	array(
+		'ids'      => array( 2, 3, 5 ),
+		'position' => 1,
+	)
+);
+mw_assert_same( array( 2, 3 ), $queue_repo->queue( 7 )['ids'], 'The queue must keep only readable releases before any mutation.' );
+
+mw_assert_same( 'moved', $queue_forms->run( 'move-up', 7, 3 ), 'Move up must succeed inside bounds.' );
+mw_assert_same( array( 3, 2 ), $queue_repo->queue( 7 )['ids'], 'Move up must swap exactly one position.' );
+mw_assert_same( 'move-failed', $queue_forms->run( 'move-up', 7, 3 ), 'Moving the first item up must fail instead of wrapping.' );
+mw_assert_same( 'move-failed', $queue_forms->run( 'move-down', 7, 2 ), 'Moving the last item down must fail instead of wrapping.' );
+mw_assert_same( 'moved', $queue_forms->run( 'move-down', 7, 3 ), 'Move down must succeed inside bounds.' );
+mw_assert_same( 'item-removed', $queue_forms->run( 'remove-item', 7, 2 ), 'Remove must drop one queued release.' );
+mw_assert_same( array( 3 ), $queue_repo->queue( 7 )['ids'], 'Removal must persist exactly one change.' );
+mw_assert_same( 'item-remove-failed', $queue_forms->run( 'remove-item', 7, 2 ), 'Removing an unqueued release must fail cleanly.' );
+
+mw_assert_same( 'shuffle-updated', $queue_forms->run( 'shuffle', 7, 0, 'on' ), 'Shuffle must persist as a preference.' );
+mw_assert_same( true, $queue_repo->queue( 7 )['shuffle'], 'Shuffle preference must survive a reload.' );
+mw_assert_same( 'repeat-updated', $queue_forms->run( 'repeat', 7, 0, 'all' ), 'Repeat must accept its documented modes.' );
+mw_assert_same( 'all', $queue_repo->queue( 7 )['repeat'], 'Repeat mode must survive a reload.' );
+mw_assert_same( 'repeat-failed', $queue_forms->run( 'repeat', 7, 0, 'sometimes' ), 'Unknown repeat modes must fail closed.' );
+mw_assert_same( 'invalid', $queue_forms->run( 'explode', 7 ), 'Unknown operations must be rejected.' );
+
+mw_assert_same( true, '' !== $queue_forms->notice_message( 'cleared' ) && '' === $queue_forms->notice_message( 'unknown-code' ), 'Notice codes must resolve to translated text or nothing.' );
+mw_assert_same( true, $queue_forms->notice_is_error( 'move-failed' ) && ! $queue_forms->notice_is_error( 'moved' ), 'Failure notices must be flagged while successes are not.' );
+
+$queue_repo->save_queue(
+	7,
+	array(
+		'ids'      => array( 2, 3 ),
+		'position' => 0,
+	)
+);
+$queue_markup_user = $queue_block->render( array() );
+mw_assert_same( true, false !== strpos( $queue_markup_user, 'method="post"' ), 'Every queue control must work as a plain form post without JavaScript.' );
+mw_assert_same( true, false !== strpos( $queue_markup_user, '_wpnonce' ), 'Queue forms must carry a nonce field.' );
+mw_assert_same( true, false !== strpos( $queue_markup_user, 'name="mw_operation" value="move-up"' ), 'Rows must expose reorder controls.' );
+mw_assert_same( true, false !== strpos( $queue_markup_user, 'aria-label="' ), 'Row buttons must carry per-title screen-reader labels.' );
+mw_assert_same( true, false !== strpos( $queue_markup_user, 'value="shuffle"' ) && false !== strpos( $queue_markup_user, 'value="repeat"' ), 'Preference controls must post shuffle and repeat.' );
+mw_assert_same( true, false !== strpos( $queue_markup_user, '>Clear queue</button>' ), 'The clear control must be rendered when enabled.' );
+
+$queue_minimal = $queue_block->render( array( 'showControls' => false, 'showClear' => false, 'showPosition' => false ) );
+mw_assert_same( false, false !== strpos( $queue_minimal, 'mw-playback-queue__controls' ), 'Disabling preferences must remove them.' );
+mw_assert_same( false, false !== strpos( $queue_minimal, 'Clear queue' ), 'Disabling clear must remove it.' );
+mw_assert_same( false, false !== strpos( $queue_minimal, 'mw-playback-queue__position' ), 'Disabling positions must remove them.' );
+
+mw_assert_same( 'cleared', $queue_forms->run( 'clear', 7 ), 'Clearing must empty the whole queue.' );
+$queue_empty = $queue_block->render( array( 'emptyMessage' => 'Nothing queued right now.' ) );
+mw_assert_same( true, false !== strpos( $queue_empty, 'Nothing queued right now.' ), 'The empty-state override must apply to the queue.' );
+
+$GLOBALS['mw_test_current_user'] = 0;
+$queue_guest                     = $queue_block->render( array() );
+mw_assert_same( true, false !== strpos( $queue_guest, 'mw-playback-queue--guest' ), 'Guests must see the queue sign-in panel.' );
+mw_assert_same( false, false !== strpos( $queue_guest, 'mw_operation' ), 'Guests must not receive queue mutation forms.' );
+
+// --- Add-to-queue control: "Play next" from any release surface ---
+
+$GLOBALS['mw_test_current_user'] = 7;
+$queue_repo->save_queue( 7, array( 'ids' => array( 2 ), 'position' => 0 ) );
+mw_assert_same( 'added', $queue_forms->run( 'add', 7, 3, 'next' ), 'Play next must insert right after the current position.' );
+mw_assert_same( array( 2, 3 ), $queue_repo->queue( 7 )['ids'], 'The next-position insert must land after the current item.' );
+mw_assert_same( 'already-queued', $queue_forms->run( 'add', 7, 2 ), 'A duplicate enqueue must report an honest already-queued notice.' );
+mw_assert_same( 'added', $queue_forms->run( 'add', 7, 4, 'end' ), 'End inserts append to the queue tail.' );
+mw_assert_same( array( 2, 3, 4 ), $queue_repo->queue( 7 )['ids'], 'End inserts must keep existing order.' );
+mw_assert_same( 'add-failed', $queue_forms->run( 'add', 7, 5, 'next' ), 'Unreadable releases must fail instead of reporting fake success.' );
+mw_assert_same( 'add-failed', $queue_forms->run( 'add', 7, 0, 'next' ), 'Missing release IDs must fail cleanly.' );
+
+$GLOBALS['mw_test_types'][21]       = 'mw_release';
+$GLOBALS['mw_test_statuses'][21]    = 'publish';
+$GLOBALS['mw_test_titles'][21]      = 'Queueable single';
+$GLOBALS['mw_test_terms_by_tax'][21] = array(
+	'mw_artist' => array(),
+	'mw_genre'  => array(),
+);
+
+$add_markup = $queue_block->render_add( array( 'releaseId' => 21 ) );
+mw_assert_same( true, false !== strpos( $add_markup, 'name="mw_operation" value="add"' ), 'The add control must post the add operation.' );
+mw_assert_same( true, false !== strpos( $add_markup, 'name="mw_release_id" value="21"' ), 'The add control must carry its target release.' );
+mw_assert_same( true, false !== strpos( $add_markup, 'name="mw_value" value="next"' ), 'The default position must be play-next.' );
+mw_assert_same( true, false !== strpos( $add_markup, '_wpnonce' ), 'The add control must carry a nonce.' );
+
+$add_end = $queue_block->render_add( array( 'releaseId' => 21, 'position' => 'end', 'label' => 'Queue it' ) );
+mw_assert_same( true, false !== strpos( $add_end, 'name="mw_value" value="end"' ), 'The position override must reach the form.' );
+mw_assert_same( true, false !== strpos( $add_end, '>Queue it</button>' ), 'Custom labels must override the defaults.' );
+
+$queue_forms->run( 'add', 7, 21, 'next' );
+$add_queued = $queue_block->render_add( array( 'releaseId' => 21 ) );
+mw_assert_same( true, false !== strpos( $add_queued, 'mw-add-to-queue--queued' ), 'Queued releases must show the in-queue badge.' );
+mw_assert_same( false, false !== strpos( $add_queued, 'mw_operation' ), 'Queued releases must not render another mutation form.' );
+
+$GLOBALS['mw_test_current_user'] = 0;
+$add_guest                       = $queue_block->render_add( array( 'releaseId' => 21 ) );
+mw_assert_same( true, false !== strpos( $add_guest, 'mw-add-to-queue--guest' ), 'Guests must see a sign-in button instead of mutation forms.' );
+mw_assert_same( false, false !== strpos( $add_guest, 'mw_operation' ), 'Guests must never receive the add form.' );
+
+$listening_blocks = new ManaCore\MusicWave\Core\Blocks\ListeningBlocks( new ManaCore\MusicWave\Core\Listening\ListeningRepository() );
+$listening_guest  = $listening_blocks->render( array() );
+mw_assert_same( true, false !== strpos( $listening_guest, 'mw-continue-listening--guest' ), 'Signed-out visitors must see the continue-listening sign-in state.' );
+mw_assert_same( false, false !== strpos( $listening_guest, 'data-mw-listening-consent' ), 'Guests must never receive the consent control.' );
+
+$GLOBALS['mw_test_current_user'] = 9;
+$listening_consent               = $listening_blocks->render( array() );
+mw_assert_same( true, false !== strpos( $listening_consent, 'mw-continue-listening--consent' ), 'Opted-out listeners must see the one-click consent panel.' );
+$GLOBALS['mw_test_user_meta'][9][ ManaCore\MusicWave\Core\Listening\ListeningRepository::CONSENT_META ] = '1';
+$listening_empty = $listening_blocks->render( array( 'emptyMessage' => 'Nothing here yet.' ) );
+mw_assert_same( true, false !== strpos( $listening_empty, 'mw-continue-listening--empty' ), 'Consenting listeners without history must see the empty state.' );
+mw_assert_same( true, false !== strpos( $listening_empty, 'Nothing here yet.' ), 'The empty-state message override must apply.' );
+$GLOBALS['mw_test_current_user']                                                                    = 0;
+$GLOBALS['mw_test_user_meta'][9][ ManaCore\MusicWave\Core\Listening\ListeningRepository::CONSENT_META ] = '0';
+
+$GLOBALS['mw_test_terms']      = $shelf_terms_backup;
+$GLOBALS['mw_test_term_meta']  = $shelf_term_meta_bak;
+
+// --- WooCommerce plan products as VIP membership (PROJECT_PLAN.md Stage 3 lifecycle parity) ---
+
+$parsed = ManaCore\MusicWave\Vip\VipPlans::parse_plan_rows( "vipgold:50\ngold365: 60 , 61 :365\n# comment\nbroken\n :99\nsilver:abc" );
+mw_assert_same( 2, count( $parsed ), 'Plan rows must keep only well-formed level:level-to-product bindings.' );
+mw_assert_same( 'vipgold', $parsed[0]['level'], 'Plan levels must stay verbatim after parsing.' );
+mw_assert_same( array( 50 ), $parsed[0]['product_ids'], 'Single-product plans must normalize their IDs.' );
+mw_assert_same( 0, $parsed[0]['duration_days'], 'Plans without a duration must mean lifetime membership.' );
+mw_assert_same( array( 60, 61 ), $parsed[1]['product_ids'], 'Comma-separated product lists must normalize.' );
+mw_assert_same( 365, $parsed[1]['duration_days'], 'Plan durations must parse as bounded days.' );
+mw_assert_same(
+	array( 'vipgold:50', 'gold365:60,61:365' ),
+	ManaCore\MusicWave\Vip\VipPlans::plan_rows_for_display( $parsed ),
+	'Plan rows must round-trip through the canonical display format.'
+);
+
+$vip_clock     = 1700000000;
+$vip_plans_now = function () use ( &$vip_clock ): int {
+	return $vip_clock;
+};
+$vip_engine    = new ManaCore\MusicWave\Vip\VipPlans(
+	array(
+		'vipgold' => array(
+			'product_ids'   => array( 50 ),
+			'duration_days' => 0,
+		),
+		'gold365' => array(
+			'product_ids'   => array( 60, 61 ),
+			'duration_days' => 365,
+		),
+	),
+	false,
+	$vip_plans_now
+);
+
+$GLOBALS['mw_test_orders'][501] = new TestWcOrder( 7, array( new TestWcOrderItem( 50 ), new TestWcOrderItem( 60, 62 ) ) );
+$GLOBALS['mw_test_orders'][502] = new TestWcOrder( 0, array( new TestWcOrderItem( 50 ) ) );
+mw_assert_same( 0, $vip_engine->grant_for_order( 502 ), 'Guest orders must never receive a VIP grant.' );
+mw_assert_same( 0, $vip_engine->grant_for_order( 999 ), 'Unknown orders must fail closed.' );
+mw_assert_same( 2, $vip_engine->grant_for_order( 501 ), 'One paid order must grant every matching plan level.' );
+mw_assert_same( true, $vip_engine->user_has_access( 7, 'vipgold' ), 'A lifetime plan grant must be active immediately.' );
+mw_assert_same( true, $vip_engine->user_has_access( 7, 'gold365' ), 'A timed plan grant must be active before expiry.' );
+mw_assert_same( false, $vip_engine->user_has_access( 7, 'silver' ), 'Unpurchased levels must stay denied.' );
+mw_assert_same( true, in_array( 'music_wave_vip_plan_granted', $GLOBALS['mw_test_actions'], true ), 'Plan grants must fire the notification action.' );
+mw_assert_same( array( 'gold365', 'vipgold' ), $vip_engine->active_levels( 7 ), 'Active levels must list every live grant.' );
+
+mw_assert_same( 2, $vip_engine->grant_for_order( 501 ), 'Reprocessing the same order must renew the purchase grants, not stack new ones.' );
+$vip_stored_grants = $vip_engine->grants_for_user( 7 );
+mw_assert_same( 1, count( $vip_stored_grants['gold365'] ), 'Grant rows must stay one-per-order.' );
+mw_assert_same( array( 501 ), array_map( static function ( $entry ) {
+	return $entry['order_id'];
+}, $vip_stored_grants['gold365'] ), 'Re-granting must renew the existing order grant in place.' );
+
+$vip_clock += 366 * 86400;
+mw_assert_same( false, $vip_engine->user_has_access( 7, 'gold365' ), 'Timed plan grants must expire without a sweep.' );
+mw_assert_same( true, $vip_engine->user_has_access( 7, 'vipgold' ), 'Lifetime grants must survive timed-grant expiry.' );
+mw_assert_same( array( 'vipgold' ), $vip_engine->active_levels( 7 ), 'Expired grants must drop out of the active level list.' );
+mw_assert_same( false, isset( $GLOBALS['mw_test_user_meta'][7][ ManaCore\MusicWave\Vip\VipPlans::GRANTS_META_KEY ]['gold365'] ), 'Expired grant rows must be pruned in place.' );
+
+$GLOBALS['mw_test_orders'][501] = new TestWcOrder( 7, array( new TestWcOrderItem( 50 ) ) );
+mw_assert_same( 1, $vip_engine->revoke_for_order( 501 ), 'Refunded orders must revoke their plan grants.' );
+mw_assert_same( false, $vip_engine->user_has_access( 7, 'vipgold' ), 'Revoked plans must stop granting access immediately.' );
+mw_assert_same( array(), $vip_engine->active_levels( 7 ), 'Revocation must empty the active level list.' );
+mw_assert_same( false, isset( $GLOBALS['mw_test_user_meta'][7][ ManaCore\MusicWave\Vip\VipPlans::GRANTS_META_KEY ] ), 'Revoked grants must not linger in user meta.' );
+mw_assert_same( true, in_array( 'music_wave_vip_plan_revoked', $GLOBALS['mw_test_actions'], true ), 'Plan revocation must fire the notification action.' );
+
+$GLOBALS['mw_test_user_meta'][7][ ManaCore\MusicWave\Vip\VipPlans::GRANTS_META_KEY ] = 'corrupted-host-data';
+mw_assert_same( false, $vip_engine->user_has_access( 7, 'vipgold' ), 'Corrupted grant payloads must fail closed.' );
+mw_assert_same( false, isset( $GLOBALS['mw_test_user_meta'][7][ ManaCore\MusicWave\Vip\VipPlans::GRANTS_META_KEY ] ), 'Corrupted grant payloads must be removed.' );
+
+// Settings round-trip: textarea parsing, preservation, and explicit clearing.
+$GLOBALS['mw_test_options'][ ManaCore\MusicWave\Vip\VipSettings::OPTION ] = array();
+$saved_vip_settings = ManaCore\MusicWave\Vip\VipSettings::sanitize(
+	array(
+		'plan_rows'        => "vipgold:50\ngold365:60:365",
+		'promote_vip_role' => 'enabled',
+	)
+);
+mw_assert_same( 2, count( $saved_vip_settings['vip_plans'] ), 'Saving VIP settings must normalize plan rows.' );
+mw_assert_same( "vipgold:50\ngold365:60:365", $saved_vip_settings['plan_rows'], 'Saved settings must render back the canonical textarea value.' );
+mw_assert_same( true, in_array( 'woocommerce_plans', (array) $saved_vip_settings['membership_sources'], true ), 'The plan source must be available by default.' );
+$GLOBALS['mw_test_options'][ ManaCore\MusicWave\Vip\VipSettings::OPTION ] = $saved_vip_settings;
+
+$partial_vip_settings = ManaCore\MusicWave\Vip\VipSettings::sanitize( array( 'delivery_provider' => 'local' ) );
+mw_assert_same( 2, count( $partial_vip_settings['vip_plans'] ), 'Partial settings saves must preserve configured plans.' );
+$cleared_vip_settings = ManaCore\MusicWave\Vip\VipSettings::sanitize( array( 'plan_rows' => '' ) );
+mw_assert_same( array(), $cleared_vip_settings['vip_plans'], 'An emptied plan list must clear every plan.' );
+$GLOBALS['mw_test_options'][ ManaCore\MusicWave\Vip\VipSettings::OPTION ] = $saved_vip_settings;
+
+// The configurable provider exposes plan grants through the shared source.
+// Stored grants remain authoritative even after a plan leaves the settings:
+// config controls new purchases, live grant rows control access.
+$GLOBALS['mw_test_orders'][503] = new TestWcOrder( 7, array( new TestWcOrderItem( 60 ) ) );
+$vip_plan_provider  = new ManaCore\MusicWave\Vip\VipPlans(
+	ManaCore\MusicWave\Vip\VipPlans::index_plans( $saved_vip_settings['vip_plans'] ),
+	false,
+	$vip_plans_now
+);
+$vip_plan_provider->grant_for_order( 503 );
+$vip_membership_a = new ManaCore\MusicWave\Vip\ConfigurableMembershipProvider( array( 'woocommerce_plans' ), $vip_plan_provider );
+mw_assert_same( true, $vip_membership_a->has_access( 7, array( 'gold365' ) ), 'Plan purchases must satisfy membership-gated releases.' );
+$vip_membership_b = new ManaCore\MusicWave\Vip\ConfigurableMembershipProvider( array( 'role' ), $vip_plan_provider );
+mw_assert_same( false, $vip_membership_b->has_access( 7, array( 'gold365' ) ), 'Disabling the plan source must withhold plan access.' );
+
+// Fail closed: no plan source, or a user without grant rows.
+$GLOBALS['mw_test_users'][6] = (object) array(
+	'user_email' => 'plain@example.test',
+	'roles'      => array(),
+);
+$vip_membership_c = new ManaCore\MusicWave\Vip\ConfigurableMembershipProvider( array( 'woocommerce_plans' ) );
+mw_assert_same( false, $vip_membership_c->has_access( 6, array( 'gold365' ) ), 'Users without plan grants must stay denied.' );
+
+// End-to-end: a plain registered user stays denied while a plan holder
+// unlocks a membership-gated release through Core's policy engine.
+$GLOBALS['mw_test_options'][ ManaCore\MusicWave\Vip\VipSettings::OPTION ] = $saved_vip_settings;
+$vip_level_repository = new TestPolicyRepository();
+$vip_level_repository->values['mw_access_mode']       = 'membership';
+$vip_level_repository->values['mw_membership_levels'] = array( 'gold365' );
+$vip_policy_engine    = new ManaCore\MusicWave\Core\Access\AccessPolicyEngine(
+	$vip_level_repository,
+	new ManaCore\MusicWave\Core\Commerce\PurchaseChecker( $vip_level_repository ),
+	$vip_membership_a
+);
+$vip_plain_customer   = new ManaCore\MusicWave\Core\Access\AccessSubject( 6 );
+mw_assert_same( false, $vip_policy_engine->decide( 1, $vip_plain_customer )->is_allowed(), 'Simple users must stay denied on membership-gated releases.' );
+mw_assert_same( true, $vip_policy_engine->decide( 1, $customer )->is_allowed(), 'Plan purchasers must unlock membership-gated releases.' );
+// --- Concurrency regression: two simultaneous order hooks must both persist ---
+//
+// The meta write hook re-enters the grant engine once, simulating a second
+// completed order landing between the first hook's meta read and meta write.
+// Without compare-and-set, the second write is clobbered by the first.
+$GLOBALS['mw_test_orders'][601] = new TestWcOrder( 9, array( new TestWcOrderItem( 50 ) ) );
+$GLOBALS['mw_test_orders'][602] = new TestWcOrder( 9, array( new TestWcOrderItem( 60 ) ) );
+$vip_race_engine                = new ManaCore\MusicWave\Vip\VipPlans(
+	ManaCore\MusicWave\Vip\VipPlans::index_plans( $saved_vip_settings['vip_plans'] ),
+	false,
+	$vip_plans_now
+);
+$GLOBALS['mw_test_meta_write_hook'] = static function ( string $operation, int $user_id, string $key, $value ): ?bool {
+	unset( $operation, $value );
+	static $reentered = false;
+	if (
+		! $reentered
+		&& 9 === $user_id
+		&& ManaCore\MusicWave\Vip\VipPlans::GRANTS_META_KEY === $key
+	) {
+		// A second completed order lands between the first hook's meta read
+		// and meta write; both grants must survive.
+		$reentered                        = true;
+		$GLOBALS['mw_test_meta_write_hook'] = null;
+		$second                           = ManaCore\MusicWave\Vip\VipPlans::from_settings( $GLOBALS['mw_test_options'][ ManaCore\MusicWave\Vip\VipSettings::OPTION ] );
+		$second_grant                     = $second->grant_for_order( 602 );
+		mw_assert_same( 1, $second_grant, 'The concurrent second order must still grant its level.' );
+	}
+	return null;
+};
+$vip_first_grant = $vip_race_engine->grant_for_order( 601 );
+mw_assert_same( 1, $vip_first_grant, 'The first order must grant its level.' );
+$vip_race_levels = $vip_race_engine->active_levels( 9 );
+mw_assert_same( array( 'gold365', 'vipgold' ), $vip_race_levels, 'Concurrent order hooks must preserve every purchased level; compare-and-set prevents last-write-wins loss.' );
+unset( $GLOBALS['mw_test_meta_write_hook'], $GLOBALS['mw_test_orders'][601], $GLOBALS['mw_test_orders'][602] );
+
+unset( $GLOBALS['mw_test_users'][6], $GLOBALS['mw_test_orders'][501], $GLOBALS['mw_test_orders'][502], $GLOBALS['mw_test_orders'][503] );
+$GLOBALS['mw_test_options'][ ManaCore\MusicWave\Vip\VipSettings::OPTION ] = array();
+
+// --- Master switch: module_enabled / delivery_access normalization ---
+$master_saved = ManaCore\MusicWave\Vip\VipSettings::sanitize(
+	array(
+		'module_enabled'  => 'disabled',
+		'delivery_access' => 'everyone',
+	)
+);
+mw_assert_same( 'disabled', $master_saved['module_enabled'], 'Saving VIP settings must persist a disabled master switch.' );
+mw_assert_same( 'everyone', $master_saved['delivery_access'], 'Saving VIP settings must persist the everyone delivery-access mode.' );
+mw_assert_same( 'enabled', ManaCore\MusicWave\Vip\VipSettings::all()['module_enabled'], 'The master switch must default to enabled.' );
+mw_assert_same( 'logged_in', ManaCore\MusicWave\Vip\VipSettings::all()['delivery_access'], 'Delivery access must default to registered users only.' );
+$master_garbage = ManaCore\MusicWave\Vip\VipSettings::sanitize( array( 'module_enabled' => 'yes', 'delivery_access' => 'guests' ) );
+mw_assert_same( 'enabled', $master_garbage['module_enabled'], 'Unknown master-switch values must fall back to enabled.' );
+mw_assert_same( 'logged_in', $master_garbage['delivery_access'], 'Unknown delivery-access values must fall back to logged-in.' );
+
+// --- Full-form checkbox semantics depend on the master switch state ---
+//
+// While enforcement is on, the membership controls are editable, so absent
+// checkboxes mean "unchecked". While it is off they are disabled in the UI
+// and not submitted, so the stored configuration must survive untouched.
+$GLOBALS['mw_test_options'][ ManaCore\MusicWave\Vip\VipSettings::OPTION ] = array(
+	'module_enabled'     => 'enabled',
+	'membership_sources' => array( 'role' ),
+	'promote_vip_role'   => 'enabled',
+);
+$vip_full_on = ManaCore\MusicWave\Vip\SettingsPage::sanitize_settings(
+	array(
+		'mwvip_full_form' => '1',
+		'module_enabled'  => 'enabled',
+	)
+);
+mw_assert_same( 'enabled', $vip_full_on['module_enabled'], 'A checked master switch on a full-form save must keep enforcement on.' );
+mw_assert_same( array(), $vip_full_on['membership_sources'], 'Unchecking every membership source while enforcement is on must clear them.' );
+mw_assert_same( 'disabled', $vip_full_on['promote_vip_role'], 'An unchecked role-promotion box must disable promotion while enforcement is on.' );
+$GLOBALS['mw_test_options'][ ManaCore\MusicWave\Vip\VipSettings::OPTION ] = array(
+	'module_enabled'     => 'disabled',
+	'membership_sources' => array( 'woocommerce_plans' ),
+	'promote_vip_role'   => 'enabled',
+	'delivery_access'    => 'everyone',
+);
+$vip_off_save = ManaCore\MusicWave\Vip\SettingsPage::sanitize_settings( array( 'mwvip_full_form' => '1' ) );
+mw_assert_same( 'disabled', $vip_off_save['module_enabled'], 'An unchecked master switch on a full-form save must disable enforcement.' );
+mw_assert_same( array( 'woocommerce_plans' ), $vip_off_save['membership_sources'], 'Membership sources must be preserved while enforcement is off because their controls are not submitted.' );
+mw_assert_same( 'enabled', $vip_off_save['promote_vip_role'], 'Role promotion must be preserved while enforcement is off.' );
+mw_assert_same( 'everyone', $vip_off_save['delivery_access'], 'Delivery access must be preserved while enforcement is off.' );
+$vip_reenable = ManaCore\MusicWave\Vip\SettingsPage::sanitize_settings(
+	array(
+		'mwvip_full_form' => '1',
+		'module_enabled'  => 'enabled',
+	)
+);
+mw_assert_same( 'enabled', $vip_reenable['module_enabled'], 'Re-enabling enforcement on save must persist.' );
+mw_assert_same( array( 'woocommerce_plans' ), $vip_reenable['membership_sources'], 'Re-enabling enforcement must not wipe the preserved membership configuration.' );
+$GLOBALS['mw_test_options'][ ManaCore\MusicWave\Vip\VipSettings::OPTION ] = array();
+
+// --- Core fail-open: no membership module means membership gates stay usable ---
+$absent_repository = new TestPolicyRepository();
+$absent_repository->values['mw_access_mode']       = 'membership';
+$absent_repository->values['mw_membership_levels'] = array( 'gold365' );
+$absent_engine = new ManaCore\MusicWave\Core\Access\AccessPolicyEngine(
+	$absent_repository,
+	new ManaCore\MusicWave\Core\Commerce\PurchaseChecker( $absent_repository )
+);
+$absent_guest = new ManaCore\MusicWave\Core\Access\AccessSubject( 0 );
+mw_assert_same( true, $absent_engine->decide( 1, $absent_guest )->is_allowed(), 'Without any membership module, membership releases must stay usable by default.' );
+mw_assert_same( 'membership_provider_absent', $absent_engine->decide( 1, $absent_guest )->reason(), 'The absent-provider allow must carry a distinct decision reason.' );
+
+$GLOBALS['mw_test_filters']['music_wave_membership_absent_behavior'] = 'deny';
+mw_assert_same( false, $absent_engine->decide( 1, $absent_guest )->is_allowed(), 'The deny absent-behavior must restore fail-closed membership gating.' );
+unset( $GLOBALS['mw_test_filters']['music_wave_membership_absent_behavior'] );
+
+// --- Default plan products: one-click presets map idempotently ---
+$GLOBALS['mw_test_options'][ ManaCore\MusicWave\Vip\VipSettings::OPTION ] = array();
+$presets_created = ManaCore\MusicWave\Vip\PlanProducts::create_defaults();
+mw_assert_same( 3, $presets_created['created'], 'The default-plans button must create the 1/6/12-month products.' );
+$presets_settings = ManaCore\MusicWave\Vip\VipSettings::all();
+mw_assert_same( 3, count( $presets_settings['vip_plans'] ), 'Created presets must be mapped as VIP plans.' );
+mw_assert_same( true, in_array( 'vip-1m', array_map( static function ( $plan ) { return $plan['level']; }, $presets_settings['vip_plans'] ), true ), 'The one-month preset level must be mapped.' );
+$presets_again = ManaCore\MusicWave\Vip\PlanProducts::create_defaults();
+mw_assert_same( 0, $presets_again['created'], 'Pressing the default-plans button again must not duplicate mappings.' );
+mw_assert_same( 3, count( ManaCore\MusicWave\Vip\VipSettings::all()['vip_plans'] ), 'Idempotent preset creation must keep the plan list stable.' );
+
+// --- Membership panel data: structure for the shared membership surfaces ---
+$GLOBALS['mw_test_users'][12] = (object) array( 'user_email' => 'member@example.test' );
+$panel_guest = ManaCore\MusicWave\Vip\PlanProducts::products_data( 0 );
+mw_assert_same( true, $panel_guest['module_enabled'], 'Panel data must report the module as enabled while the switch is on.' );
+mw_assert_same( array(), $panel_guest['active'], 'Guests must have no active membership rows.' );
+mw_assert_same( 3, count( $panel_guest['plans'] ), 'Panel data must expose every mapped plan product.' );
+$first_plan = $panel_guest['plans'][0];
+mw_assert_same( true, isset( $first_plan['title'], $first_plan['duration'], $first_plan['url'], $first_plan['level'] ), 'Plan cards must carry title, duration, URL, and level.' );
+mw_assert_same( '1 month', $first_plan['duration'], 'Durations must render a human label.' );
+$panel_disabled = ManaCore\MusicWave\Vip\VipSettings::sanitize( array( 'module_enabled' => 'disabled' ) );
+$GLOBALS['mw_test_options'][ ManaCore\MusicWave\Vip\VipSettings::OPTION ] = $panel_disabled;
+mw_assert_same( false, ManaCore\MusicWave\Vip\PlanProducts::products_data( 12 )['module_enabled'], 'Panel data must reflect a disabled master switch.' );
+mw_assert_same( 'Lifetime', ManaCore\MusicWave\Vip\PlanProducts::duration_label( 0 ), 'Zero-duration plans must read as lifetime.' );
+mw_assert_same( '6 months', ManaCore\MusicWave\Vip\PlanProducts::duration_label( 180 ), 'Durations must read naturally.' );
+mw_assert_same( '1 year', ManaCore\MusicWave\Vip\PlanProducts::duration_label( 365 ), 'Annual durations must read as years.' );
+unset( $GLOBALS['mw_test_users'][12] );
+$GLOBALS['mw_test_options'][ ManaCore\MusicWave\Vip\VipSettings::OPTION ] = array();
+
+// --- Policy-driven anonymous delivery (the VIP "everyone" mode) ---
+// Guests receive anonymous tokens exactly when the policy allows them;
+// purchase and strict membership releases keep denying anonymous visitors.
+$guest_token = ( new ManaCore\MusicWave\Core\Downloads\DownloadTokenService( 'test-download-secret' ) )->issue( 1, 0, 60, 'guest-nonce', 'mp3-320', 'stream' );
+$guest_claims = ( new ManaCore\MusicWave\Core\Downloads\DownloadTokenService( 'test-download-secret' ) )->verify( (string) $guest_token, 'guest-nonce' );
+mw_assert_same( 0, null === $guest_claims ? -1 : $guest_claims->user_id(), 'Anonymous tokens must verify with a zero user binding.' );
+
+$guest_repository = new TestPolicyRepository();
+$guest_repository->values['mw_access_mode']      = 'public';
+$guest_repository->values['mw_download_assets']  = array(
+	array(
+		'key'      => 'mp3-320',
+		'label'    => 'MP3 320',
+		'asset_id' => 'local:guest/release.mp3',
+	),
+);
+$guest_provider = new TestDownloadProvider();
+$guest_resolver = new ManaCore\MusicWave\Core\Downloads\DownloadResolver(
+	$guest_repository,
+	new ManaCore\MusicWave\Core\Access\AccessPolicyEngine( $guest_repository, new ManaCore\MusicWave\Core\Commerce\PurchaseChecker( $guest_repository ) ),
+	new ManaCore\MusicWave\Core\Downloads\DownloadTokenService( 'guest-secret' ),
+	new ManaCore\MusicWave\Core\Downloads\TransientReplayStore(),
+	$guest_provider
+);
+mw_assert_same( true, $guest_resolver->can_request( 1 ), 'Guests must reach delivery endpoints when the policy allows them.' );
+$guest_ticket = $guest_resolver->issue( 1, new ManaCore\MusicWave\Core\Access\AccessSubject( 0 ), 'guest-binding', 'mp3-320' );
+mw_assert_same( true, is_string( $guest_ticket ), 'Policy-allowed guests must receive an opaque delivery ticket.' );
+mw_assert_same( true, $guest_resolver->deliver( 1, 0, (string) $guest_ticket, 'guest-binding' ), 'Anonymous tickets must deliver through the provider.' );
+
+$guest_locked_repository = new TestPolicyRepository();
+$guest_locked_repository->values['mw_access_mode']       = 'membership';
+$guest_locked_repository->values['mw_membership_levels'] = array( 'gold365' );
+$guest_locked_provider  = new TestMembershipProvider();
+$guest_locked_provider->granted = true;
+$guest_locked_resolver  = new ManaCore\MusicWave\Core\Downloads\DownloadResolver(
+	$guest_locked_repository,
+	new ManaCore\MusicWave\Core\Access\AccessPolicyEngine( $guest_locked_repository, new ManaCore\MusicWave\Core\Commerce\PurchaseChecker( $guest_locked_repository ), $guest_locked_provider ),
+	new ManaCore\MusicWave\Core\Downloads\DownloadTokenService( 'guest-locked-secret' ),
+	new ManaCore\MusicWave\Core\Downloads\TransientReplayStore(),
+	new TestDownloadProvider()
+);
+mw_assert_same( null, $guest_locked_resolver->issue( 1, new ManaCore\MusicWave\Core\Access\AccessSubject( 0 ), 'guest-binding' ), 'Strict membership releases must keep denying anonymous visitors.' );
+mw_assert_same( 'entitlement', $guest_locked_resolver->last_deny_reason(), 'Anonymous denials must carry the entitlement reason.' );
+
+// Guest rate limiting: per-IP buckets, never a shared zero bucket.
+$_SERVER['REMOTE_ADDR'] = '203.0.113.9';
+$guest_limiter = new ManaCore\MusicWave\Core\Downloads\DownloadRateLimiter();
+mw_assert_same( true, $guest_limiter->allow( 0 ), 'Guest token requests must be rate limited per IP, not blocked outright.' );
+mw_assert_same( true, $guest_limiter->allow( 8 ), 'Registered visitors must keep their own rate bucket.' );
+unset( $_SERVER['REMOTE_ADDR'] );
 
 require __DIR__ . '/template-integrity.php';
 

@@ -25,6 +25,10 @@ final class Schema090 implements Migration {
 	 * (PROJECT_PLAN.md Stage 2 deliverable 3).
 	 *
 	 * @return void
+	 *
+	 * @throws \RuntimeException When the dbDelta loader is unreadable, so the
+	 *                           schema version stays un-persisted and the
+	 *                           runner retries this migration.
 	 */
 	public function up(): void {
 		global $wpdb;
@@ -38,7 +42,10 @@ final class Schema090 implements Migration {
 			}
 			$upgrade_file = ABSPATH . 'wp-admin/includes/upgrade.php';
 			if ( ! is_readable( $upgrade_file ) ) {
-				return;
+				// Throwing keeps the schema version un-persisted so the runner
+				// retries this migration; a silent return would mark the table
+				// created while it never was.
+				throw new \RuntimeException( 'MusicWave could not load dbDelta from ' . esc_html( $upgrade_file ) );
 			}
 			require_once $upgrade_file;
 		}

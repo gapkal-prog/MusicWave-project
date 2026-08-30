@@ -77,7 +77,7 @@ final class LibraryRoutes {
 	/**
 	 * List the caller's library with display summaries and filter counts.
 	 *
-	 * @return WP_REST_Response|WP_Error
+	 * @return WP_REST_Response
 	 */
 	public function index( WP_REST_Request $request ) {
 		$filter = $request->get_param( 'filter' );

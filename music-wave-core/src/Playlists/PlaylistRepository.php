@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace ManaCore\MusicWave\Core\Playlists;
 
+use ManaCore\MusicWave\Core\Catalog\ReleasePostType;
 use ManaCore\MusicWave\Core\Catalog\ReleaseVisibility;
 
 final class PlaylistRepository {
@@ -101,7 +102,8 @@ final class PlaylistRepository {
 			return false;
 		}
 
-		$fields = array();
+		$fields               = array();
+		$visibility_unchanged = false;
 		if ( array_key_exists( 'title', $changes ) ) {
 			$title = $this->sanitize_title( (string) $changes['title'] );
 			if ( '' === $title ) {
@@ -110,12 +112,18 @@ final class PlaylistRepository {
 			$fields['title'] = $title;
 		}
 		if ( array_key_exists( 'visibility', $changes ) ) {
-			$visibility            = $this->sanitize_visibility( (string) $changes['visibility'] );
-			$fields['visibility']  = $visibility;
-			$fields['share_token'] = self::VISIBILITY_PRIVATE === $visibility ? '' : $this->generate_share_token();
+			$visibility = $this->sanitize_visibility( (string) $changes['visibility'] );
+			if ( $visibility === (string) $playlist['visibility'] ) {
+				// Re-posting the current visibility must not rotate the share
+				// token and silently break previously shared links.
+				$visibility_unchanged = true;
+			} else {
+				$fields['visibility']  = $visibility;
+				$fields['share_token'] = self::VISIBILITY_PRIVATE === $visibility ? '' : $this->generate_share_token();
+			}
 		}
 		if ( array() === $fields ) {
-			return false;
+			return $visibility_unchanged;
 		}
 
 		return $this->store->update( $playlist_id, $fields );
@@ -240,6 +248,14 @@ final class PlaylistRepository {
 		}
 
 		return $playlists;
+	}
+
+	public function count_for_user( int $user_id ): int {
+		if ( $user_id < 1 ) {
+			return 0;
+		}
+
+		return $this->store->count_for_user( $user_id );
 	}
 
 	/**
@@ -380,6 +396,44 @@ final class PlaylistRepository {
 	}
 
 	/**
+	 * Public playlists for the community page: only `public` visibility, with
+	 * viewer-filtered item counts and author display name.
+	 *
+	 * @return array<int, array<string, mixed>>
+	 */
+	public function public_playlists( int $limit = 24, int $offset = 0, string $search = '', string $orderby = 'updated_at', int $viewer_id = 0 ): array {
+		$search  = $this->sanitize_search( $search );
+		$orderby = in_array( $orderby, array( 'updated_at', 'created_at', 'title' ), true ) ? $orderby : 'updated_at';
+		$limit   = min( 50, max( 1, $limit ) );
+		$offset  = max( 0, $offset );
+		$rows    = $this->store->public_playlists( $limit, $offset, $search, $orderby );
+		$items   = array();
+		foreach ( $rows as $row ) {
+			$playlist = $this->normalize( $row );
+			if ( null === $playlist ) {
+				continue;
+			}
+			// Public only, but double-check after normalize.
+			if ( self::VISIBILITY_PUBLIC !== $playlist['visibility'] ) {
+				continue;
+			}
+			$playlist_id             = (int) $playlist['id'];
+			$view_items              = $this->items_for_viewer( $playlist_id, $viewer_id );
+			$playlist['count']       = count( $view_items );
+			$playlist['author_name'] = $this->author_name( (int) $playlist['user_id'] );
+			$playlist['author_id']   = (int) $playlist['user_id'];
+			// Provide normalized view-like shape for the card.
+			$items[] = $playlist;
+		}
+
+		return $items;
+	}
+
+	public function count_public( string $search = '' ): int {
+		return $this->store->count_public( $this->sanitize_search( $search ) );
+	}
+
+	/**
 	 * Delete every playlist owned by one user.
 	 */
 	public function erase( int $user_id ): bool {
@@ -393,7 +447,9 @@ final class PlaylistRepository {
 	 * @return void
 	 */
 	public function handle_deleted_post( int $post_id ): void {
-		if ( $post_id > 0 ) {
+		// Playlist items only ever reference releases; skip every other post
+		// type so unrelated deletions do not hit the playlist tables.
+		if ( $post_id > 0 && ReleasePostType::KEY === get_post_type( $post_id ) ) {
 			$this->store->purge_release( $post_id );
 		}
 	}
@@ -406,6 +462,28 @@ final class PlaylistRepository {
 	 */
 	public function handle_deleted_user( int $user_id ): void {
 		$this->erase( $user_id );
+	}
+
+	/**
+	 * Whether a release already lives in a playlist (raw, not viewer-filtered).
+	 */
+	public function contains( int $playlist_id, int $release_id ): bool {
+		if ( $playlist_id < 1 || $release_id < 1 ) {
+			return false;
+		}
+
+		return in_array( $release_id, $this->ordered_ids( $playlist_id ), true );
+	}
+
+	/**
+	 * Number of stored items in a playlist.
+	 */
+	public function count_items( int $playlist_id ): int {
+		if ( $playlist_id < 1 ) {
+			return 0;
+		}
+
+		return count( $this->ordered_ids( $playlist_id ) );
 	}
 
 	/**
@@ -463,6 +541,28 @@ final class PlaylistRepository {
 			'created_at'  => isset( $row['created_at'] ) ? absint( $row['created_at'] ) : 0,
 			'updated_at'  => isset( $row['updated_at'] ) ? absint( $row['updated_at'] ) : 0,
 		);
+	}
+
+	private function sanitize_search( string $search ): string {
+		$search = function_exists( 'sanitize_text_field' ) ? sanitize_text_field( $search ) : trim( strip_tags( $search ) ); // phpcs:ignore WordPress.WP.AlternativeFunctions
+		$search = trim( $search );
+		if ( '' === $search ) {
+			return '';
+		}
+		$search = preg_replace( '/\s+/', ' ', $search );
+		$search = is_string( $search ) ? $search : '';
+		return function_exists( 'mb_substr' ) ? mb_substr( $search, 0, 60 ) : substr( $search, 0, 60 );
+	}
+
+	private function author_name( int $user_id ): string {
+		$user = function_exists( 'get_userdata' ) ? get_userdata( $user_id ) : null;
+		if ( $user && isset( $user->display_name ) && is_string( $user->display_name ) && '' !== trim( $user->display_name ) ) {
+			return trim( $user->display_name );
+		}
+		if ( $user && isset( $user->user_login ) && is_string( $user->user_login ) ) {
+			return $user->user_login;
+		}
+		return __( 'MusicWave listener', 'music-wave-core' );
 	}
 
 	private function sanitize_title( string $title ): string {

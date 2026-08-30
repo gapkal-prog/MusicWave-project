@@ -3,14 +3,32 @@
 	"name": "music-wave/account-dashboard",
 	"title": "User music dashboard",
 	"category": "music-wave",
-	"description": "Displays account shortcuts, statistics, and the secure personal music library.",
-	"keywords": [ "library", "account" ],
+	"description": "The unified account area: music library, orders, downloads, addresses, payment methods, membership, and playlists in one navigation.",
+	"keywords": [ "library", "account", "membership", "orders", "woocommerce" ],
 	"textdomain": "music-wave-core",
 	"icon": "dashboard",
 	"attributes": {
 		"showLibrary": { "type": "boolean", "default": true },
 		"showQuickLinks": { "type": "boolean", "default": true },
-		"showStats": { "type": "boolean", "default": true }
+		"showStats": { "type": "boolean", "default": true },
+		"showMembershipPanel": { "type": "boolean", "default": true },
+		"showOrders": { "type": "boolean", "default": true },
+		"showDownloads": { "type": "boolean", "default": true },
+		"showAddresses": { "type": "boolean", "default": true },
+		"showPaymentMethods": { "type": "boolean", "default": true },
+		"showAccountDetails": { "type": "boolean", "default": true },
+		"showSignOut": { "type": "boolean", "default": true },
+		"introText": { "type": "string", "default": "" },
+		"membershipHeading": { "type": "string", "default": "" },
+		"libraryHeading": { "type": "string", "default": "" },
+		"ordersHeading": { "type": "string", "default": "" },
+		"downloadsHeading": { "type": "string", "default": "" },
+		"addressesHeading": { "type": "string", "default": "" },
+		"paymentHeading": { "type": "string", "default": "" },
+		"accountHeading": { "type": "string", "default": "" },
+		"playlistsHeading": { "type": "string", "default": "" },
+		"notificationsHeading": { "type": "string", "default": "" },
+		"panelOrder": { "type": "string", "default": "default" }
 	},
 	"supports": {
 		"anchor": true,
@@ -24,7 +42,25 @@
 		"attributes": {
 			"showLibrary": true,
 			"showQuickLinks": true,
-			"showStats": true
+			"showStats": true,
+			"showMembershipPanel": true,
+			"showOrders": true,
+			"showDownloads": true,
+			"showAddresses": true,
+			"showPaymentMethods": true,
+			"showAccountDetails": true,
+			"showSignOut": true,
+			"introText": "",
+			"membershipHeading": "",
+			"libraryHeading": "",
+			"ordersHeading": "",
+			"downloadsHeading": "",
+			"addressesHeading": "",
+			"paymentHeading": "",
+			"accountHeading": "",
+			"playlistsHeading": "",
+			"notificationsHeading": "",
+			"panelOrder": "default"
 		}
 	}
 }

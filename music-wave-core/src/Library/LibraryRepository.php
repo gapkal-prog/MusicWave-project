@@ -9,6 +9,7 @@ declare(strict_types=1);
 
 namespace ManaCore\MusicWave\Core\Library;
 
+use ManaCore\MusicWave\Core\Catalog\ReleasePostType;
 use ManaCore\MusicWave\Core\Catalog\ReleaseVisibility;
 use WP_Term;
 
@@ -79,9 +80,24 @@ final class LibraryRepository {
 			return array();
 		}
 
-		$candidates = $wpdb->get_col(
-			$wpdb->prepare( "SELECT user_id FROM {$wpdb->usermeta} WHERE meta_key = %s", self::META_KEY ) // phpcs:ignore WordPress.DB.DirectDatabaseQuery
-		);
+		// Serialized items always store `type` as a string field and `id` as
+		// an int or numeric-string field, so exact field patterns narrow the
+		// candidates in SQL instead of deserializing every library. False
+		// positives are possible across items of one library; has() below
+		// stays the authoritative check.
+		$sql    = "SELECT user_id FROM {$wpdb->usermeta} WHERE meta_key = %s";
+		$params = array( self::META_KEY );
+		if ( method_exists( $wpdb, 'prepare' ) && method_exists( $wpdb, 'esc_like' ) ) {
+			$type_pattern = '%' . $wpdb->esc_like( 's:4:"type";s:' . strlen( $type ) . ':"' . $type . '";' ) . '%';
+			$int_pattern  = '%' . $wpdb->esc_like( 's:2:"id";i:' . $item_id . ';' ) . '%';
+			$str_pattern  = '%' . $wpdb->esc_like( 's:2:"id";s:' . strlen( (string) $item_id ) . ':"' . $item_id . '";' ) . '%';
+			$sql         .= ' AND meta_value LIKE %s AND ( meta_value LIKE %s OR meta_value LIKE %s )';
+			$params[]     = $type_pattern;
+			$params[]     = $int_pattern;
+			$params[]     = $str_pattern;
+		}
+
+		$candidates = $wpdb->get_col( $wpdb->prepare( $sql, $params ) ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.NotPrepared
 
 		$matched = array();
 		foreach ( is_array( $candidates ) ? $candidates : array() as $candidate ) {
@@ -259,6 +275,12 @@ final class LibraryRepository {
 	 * @return void
 	 */
 	public function handle_deleted_post( int $post_id ): void {
+		// Library targets only ever reference releases; without this guard
+		// every unrelated post deletion (pages, revisions, ...) would trigger
+		// three full library sweeps.
+		if ( $post_id < 1 || ReleasePostType::KEY !== get_post_type( $post_id ) ) {
+			return;
+		}
 		foreach ( $this->release_types() as $type ) {
 			$this->purge_target( $type, $post_id );
 		}
@@ -302,22 +324,8 @@ final class LibraryRepository {
 	 * @return void
 	 */
 	private function purge_target( string $type, int $item_id ): void {
-		global $wpdb;
-
 		$this->cache = array();
-		if ( ! isset( $wpdb ) || ! property_exists( $wpdb, 'usermeta' ) ) {
-			return;
-		}
-
-		$user_ids = $wpdb->get_col(
-			$wpdb->prepare( "SELECT user_id FROM {$wpdb->usermeta} WHERE meta_key = %s", self::META_KEY ) // phpcs:ignore WordPress.DB.DirectDatabaseQuery
-		);
-
-		foreach ( is_array( $user_ids ) ? $user_ids : array() as $user_id ) {
-			$user_id = absint( $user_id );
-			if ( $user_id < 1 || ! $this->has( $user_id, $type, $item_id ) ) {
-				continue;
-			}
+		foreach ( $this->users_with( $type, $item_id ) as $user_id ) {
 			$this->remove( $user_id, $type, $item_id );
 		}
 	}

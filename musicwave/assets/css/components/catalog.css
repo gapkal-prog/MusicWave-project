@@ -99,29 +99,77 @@
 	grid-template-columns: repeat(auto-fill, minmax(min(15rem, 100%), 1fr)) !important;
 }
 
-.mw-search-results {
+/* ------------------------------------------------------------------ */
+/* Search page                                                        */
+/* ------------------------------------------------------------------ */
+
+.mw-search-hero {
+	margin-bottom: var(--wp--preset--spacing--40);
+}
+
+.mw-search-hero .wp-block-search {
+	max-width: 38rem;
+	margin-block: var(--wp--preset--spacing--20);
+}
+
+.mw-search-hero .wp-block-search__inside-wrapper {
+	flex-wrap: nowrap;
+}
+
+.mw-search-hero .wp-block-search__input {
+	min-height: 3rem;
+	flex: 1 1 auto;
+	border-color: var(--mw-color-border);
+	border-start-end-radius: 0;
+	border-end-end-radius: 0;
+}
+
+.mw-search-hero .wp-block-search__button {
+	min-height: 3rem;
+	padding-inline: 1.25rem;
+	white-space: nowrap;
+}
+
+.mw-search-hero .wp-block-query-title {
+	margin: 0;
+}
+
+.mw-search-hero > p:last-child {
+	margin-block: 0;
+}
+
+/* Results reuse the shared release-card grid; give the grid a top gap
+ * only on the search page (the archive filters block already adds one). */
+.mw-search-page .mw-release-grid {
+	margin-top: 0;
+}
+
+/* Empty state: one quiet centered panel with a retry search. */
+.mw-search-empty {
 	display: grid;
 	gap: var(--wp--preset--spacing--20);
+	justify-items: center;
 	margin-top: var(--wp--preset--spacing--30);
+	padding: var(--wp--preset--spacing--50) var(--wp--preset--spacing--30);
+	text-align: center;
+	border: 1px dashed var(--mw-color-border);
+	border-radius: var(--mw-radius-lg);
 }
 
-.mw-search-result {
-	padding: var(--wp--preset--spacing--30);
-	transition: background-color 160ms ease, border-color 160ms ease;
+.mw-search-empty p {
+	margin: 0;
 }
 
-.mw-search-result:hover {
-	background: var(--mw-color-surface-raised);
-	border-color: color-mix(in srgb, var(--mw-color-accent) 55%, var(--mw-color-border));
-}
-
-.mw-search-result .wp-block-post-title,
-.mw-search-result .wp-block-post-excerpt {
-	margin-block: 0;
+.mw-search-empty .wp-block-search {
+	width: min(24rem, 100%);
 }
 
 @media (max-width: 40rem) {
 	.mw-release-hero {
+		padding: var(--wp--preset--spacing--30) !important;
+	}
+
+	.mw-search-hero {
 		padding: var(--wp--preset--spacing--30) !important;
 	}
 }
@@ -145,8 +193,57 @@
 	font-size: 0.875rem;
 }
 
+/* Composite release page panel: chips, facts, actions, downloads, tracks. */
+.mw-release-meta--panel {
+	display: flex;
+	flex-direction: column;
+	gap: var(--wp--preset--spacing--30);
+	margin: var(--wp--preset--spacing--30) 0 0;
+}
+
+.mw-release-meta__chips {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.5rem;
+}
+
+.mw-release-meta__chip {
+	display: inline-flex;
+	align-items: center;
+	padding: 0.3rem 0.9rem;
+	color: var(--mw-color-text);
+	font-size: 0.8125rem;
+	font-weight: 650;
+	text-decoration: none;
+	background: var(--mw-color-surface-raised);
+	border: 1px solid var(--mw-color-border);
+	border-radius: 999px;
+	transition: color 160ms ease, border-color 160ms ease, background-color 160ms ease, transform 160ms var(--mw-ease-out);
+}
+
+a.mw-release-meta__chip:hover,
+a.mw-release-meta__chip:focus-visible {
+	color: var(--mw-color-accent-strong);
+	background: color-mix(in srgb, var(--mw-color-accent) 10%, var(--mw-color-surface-raised));
+	border-color: color-mix(in srgb, var(--mw-color-accent) 55%, var(--mw-color-border));
+	transform: translateY(-1px);
+}
+
+.mw-release-meta__chip--artist {
+	color: var(--mw-color-accent-strong);
+	background: color-mix(in srgb, var(--mw-color-accent) 12%, transparent);
+	border-color: color-mix(in srgb, var(--mw-color-accent) 40%, var(--mw-color-border));
+}
+
+.mw-release-meta__facts {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(8rem, 1fr));
+	gap: var(--wp--preset--spacing--20) var(--wp--preset--spacing--30);
+	margin: 0;
+}
+
 /* Inline layout: one flowing row of label/value pairs. */
-.mw-release-meta--inline {
+.mw-release-meta__facts--inline {
 	display: flex;
 	flex-wrap: wrap;
 	align-items: baseline;
@@ -154,23 +251,22 @@
 	row-gap: 0.5rem;
 }
 
-.mw-release-meta--inline .mw-release-meta__item {
+.mw-release-meta__facts--inline .mw-release-meta__item {
 	display: inline-flex;
 	align-items: baseline;
 	gap: 0.45rem;
 }
 
-.mw-release-meta--inline dd {
+.mw-release-meta__facts--inline dd {
 	margin: 0;
 }
 
 /* Stacked layout: one bordered row per field. */
-.mw-release-meta--stack {
-	display: grid;
+.mw-release-meta__facts--stack {
 	grid-template-columns: 1fr;
 }
 
-.mw-release-meta--stack .mw-release-meta__item {
+.mw-release-meta__facts--stack .mw-release-meta__item {
 	display: flex;
 	flex-wrap: wrap;
 	justify-content: space-between;
@@ -180,12 +276,12 @@
 	border-bottom: 1px solid var(--mw-color-border);
 }
 
-.mw-release-meta--stack .mw-release-meta__item:last-child {
+.mw-release-meta__facts--stack .mw-release-meta__item:last-child {
 	padding-bottom: 0;
 	border-bottom: 0;
 }
 
-.mw-release-meta--stack dd {
+.mw-release-meta__facts--stack dd {
 	margin: 0;
 	text-align: right;
 }
@@ -205,6 +301,7 @@
 .mw-release-meta dd {
 	margin: 0.2rem 0 0;
 	font-weight: 650;
+	font-variant-numeric: tabular-nums;
 }
 
 .mw-release-meta dd a {

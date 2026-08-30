@@ -20,7 +20,6 @@
 <!-- /wp:paragraph --></div>
 <!-- /wp:group -->
 <!-- wp:music-wave/account-dashboard /-->
-<!-- wp:post-content /-->
 <!-- wp:separator {"align":"wide","className":"is-style-wide"} -->
 <hr class="wp-block-separator alignwide has-alpha-channel-opacity is-style-wide"/>
 <!-- /wp:separator -->

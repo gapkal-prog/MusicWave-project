@@ -1,0 +1,25 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "musicwave/theme-text",
+  "title": "MusicWave template text",
+  "category": "theme",
+  "description": "Translated template text for MusicWave templates. The key selects a language-aware string.",
+  "textdomain": "musicwave",
+  "icon": "editor-textcolor",
+  "keywords": ["text", "translation", "template"],
+  "attributes": {
+    "key": { "type": "string", "default": "" },
+    "tagName": { "type": "string", "default": "p" },
+    "className": { "type": "string", "default": "" }
+  },
+  "supports": {
+    "inserter": false,
+    "interactivity": false,
+    "color": { "background": true, "text": true, "gradient": true, "link": true },
+    "spacing": { "margin": true, "padding": true },
+    "typography": { "fontSize": true, "fontWeight": true, "lineHeight": true, "letterSpacing": true, "textTransform": true },
+    "border": { "color": true, "radius": true, "style": true, "width": true },
+    "shadow": true
+  }
+}

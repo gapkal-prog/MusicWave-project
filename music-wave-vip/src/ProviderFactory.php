@@ -26,7 +26,9 @@ final class ProviderFactory {
 
 	/** @return \ManaCore\MusicWave\Core\Access\MembershipProvider */
 	public static function membership_provider() {
-		$config   = VipSettings::all();
+		$config = VipSettings::all();
+		// The plan engine is composed lazily at decision time so grants read
+		// from user meta on every access check; no entitlement is cached.
 		$provider = new ConfigurableMembershipProvider( (array) $config['membership_sources'] );
 		$provider = apply_filters( 'music_wave_vip_membership_provider', $provider, $config );
 

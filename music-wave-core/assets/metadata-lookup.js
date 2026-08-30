@@ -6,7 +6,7 @@
  *   GET  /music-wave/v1/metadata-lookup?q=
  *   POST /music-wave/v1/metadata-lookup/apply
  *
- * @package ManaCore\MusicWave\Core
+ * @package
  */
 ( function () {
 	'use strict';
@@ -40,10 +40,13 @@
 	}
 
 	function buildUi( container ) {
-		var postId = parseInt( container.getAttribute( 'data-post-id' ), 10 ) || 0;
+		var postId =
+			parseInt( container.getAttribute( 'data-post-id' ), 10 ) || 0;
 		var releaseTypes = [];
 		try {
-			releaseTypes = JSON.parse( container.getAttribute( 'data-release-types' ) || '[]' );
+			releaseTypes = JSON.parse(
+				container.getAttribute( 'data-release-types' ) || '[]'
+			);
 		} catch ( e ) {}
 		if ( ! Array.isArray( releaseTypes ) ) {
 			releaseTypes = [];
@@ -56,9 +59,16 @@
 		input.type = 'search';
 		input.className = 'mw-metadata-lookup__input';
 		input.placeholder = t( 'queryPlaceholder', 'Track, artist, or album…' );
-		input.setAttribute( 'aria-label', t( 'queryPlaceholder', 'Track, artist, or album' ) );
+		input.setAttribute(
+			'aria-label',
+			t( 'queryPlaceholder', 'Track, artist, or album' )
+		);
 
-		var button = el( 'button', 'button button-secondary mw-metadata-lookup__search', t( 'search', 'Search' ) );
+		var button = el(
+			'button',
+			'button button-secondary mw-metadata-lookup__search',
+			t( 'search', 'Search' )
+		);
 		button.type = 'button';
 
 		form.appendChild( input );
@@ -72,7 +82,9 @@
 		var yearInput = searchField( 'year', t( 'year', 'Year' ) );
 		yearInput.inputMode = 'numeric';
 		yearInput.maxLength = 4;
-		advanced.appendChild( el( 'summary', '', t( 'refineSearch', 'Refine search' ) ) );
+		advanced.appendChild(
+			el( 'summary', '', t( 'refineSearch', 'Refine search' ) )
+		);
 		advancedFields.appendChild( artistInput.parentNode );
 		advancedFields.appendChild( albumInput.parentNode );
 		advancedFields.appendChild( yearInput.parentNode );
@@ -101,11 +113,14 @@
 
 		function setStatus( message, isError ) {
 			status.textContent = message || '';
-			status.classList.toggle( 'mw-metadata-lookup__status--error', !! isError );
+			status.classList.toggle(
+				'mw-metadata-lookup__status--error',
+				!! isError
+			);
 		}
 
 		function headers( includeContentType ) {
-			var output = { 'X-WP-Nonce': nonce, 'Accept': 'application/json' };
+			var output = { 'X-WP-Nonce': nonce, Accept: 'application/json' };
 			if ( includeContentType ) {
 				output[ 'Content-Type' ] = 'application/json';
 			}
@@ -113,32 +128,44 @@
 		}
 
 		function parseResponse( response ) {
-			return response.json().catch( function () {
-				return {};
-			} ).then( function ( payload ) {
-				if ( ! response.ok ) {
-					throw new Error( payload.message || t( 'error', 'Lookup failed. Try again.' ) );
-				}
-				return payload;
-			} );
+			return response
+				.json()
+				.catch( function () {
+					return {};
+				} )
+				.then( function ( payload ) {
+					if ( ! response.ok ) {
+						throw new Error(
+							payload.message ||
+								t( 'error', 'Lookup failed. Try again.' )
+						);
+					}
+					return payload;
+				} );
 		}
 
 		function search() {
 			var q = input.value.trim();
 			var artist = artistInput.value.trim();
 			var album = albumInput.value.trim();
-			var year = yearInput.value.trim();
 			if ( ! q && ! artist && ! album ) {
-				setStatus( t( 'queryPlaceholder', 'Enter a track, artist, or album.' ), true );
+				setStatus(
+					t( 'queryPlaceholder', 'Enter a track, artist, or album.' ),
+					true
+				);
 				return;
 			}
+			var year = yearInput.value.trim();
 			button.disabled = true;
 			setStatus( t( 'searching', 'Searching…' ) );
 			results.innerHTML = '';
 
 			var params = [ 'limit=8' ];
 			if ( q ) {
-				params.push( ( artist || album ? 'track=' : 'q=' ) + encodeURIComponent( q ) );
+				params.push(
+					( artist || album ? 'track=' : 'q=' ) +
+						encodeURIComponent( q )
+				);
 			}
 			if ( artist ) {
 				params.push( 'artist=' + encodeURIComponent( artist ) );
@@ -150,27 +177,46 @@
 				params.push( 'year=' + encodeURIComponent( year ) );
 			}
 			releaseTypes.forEach( function ( releaseType ) {
-				params.push( 'release_types[]=' + encodeURIComponent( releaseType ) );
+				params.push(
+					'release_types[]=' + encodeURIComponent( releaseType )
+				);
 			} );
 
 			fetch( root + '?' + params.join( '&' ), {
 				method: 'GET',
 				headers: headers( false ),
-				credentials: 'same-origin'
+				credentials: 'same-origin',
 			} )
 				.then( parseResponse )
 				.then( function ( payload ) {
 					button.disabled = false;
-					if ( ! payload || ! payload.success || ! payload.results || ! payload.results.length ) {
-						setStatus( ( payload && payload.message ) || t( 'noResults', 'No matches found.' ), true );
+					if (
+						! payload ||
+						! payload.success ||
+						! payload.results ||
+						! payload.results.length
+					) {
+						setStatus(
+							( payload && payload.message ) ||
+								t( 'noResults', 'No matches found.' ),
+							true
+						);
 						return;
 					}
 					renderResults( payload.results, payload );
-					setStatus( payload.label ? ( t( 'providedBy', 'Source' ) + ': ' + payload.label ) : '' );
+					setStatus(
+						payload.label
+							? t( 'providedBy', 'Source' ) + ': ' + payload.label
+							: ''
+					);
 				} )
 				.catch( function ( error ) {
 					button.disabled = false;
-					setStatus( error.message || t( 'error', 'Lookup failed. Try again.' ), true );
+					setStatus(
+						error.message ||
+							t( 'error', 'Lookup failed. Try again.' ),
+						true
+					);
 				} );
 		}
 
@@ -188,25 +234,39 @@
 				}
 
 				var body = el( 'div', 'mw-metadata-lookup__body' );
-				var title = el( 'strong', 'mw-metadata-lookup__title', item.title || '' );
+				var title = el(
+					'strong',
+					'mw-metadata-lookup__title',
+					item.title || ''
+				);
 				var meta = el(
 					'span',
 					'mw-metadata-lookup__meta',
-					[ item.artist, item.album, item.year ].filter( Boolean ).join( ' • ' )
+					[ item.artist, item.album, item.year ]
+						.filter( Boolean )
+						.join( ' • ' )
 				);
 				var details = el(
 					'span',
 					'mw-metadata-lookup__details',
 					[
-						entityNames( item.genres ).join( ', ' ) || item.genre || '',
+						entityNames( item.genres ).join( ', ' ) ||
+							item.genre ||
+							'',
 						entityNames( item.labels ).join( ', ' ),
 						entityNames( item.moods ).join( ', ' ),
 						item.duration ? formatDuration( item.duration ) : '',
-						item.isrc ? 'ISRC: ' + item.isrc : ''
-					].filter( Boolean ).join( ' • ' )
+						item.isrc ? 'ISRC: ' + item.isrc : '',
+					]
+						.filter( Boolean )
+						.join( ' • ' )
 				);
 
-				var applyBtn = el( 'button', 'button button-primary mw-metadata-lookup__apply', t( 'apply', 'Apply' ) );
+				var applyBtn = el(
+					'button',
+					'button button-primary mw-metadata-lookup__apply',
+					t( 'apply', 'Apply' )
+				);
 				applyBtn.type = 'button';
 				applyBtn.addEventListener( 'click', function () {
 					applyResult( item, payload, applyBtn );
@@ -235,9 +295,11 @@
 			if ( ! Array.isArray( entities ) ) {
 				return [];
 			}
-			return entities.map( function ( entity ) {
-				return entity && entity.name ? entity.name : '';
-			} ).filter( Boolean );
+			return entities
+				.map( function ( entity ) {
+					return entity && entity.name ? entity.name : '';
+				} )
+				.filter( Boolean );
 		}
 
 		function applyResult( item, payload, btn ) {
@@ -257,7 +319,8 @@
 				duration: item.duration || 0,
 				isrc: item.isrc || '',
 				cover_url: item.cover_url || '',
-				provider: item.provider || ( payload && payload.provider ) || '',
+				provider:
+					item.provider || ( payload && payload.provider ) || '',
 				source_url: item.source_url || '',
 				description: item.description || '',
 				artists: item.artists || [],
@@ -266,38 +329,55 @@
 				moods: item.moods || [],
 				tags: item.tags || [],
 				fill_content: editorFieldIsEmpty( 'content' ),
-				fill_excerpt: editorFieldIsEmpty( 'excerpt' )
+				fill_excerpt: editorFieldIsEmpty( 'excerpt' ),
 			};
 
 			fetch( root + '/apply', {
 				method: 'POST',
 				headers: headers( true ),
 				credentials: 'same-origin',
-				body: JSON.stringify( body )
+				body: JSON.stringify( body ),
 			} )
 				.then( parseResponse )
 				.then( function ( responsePayload ) {
 					if ( ! responsePayload || ! responsePayload.success ) {
 						btn.disabled = false;
 						btn.textContent = t( 'apply', 'Apply' );
-						setStatus( ( responsePayload && responsePayload.message ) || t( 'error', 'Lookup failed. Try again.' ), true );
+						setStatus(
+							( responsePayload && responsePayload.message ) ||
+								t( 'error', 'Lookup failed. Try again.' ),
+							true
+						);
 						return;
 					}
-					var warningText = responsePayload.warnings && responsePayload.warnings.length
-						? ' ' + responsePayload.warnings.join( ' ' )
-						: '';
-					setStatus( ( responsePayload.message || t( 'applied', 'Metadata applied.' ) ) + warningText, false );
+					var warningText =
+						responsePayload.warnings &&
+						responsePayload.warnings.length
+							? ' ' + responsePayload.warnings.join( ' ' )
+							: '';
+					setStatus(
+						( responsePayload.message ||
+							t( 'applied', 'Metadata applied.' ) ) + warningText,
+						false
+					);
 					reflectSavedFields( responsePayload );
 					btn.disabled = true;
 					btn.textContent = t( 'applied', 'Metadata applied.' );
-					if ( responsePayload.attachment && responsePayload.attachment.url ) {
+					if (
+						responsePayload.attachment &&
+						responsePayload.attachment.url
+					) {
 						refreshFeaturedImage( responsePayload.attachment.id );
 					}
 				} )
 				.catch( function ( error ) {
 					btn.disabled = false;
 					btn.textContent = t( 'apply', 'Apply' );
-					setStatus( error.message || t( 'error', 'Lookup failed. Try again.' ), true );
+					setStatus(
+						error.message ||
+							t( 'error', 'Lookup failed. Try again.' ),
+						true
+					);
 				} );
 		}
 
@@ -308,27 +388,38 @@
 				year: 'mw_release_year',
 				date: 'mw_release_date',
 				duration: 'mw_duration',
-				isrc: 'mw_isrc'
+				isrc: 'mw_isrc',
 			};
 
 			Object.keys( fieldMap ).forEach( function ( key ) {
-				if ( undefined === fields[ key ] || null === fields[ key ] || '' === fields[ key ] || 0 === fields[ key ] ) {
+				if (
+					undefined === fields[ key ] ||
+					null === fields[ key ] ||
+					'' === fields[ key ] ||
+					0 === fields[ key ]
+				) {
 					return;
 				}
 				var inputField = document.getElementById( fieldMap[ key ] );
 				if ( inputField ) {
 					inputField.value = fields[ key ];
-					inputField.dispatchEvent( new Event( 'change', { bubbles: true } ) );
+					inputField.dispatchEvent(
+						new Event( 'change', { bubbles: true } )
+					);
 				}
 			} );
 
 			var titleField = document.getElementById( 'title' );
 			if ( titleField && fields.title ) {
 				titleField.value = fields.title;
-				titleField.dispatchEvent( new Event( 'input', { bubbles: true } ) );
+				titleField.dispatchEvent(
+					new Event( 'input', { bubbles: true } )
+				);
 			}
 
-			var artistTags = document.querySelector( 'input[name="tax_input[mw_artist]"]' );
+			var artistTags = document.querySelector(
+				'input[name="tax_input[mw_artist]"]'
+			);
 			syncClassicTaxonomy( 'mw_artist', payload, false, artistTags );
 			syncClassicTaxonomy( 'mw_label', payload, false );
 			syncClassicTaxonomy( 'mw_genre', payload, true );
@@ -346,7 +437,11 @@
 			if ( fields.description && fields.excerpt_applied ) {
 				var excerptField = document.getElementById( 'excerpt' );
 				if ( excerptField ) {
-					excerptField.value = fields.description.replace( /<[^>]+>/g, '' ).split( /\s+/ ).slice( 0, 40 ).join( ' ' );
+					excerptField.value = fields.description
+						.replace( /<[^>]+>/g, '' )
+						.split( /\s+/ )
+						.slice( 0, 40 )
+						.join( ' ' );
 				}
 			}
 
@@ -361,26 +456,51 @@
 						edits.content = fields.description;
 					}
 					if ( fields.description && fields.excerpt_applied ) {
-						edits.excerpt = fields.description.replace( /<[^>]+>/g, '' ).split( /\s+/ ).slice( 0, 40 ).join( ' ' );
+						edits.excerpt = fields.description
+							.replace( /<[^>]+>/g, '' )
+							.split( /\s+/ )
+							.slice( 0, 40 )
+							.join( ' ' );
 					}
 					Object.keys( fieldMap ).forEach( function ( key ) {
-						if ( undefined !== fields[ key ] && null !== fields[ key ] && '' !== fields[ key ] && 0 !== fields[ key ] ) {
+						if (
+							undefined !== fields[ key ] &&
+							null !== fields[ key ] &&
+							'' !== fields[ key ] &&
+							0 !== fields[ key ]
+						) {
 							meta[ fieldMap[ key ] ] = fields[ key ];
 						}
 					} );
 					if ( Object.keys( meta ).length ) {
 						edits.meta = meta;
 					}
-					if ( payload.terms && payload.terms.mw_artist && payload.terms.mw_artist.length ) {
+					if (
+						payload.terms &&
+						payload.terms.mw_artist &&
+						payload.terms.mw_artist.length
+					) {
 						edits.mw_artist = payload.terms.mw_artist;
 					}
-					if ( payload.terms && payload.terms.mw_genre && payload.terms.mw_genre.length ) {
+					if (
+						payload.terms &&
+						payload.terms.mw_genre &&
+						payload.terms.mw_genre.length
+					) {
 						edits.mw_genre = payload.terms.mw_genre;
 					}
-					if ( payload.terms && payload.terms.mw_label && payload.terms.mw_label.length ) {
+					if (
+						payload.terms &&
+						payload.terms.mw_label &&
+						payload.terms.mw_label.length
+					) {
 						edits.mw_label = payload.terms.mw_label;
 					}
-					if ( payload.terms && payload.terms.mw_mood && payload.terms.mw_mood.length ) {
+					if (
+						payload.terms &&
+						payload.terms.mw_mood &&
+						payload.terms.mw_mood.length
+					) {
 						edits.mw_mood = payload.terms.mw_mood;
 					}
 					wp.data.dispatch( 'core/editor' ).editPost( edits );
@@ -388,31 +508,59 @@
 			}
 		}
 
-		function syncClassicTaxonomy( taxonomy, payload, hierarchical, existingField ) {
-			var ids = payload.terms && payload.terms[ taxonomy ] ? payload.terms[ taxonomy ].map( String ) : [];
-			var names = payload.term_names && payload.term_names[ taxonomy ] ? payload.term_names[ taxonomy ] : [];
+		function syncClassicTaxonomy(
+			taxonomy,
+			payload,
+			hierarchical,
+			existingField
+		) {
+			var ids =
+				payload.terms && payload.terms[ taxonomy ]
+					? payload.terms[ taxonomy ].map( String )
+					: [];
+			var names =
+				payload.term_names && payload.term_names[ taxonomy ]
+					? payload.term_names[ taxonomy ]
+					: [];
 			if ( ! hierarchical ) {
-				var field = existingField || document.querySelector( 'input[name="tax_input[' + taxonomy + ']"], textarea[name="tax_input[' + taxonomy + ']"]' );
+				var field =
+					existingField ||
+					document.querySelector(
+						'input[name="tax_input[' +
+							taxonomy +
+							']"], textarea[name="tax_input[' +
+							taxonomy +
+							']"]'
+					);
 				if ( field && names.length ) {
 					field.value = names.join( ', ' );
-					field.dispatchEvent( new Event( 'change', { bubbles: true } ) );
+					field.dispatchEvent(
+						new Event( 'change', { bubbles: true } )
+					);
 				}
 				return;
 			}
 
-			var container = document.getElementById( taxonomy + 'div' ) || document.getElementById( taxonomy + '-all' );
+			var container =
+				document.getElementById( taxonomy + 'div' ) ||
+				document.getElementById( taxonomy + '-all' );
 			if ( ! container || ! ids.length ) {
 				return;
 			}
-			var checkboxes = container.querySelectorAll( 'input[type="checkbox"][name="tax_input[' + taxonomy + '][]"]' );
+			var checkboxes = container.querySelectorAll(
+				'input[type="checkbox"][name="tax_input[' + taxonomy + '][]"]'
+			);
 			var rendered = {};
 			checkboxes.forEach( function ( checkbox ) {
 				rendered[ String( checkbox.value ) ] = true;
-				checkbox.checked = ids.indexOf( String( checkbox.value ) ) !== -1;
+				checkbox.checked =
+					ids.indexOf( String( checkbox.value ) ) !== -1;
 			} );
-			container.querySelectorAll( '.mw-metadata-assigned' ).forEach( function ( field ) {
-				field.remove();
-			} );
+			container
+				.querySelectorAll( '.mw-metadata-assigned' )
+				.forEach( function ( field ) {
+					field.remove();
+				} );
 			ids.forEach( function ( id ) {
 				if ( rendered[ id ] ) {
 					return;
@@ -430,24 +578,38 @@
 			var value = '';
 			if ( window.wp && wp.data && wp.data.select ) {
 				try {
-					value = wp.data.select( 'core/editor' ).getEditedPostAttribute( fieldName ) || '';
+					value =
+						wp.data
+							.select( 'core/editor' )
+							.getEditedPostAttribute( fieldName ) || '';
 				} catch ( e ) {}
 			}
-			if ( ! value && 'content' === fieldName && window.tinymce && tinymce.get( 'content' ) ) {
-				value = tinymce.get( 'content' ).getContent( { format: 'text' } ) || '';
+			if (
+				! value &&
+				'content' === fieldName &&
+				window.tinymce &&
+				tinymce.get( 'content' )
+			) {
+				value =
+					tinymce.get( 'content' ).getContent( { format: 'text' } ) ||
+					'';
 			}
 			if ( ! value ) {
 				var field = document.getElementById( fieldName );
 				value = field ? field.value : '';
 			}
-			return ! String( value ).replace( /<[^>]+>/g, '' ).trim();
+			return ! String( value )
+				.replace( /<[^>]+>/g, '' )
+				.trim();
 		}
 
 		function refreshFeaturedImage( attachmentId ) {
 			// Block editor: ask the editor to re-read the entity record.
 			if ( window.wp && wp.data && wp.data.dispatch ) {
 				try {
-					wp.data.dispatch( 'core/editor' ).editPost( { featured_media: parseInt( attachmentId, 10 ) } );
+					wp.data.dispatch( 'core/editor' ).editPost( {
+						featured_media: parseInt( attachmentId, 10 ),
+					} );
 				} catch ( e ) {}
 			}
 			// Classic editor meta box refreshes on next save; nothing else to do.
@@ -463,7 +625,9 @@
 	}
 
 	ready( function () {
-		var containers = document.querySelectorAll( '.mw-metadata-lookup[data-post-id]' );
+		var containers = document.querySelectorAll(
+			'.mw-metadata-lookup[data-post-id]'
+		);
 		containers.forEach( buildUi );
 	} );
 } )();

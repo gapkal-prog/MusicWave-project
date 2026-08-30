@@ -173,6 +173,25 @@ final class ListeningRepository {
 	}
 
 	/**
+	 * Count stored activity rows across every consenting user.
+	 *
+	 * Administrative dashboard metric only; rows are consent-gated on write
+	 * and pruned by the retention window, so the aggregate count exposes no
+	 * individual listening data.
+	 */
+	public function count_all(): int {
+		global $wpdb;
+
+		if ( ! $this->table_available() ) {
+			return 0;
+		}
+
+		$table = $wpdb->prefix . self::TABLE;
+
+		return (int) $wpdb->get_var( "SELECT COUNT(*) FROM {$table}" ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+	}
+
+	/**
 	 * Erase every stored activity row and the durable queue for one user.
 	 */
 	public function erase( int $user_id ): bool {
@@ -249,8 +268,11 @@ final class ListeningRepository {
 			return false;
 		}
 
-		$table                 = $wpdb->prefix . self::TABLE;
-		$this->table_available = $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $table ) ) === $table; // phpcs:ignore WordPress.DB.DirectDatabaseQuery
+		$table = $wpdb->prefix . self::TABLE;
+		// Underscores are LIKE wildcards; escape them so the existence probe
+		// matches the exact table name only.
+		$like                  = method_exists( $wpdb, 'esc_like' ) ? $wpdb->esc_like( $table ) : $table;
+		$this->table_available = $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $like ) ) === $table; // phpcs:ignore WordPress.DB.DirectDatabaseQuery
 
 		return $this->table_available;
 	}

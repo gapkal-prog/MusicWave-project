@@ -203,6 +203,55 @@
 	min-height: 2.25rem;
 }
 
+/* Standalone download section: a full-width release-page card. */
+.mw-download-action .mw-download-action__heading {
+	margin-bottom: var(--wp--preset--spacing--20, 1rem);
+}
+
+.mw-download-action .mw-download-file-list {
+	margin-top: var(--wp--preset--spacing--20, 1rem);
+}
+
+.mw-download-file-row {
+	transition: background-color 160ms ease;
+}
+
+.mw-download-file-row:hover {
+	background: color-mix(in srgb, var(--mw-color-surface-raised) 65%, transparent);
+}
+
+.mw-download-action__security {
+	display: flex;
+	align-items: flex-start;
+	gap: 0.5rem;
+	margin: 0;
+	padding-top: 0.75rem;
+	border-top: 1px dashed var(--mw-color-border);
+	color: var(--mw-color-text-muted);
+	font-size: 0.8125rem;
+	line-height: 1.5;
+}
+
+.mw-download-action__security-icon {
+	flex: 0 0 auto;
+	margin-top: 0.2rem;
+	color: var(--mw-color-accent-strong);
+}
+
+.mw-download-action__security-badge {
+	flex: 0 0 auto;
+	margin-inline-start: auto;
+	padding: 0.15rem 0.6rem;
+	color: var(--mw-color-accent-strong);
+	font-size: 0.6875rem;
+	font-weight: 800;
+	letter-spacing: 0.06em;
+	text-transform: uppercase;
+	white-space: nowrap;
+	background: color-mix(in srgb, var(--mw-color-accent) 14%, transparent);
+	border-radius: 999px;
+}
+
 @media (max-width: 54rem) {
 	.mw-download-file-row {
 		grid-template-columns: minmax(10rem, 1fr) minmax(9rem, 12rem);

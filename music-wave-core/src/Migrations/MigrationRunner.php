@@ -48,14 +48,20 @@ final class MigrationRunner {
 	 * Run pending migrations for administrators only.
 	 *
 	 * @return void
-	 * @throws RuntimeException When the schema version cannot be persisted.
 	 */
 	public function maybe_run(): void {
 		if ( ! current_user_can( 'manage_options' ) ) {
 			return;
 		}
 
-		$this->run_pending();
+		try {
+			$this->run_pending();
+		} catch ( RuntimeException $exception ) {
+			// A failed migration keeps its retry semantics (the version stays
+			// un-persisted and the lock is released); surface it in the debug
+			// log instead of failing the whole admin request.
+			error_log( 'MusicWave Core migration failed: ' . $exception->getMessage() ); // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
+		}
 	}
 
 	/**
@@ -70,6 +76,12 @@ final class MigrationRunner {
 	 * @throws RuntimeException When the schema version cannot be persisted.
 	 */
 	public function run_pending(): int {
+		// Cheap pre-check so fully migrated sites never touch the lock option
+		// on every admin page load.
+		if ( array() === $this->pending( (string) get_option( self::OPTION, '0.0.0' ) ) ) {
+			return 0;
+		}
+
 		if ( ! $this->acquire_lock() ) {
 			return 0;
 		}

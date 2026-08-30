@@ -16,6 +16,9 @@ use WP_REST_Request;
 use WP_REST_Response;
 
 final class DownloadAssetRoutes {
+	/** Maximum number of quality variants stored per release. */
+	public const MAX_ASSETS = 20;
+
 	/** @var ReleaseRepository */
 	private $releases;
 
@@ -89,6 +92,10 @@ final class DownloadAssetRoutes {
 		if ( ! is_array( $assets ) ) {
 			return new WP_Error( 'mw_download_assets_invalid', __( 'Download qualities must be an array.', 'music-wave-core' ), array( 'status' => 400 ) );
 		}
+
+		// Normalize before anything else so authorization and persistence both
+		// operate on exactly the same bounded, sanitized variant list.
+		$assets = array_slice( $this->normalize_assets( $assets ), 0, self::MAX_ASSETS );
 
 		$release_id = absint( $request->get_param( 'id' ) );
 		$denied     = $this->deny_unauthorized_assignments( $release_id, $assets );
@@ -195,6 +202,17 @@ final class DownloadAssetRoutes {
 				);
 			}
 		}
+
+		return $this->normalize_assets( $assets );
+	}
+
+	/**
+	 * Sanitize raw variant definitions, dropping incomplete entries.
+	 *
+	 * @param array<int, mixed> $assets Raw stored or submitted variants.
+	 * @return array<int, array<string, int|string>>
+	 */
+	private function normalize_assets( array $assets ): array {
 		$result = array();
 
 		foreach ( $assets as $asset ) {

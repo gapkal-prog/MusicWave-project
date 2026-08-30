@@ -1,0 +1,41 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/theme.json",
+  "version": 3,
+  "title": "Sunrise",
+  "settings": {
+    "color": {
+      "palette": [
+        { "slug": "canvas", "name": "Canvas", "color": "#fff8f0" },
+        { "slug": "surface", "name": "Surface", "color": "#ffffff" },
+        { "slug": "surface-raised", "name": "Raised surface", "color": "#fff1e0" },
+        { "slug": "text", "name": "Text", "color": "#1f1a17" },
+        { "slug": "muted", "name": "Muted text", "color": "#8a7a6e" },
+        { "slug": "accent", "name": "Accent", "color": "#ff6b35" },
+        { "slug": "accent-strong", "name": "Accent strong", "color": "#e85d04" },
+        { "slug": "editorial", "name": "Editorial rose", "color": "#d90429" },
+        { "slug": "on-accent", "name": "On accent", "color": "#ffffff" }
+      ],
+      "gradients": [
+        { "slug": "accent-wash", "name": "Accent wash", "gradient": "linear-gradient(135deg, #ff6b35 0%, #ffb627 55%, #ffd166 100%)" },
+        { "slug": "sunset-glow", "name": "Sunset glow", "gradient": "linear-gradient(135deg, #ff7a18, #fa2d48 55%, #9a1b8f)" }
+      ]
+    }
+  },
+  "styles": {
+    "color": {
+      "background": "var:preset|color|canvas",
+      "text": "var:preset|color|text"
+    },
+    "typography": {
+      "fontFamily": "var:preset|font-family|display"
+    },
+    "elements": {
+      "button": {
+        "border": { "radius": "999px" },
+        "color": { "background": "var:preset|color|accent", "text": "var:preset|color|on-accent" }
+      },
+      "heading": { "typography": { "fontWeight": "800", "letterSpacing": "-0.03em" } },
+      "link": { "color": { "text": "var:preset|color|accent-strong" } }
+    }
+  }
+}

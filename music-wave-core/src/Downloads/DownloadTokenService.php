@@ -41,7 +41,10 @@ final class DownloadTokenService {
 		if ( ! in_array( $purpose, array( 'download', 'stream' ), true ) ) {
 			return null; }
 		$claims = new DownloadTokenClaims( absint( $payload['r'] ), absint( $payload['u'] ), (int) $payload['e'], sanitize_key( $payload['j'] ), $payload['b'], sanitize_key( (string) $payload['a'] ), $purpose );
-		if ( $claims->release_id() < 1 || $claims->user_id() < 1 || $claims->expires_at() < time() || strlen( $claims->token_id() ) < 16 ) {
+		// A user id of 0 marks an anonymous token: policy-driven open gates
+		// (public releases, the VIP everyone mode, or a disabled paywall) may
+		// serve guests, so only the release binding and expiry stay mandatory.
+		if ( $claims->release_id() < 1 || $claims->expires_at() < time() || strlen( $claims->token_id() ) < 16 ) {
 			return null; }
 		return $claims;
 	}

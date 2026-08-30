@@ -1,0 +1,153 @@
+/* ================================================================
+   Term hero block (artist/genre/mood/label archive headers)
+   Layouts: banner (media + scrim + bottom content) | compact row
+   Fallbacks: curated hue gradients when a term carries no cover.
+   Logical properties only — every variant is RTL-safe.
+   ================================================================ */
+
+.mw-term-hero {
+	position: relative;
+	margin-block-end: var(--wp--preset--spacing--40);
+	overflow: hidden;
+	border-radius: var(--mw-radius-lg, 1.5rem);
+}
+
+.mw-term-hero__media {
+	inset-block-start: 0;
+	inline-size: 100%;
+	inset-inline-start: 0;
+	position: absolute;
+}
+
+.mw-term-hero--banner .mw-term-hero__media {
+	block-size: 100%;
+}
+
+.mw-term-hero__image,
+.mw-term-hero__media {
+	background:
+		radial-gradient(circle at 22% 18%, color-mix(in srgb, var(--mw-color-accent, #1db954) 38%, transparent), transparent 55%),
+		var(--mw-color-surface-raised, #1d2330);
+}
+
+.mw-term-hero--hue-1 .mw-term-hero__media { background: linear-gradient(135deg, color-mix(in srgb, var(--wp--preset--color--accent, #1db954) 70%, #000), var(--wp--preset--color--accent-strong, #1ed760)); }
+.mw-term-hero--hue-2 .mw-term-hero__media { background: linear-gradient(135deg, #7a1030, var(--wp--preset--color--editorial, #fa2d48)); }
+.mw-term-hero--hue-3 .mw-term-hero__media { background: linear-gradient(135deg, #2743b8, #4f7cf7); }
+.mw-term-hero--hue-4 .mw-term-hero__media { background: linear-gradient(135deg, #6c2bb0, #a55ee8); }
+.mw-term-hero--hue-5 .mw-term-hero__media { background: linear-gradient(135deg, #a05a12, #e8933a); }
+.mw-term-hero--hue-6 .mw-term-hero__media { background: linear-gradient(135deg, #0f766e, #2cbfae); }
+
+.mw-term-hero__scrim {
+	inset: 0;
+	position: absolute;
+	background: linear-gradient(to top, rgb(0 0 0 / 82%) 0%, rgb(0 0 0 / 45%) 45%, transparent 75%);
+}
+
+.mw-term-hero__content {
+	color: var(--mw-color-text, #fff);
+	display: flex;
+	flex-direction: column;
+	gap: .35rem;
+	max-width: 44rem;
+	padding: clamp(1.25rem, 3vw, 2.5rem);
+	position: relative;
+	z-index: 1;
+}
+
+.mw-term-hero__eyebrow {
+	font-size: .75rem;
+	font-weight: 800;
+	letter-spacing: .12em;
+	margin: 0;
+	opacity: .85;
+	text-transform: uppercase;
+}
+
+.mw-term-hero__name {
+	font-size: clamp(2rem, 5vw, 3.5rem);
+	letter-spacing: -.03em;
+	line-height: 1.05;
+	margin: 0;
+}
+
+.mw-term-hero__count {
+	align-self: flex-start;
+	background: color-mix(in srgb, var(--mw-term-accent, #fff) 20%, transparent);
+	border-radius: 999px;
+	font-size: .8125rem;
+	font-weight: 700;
+	margin: .15rem 0 0;
+	padding: .2rem .8rem;
+}
+
+.mw-term-hero__description,
+.mw-term-hero__description p {
+	color: inherit;
+	font-size: .9375rem;
+	line-height: 1.65;
+	margin: .25rem 0 0;
+	opacity: .88;
+}
+
+.mw-term-hero__follow {
+	margin-block-start: .6rem;
+}
+
+/* ---- Banner sizes ---- */
+.mw-term-hero--banner {
+	block-size: auto;
+	display: flex;
+	align-items: flex-end;
+	min-block-size: clamp(14rem, 30vw, 24rem);
+}
+
+.mw-term-hero--banner .mw-term-hero__content {
+	inline-size: 100%;
+}
+
+.mw-term-hero--size-short { min-block-size: clamp(11rem, 22vw, 16rem); }
+.mw-term-hero--size-medium { min-block-size: clamp(14rem, 30vw, 24rem); }
+.mw-term-hero--size-tall { min-block-size: clamp(17rem, 38vw, 30rem); }
+
+/* ---- Compact row ---- */
+.mw-term-hero--compact {
+	align-items: center;
+	background: var(--mw-color-surface-raised, #1d2330);
+	display: flex;
+	gap: clamp(1rem, 2.5vw, 1.5rem);
+	padding: clamp(1rem, 2.5vw, 1.5rem);
+}
+
+.mw-term-hero--compact .mw-term-hero__media,
+.mw-term-hero--compact .mw-term-hero__scrim {
+	display: none;
+}
+
+.mw-term-hero--compact::before {
+	align-self: stretch;
+	background:
+		radial-gradient(circle at 22% 18%, color-mix(in srgb, var(--mw-color-accent, #1db954) 38%, transparent), transparent 60%),
+		var(--mw-color-surface, #151922);
+	border-radius: var(--mw-radius-md, 1rem);
+	content: "";
+	flex: 0 0 auto;
+	inline-size: clamp(3.5rem, 8vw, 6rem);
+	order: -1;
+}
+
+.mw-term-hero--compact.mw-term-hero--shape-circle::before { border-radius: 50%; }
+.mw-term-hero--compact.mw-term-hero--shape-square::before { border-radius: 0; }
+
+.mw-term-hero--compact .mw-term-hero__content {
+	padding: 0;
+}
+
+.mw-term-hero--compact .mw-term-hero__name {
+	font-size: clamp(1.4rem, 3vw, 2rem);
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.mw-term-hero {
+		transition: none;
+	}
+}

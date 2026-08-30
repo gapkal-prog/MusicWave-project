@@ -18,12 +18,24 @@
 		--wp--preset--color--on-accent,
 		color-mix(in srgb, var(--mw-color-accent) 20%, #000)
 	);
+	/* Saved-to-library "love" state, intentionally independent of the accent. */
+	--mw-color-heart: #ff2d55;
 	--mw-shadow-card: var(--wp--preset--shadow--card, 0 18px 50px rgb(0 0 0 / 24%));
 	--mw-shadow-floating: var(--wp--preset--shadow--floating, 0 24px 70px rgb(0 0 0 / 40%));
 	--mw-radius-sm: 0.625rem;
 	--mw-radius-md: 1rem;
 	--mw-radius-lg: 1.5rem;
 	--mw-ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+	/* Fluid typography & spacing — harmonized across devices */
+	--mw-fluid-xs: clamp(0.75rem, 0.7rem + 0.2vw, 0.875rem);
+	--mw-fluid-sm: clamp(0.875rem, 0.82rem + 0.25vw, 1rem);
+	--mw-fluid-md: clamp(1rem, 0.92rem + 0.4vw, 1.25rem);
+	--mw-fluid-lg: clamp(1.25rem, 1.05rem + 0.9vw, 1.75rem);
+	--mw-fluid-xl: clamp(1.5rem, 1.2rem + 1.4vw, 2.35rem);
+	--mw-space-xs: clamp(0.5rem, 0.45rem + 0.2vw, 0.75rem);
+	--mw-space-sm: clamp(0.75rem, 0.65rem + 0.4vw, 1rem);
+	--mw-space-md: clamp(1rem, 0.85rem + 0.6vw, 1.5rem);
+	--mw-space-lg: clamp(1.5rem, 1.2rem + 1vw, 2.5rem);
 }
 
 html[data-mw-theme="light"] {

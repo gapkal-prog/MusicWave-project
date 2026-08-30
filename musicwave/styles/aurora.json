@@ -1,5 +1,5 @@
 {
-  "$schema": "https://schemas.wp.org/wp/6.6/theme.json",
+  "$schema": "https://schemas.wp.org/trunk/theme.json",
   "version": 3,
   "title": "Aurora",
   "settings": {
@@ -11,7 +11,19 @@
         { "slug": "text", "name": "Text", "color": "#eef3ff" },
         { "slug": "muted", "name": "Muted text", "color": "#aebbd8" },
         { "slug": "accent", "name": "Accent", "color": "#28d7bd" },
-        { "slug": "accent-strong", "name": "Accent strong", "color": "#7cf4df" }
+        { "slug": "accent-strong", "name": "Accent strong", "color": "#7cf4df" },
+        { "slug": "editorial", "name": "Editorial rose", "color": "#ff4d6d" },
+        { "slug": "on-accent", "name": "On accent", "color": "#04201b" }
+      ],
+      "gradients": [
+        { "slug": "accent-wash", "name": "Accent wash", "gradient": "radial-gradient(circle at 16% 18%, rgba(40,215,189,0.32), transparent 56%), linear-gradient(180deg, #1a2340, #0c1020)" },
+        { "slug": "editorial-rose", "name": "Editorial rose", "gradient": "linear-gradient(135deg, #ff4d6d, #7a1e4a 55%, #2a1140)" }
+      ]
+    },
+    "shadow": {
+      "presets": [
+        { "slug": "card", "name": "Card", "shadow": "0 18px 48px rgb(6 12 32 / 32%)" },
+        { "slug": "floating", "name": "Floating", "shadow": "0 24px 64px rgb(6 12 32 / 44%)" }
       ]
     }
   },
@@ -26,14 +38,14 @@
     "elements": {
       "button": {
         "border": { "radius": "0.75rem" },
-        "color": {
-          "background": "var:preset|color|accent",
-          "text": "var:preset|color|canvas"
-        }
+        "color": { "background": "var:preset|color|accent", "text": "var:preset|color|on-accent" },
+        "typography": { "fontWeight": "700" }
       },
-      "link": {
-        "color": { "text": "var:preset|color|accent-strong" }
-      }
+      "heading": { "typography": { "fontWeight": "750", "letterSpacing": "-0.02em" } },
+      "link": { "color": { "text": "var:preset|color|accent-strong" } }
+    },
+    "blocks": {
+      "core/group": { "border": { "radius": "1rem" } }
     }
   }
 }

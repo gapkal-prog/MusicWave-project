@@ -1,0 +1,51 @@
+{
+	"apiVersion": 3,
+	"name": "music-wave/artists-shelf",
+	"title": "Artists shelf",
+	"category": "music-wave",
+	"description": "Displays catalog artists as a responsive grid, horizontal scroll shelf, or compact list with follow buttons and release counts.",
+	"keywords": [ "artists", "singers", "shelf", "grid", "follow" ],
+	"textdomain": "music-wave-core",
+	"icon": "admin-users",
+	"attributes": {
+		"eyebrow": { "type": "string", "default": "" },
+		"heading": { "type": "string", "default": "" },
+		"description": { "type": "string", "default": "" },
+		"showHeading": { "type": "boolean", "default": true },
+		"source": { "type": "string", "default": "all" },
+		"termSlug": { "type": "string", "default": "" },
+		"artistIds": { "type": "string", "default": "" },
+		"orderBy": { "type": "string", "default": "count" },
+		"order": { "type": "string", "default": "DESC" },
+		"itemsToShow": { "type": "integer", "default": 8 },
+		"columns": { "type": "integer", "default": 4 },
+		"layout": { "type": "string", "default": "grid" },
+		"imageShape": { "type": "string", "default": "circle" },
+		"imageSize": { "type": "string", "default": "medium" },
+		"showImage": { "type": "boolean", "default": true },
+		"showName": { "type": "boolean", "default": true },
+		"showBio": { "type": "boolean", "default": false },
+		"showReleaseCount": { "type": "boolean", "default": true },
+		"showFollowButton": { "type": "boolean", "default": true },
+		"bioLength": { "type": "integer", "default": 20 },
+		"sectionUrl": { "type": "string", "default": "" },
+		"sectionLinkLabel": { "type": "string", "default": "" },
+		"emptyMessage": { "type": "string", "default": "" }
+	},
+	"supports": {
+		"anchor": true,
+		"align": [ "wide", "full" ],
+		"border": { "color": true, "radius": true, "style": true, "width": true },
+		"color": { "background": true, "link": true, "text": true },
+		"spacing": { "blockGap": true, "margin": true, "padding": true },
+		"typography": { "fontSize": true, "lineHeight": true }
+	},
+	"example": {
+		"attributes": {
+			"heading": "Popular artists",
+			"layout": "scroll",
+			"itemsToShow": 8,
+			"imageShape": "circle"
+		}
+	}
+}

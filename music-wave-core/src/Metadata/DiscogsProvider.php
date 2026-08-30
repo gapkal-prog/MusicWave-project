@@ -16,12 +16,8 @@ final class DiscogsProvider implements MetadataProvider, MetadataEnrichmentProvi
 	/** @var string */
 	private $token;
 
-	/** @var string */
-	private $secret;
-
-	public function __construct( string $token = '', string $secret = '' ) {
-		$this->token  = $token;
-		$this->secret = $secret;
+	public function __construct( string $token = '' ) {
+		$this->token = $token;
 	}
 
 	public function name(): string {

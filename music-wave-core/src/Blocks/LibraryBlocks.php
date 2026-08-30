@@ -17,18 +17,14 @@ final class LibraryBlocks {
 	public const FILTER_QUERY_ARG = 'mw-library';
 	public const PAGE_QUERY_ARG   = 'mw-library-page';
 
-	/** @var LibraryRepository */
-	private $repository;
-
 	/** @var LibraryCatalog */
 	private $catalog;
 
 	/** @var object|null */
 	private $render_context;
 
-	public function __construct( LibraryRepository $repository, LibraryCatalog $catalog ) {
-		$this->repository = $repository;
-		$this->catalog    = $catalog;
+	public function __construct( LibraryCatalog $catalog ) {
+		$this->catalog = $catalog;
 	}
 
 	/**
@@ -189,8 +185,8 @@ final class LibraryBlocks {
 		}
 
 		$user_id = get_current_user_id();
-		$heading = $this->text_attribute( $attributes, 'heading', __( 'My music library', 'music-wave-core' ) );
-		$intro   = $this->text_attribute( $attributes, 'intro', __( 'Every song, album, podcast, and artist you save appears here. Add items with the “Add to library” button on any release or artist page.', 'music-wave-core' ) );
+		$heading = BlockSupport::text_attribute( $attributes, 'heading', __( 'My music library', 'music-wave-core' ) );
+		$intro   = BlockSupport::text_attribute( $attributes, 'intro', __( 'Every song, album, podcast, and artist you save appears here. Add items with the “Add to library” button on any release or artist page.', 'music-wave-core' ) );
 
 		if ( $user_id < 1 ) {
 			return '<section ' . BlockSupport::wrapper_attributes( 'mw-music-library mw-music-library--guest' ) . '><div class="mw-music-library__guest"><span class="mw-music-library__eyebrow">' . esc_html__( 'Your collection', 'music-wave-core' ) . '</span><h2>' . esc_html( $heading ) . '</h2><p>' . esc_html__( 'Sign in to build your personal library: save songs, albums, podcasts, and follow your favorite artists.', 'music-wave-core' ) . '</p><a class="wp-element-button" href="' . esc_url( wp_login_url( home_url( '/' ) ) ) . '">' . esc_html__( 'Sign in', 'music-wave-core' ) . '</a></div></section>';
@@ -199,10 +195,10 @@ final class LibraryBlocks {
 		$filter  = $this->active_filter();
 		$counts  = $this->catalog->counts( $user_id );
 		$page    = $this->active_page();
-		$paged   = $this->catalog->paged_summaries( $user_id, $filter, $this->range_attribute( $attributes, 'itemsToShow', 1, 100, 24 ), $page );
+		$paged   = $this->catalog->paged_summaries( $user_id, $filter, BlockSupport::range_attribute( $attributes, 'itemsToShow', 1, 100, 24 ), $page );
 		$items   = $paged['items'];
-		$layout  = $this->key_attribute( $attributes, 'layout', array( 'list', 'grid' ), 'list' );
-		$columns = $this->range_attribute( $attributes, 'columns', 2, 6, 4 );
+		$layout  = BlockSupport::key_attribute( $attributes, 'layout', array( 'list', 'grid' ), 'list' );
+		$columns = BlockSupport::range_attribute( $attributes, 'columns', 2, 6, 4 );
 
 		LibraryButton::enqueue_assets();
 
@@ -220,7 +216,7 @@ final class LibraryBlocks {
 			$tabs = $this->filter_tabs( $counts, $filter, ! isset( $attributes['showCounts'] ) || false !== $attributes['showCounts'] );
 		}
 
-		$empty = $this->text_attribute(
+		$empty = BlockSupport::text_attribute(
 			$attributes,
 			'emptyMessage',
 			LibraryCatalog::FILTER_ALL === $filter
@@ -265,7 +261,7 @@ final class LibraryBlocks {
 			return '';
 		}
 
-		$item_type = $this->key_attribute(
+		$item_type = BlockSupport::key_attribute(
 			$attributes,
 			'itemType',
 			array( LibraryRepository::TYPE_RELEASE, LibraryRepository::TYPE_WISHLIST, LibraryRepository::TYPE_PRESAVE ),
@@ -486,47 +482,5 @@ final class LibraryBlocks {
 		}
 
 		return 0;
-	}
-
-	/**
-	 * Read a sanitized plain-text attribute with a translated fallback.
-	 *
-	 * @param array<string, mixed> $attributes Block attributes.
-	 * @param string               $key        Attribute name.
-	 * @param string               $fallback   Translated default text.
-	 */
-	private function text_attribute( array $attributes, string $key, string $fallback ): string {
-		$value = isset( $attributes[ $key ] ) && is_scalar( $attributes[ $key ] ) ? sanitize_text_field( (string) $attributes[ $key ] ) : '';
-
-		return '' !== $value ? $value : $fallback;
-	}
-
-	/**
-	 * Read an allow-listed key attribute, falling back when unknown.
-	 *
-	 * @param array<string, mixed> $attributes Block attributes.
-	 * @param string               $key        Attribute name.
-	 * @param array<int, string>   $allowed    Allowed values.
-	 * @param string               $fallback   Fallback value.
-	 */
-	private function key_attribute( array $attributes, string $key, array $allowed, string $fallback ): string {
-		$value = isset( $attributes[ $key ] ) && is_scalar( $attributes[ $key ] ) ? sanitize_key( (string) $attributes[ $key ] ) : '';
-
-		return in_array( $value, $allowed, true ) ? $value : $fallback;
-	}
-
-	/**
-	 * Read a bounded integer attribute; out-of-range values use the fallback.
-	 *
-	 * @param array<string, mixed> $attributes Block attributes.
-	 * @param string               $key        Attribute name.
-	 * @param int                  $min        Minimum allowed value.
-	 * @param int                  $max        Maximum allowed value.
-	 * @param int                  $fallback   Fallback value.
-	 */
-	private function range_attribute( array $attributes, string $key, int $min, int $max, int $fallback ): int {
-		$value = isset( $attributes[ $key ] ) ? absint( $attributes[ $key ] ) : 0;
-
-		return $value >= $min && $value <= $max ? $value : $fallback;
 	}
 }

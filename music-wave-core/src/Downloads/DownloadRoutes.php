@@ -37,7 +37,7 @@ final class DownloadRoutes {
 			array(
 				'methods'             => 'POST',
 				'callback'            => array( $this, 'issue' ),
-				'permission_callback' => array( $this, 'authenticated' ),
+				'permission_callback' => array( $this, 'may_request' ),
 			)
 		);
 		register_rest_route(
@@ -46,7 +46,7 @@ final class DownloadRoutes {
 			array(
 				'methods'             => 'GET',
 				'callback'            => array( $this, 'download' ),
-				'permission_callback' => array( $this, 'authenticated' ),
+				'permission_callback' => array( $this, 'may_request' ),
 			)
 		);
 		register_rest_route(
@@ -55,21 +55,28 @@ final class DownloadRoutes {
 			array(
 				'methods'             => 'GET',
 				'callback'            => array( $this, 'stream' ),
-				'permission_callback' => array( $this, 'authenticated' ),
+				'permission_callback' => array( $this, 'may_request' ),
 			)
 		);
 	}
 
 	/**
-	 * Return an actionable authentication error instead of REST's generic 401.
+	 * Policy-aware endpoint gate.
 	 *
-	 * WordPress cookie authentication validates the REST nonce before this
-	 * callback runs. The frontend sends that nonce explicitly for every step.
+	 * Logged-in visitors pass as before. Guests pass exactly when the access
+	 * policy allows them for this release (public releases or a policy-level
+	 * open gate such as the VIP "everyone including guests" delivery mode);
+	 * everyone else receives an actionable 401 instead of REST's generic one.
 	 *
+	 * @param WP_REST_Request $request Request carrying the release id.
 	 * @return true|WP_Error
 	 */
-	public function authenticated() {
+	public function may_request( $request ) {
 		if ( get_current_user_id() > 0 ) {
+			return true;
+		}
+		$release_id = $request instanceof WP_REST_Request ? absint( $request->get_param( 'id' ) ) : 0;
+		if ( $release_id > 0 && $this->resolver->can_request( $release_id ) ) {
 			return true;
 		}
 
@@ -103,6 +110,21 @@ final class DownloadRoutes {
 		$token      = $this->resolver->issue( $release_id, AccessSubject::current(), $nonce, $quality, $purpose );
 
 		if ( null === $token ) {
+			$reason = method_exists( $this->resolver, 'last_deny_reason' ) ? $this->resolver->last_deny_reason() : '';
+			if ( 'provider_unavailable' === $reason ) {
+				return new WP_Error(
+					'mw_download_denied',
+					__( 'VIP protected downloads are currently unavailable. The VIP module is disabled or its storage is not configured. Please contact the site administrator or use a purchase-based option if available.', 'music-wave-core' ),
+					array( 'status' => 503 )
+				);
+			}
+			if ( 'stream_unsupported' === $reason ) {
+				return new WP_Error(
+					'mw_stream_denied',
+					__( 'Secure playback is not available for this file type. Try downloading instead.', 'music-wave-core' ),
+					array( 'status' => 400 )
+				);
+			}
 			return new WP_Error(
 				'mw_download_denied',
 				__( 'This file is unavailable or your account does not have access to it.', 'music-wave-core' ),

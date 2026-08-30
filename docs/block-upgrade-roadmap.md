@@ -3,8 +3,8 @@
 > این سند دو بخش دارد: بخش اول **فارسی** برای مالک پروژه، بخش دوم **انگلیسی** برای عامل هوشمند (Agent) تا در جلسه‌های بعدی دقیقاً از همین نقطه ادامه دهد.
 > This document has two parts: Part 1 (Persian) for the project owner, Part 2 (English) as an actionable continuation spec for any AI agent working on this repository.
 
-- تاریخ آخرین به‌روزرسانی / Last updated: 2026-08-16
-- وضعیت فعلی / Current status: `tests/run.php` ✅ PASS — `PHPStan level 3 (2G)` ✅ 0 errors — `PHPCS` ✅ 0 errors / 0 warnings — فاز ۰ و ۱ و ۲ کامل شدند (block.json، دسته بلوک، Style Variations، ابزارسازی npm/ESLint/Playwright). ادامه: فاز ۳
+- تاریخ آخرین به‌روزرسانی / Last updated: 2026-08-25
+- وضعیت فعلی / Current status: `tests/run.php` ✅ PASS — `PHPStan level 3 (2G)` ✅ 0 errors — `PHPCS` ✅ exit 0 — `ESLint` ✅ 0 errors — فاز ۰ تا ۲ کامل + ارتقای Public Playlists (Template Part، ویرایش جزئی بلوک، هماهنگی با Release Shelf) کامل شد. ادامه: فاز ۳
 
 ---
 
@@ -171,6 +171,19 @@ Plus for any block touched: confirm the four parity locations (§2.3.3) and a ma
 - `tests/run.php` stubs a minimal WP environment: do not swap `json_encode()` for `wp_json_encode()` in code paths the domain tests exercise (DownloadTokenService).
 - When editing attribute lists, keep all parity locations in sync: block.json + PHP fallback arrays + `Rendering.php` + `blocks.js` fieldConfig + theme CSS; the integrity test now validates block.json ↔ Rendering.php automatically.
 
-## 2.11 Definition of Done (marketplace-grade)
+## 2.11 Public Playlists Site Editor Upgrade (DONE 2026-08-25, revised 2026-08-26)
+
+The Public playlists surface is now a first-class, modular Site Editor experience coordinated with the MusicWave release shelf:
+
+1. **Direct block composition**: `templates/page-playlists.html` composes the archive section by section from real blocks — header/footer template parts, the app-shell group, the `<main>` landmark, `music-wave/public-playlists`, and a helper paragraph. The block itself renders the whole experience, so no wrapper template part or single-block pattern duplicates it (an integrity test guards against re-introducing that layer).
+2. **Block granularity** (`music-wave/public-playlists`): new attributes — `layout` gains the `scroll` horizontal rail, `columns` extends 2–6 (shelf parity), plus `imageShape` (`square|circle|landscape|portrait`), `showToggle`, `showPagination`, `sectionUrl` + `sectionLinkLabel` (release-shelf-style "See all" header link). `supports.typography` adds `fontWeight`/`textTransform`. All four parity locations were updated together (block.json, `Rendering.php::editor_blocks()`, `blocks.js` fieldConfig groups, theme CSS) — the integrity test enforces block.json ↔ Rendering.php automatically.
+3. **Style variations**: `register_block_style` variants `cards` (default, unchanged rendering) and `minimal` (borderless editorial surface). The renderer resolves them through `BlockSupport::style_variation()` and appends `mw-public-playlists--minimal` only when non-default.
+4. **Shared layout system**: `.mw-public-playlists__grid` consumes the same `--mw-shelf-columns` token and container-query breakpoints as `.mw-release-shelf` (52rem caps at 3 columns, 34rem collapses to 2), plus a scroll rail mirroring `.mw-release-shelf--scroll` (scroll-snap + auto columns). Art shape modifiers mirror the shelf art variants.
+5. **Client parity**: `playlists.js` reads `layout`, `columns`, `imageShape`, `showToggle`, and `showPagination` from `data-mw-public-options` so instant-search re-renders respect every inspector setting.
+6. **Theme shelf coordination**: `musicwave/assets/editor-blocks.js` gained a "Content source" control for `musicwave/release-shelf` (releases ↔ public playlists) with a playlist query panel (`playlistOrderBy`, `playlistSearch`), replacing the previous releases-only inspector for that mode.
+
+Verification: `php tests/run.php` (includes extended template-integrity assertions), `composer check:syntax`, `composer check:phpcs` (exit 0), `composer check:phpstan` (0 errors), `npm run lint:js` (0 errors), `php tools/check-templates.php`, `composer make-pot`.
+
+## 2.12 Definition of Done (marketplace-grade)
 
 The project is "marketplace-ready" when: all four quality gates are green, every block ships a `block.json` with icon/keywords/example, the `.pot` + JS translation pipeline is wired, `LICENSE` exists, `docs/block-reference.md` covers all 14 blocks, and RTL + 3 style variations render without visual regressions.

@@ -38,7 +38,11 @@ inventory of public extension points, their stability level, and the deprecation
 |---|---|---|
 | `music_wave_vip_download_provider` / `music_wave_vip_membership_provider` | filter | Replace composed VIP adapters. |
 | `music_wave_vip_remote_download_url` | filter | Return a complete signed URL; the result must pass the HTTPS host allowlist or delivery fails closed. |
-| `music_wave_vip_membership_levels_for_user` | filter | Map user roles/sources to membership level slugs. |
+| `music_wave_vip_membership_levels_for_user` | filter | Map user roles/sources to membership level slugs. VIP adds active plan levels at priority 20. |
+| `music_wave_vip_granting_statuses` | filter | `array<int, string>` WooCommerce order statuses that grant VIP plans (default `processing`, `completed`; ADR 0004 parity). |
+| `music_wave_vip_plan_granted` | action | `(int $user_id, int $order_id, array $levels)` after a paid order grants plan levels. |
+| `music_wave_vip_plan_revoked` | action | `(int $user_id, int $order_id)` after a voided order revokes its plan grants. |
+| `music_wave_vip_grants_write_failed` | action | `(string $event, int $user_id, int $order_id)` when a grant meta write exhausts its compare-and-set retries under webhook contention. |
 
 ## Catalog, presentation, and privacy (stable)
 

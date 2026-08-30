@@ -1,0 +1,40 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/theme.json",
+  "version": 3,
+  "title": "Obsidian",
+  "settings": {
+    "color": {
+      "palette": [
+        { "slug": "canvas", "name": "Canvas", "color": "#07070a" },
+        { "slug": "surface", "name": "Surface", "color": "#12131a" },
+        { "slug": "surface-raised", "name": "Raised surface", "color": "#1c1e2b" },
+        { "slug": "text", "name": "Text", "color": "#e8eaf2" },
+        { "slug": "muted", "name": "Muted text", "color": "#9aa0b8" },
+        { "slug": "accent", "name": "Accent", "color": "#7c3aed" },
+        { "slug": "accent-strong", "name": "Accent strong", "color": "#a78bfa" },
+        { "slug": "editorial", "name": "Editorial rose", "color": "#ef4444" },
+        { "slug": "on-accent", "name": "On accent", "color": "#ffffff" }
+      ],
+      "gradients": [
+        { "slug": "accent-wash", "name": "Accent wash", "gradient": "radial-gradient(circle at 18% 16%, rgba(124,58,237,0.34), transparent 58%), linear-gradient(180deg, #12131a, #07070a)" },
+        { "slug": "midnight-radio", "name": "Midnight radio", "gradient": "linear-gradient(145deg, #1e1b4b, #07070a)" }
+      ]
+    }
+  },
+  "styles": {
+    "color": {
+      "background": "var:preset|color|canvas",
+      "text": "var:preset|color|text"
+    },
+    "typography": {
+      "fontFamily": "var:preset|font-family|system"
+    },
+    "elements": {
+      "button": {
+        "border": { "radius": "0.5rem" },
+        "color": { "background": "var:preset|color|accent", "text": "var:preset|color|on-accent" }
+      },
+      "link": { "color": { "text": "var:preset|color|accent-strong" } }
+    }
+  }
+}

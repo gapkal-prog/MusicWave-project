@@ -1,0 +1,78 @@
+/* -------------------------------------------------------------------------
+ * MusicWave curated block styles — one-click visual variations
+ * ---------------------------------------------------------------------- */
+
+/* Buttons */
+.wp-block-button.is-style-mw-pill .wp-block-button__link {
+	border-radius: 999px;
+}
+
+.wp-block-button.is-style-mw-outline-accent .wp-block-button__link {
+	background: transparent;
+	color: var(--wp--preset--color--accent, #1db954);
+	border: 2px solid var(--wp--preset--color--accent, #1db954);
+}
+
+.wp-block-button.is-style-mw-outline-accent .wp-block-button__link:hover {
+	background: var(--wp--preset--color--accent, #1db954);
+	color: var(--wp--preset--color--on-accent, #052e16);
+}
+
+/* Group — surface cards */
+.wp-block-group.is-style-mw-surface,
+.is-style-mw-surface {
+	background: var(--mw-color-surface);
+	border: 1px solid var(--mw-color-border);
+	border-radius: var(--mw-radius-lg);
+	box-shadow: var(--mw-shadow-card);
+	padding: var(--wp--preset--spacing--30);
+}
+
+.wp-block-group.is-style-mw-surface-raised,
+.is-style-mw-surface-raised {
+	background: var(--mw-color-surface-raised);
+	border: 1px solid var(--mw-color-border);
+	border-radius: var(--mw-radius-lg);
+	box-shadow: var(--mw-shadow-floating);
+}
+
+/* Columns tight gap */
+.wp-block-columns.is-style-mw-tight-gap {
+	gap: var(--wp--preset--spacing--20) !important;
+}
+
+/* Separator accent */
+.wp-block-separator.is-style-mw-accent {
+	background: var(--wp--preset--color--accent, #1db954);
+	height: 3px;
+	border: 0;
+	opacity: 1;
+}
+
+/* Images rounded / circle */
+.wp-block-image.is-style-mw-rounded img {
+	border-radius: var(--mw-radius-md);
+}
+
+.wp-block-image.is-style-mw-circle img {
+	border-radius: 50%;
+}
+
+/* Checklist */
+.wp-block-list.is-style-mw-checklist {
+	list-style: none;
+	padding-left: 0;
+}
+
+.wp-block-list.is-style-mw-checklist li {
+	position: relative;
+	padding-left: 1.6rem;
+}
+
+.wp-block-list.is-style-mw-checklist li::before {
+	content: "✓";
+	position: absolute;
+	left: 0;
+	color: var(--wp--preset--color--accent, #1db954);
+	font-weight: 800;
+}

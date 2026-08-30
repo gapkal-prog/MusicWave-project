@@ -95,6 +95,14 @@ final class ReleaseBlocks {
 					'type'    => 'boolean',
 					'default' => true,
 				),
+				'showTaxonomyChips' => array(
+					'type'    => 'boolean',
+					'default' => true,
+				),
+				'showActions'       => array(
+					'type'    => 'boolean',
+					'default' => true,
+				),
 				'layout'            => array(
 					'type'    => 'string',
 					'default' => 'grid',
@@ -515,63 +523,6 @@ final class ReleaseBlocks {
 	}
 
 	/**
-	 * Read a boolean block attribute with an explicit default.
-	 *
-	 * @param array<string, mixed> $attributes Block attributes.
-	 * @param string               $key        Attribute name.
-	 * @param bool                 $fallback   Value used when the attribute is absent.
-	 */
-	private function bool_attribute( array $attributes, string $key, bool $fallback ): bool {
-		if ( ! isset( $attributes[ $key ] ) ) {
-			return $fallback;
-		}
-
-		return (bool) $attributes[ $key ];
-	}
-
-	/**
-	 * Read a sanitized plain-text attribute with a translated fallback.
-	 *
-	 * @param array<string, mixed> $attributes Block attributes.
-	 * @param string               $key        Attribute name.
-	 * @param string               $fallback   Translated default text.
-	 */
-	private function text_attribute( array $attributes, string $key, string $fallback ): string {
-		$value = isset( $attributes[ $key ] ) && is_scalar( $attributes[ $key ] ) ? sanitize_text_field( (string) $attributes[ $key ] ) : '';
-
-		return '' !== $value ? $value : $fallback;
-	}
-
-	/**
-	 * Read an allow-listed key attribute, falling back when the value is unknown.
-	 *
-	 * @param array<string, mixed> $attributes Block attributes.
-	 * @param string               $key        Attribute name.
-	 * @param array<int, string>   $allowed    Allowed key values.
-	 * @param string               $fallback   Value used for unknown keys.
-	 */
-	private function key_attribute( array $attributes, string $key, array $allowed, string $fallback ): string {
-		$value = isset( $attributes[ $key ] ) && is_scalar( $attributes[ $key ] ) ? sanitize_key( (string) $attributes[ $key ] ) : '';
-
-		return in_array( $value, $allowed, true ) ? $value : $fallback;
-	}
-
-	/**
-	 * Read a bounded integer attribute; out-of-range values use the fallback.
-	 *
-	 * @param array<string, mixed> $attributes Block attributes.
-	 * @param string               $key        Attribute name.
-	 * @param int                  $min        Minimum allowed value.
-	 * @param int                  $max        Maximum allowed value.
-	 * @param int                  $fallback   Value used when out of range.
-	 */
-	private function range_attribute( array $attributes, string $key, int $min, int $max, int $fallback ): int {
-		$value = isset( $attributes[ $key ] ) ? absint( $attributes[ $key ] ) : 0;
-
-		return $value >= $min && $value <= $max ? $value : $fallback;
-	}
-
-	/**
 	 * Read a message override: block attribute, then global setting, then fallback.
 	 *
 	 * @param array<string, mixed> $attributes  Block attributes.
@@ -610,7 +561,7 @@ final class ReleaseBlocks {
 	 * @param string               $setting_key Global MusicWave setting key.
 	 */
 	private function visibility_attribute( array $attributes, string $key, string $setting_key ): bool {
-		$value = $this->key_attribute( $attributes, $key, array( 'inherit', 'enabled', 'disabled' ), 'inherit' );
+		$value = BlockSupport::key_attribute( $attributes, $key, array( 'inherit', 'enabled', 'disabled' ), 'inherit' );
 		if ( 'enabled' === $value ) {
 			return true;
 		}
@@ -651,10 +602,13 @@ final class ReleaseBlocks {
 	}
 
 	/**
-	 * Render release metadata without exposing private access fields.
+	 * Render the release detail panel without exposing private access fields.
 	 *
-	 * Layout, field labels, taxonomy links, and the displayed fields are all
-	 * editor-controlled; empty fields are skipped so the panel stays compact.
+	 * The full-size panel groups the release identity: linked taxonomy
+	 * chips, metadata facts, and the library and playlist actions. Downloads
+	 * and track lists are separate template blocks rendered below the panel.
+	 * Compact placements inside loops stay metadata-only. Empty fields are
+	 * skipped so the panel stays compact.
 	 *
 	 * @param array<string, mixed> $attributes Block attributes.
 	 * @return string
@@ -673,13 +627,14 @@ final class ReleaseBlocks {
 		}
 
 		$compact   = ! empty( $attributes['compact'] );
-		$layout    = $this->key_attribute( $attributes, 'layout', array( 'grid', 'inline', 'stack' ), 'grid' );
+		$layout    = BlockSupport::key_attribute( $attributes, 'layout', array( 'grid', 'inline', 'stack' ), 'grid' );
 		$variation = BlockSupport::style_variation( $attributes, array( 'inline', 'stack' ) );
 		if ( '' !== $variation ) {
 			$layout = $variation;
 		}
-		$show_labels = $this->bool_attribute( $attributes, 'showLabels', true );
-		$link_terms  = $this->bool_attribute( $attributes, 'linkTerms', false );
+		$show_labels = BlockSupport::bool_attribute( $attributes, 'showLabels', true );
+		$link_terms  = BlockSupport::bool_attribute( $attributes, 'linkTerms', false );
+		$use_chips   = ! $compact && BlockSupport::bool_attribute( $attributes, 'showTaxonomyChips', true );
 		$items       = array();
 		$fields      = array(
 			'mw_catalog_number' => array( __( 'Catalog number', 'music-wave-core' ), 'showCatalogNumber' ),
@@ -689,7 +644,7 @@ final class ReleaseBlocks {
 			'mw_musical_key'    => array( __( 'Key', 'music-wave-core' ), 'showKey' ),
 		);
 		foreach ( $fields as $key => $field ) {
-			if ( ! $this->bool_attribute( $attributes, (string) $field[1], true ) ) {
+			if ( ! BlockSupport::bool_attribute( $attributes, (string) $field[1], true ) ) {
 				continue;
 			}
 			$value = $this->repository->get( $release_id, $key );
@@ -709,7 +664,11 @@ final class ReleaseBlocks {
 			'mw_release_type' => array( __( 'Release type', 'music-wave-core' ), 'showReleaseType' ),
 		);
 		foreach ( $taxonomies as $taxonomy => $field ) {
-			if ( ! $this->bool_attribute( $attributes, (string) $field[1], true ) ) {
+			if ( ! BlockSupport::bool_attribute( $attributes, (string) $field[1], true ) ) {
+				continue;
+			}
+			// The full panel shows linked chips instead of plain text rows.
+			if ( $use_chips ) {
 				continue;
 			}
 			$terms = wp_get_post_terms( $release_id, $taxonomy, array( 'fields' => $link_terms ? 'all' : 'names' ) );
@@ -723,22 +682,78 @@ final class ReleaseBlocks {
 			$items[] = $this->meta_item_markup( (string) $field[0], $value, $show_labels );
 		}
 
-		if ( empty( $items ) ) {
+		if ( $compact ) {
+			if ( empty( $items ) ) {
+				return '';
+			}
+
+			$class = 'mw-release-meta mw-release-meta--compact' . ( 'grid' !== $layout ? ' mw-release-meta--' . $layout : '' );
+
+			return '<dl ' . BlockSupport::wrapper_attributes( $class ) . '>' . implode( '', $items ) . '</dl>';
+		}
+
+		$chips = $use_chips ? $this->meta_taxonomy_chips( $release_id, $attributes ) : '';
+
+		$facts = '';
+		if ( ! empty( $items ) ) {
+			$facts_class = 'mw-release-meta__facts' . ( 'grid' !== $layout ? ' mw-release-meta__facts--' . $layout : '' );
+			$facts       = '<dl class="' . esc_attr( $facts_class ) . '">' . implode( '', $items ) . '</dl>';
+		}
+
+		$buttons = '';
+		if ( BlockSupport::bool_attribute( $attributes, 'showLibraryButton', true ) ) {
+			$buttons .= LibraryButton::markup( LibraryRepository::TYPE_RELEASE, $release_id, array( 'style' => 'heart' ) );
+		}
+		if ( BlockSupport::bool_attribute( $attributes, 'showActions', true ) ) {
+			$buttons .= do_blocks( '<!-- wp:music-wave/add-to-playlist {"releaseId":' . $release_id . '} /-->' );
+		}
+		$actions = '' !== trim( $buttons ) ? '<div class="mw-release-meta__actions">' . $buttons . '</div>' : '';
+
+		$body = $chips . $facts . $actions;
+		if ( '' === $body ) {
 			return '';
 		}
 
-		if ( ! $compact && $this->bool_attribute( $attributes, 'showLibraryButton', true ) ) {
-			$button = LibraryButton::markup( LibraryRepository::TYPE_RELEASE, $release_id );
-			if ( '' !== $button ) {
-				$items[] = '<div class="mw-release-meta__actions">' . $button . '</div>';
+		return '<section ' . BlockSupport::wrapper_attributes( 'mw-release-meta mw-release-meta--panel' ) . ' aria-label="' . esc_attr__( 'Release details', 'music-wave-core' ) . '">' . $body . '</section>';
+	}
+
+	/**
+	 * Render linked taxonomy chips for the full-size release panel.
+	 *
+	 * Every chip links to its archive so visitors can jump straight from a
+	 * release into the matching artist, genre, mood, or type catalog.
+	 *
+	 * @param array<string, mixed> $attributes Block attributes.
+	 */
+	private function meta_taxonomy_chips( int $release_id, array $attributes ): string {
+		$taxonomies = array(
+			'mw_artist'       => 'showArtist',
+			'mw_genre'        => 'showGenre',
+			'mw_mood'         => 'showMood',
+			'mw_release_type' => 'showReleaseType',
+		);
+		$chips      = array();
+		foreach ( $taxonomies as $taxonomy => $attribute ) {
+			if ( ! BlockSupport::bool_attribute( $attributes, $attribute, true ) ) {
+				continue;
+			}
+			$terms = wp_get_post_terms( $release_id, $taxonomy, array( 'fields' => 'all' ) );
+			if ( is_wp_error( $terms ) || empty( $terms ) ) {
+				continue;
+			}
+			$variant = sanitize_html_class( str_replace( 'mw_', '', $taxonomy ) );
+			foreach ( $terms as $term ) {
+				if ( ! is_object( $term ) || empty( $term->name ) ) {
+					continue;
+				}
+				$url     = get_term_link( $term );
+				$chips[] = ! is_wp_error( $url ) && is_string( $url ) && '' !== $url
+					? '<a class="mw-release-meta__chip mw-release-meta__chip--' . $variant . '" href="' . esc_url( $url ) . '">' . esc_html( $term->name ) . '</a>'
+					: '<span class="mw-release-meta__chip mw-release-meta__chip--' . $variant . '">' . esc_html( $term->name ) . '</span>';
 			}
 		}
 
-		$class = 'mw-release-meta'
-			. ( $compact ? ' mw-release-meta--compact' : '' )
-			. ( 'grid' !== $layout ? ' mw-release-meta--' . $layout : '' );
-
-		return '<dl ' . BlockSupport::wrapper_attributes( $class ) . '>' . implode( '', $items ) . '</dl>';
+		return empty( $chips ) ? '' : '<div class="mw-release-meta__chips">' . implode( '', $chips ) . '</div>';
 	}
 
 	/**
@@ -805,13 +820,13 @@ final class ReleaseBlocks {
 			return '';
 		}
 
-		$layout   = $this->key_attribute( $attributes, 'layout', array( 'banner', 'stack' ), 'banner' );
+		$layout   = BlockSupport::key_attribute( $attributes, 'layout', array( 'banner', 'stack' ), 'banner' );
 		$decision = $this->policy->decide( $release_id, AccessSubject::current() );
 		if ( $decision->is_allowed() && 'public' === $decision->mode() ) {
 			return '';
 		}
 		if ( $decision->is_allowed() ) {
-			if ( ! $this->bool_attribute( $attributes, 'showWhenGranted', true ) ) {
+			if ( ! BlockSupport::bool_attribute( $attributes, 'showWhenGranted', true ) ) {
 				return '';
 			}
 			$message = $this->message_attribute( $attributes, 'grantedMessage', 'access_granted_message', __( 'Access granted', 'music-wave-core' ) );
@@ -869,7 +884,7 @@ final class ReleaseBlocks {
 			return '';
 		}
 
-		$show_role = $this->bool_attribute( $attributes, 'showRole', true );
+		$show_role = BlockSupport::bool_attribute( $attributes, 'showRole', true );
 		$names     = array();
 		foreach ( $credits as $credit ) {
 			if ( ! is_array( $credit ) || empty( $credit['name'] ) || ! is_scalar( $credit['name'] ) ) {
@@ -885,8 +900,8 @@ final class ReleaseBlocks {
 			return '';
 		}
 
-		$layout = $this->key_attribute( $attributes, 'layout', array( 'list', 'grid', 'inline' ), 'list' );
-		if ( $show_role && $this->bool_attribute( $attributes, 'groupByRole', false ) ) {
+		$layout = BlockSupport::key_attribute( $attributes, 'layout', array( 'list', 'grid', 'inline' ), 'list' );
+		if ( $show_role && BlockSupport::bool_attribute( $attributes, 'groupByRole', false ) ) {
 			$body = $this->credit_groups_markup( $names );
 		} else {
 			$body = '<ul class="mw-release-credits__list mw-release-credits__list--' . esc_attr( $layout ) . '">' . implode( '', array_map( array( $this, 'credit_item_markup' ), $names ) ) . '</ul>';
@@ -895,8 +910,8 @@ final class ReleaseBlocks {
 			return '';
 		}
 
-		$heading      = $this->text_attribute( $attributes, 'heading', __( 'Credits', 'music-wave-core' ) );
-		$show_heading = $this->bool_attribute( $attributes, 'showHeading', true );
+		$heading      = BlockSupport::text_attribute( $attributes, 'heading', __( 'Credits', 'music-wave-core' ) );
+		$show_heading = BlockSupport::bool_attribute( $attributes, 'showHeading', true );
 		$heading_html = $show_heading ? '<h2 class="mw-release-credits__heading">' . esc_html( $heading ) . '</h2>' : '';
 		$aria_label   = $show_heading ? '' : ' aria-label="' . esc_attr( $heading ) . '"';
 
@@ -960,11 +975,11 @@ final class ReleaseBlocks {
 		}
 
 		$options = array(
-			'show_position' => $this->bool_attribute( $attributes, 'showPosition', true ),
-			'show_artwork'  => $this->bool_attribute( $attributes, 'showArtwork', false ),
-			'show_duration' => $this->bool_attribute( $attributes, 'showDuration', true ),
-			'show_preview'  => $this->bool_attribute( $attributes, 'showPreview', true ),
-			'show_download' => $this->bool_attribute( $attributes, 'showDownload', true ),
+			'show_position' => BlockSupport::bool_attribute( $attributes, 'showPosition', true ),
+			'show_artwork'  => BlockSupport::bool_attribute( $attributes, 'showArtwork', false ),
+			'show_duration' => BlockSupport::bool_attribute( $attributes, 'showDuration', true ),
+			'show_preview'  => BlockSupport::bool_attribute( $attributes, 'showPreview', true ),
+			'show_download' => BlockSupport::bool_attribute( $attributes, 'showDownload', true ),
 		);
 
 		$rows           = array();
@@ -986,17 +1001,17 @@ final class ReleaseBlocks {
 		}
 
 		$grouped = '';
-		if ( $this->bool_attribute( $attributes, 'groupByDisc', false ) ) {
+		if ( BlockSupport::bool_attribute( $attributes, 'groupByDisc', false ) ) {
 			$grouped = $this->collection_disc_groups( $items, $options );
 		}
 
-		$heading      = $this->text_attribute( $attributes, 'heading', __( 'Track list', 'music-wave-core' ) );
-		$show_heading = $this->bool_attribute( $attributes, 'showHeading', true );
+		$heading      = BlockSupport::text_attribute( $attributes, 'heading', __( 'Track list', 'music-wave-core' ) );
+		$show_heading = BlockSupport::bool_attribute( $attributes, 'showHeading', true );
 		$heading_html = $show_heading ? '<h2 class="mw-collection-list__heading">' . esc_html( $heading ) . '</h2>' : '';
 		$aria_label   = $show_heading ? '' : ' aria-label="' . esc_attr( $heading ) . '"';
 		$list_markup  = '' !== $grouped ? $grouped : '<ol class="mw-collection-list__items">' . implode( '', $rows ) . '</ol>';
 		$total_html   = '';
-		if ( $this->bool_attribute( $attributes, 'showTotalDuration', false ) && $total_duration > 0 ) {
+		if ( BlockSupport::bool_attribute( $attributes, 'showTotalDuration', false ) && $total_duration > 0 ) {
 			/* translators: %s: formatted running time, such as 42:10. */
 			$total_html = '<p class="mw-collection-list__total">' . esc_html( sprintf( __( 'Total length: %s', 'music-wave-core' ), $this->format_duration( $total_duration ) ) ) . '</p>';
 		}
@@ -1149,10 +1164,10 @@ final class ReleaseBlocks {
 			return '';
 		}
 
-		$show_search = $this->bool_attribute( $attributes, 'showSearch', true );
-		$show_sort   = $this->bool_attribute( $attributes, 'showSort', true );
-		$show_reset  = $this->bool_attribute( $attributes, 'showReset', true );
-		$max_terms   = $this->range_attribute( $attributes, 'maxTerms', 10, 200, 50 );
+		$show_search = BlockSupport::bool_attribute( $attributes, 'showSearch', true );
+		$show_sort   = BlockSupport::bool_attribute( $attributes, 'showSort', true );
+		$show_reset  = BlockSupport::bool_attribute( $attributes, 'showReset', true );
+		$max_terms   = BlockSupport::range_attribute( $attributes, 'maxTerms', 10, 200, 50 );
 
 		$filters = array(
 			'mw_artist'       => array( __( 'Artist', 'music-wave-core' ), 'showArtistFilter' ),
@@ -1162,7 +1177,7 @@ final class ReleaseBlocks {
 		);
 		$fields  = array();
 		foreach ( $filters as $taxonomy => $field ) {
-			if ( ! $this->bool_attribute( $attributes, (string) $field[1], true ) ) {
+			if ( ! BlockSupport::bool_attribute( $attributes, (string) $field[1], true ) ) {
 				continue;
 			}
 			$label = (string) $field[0];
@@ -1199,7 +1214,7 @@ final class ReleaseBlocks {
 		$search_html = '';
 		if ( $show_search ) {
 			$search      = isset( $_GET['s'] ) && is_scalar( $_GET['s'] ) ? sanitize_text_field( wp_unslash( (string) $_GET['s'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-			$placeholder = $this->text_attribute( $attributes, 'searchPlaceholder', __( 'Search releases', 'music-wave-core' ) );
+			$placeholder = BlockSupport::text_attribute( $attributes, 'searchPlaceholder', __( 'Search releases', 'music-wave-core' ) );
 			// The field is a plain input for no-JS visitors; catalog-suggest.js
 			// upgrades it to an ARIA combobox in place.
 			$search_html = '<div class="mw-catalog-suggest">'
@@ -1225,14 +1240,14 @@ final class ReleaseBlocks {
 			$sort_markup .= '</select></label>';
 		}
 
-		$submit_label = $this->text_attribute( $attributes, 'submitLabel', __( 'Apply filters', 'music-wave-core' ) );
+		$submit_label = BlockSupport::text_attribute( $attributes, 'submitLabel', __( 'Apply filters', 'music-wave-core' ) );
 		$actions      = '<button type="submit">' . esc_html( $submit_label ) . '</button>';
 		if ( $show_reset ) {
-			$reset_label = $this->text_attribute( $attributes, 'resetLabel', __( 'Reset', 'music-wave-core' ) );
+			$reset_label = BlockSupport::text_attribute( $attributes, 'resetLabel', __( 'Reset', 'music-wave-core' ) );
 			$actions    .= '<a href="' . esc_url( $archive_url ) . '">' . esc_html( $reset_label ) . '</a>';
 		}
 
-		$layout    = $this->key_attribute( $attributes, 'layout', array( 'inline', 'stacked' ), 'inline' );
+		$layout    = BlockSupport::key_attribute( $attributes, 'layout', array( 'inline', 'stacked' ), 'inline' );
 		$variation = BlockSupport::style_variation( $attributes, array( 'stacked' ) );
 		if ( '' !== $variation ) {
 			$layout = $variation;
@@ -1287,6 +1302,10 @@ final class ReleaseBlocks {
 	 * @return void
 	 */
 	private function enqueue_catalog_filter_assets(): void {
+		if ( is_admin() || ! function_exists( 'wp_enqueue_script' ) ) {
+			return;
+		}
+
 		wp_enqueue_script( 'music-wave-catalog-filters', MUSIC_WAVE_CORE_URL . 'assets/catalog-filters.js', array(), MUSIC_WAVE_CORE_VERSION, true );
 		wp_localize_script(
 			'music-wave-catalog-filters',
@@ -1304,8 +1323,8 @@ final class ReleaseBlocks {
 	 * @return string
 	 */
 	public function render_catalog_results( array $attributes ): string {
-		$show_count = $this->bool_attribute( $attributes, 'showCount', true );
-		$show_chips = $this->bool_attribute( $attributes, 'showChips', true );
+		$show_count = BlockSupport::bool_attribute( $attributes, 'showCount', true );
+		$show_chips = BlockSupport::bool_attribute( $attributes, 'showChips', true );
 		if ( ! $show_count && ! $show_chips ) {
 			return '';
 		}
@@ -1353,13 +1372,13 @@ final class ReleaseBlocks {
 		$limit     = $limit >= 10 && $limit <= 120 ? $limit : 30;
 		$label     = isset( $attributes['label'] ) ? sanitize_text_field( (string) $attributes['label'] ) : '';
 		$label     = '' !== $label ? $label : __( 'Play preview', 'music-wave-core' );
-		$style     = $this->key_attribute( $attributes, 'style', array( 'solid', 'outline', 'ghost' ), 'solid' );
+		$style     = BlockSupport::key_attribute( $attributes, 'style', array( 'solid', 'outline', 'ghost' ), 'solid' );
 		$variation = BlockSupport::style_variation( $attributes, array( 'outline', 'ghost' ) );
 		if ( '' !== $variation ) {
 			$style = $variation;
 		}
 		$button = 'mw-preview-button' . ( 'solid' !== $style ? ' mw-preview-button--' . $style : '' );
-		$icon   = $this->bool_attribute( $attributes, 'showIcon', true ) ? '<span class="mw-preview-button__icon" aria-hidden="true">&#9654;</span>' : '';
+		$icon   = BlockSupport::bool_attribute( $attributes, 'showIcon', true ) ? '<span class="mw-preview-button__icon" aria-hidden="true">&#9654;</span>' : '';
 
 		return '<section ' . BlockSupport::wrapper_attributes( 'mw-preview-player' ) . '><h2 class="screen-reader-text">' . esc_html__( 'Audio preview', 'music-wave-core' ) . '</h2><button class="' . esc_attr( $button ) . '" type="button" aria-pressed="false" data-preview-url="' . esc_url( $preview_url ) . '" data-preview-title="' . esc_attr( $title ) . '" data-preview-artist="' . esc_attr( $artist ) . '" data-preview-image="' . esc_url( is_string( $image ) ? $image : '' ) . '" data-preview-link="' . esc_url( is_string( $link ) ? $link : '' ) . '" data-preview-limit="' . esc_attr( (string) $limit ) . '">' . $icon . '<span>' . esc_html( $label ) . '</span></button></section>';
 	}
@@ -1377,18 +1396,16 @@ final class ReleaseBlocks {
 		$release_id = $this->release_id( $attributes );
 		$compact    = ! empty( $attributes['compact'] );
 		$embedded   = ! empty( $attributes['_musicwave_embedded_ui'] );
+		// Policy-driven rendering: guests see the secure controls whenever the
+		// decision itself allows them (public releases or a policy-level open
+		// gate such as the VIP "everyone including guests" mode); the sign-in
+		// prompt only belongs on the access panel for denied visitors.
 		if ( $release_id <= 0 || ! $this->policy->decide( $release_id, AccessSubject::current() )->is_allowed() ) {
 			return '';
 		}
 		$assets = $this->download_assets( $release_id );
 		if ( empty( $assets ) ) {
 			return '';
-		}
-		if ( get_current_user_id() < 1 ) {
-			$wrapper     = $embedded ? 'class="mw-download-action"' : BlockSupport::wrapper_attributes( 'mw-download-action' );
-			$login_label = $this->text_attribute( $attributes, 'loginLabel', __( 'Sign in to download', 'music-wave-core' ) );
-
-			return '<aside ' . $wrapper . '><a class="wp-element-button" href="' . esc_url( wp_login_url( get_permalink( $release_id ) ) ) . '">' . esc_html( $login_label ) . '</a></aside>';
 		}
 
 		wp_enqueue_script( 'music-wave-download', MUSIC_WAVE_CORE_URL . 'assets/download.js', array( 'wp-api-fetch' ), MUSIC_WAVE_CORE_VERSION, true );
@@ -1413,11 +1430,11 @@ final class ReleaseBlocks {
 		$class   = 'mw-download-action' . ( $compact ? ' mw-download-action--compact' : '' );
 		$heading = '';
 		if ( ! $compact ) {
-			$heading_html     = $this->bool_attribute( $attributes, 'showHeading', true )
-				? '<strong>' . esc_html( $this->text_attribute( $attributes, 'heading', __( 'Download this release', 'music-wave-core' ) ) ) . '</strong>'
+			$heading_html     = BlockSupport::bool_attribute( $attributes, 'showHeading', true )
+				? '<strong>' . esc_html( BlockSupport::text_attribute( $attributes, 'heading', __( 'Download this release', 'music-wave-core' ) ) ) . '</strong>'
 				: '';
-			$description_html = $this->bool_attribute( $attributes, 'showDescription', true )
-				? '<span>' . esc_html( $this->text_attribute( $attributes, 'description', __( 'Play an available audio file or download your preferred quality.', 'music-wave-core' ) ) ) . '</span>'
+			$description_html = BlockSupport::bool_attribute( $attributes, 'showDescription', true )
+				? '<span>' . esc_html( BlockSupport::text_attribute( $attributes, 'description', __( 'Play an available audio file or download your preferred quality.', 'music-wave-core' ) ) ) . '</span>'
 				: '';
 			if ( '' !== $heading_html || '' !== $description_html ) {
 				$heading = '<div class="mw-download-action__heading">' . $heading_html . $description_html . '</div>';
@@ -1425,15 +1442,25 @@ final class ReleaseBlocks {
 		}
 
 		$row_options = array(
-			'show_quality'   => $this->bool_attribute( $attributes, 'showQuality', true ),
-			'show_stream'    => $this->bool_attribute( $attributes, 'showStream', true ),
-			'download_label' => $this->text_attribute( $attributes, 'downloadLabel', __( 'Secure download', 'music-wave-core' ) ),
+			'show_quality'   => BlockSupport::bool_attribute( $attributes, 'showQuality', true ),
+			'show_stream'    => BlockSupport::bool_attribute( $attributes, 'showStream', true ),
+			'download_label' => BlockSupport::text_attribute( $attributes, 'downloadLabel', __( 'Secure download', 'music-wave-core' ) ),
 			'play_label'     => isset( $attributes['playLabel'] ) && is_scalar( $attributes['playLabel'] ) ? sanitize_text_field( (string) $attributes['playLabel'] ) : '',
 		);
 
 		$wrapper = $embedded ? 'class="' . esc_attr( $class ) . '"' : BlockSupport::wrapper_attributes( $class );
 
-		return '<aside ' . $wrapper . '>' . $heading . $this->download_file_rows( $release_id, $files, $row_options ) . '<audio class="mw-secure-audio" preload="metadata" hidden></audio><span class="mw-download-status" role="status" aria-live="polite"></span></aside>';
+		$security = '';
+		if ( ! $compact ) {
+			$protected = (bool) has_filter( 'music_wave_download_provider' );
+			$message   = $protected
+				? __( 'Protected by MusicWave VIP: files stream from a protected directory through signed, expiring links. Direct file URLs are never exposed.', 'music-wave-core' )
+				: __( 'Delivered through signed, expiring links. Direct file URLs are never exposed.', 'music-wave-core' );
+			$badge     = $protected ? '<span class="mw-download-action__security-badge">' . esc_html__( 'VIP protected', 'music-wave-core' ) . '</span>' : '';
+			$security  = '<p class="mw-download-action__security"><svg class="mw-download-action__security-icon" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg><span>' . esc_html( $message ) . '</span>' . $badge . '</p>';
+		}
+
+		return '<aside ' . $wrapper . '>' . $heading . $this->download_file_rows( $release_id, $files, $row_options ) . '<audio class="mw-secure-audio" preload="metadata" hidden></audio><span class="mw-download-status" role="status" aria-live="polite"></span>' . $security . '</aside>';
 	}
 
 	/**
@@ -1451,21 +1478,21 @@ final class ReleaseBlocks {
 			return '';
 		}
 
-		$limit = $this->range_attribute( $attributes, 'itemsToShow', 2, 12, 0 );
+		$limit = BlockSupport::range_attribute( $attributes, 'itemsToShow', 2, 12, 0 );
 		if ( $limit < 2 ) {
 			$limit = absint( Settings::get( 'related_items_per_section' ) );
 		}
 		$limit    = $limit >= 2 && $limit <= 12 ? $limit : 4;
-		$order_by = $this->key_attribute( $attributes, 'orderBy', array( 'date', 'title', 'rand', 'modified' ), 'date' );
+		$order_by = BlockSupport::key_attribute( $attributes, 'orderBy', array( 'date', 'title', 'rand', 'modified' ), 'date' );
 		$order    = isset( $attributes['order'] ) && 'ASC' === strtoupper( (string) $attributes['order'] ) ? 'ASC' : 'DESC';
 		$options  = $this->related_card_options( $attributes );
 		$excluded = array( $release_id );
 		$sections = array();
 
-		$same_artist_heading = $this->text_attribute( $attributes, 'sameArtistHeading', __( 'More from this artist', 'music-wave-core' ) );
-		$similar_heading     = $this->text_attribute( $attributes, 'similarHeading', __( 'Similar releases', 'music-wave-core' ) );
-		$show_section_link   = $this->bool_attribute( $attributes, 'showSectionLink', false );
-		$section_link_label  = $this->text_attribute( $attributes, 'sectionLinkLabel', __( 'See all', 'music-wave-core' ) );
+		$same_artist_heading = BlockSupport::text_attribute( $attributes, 'sameArtistHeading', __( 'More from this artist', 'music-wave-core' ) );
+		$similar_heading     = BlockSupport::text_attribute( $attributes, 'similarHeading', __( 'Similar releases', 'music-wave-core' ) );
+		$show_section_link   = BlockSupport::bool_attribute( $attributes, 'showSectionLink', false );
+		$section_link_label  = BlockSupport::text_attribute( $attributes, 'sectionLinkLabel', __( 'See all', 'music-wave-core' ) );
 
 		if ( $this->visibility_attribute( $attributes, 'sameArtistSection', 'show_same_artist_releases' ) ) {
 			$artist_ids = wp_get_post_terms( $release_id, 'mw_artist', array( 'fields' => 'ids' ) );
@@ -1502,15 +1529,15 @@ final class ReleaseBlocks {
 			$match     = array(
 				'mw_genre'        => array(
 					'weight'  => 4,
-					'enabled' => $this->bool_attribute( $attributes, 'matchGenre', true ),
+					'enabled' => BlockSupport::bool_attribute( $attributes, 'matchGenre', true ),
 				),
 				'mw_mood'         => array(
 					'weight'  => 2,
-					'enabled' => $this->bool_attribute( $attributes, 'matchMood', true ),
+					'enabled' => BlockSupport::bool_attribute( $attributes, 'matchMood', true ),
 				),
 				'mw_release_type' => array(
 					'weight'  => 1,
-					'enabled' => $this->bool_attribute( $attributes, 'matchType', true ),
+					'enabled' => BlockSupport::bool_attribute( $attributes, 'matchType', true ),
 				),
 			);
 			foreach ( $match as $taxonomy => $config ) {
@@ -1555,16 +1582,16 @@ final class ReleaseBlocks {
 	 */
 	private function related_card_options( array $attributes ): array {
 		return array(
-			'layout'       => $this->key_attribute( $attributes, 'layout', array( 'grid', 'scroll', 'list' ), 'grid' ),
-			'columns'      => $this->range_attribute( $attributes, 'columns', 2, 6, 4 ),
-			'shape'        => $this->key_attribute( $attributes, 'imageShape', array( 'square', 'landscape', 'portrait', 'circle' ), 'square' ),
-			'show_artwork' => $this->bool_attribute( $attributes, 'showArtwork', true ),
-			'show_artist'  => $this->bool_attribute( $attributes, 'showArtist', true ),
-			'show_date'    => $this->bool_attribute( $attributes, 'showDate', false ),
-			'show_excerpt' => $this->bool_attribute( $attributes, 'showExcerpt', false ),
-			'show_preview' => $this->bool_attribute( $attributes, 'showPreview', true ),
-			'show_action'  => $this->bool_attribute( $attributes, 'showAction', false ),
-			'action_label' => $this->text_attribute( $attributes, 'actionLabel', __( 'Open release', 'music-wave-core' ) ),
+			'layout'       => BlockSupport::key_attribute( $attributes, 'layout', array( 'grid', 'scroll', 'list' ), 'grid' ),
+			'columns'      => BlockSupport::range_attribute( $attributes, 'columns', 2, 6, 4 ),
+			'shape'        => BlockSupport::key_attribute( $attributes, 'imageShape', array( 'square', 'landscape', 'portrait', 'circle' ), 'square' ),
+			'show_artwork' => BlockSupport::bool_attribute( $attributes, 'showArtwork', true ),
+			'show_artist'  => BlockSupport::bool_attribute( $attributes, 'showArtist', true ),
+			'show_date'    => BlockSupport::bool_attribute( $attributes, 'showDate', false ),
+			'show_excerpt' => BlockSupport::bool_attribute( $attributes, 'showExcerpt', false ),
+			'show_preview' => BlockSupport::bool_attribute( $attributes, 'showPreview', true ),
+			'show_action'  => BlockSupport::bool_attribute( $attributes, 'showAction', false ),
+			'action_label' => BlockSupport::text_attribute( $attributes, 'actionLabel', __( 'Open release', 'music-wave-core' ) ),
 		);
 	}
 
@@ -1753,19 +1780,6 @@ final class ReleaseBlocks {
 		$url = $this->repository->get( $release_id, 'mw_preview_url' );
 
 		return is_string( $url ) && 'https' === wp_parse_url( $url, PHP_URL_SCHEME );
-	}
-
-	/**
-	 * Build a customer-facing label that distinguishes files in collections.
-	 *
-	 * @param array<string, string> $asset Download variant.
-	 * @return string
-	 */
-	private function download_asset_label( array $asset ): string {
-		$file_label = isset( $asset['file_label'] ) ? sanitize_text_field( $asset['file_label'] ) : '';
-		$label      = isset( $asset['label'] ) ? sanitize_text_field( $asset['label'] ) : '';
-
-		return '' !== $file_label && '' !== $label ? $file_label . ' — ' . $label : $label;
 	}
 
 	/**

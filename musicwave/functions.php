@@ -14,6 +14,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Register theme features and editor parity.
  *
+ * Widgets and template parts are intentionally widget-compatible so a buyer
+ * who expects Appearance → Widgets finds editable widget areas inside the
+ * Site Editor without ever touching code.
+ *
  * @return void
  */
 function musicwave_setup(): void {
@@ -24,6 +28,9 @@ function musicwave_setup(): void {
 	add_editor_style( array_merge( array( 'style.css' ), musicwave_editor_style_files() ) );
 	add_theme_support( 'responsive-embeds' );
 	add_theme_support( 'woocommerce' );
+	add_theme_support( 'widgets' );
+	add_theme_support( 'widgets-block-editor' );
+	add_theme_support( 'block-template-parts' );
 }
 add_action( 'after_setup_theme', 'musicwave_setup' );
 
@@ -46,13 +53,17 @@ function musicwave_style_modules(): array {
 			'file'         => 'assets/css/layout.css',
 			'dependencies' => array( 'musicwave-base' ),
 		),
+		'musicwave-navigation'      => array(
+			'file'         => 'assets/css/components/navigation.css',
+			'dependencies' => array( 'musicwave-layout' ),
+		),
 		'musicwave-utilities'       => array(
 			'file'         => 'assets/css/utilities.css',
 			'dependencies' => array( 'musicwave-base' ),
 		),
 		'musicwave-theme-toggle'    => array(
 			'file'         => 'assets/css/components/theme-toggle.css',
-			'dependencies' => array( 'musicwave-base' ),
+			'dependencies' => array( 'musicwave-navigation' ),
 		),
 		'musicwave-catalog'         => array(
 			'file'         => 'assets/css/components/catalog.css',
@@ -64,6 +75,22 @@ function musicwave_style_modules(): array {
 		),
 		'musicwave-artist'          => array(
 			'file'         => 'assets/css/components/artist.css',
+			'dependencies' => array( 'musicwave-utilities' ),
+		),
+		'musicwave-artists-shelf'   => array(
+			'file'         => 'assets/css/components/artists-shelf.css',
+			'dependencies' => array( 'musicwave-utilities', 'musicwave-shelf' ),
+		),
+		'musicwave-taxonomy-shelf'  => array(
+			'file'         => 'assets/css/components/taxonomy-shelf.css',
+			'dependencies' => array( 'musicwave-utilities', 'musicwave-shelf' ),
+		),
+		'musicwave-term-hero'       => array(
+			'file'         => 'assets/css/components/term-hero.css',
+			'dependencies' => array( 'musicwave-utilities' ),
+		),
+		'musicwave-queue'           => array(
+			'file'         => 'assets/css/components/queue.css',
 			'dependencies' => array( 'musicwave-utilities' ),
 		),
 		'musicwave-access'          => array(
@@ -110,8 +137,16 @@ function musicwave_style_modules(): array {
 			'file'         => 'assets/css/components/playlists.css',
 			'dependencies' => array( 'musicwave-utilities' ),
 		),
+		'musicwave-listening'       => array(
+			'file'         => 'assets/css/components/listening.css',
+			'dependencies' => array( 'musicwave-utilities', 'musicwave-shelf' ),
+		),
 		'musicwave-notifications'   => array(
 			'file'         => 'assets/css/components/notifications.css',
+			'dependencies' => array( 'musicwave-utilities' ),
+		),
+		'musicwave-block-styles'    => array(
+			'file'         => 'assets/css/components/block-styles.css',
 			'dependencies' => array( 'musicwave-utilities' ),
 		),
 		'musicwave-accessibility'   => array(
@@ -167,6 +202,9 @@ function musicwave_enqueue_assets(): void {
 		$version,
 		true
 	);
+	if ( function_exists( 'wp_set_script_translations' ) ) {
+		wp_set_script_translations( 'musicwave-theme-preference', 'musicwave' );
+	}
 	// Registered only: the slider script enqueues at render time of the
 	// musicwave/release-slider block, so routes without a slider ship no
 	// slider bytes (PROJECT_PLAN.md Stage 4 deliverable 4).
@@ -177,6 +215,9 @@ function musicwave_enqueue_assets(): void {
 		$version,
 		true
 	);
+	if ( function_exists( 'wp_set_script_translations' ) ) {
+		wp_set_script_translations( 'musicwave-slider', 'musicwave' );
+	}
 	wp_localize_script(
 		'musicwave-slider',
 		'musicwaveSlider',
@@ -212,328 +253,252 @@ function musicwave_preload_theme_preference(): void {
 add_action( 'wp_head', 'musicwave_preload_theme_preference', 0 );
 
 /**
- * Register a dedicated pattern category for the Site Editor.
+ * Defer non-critical scripts + preload critical tokens for LCP.
+ *
+ * @param string $tag    Script tag.
+ * @param string $handle Script handle.
+ * @return string
+ */
+function musicwave_filter_script_tag( string $tag, string $handle ): string {
+	$defer = array( 'musicwave-theme-preference', 'musicwave-slider', 'music-wave-playlists', 'music-wave-preview-player' );
+	// WordPress 6.3+ may already add `defer` via the script strategy API (data-wp-strategy="defer").
+	// Avoid double-defer and respect an existing strategy attribute.
+	if ( in_array( $handle, $defer, true ) && false === strpos( $tag, ' defer' ) && false === strpos( $tag, 'data-wp-strategy' ) ) {
+		$tag = str_replace( ' src', ' defer src', $tag );
+	}
+	return $tag;
+}
+add_filter( 'script_loader_tag', 'musicwave_filter_script_tag', 10, 2 );
+
+/**
+ * Register pattern categories used by the Site Editor.
+ *
+ * Non-technical buyers browse patterns by category; keeping `musicwave` as the
+ * primary label plus `featured` and `widget` groups prevents the editor from
+ * showing ungrouped or miscategorized patterns.
  *
  * @return void
  */
 function musicwave_register_pattern_categories(): void {
-	register_block_pattern_category(
-		'musicwave',
-		array( 'label' => __( 'MusicWave', 'musicwave' ) )
+	$categories = array(
+		'musicwave'         => __( 'MusicWave', 'musicwave' ),
+		'featured'          => __( 'Featured', 'musicwave' ),
+		'musicwave-hero'    => __( 'MusicWave Hero', 'musicwave' ),
+		'musicwave-shelves' => __( 'MusicWave Shelves', 'musicwave' ),
+		'musicwave-widgets' => __( 'MusicWave Widgets', 'musicwave' ),
+		'musicwave-footers' => __( 'MusicWave Footers', 'musicwave' ),
+		'musicwave-headers' => __( 'MusicWave Headers', 'musicwave' ),
+		'musicwave-cards'   => __( 'MusicWave Cards', 'musicwave' ),
+		'musicwave-cta'     => __( 'MusicWave Call to Action', 'musicwave' ),
 	);
+	foreach ( $categories as $slug => $label ) {
+		if ( ! WP_Block_Pattern_Categories_Registry::get_instance()->is_registered( $slug ) ) {
+			register_block_pattern_category(
+				$slug,
+				array( 'label' => $label )
+			);
+		}
+	}
 }
 add_action( 'init', 'musicwave_register_pattern_categories' );
 
 /**
+ * Register curated block styles for one-click visual variations.
+ *
+ * All styles are pure CSS class hooks consumed by the modular CSS;
+ * the buyer never edits code — they pick a style in the Site Editor's
+ * Styles panel or block sidebar.
+ *
+ * @return void
+ */
+function musicwave_register_block_styles(): void {
+	$styles = array(
+		array(
+			'block' => 'core/button',
+			'name'  => 'mw-pill',
+			'label' => __( 'Pill (MusicWave)', 'musicwave' ),
+		),
+		array(
+			'block' => 'core/button',
+			'name'  => 'mw-outline-accent',
+			'label' => __( 'Outline accent', 'musicwave' ),
+		),
+		array(
+			'block' => 'core/group',
+			'name'  => 'mw-surface',
+			'label' => __( 'Surface card', 'musicwave' ),
+		),
+		array(
+			'block' => 'core/group',
+			'name'  => 'mw-surface-raised',
+			'label' => __( 'Raised surface', 'musicwave' ),
+		),
+		array(
+			'block' => 'core/columns',
+			'name'  => 'mw-tight-gap',
+			'label' => __( 'Tight gap', 'musicwave' ),
+		),
+		array(
+			'block' => 'core/separator',
+			'name'  => 'mw-accent',
+			'label' => __( 'Accent line', 'musicwave' ),
+		),
+		array(
+			'block' => 'core/image',
+			'name'  => 'mw-rounded',
+			'label' => __( 'Rounded', 'musicwave' ),
+		),
+		array(
+			'block' => 'core/image',
+			'name'  => 'mw-circle',
+			'label' => __( 'Circle', 'musicwave' ),
+		),
+		array(
+			'block' => 'core/list',
+			'name'  => 'mw-checklist',
+			'label' => __( 'Checklist', 'musicwave' ),
+		),
+	);
+	foreach ( $styles as $style ) {
+		if ( function_exists( 'register_block_style' ) ) {
+			register_block_style(
+				$style['block'],
+				array(
+					'name'  => $style['name'],
+					'label' => $style['label'],
+				)
+			);
+		}
+	}
+}
+add_action( 'init', 'musicwave_register_block_styles' );
+
+/**
+ * Register legacy widget areas for hybrid / classic-widget compatibility.
+ *
+ * Block themes do not require sidebars, but many buyers still search for
+ * Appearance → Widgets. These sidebars back the editable template parts
+ * (sidebar + footer-widgets) so legacy widgets and block widgets both work
+ * without ever exposing raw PHP to the buyer.
+ *
+ * @return void
+ */
+function musicwave_widgets_init(): void {
+	$sidebars = array(
+		array(
+			'name'          => __( 'MusicWave sidebar', 'musicwave' ),
+			'id'            => 'musicwave-sidebar',
+			'description'   => __( 'Appears in the Sidebar template part (Appearance → Editor → Template Parts → Sidebar). Add any block or legacy widget here. Fully editable visually — no code required.', 'musicwave' ),
+			'before_widget' => '<section id="%1$s" class="widget mw-widget %2$s">',
+			'after_widget'  => '</section>',
+			'before_title'  => '<h3 class="widget-title">',
+			'after_title'   => '</h3>',
+		),
+		array(
+			'name'          => __( 'MusicWave footer widgets', 'musicwave' ),
+			'id'            => 'musicwave-footer-widgets',
+			'description'   => __( 'Appears in the Footer widgets template part (Appearance → Editor → Template Parts → Footer widgets). Drag any block or legacy widget — colors follow global Styles.', 'musicwave' ),
+			'before_widget' => '<section id="%1$s" class="widget mw-widget %2$s">',
+			'after_widget'  => '</section>',
+			'before_title'  => '<h3 class="widget-title">',
+			'after_title'   => '</h3>',
+		),
+		array(
+			'name'          => __( 'MusicWave shop sidebar', 'musicwave' ),
+			'id'            => 'musicwave-shop-sidebar',
+			'description'   => __( 'Appears in the Shop sidebar template part (Template Parts → Shop sidebar). Use WooCommerce filters, categories, or any block.', 'musicwave' ),
+			'before_widget' => '<section id="%1$s" class="widget mw-widget %2$s">',
+			'after_widget'  => '</section>',
+			'before_title'  => '<h3 class="widget-title">',
+			'after_title'   => '</h3>',
+		),
+		array(
+			'name'          => __( 'MusicWave header widgets', 'musicwave' ),
+			'id'            => 'musicwave-header-widgets',
+			'description'   => __( 'Optional: small widget area for the header (e.g., announcement, language switcher). Add blocks under Appearance → Widgets or directly in the Header template part.', 'musicwave' ),
+			'before_widget' => '<section id="%1$s" class="widget mw-widget %2$s">',
+			'after_widget'  => '</section>',
+			'before_title'  => '<h3 class="widget-title">',
+			'after_title'   => '</h3>',
+		),
+	);
+	foreach ( $sidebars as $sidebar ) {
+		register_sidebar( $sidebar );
+	}
+}
+add_action( 'widgets_init', 'musicwave_widgets_init' );
+
+/**
+ * Load and decode a theme block's block.json without requiring the block to be registered.
+ *
+ * @param string $block_dir Directory name inside musicwave/blocks.
+ * @return array<string, mixed>|null
+ */
+function musicwave_load_block_json( string $block_dir ): ?array {
+	$file = get_template_directory() . '/blocks/' . $block_dir . '/block.json';
+	if ( ! is_readable( $file ) ) {
+		return null;
+	}
+	// Local bundled metadata file, never a remote URL.
+	$raw = file_get_contents( $file ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
+	if ( ! is_string( $raw ) || '' === $raw ) {
+		return null;
+	}
+	$data = json_decode( $raw, true );
+	return is_array( $data ) ? $data : null;
+}
+
+/**
  * Register presentation-only blocks for translated default template text.
+ *
+ * Metadata lives in musicwave/blocks/<block>/block.json as the single source
+ * of truth for attributes and supports; PHP only injects the render callback.
+ * This eliminates the previous triple duplication between PHP registration,
+ * block.json, and the JS localization that caused Site Editor validation
+ * errors when the maps drifted (PROJECT_PLAN.md P1).
  *
  * @return void
  */
 function musicwave_register_presentation_blocks(): void {
-	register_block_type(
-		'musicwave/theme-text',
-		array(
-			'api_version'     => 3,
-			'attributes'      => array(
-				'key'       => array(
-					'type'    => 'string',
-					'default' => '',
-				),
-				'tagName'   => array(
-					'type'    => 'string',
-					'default' => 'p',
-				),
-				'className' => array(
-					'type'    => 'string',
-					'default' => '',
-				),
-			),
-			'render_callback' => 'musicwave_render_theme_text',
-			'supports'        => array( 'inserter' => false ),
-		)
+	$blocks = array(
+		'theme-text'     => array(
+			'dir'      => 'theme-text',
+			'callback' => 'musicwave_render_theme_text',
+		),
+		'theme-toggle'   => array(
+			'dir'      => 'theme-toggle',
+			'callback' => 'musicwave_render_theme_toggle',
+		),
+		'release-slider' => array(
+			'dir'      => 'release-slider',
+			'callback' => 'musicwave_render_release_slider',
+		),
+		'release-shelf'  => array(
+			'dir'      => 'release-shelf',
+			'callback' => 'musicwave_render_release_shelf',
+		),
 	);
-	register_block_type(
-		'musicwave/theme-toggle',
-		array(
-			'api_version'     => 3,
-			'render_callback' => 'musicwave_render_theme_toggle',
-			'supports'        => array( 'inserter' => false ),
-		)
-	);
-	register_block_type(
-		'musicwave/release-slider',
-		array(
-			'api_version'     => 3,
-			'attributes'      => array(
-				'enabled'      => array(
-					'type'    => 'string',
-					'default' => 'inherit',
-				),
-				'eyebrow'      => array(
-					'type'    => 'string',
-					'default' => '',
-				),
-				'title'        => array(
-					'type'    => 'string',
-					'default' => '',
-				),
-				'orderBy'      => array(
-					'type'    => 'string',
-					'default' => 'date',
-				),
-				'order'        => array(
-					'type'    => 'string',
-					'default' => 'DESC',
-				),
-				'taxonomy'     => array(
-					'type'    => 'string',
-					'default' => '',
-				),
-				'termSlug'     => array(
-					'type'    => 'string',
-					'default' => '',
-				),
-				'releaseIds'   => array(
-					'type'    => 'string',
-					'default' => '',
-				),
-				'contentType'  => array(
-					'type'    => 'string',
-					'default' => '',
-				),
-				'itemsToShow'  => array(
-					'type'    => 'integer',
-					'default' => 0,
-				),
-				'autoplay'     => array(
-					'type'    => 'string',
-					'default' => 'inherit',
-				),
-				'interval'     => array(
-					'type'    => 'integer',
-					'default' => 0,
-				),
-				'loop'         => array(
-					'type'    => 'string',
-					'default' => 'inherit',
-				),
-				'pauseOnHover' => array(
-					'type'    => 'string',
-					'default' => 'inherit',
-				),
-				'showArrows'   => array(
-					'type'    => 'string',
-					'default' => 'inherit',
-				),
-				'showDots'     => array(
-					'type'    => 'string',
-					'default' => 'inherit',
-				),
-				'showExcerpt'  => array(
-					'type'    => 'boolean',
-					'default' => false,
-				),
-				'showArtist'   => array(
-					'type'    => 'boolean',
-					'default' => true,
-				),
-				'showDate'     => array(
-					'type'    => 'boolean',
-					'default' => false,
-				),
-				'showViews'    => array(
-					'type'    => 'boolean',
-					'default' => false,
-				),
-			),
-			'render_callback' => 'musicwave_render_release_slider',
-			'supports'        => array(
-				'align'   => array( 'wide', 'full' ),
-				'anchor'  => true,
-				'color'   => array(
-					'background' => true,
-					'text'       => true,
-				),
-				'spacing' => array(
-					'margin'  => true,
-					'padding' => true,
-				),
-			),
-		)
-	);
-	register_block_type(
-		'musicwave/release-shelf',
-		array(
-			'api_version'     => 3,
-			'attributes'      => array(
-				'eyebrow'           => array(
-					'type'    => 'string',
-					'default' => '',
-				),
-				'title'             => array(
-					'type'    => 'string',
-					'default' => '',
-				),
-				'description'       => array(
-					'type'    => 'string',
-					'default' => '',
-				),
-				'orderBy'           => array(
-					'type'    => 'string',
-					'default' => 'date',
-				),
-				'order'             => array(
-					'type'    => 'string',
-					'default' => 'DESC',
-				),
-				'taxonomy'          => array(
-					'type'    => 'string',
-					'default' => '',
-				),
-				'termSlug'          => array(
-					'type'    => 'string',
-					'default' => '',
-				),
-				'releaseIds'        => array(
-					'type'    => 'string',
-					'default' => '',
-				),
-				'itemsToShow'       => array(
-					'type'    => 'integer',
-					'default' => 8,
-				),
-				'columns'           => array(
-					'type'    => 'integer',
-					'default' => 4,
-				),
-				'layout'            => array(
-					'type'    => 'string',
-					'default' => 'grid',
-				),
-				'imageShape'        => array(
-					'type'    => 'string',
-					'default' => 'square',
-				),
-				'showArtwork'       => array(
-					'type'    => 'boolean',
-					'default' => true,
-				),
-				'showPlayButton'    => array(
-					'type'    => 'boolean',
-					'default' => true,
-				),
-				'showArtist'        => array(
-					'type'    => 'boolean',
-					'default' => true,
-				),
-				'showExcerpt'       => array(
-					'type'    => 'boolean',
-					'default' => false,
-				),
-				'showDate'          => array(
-					'type'    => 'boolean',
-					'default' => false,
-				),
-				'showAction'        => array(
-					'type'    => 'boolean',
-					'default' => true,
-				),
-				'actionLabel'       => array(
-					'type'    => 'string',
-					'default' => '',
-				),
-				'sectionUrl'        => array(
-					'type'    => 'string',
-					'default' => '',
-				),
-				'sectionLinkLabel'  => array(
-					'type'    => 'string',
-					'default' => '',
-				),
-				'featuredReleaseId' => array(
-					'type'    => 'integer',
-					'default' => 0,
-				),
-				'featuredSource'    => array(
-					'type'    => 'string',
-					'default' => 'excerpt',
-				),
-				'overlay'           => array(
-					'type'    => 'integer',
-					'default' => 50,
-				),
-				'showRank'          => array(
-					'type'    => 'boolean',
-					'default' => false,
-				),
-				'showViews'         => array(
-					'type'    => 'boolean',
-					'default' => false,
-				),
-				'contentType'       => array(
-					'type'    => 'string',
-					'default' => '',
-				),
-				'ctaLabel'          => array(
-					'type'    => 'string',
-					'default' => '',
-				),
-				'ctaStyle'          => array(
-					'type'    => 'string',
-					'default' => 'solid',
-				),
-				'ctaBgColor'        => array(
-					'type'    => 'string',
-					'default' => '',
-				),
-				'ctaTextColor'      => array(
-					'type'    => 'string',
-					'default' => '',
-				),
-				'ctaRadius'         => array(
-					'type'    => 'integer',
-					'default' => 999,
-				),
-				'heroTitleColor'    => array(
-					'type'    => 'string',
-					'default' => '',
-				),
-				'heroTitleSize'     => array(
-					'type'    => 'integer',
-					'default' => 0,
-				),
-				'heroTextColor'     => array(
-					'type'    => 'string',
-					'default' => '',
-				),
-				'sideColumnWidth'   => array(
-					'type'    => 'integer',
-					'default' => 340,
-				),
-			),
-			'render_callback' => 'musicwave_render_release_shelf',
-			'supports'        => array(
-				'align'     => array( 'wide', 'full' ),
-				'anchor'    => true,
-				'color'     => array(
-					'background' => true,
-					'text'       => true,
-					'gradient'   => true,
-				),
-				'spacing'   => array(
-					'margin'  => true,
-					'padding' => true,
-				),
-				'border'    => array( 'radius' => true ),
-				'dimension' => array( 'minHeight' => true ),
-			),
-		)
-	);
+
+	foreach ( $blocks as $config ) {
+		$dir      = (string) $config['dir'];
+		$callback = (string) $config['callback'];
+		$path     = get_template_directory() . '/blocks/' . $dir;
+		if ( is_readable( $path . '/block.json' ) ) {
+			// block.json is authoritative; only the render callback is added in PHP.
+			register_block_type( $path, array( 'render_callback' => $callback ) );
+			continue;
+		}
+		// Fallback: if the bundled json is missing (e.g. incomplete deployment), do not fatal.
+	}
 }
 add_action( 'init', 'musicwave_register_presentation_blocks' );
 
 /**
  * Register JavaScript editor counterparts for template presentation blocks.
+ *
+ * The block.json files are the single source of truth; this loader reads them
+ * at runtime so JS and PHP never diverge. Non-technical buyers get a clear,
+ * translated inspector without ever seeing raw JSON or PHP.
  *
  * @return void
  */
@@ -546,305 +511,55 @@ function musicwave_enqueue_presentation_editor_blocks(): void {
 		(string) $theme->get( 'Version' ),
 		true
 	);
+	if ( function_exists( 'wp_set_script_translations' ) ) {
+		wp_set_script_translations( 'musicwave-presentation-blocks', 'musicwave' );
+	}
+
+	$dirs      = array( 'theme-text', 'theme-toggle', 'release-slider', 'release-shelf' );
+	$localized = array();
+	foreach ( $dirs as $dir ) {
+		$meta = musicwave_load_block_json( $dir );
+		if ( null === $meta || empty( $meta['name'] ) ) {
+			continue;
+		}
+		$entry = array(
+			'name' => (string) $meta['name'],
+		);
+		// Title / description / icon are already translated in block.json's textdomain,
+		// but re-translate via __() for currency and for the classic localization path.
+		if ( isset( $meta['title'] ) ) {
+			// Title comes from block.json; keep the PHP translation wrapper for consistency.
+			$title_map      = array(
+				'musicwave/theme-text'     => __( 'MusicWave template text', 'musicwave' ),
+				'musicwave/theme-toggle'   => __( 'MusicWave display preference', 'musicwave' ),
+				'musicwave/release-slider' => __( 'MusicWave release slider', 'musicwave' ),
+				'musicwave/release-shelf'  => __( 'MusicWave release shelf', 'musicwave' ),
+			);
+			$entry['title'] = $title_map[ $meta['name'] ] ?? (string) $meta['title'];
+		}
+		if ( isset( $meta['description'] ) ) {
+			$desc_map = array(
+				'musicwave/release-slider' => __( 'A responsive, accessible slider for featured or recent releases.', 'musicwave' ),
+				'musicwave/release-shelf'  => __( 'A configurable grid, horizontal shelf, or compact list of releases.', 'musicwave' ),
+			);
+			if ( isset( $desc_map[ $meta['name'] ] ) ) {
+				$entry['description'] = $desc_map[ $meta['name'] ];
+			} else {
+				$entry['description'] = (string) $meta['description'];
+			}
+		}
+		if ( isset( $meta['icon'] ) ) {
+			$entry['icon'] = (string) $meta['icon'];
+		}
+		$entry['attributes'] = isset( $meta['attributes'] ) && is_array( $meta['attributes'] ) ? $meta['attributes'] : array();
+		$entry['supports']   = isset( $meta['supports'] ) && is_array( $meta['supports'] ) ? $meta['supports'] : array();
+		$localized[]         = $entry;
+	}
+
 	wp_localize_script(
 		'musicwave-presentation-blocks',
 		'musicwavePresentationBlocks',
-		array(
-			array(
-				'name'       => 'musicwave/theme-text',
-				'title'      => __( 'MusicWave template text', 'musicwave' ),
-				'icon'       => 'editor-textcolor',
-				'attributes' => array(
-					'key'       => array(
-						'type'    => 'string',
-						'default' => '',
-					),
-					'tagName'   => array(
-						'type'    => 'string',
-						'default' => 'p',
-					),
-					'className' => array(
-						'type'    => 'string',
-						'default' => '',
-					),
-				),
-				'supports'   => array( 'inserter' => false ),
-			),
-			array(
-				'name'       => 'musicwave/theme-toggle',
-				'title'      => __( 'MusicWave display preference', 'musicwave' ),
-				'icon'       => 'visibility',
-				'attributes' => array(),
-				'supports'   => array( 'inserter' => false ),
-			),
-			array(
-				'name'        => 'musicwave/release-slider',
-				'title'       => __( 'MusicWave release slider', 'musicwave' ),
-				'description' => __( 'A responsive, accessible slider for featured or recent releases.', 'musicwave' ),
-				'icon'        => 'slides',
-				'attributes'  => array(
-					'enabled'      => array(
-						'type'    => 'string',
-						'default' => 'inherit',
-					),
-					'eyebrow'      => array(
-						'type'    => 'string',
-						'default' => '',
-					),
-					'title'        => array(
-						'type'    => 'string',
-						'default' => '',
-					),
-					'orderBy'      => array(
-						'type'    => 'string',
-						'default' => 'date',
-					),
-					'order'        => array(
-						'type'    => 'string',
-						'default' => 'DESC',
-					),
-					'taxonomy'     => array(
-						'type'    => 'string',
-						'default' => '',
-					),
-					'termSlug'     => array(
-						'type'    => 'string',
-						'default' => '',
-					),
-					'releaseIds'   => array(
-						'type'    => 'string',
-						'default' => '',
-					),
-					'contentType'  => array(
-						'type'    => 'string',
-						'default' => '',
-					),
-					'itemsToShow'  => array(
-						'type'    => 'integer',
-						'default' => 0,
-					),
-					'autoplay'     => array(
-						'type'    => 'string',
-						'default' => 'inherit',
-					),
-					'interval'     => array(
-						'type'    => 'integer',
-						'default' => 0,
-					),
-					'loop'         => array(
-						'type'    => 'string',
-						'default' => 'inherit',
-					),
-					'pauseOnHover' => array(
-						'type'    => 'string',
-						'default' => 'inherit',
-					),
-					'showArrows'   => array(
-						'type'    => 'string',
-						'default' => 'inherit',
-					),
-					'showDots'     => array(
-						'type'    => 'string',
-						'default' => 'inherit',
-					),
-					'showExcerpt'  => array(
-						'type'    => 'boolean',
-						'default' => false,
-					),
-					'showArtist'   => array(
-						'type'    => 'boolean',
-						'default' => true,
-					),
-					'showDate'     => array(
-						'type'    => 'boolean',
-						'default' => false,
-					),
-					'showViews'    => array(
-						'type'    => 'boolean',
-						'default' => false,
-					),
-				),
-				'supports'    => array(
-					'align'   => array( 'wide', 'full' ),
-					'anchor'  => true,
-					'color'   => array(
-						'background' => true,
-						'text'       => true,
-					),
-					'spacing' => array(
-						'margin'  => true,
-						'padding' => true,
-					),
-				),
-			),
-			array(
-				'name'        => 'musicwave/release-shelf',
-				'title'       => __( 'MusicWave release shelf', 'musicwave' ),
-				'description' => __( 'A configurable grid, horizontal shelf, or compact list of releases.', 'musicwave' ),
-				'icon'        => 'screenoptions',
-				'attributes'  => array(
-					'eyebrow'           => array(
-						'type'    => 'string',
-						'default' => '',
-					),
-					'title'             => array(
-						'type'    => 'string',
-						'default' => '',
-					),
-					'description'       => array(
-						'type'    => 'string',
-						'default' => '',
-					),
-					'orderBy'           => array(
-						'type'    => 'string',
-						'default' => 'date',
-					),
-					'order'             => array(
-						'type'    => 'string',
-						'default' => 'DESC',
-					),
-					'taxonomy'          => array(
-						'type'    => 'string',
-						'default' => '',
-					),
-					'termSlug'          => array(
-						'type'    => 'string',
-						'default' => '',
-					),
-					'releaseIds'        => array(
-						'type'    => 'string',
-						'default' => '',
-					),
-					'itemsToShow'       => array(
-						'type'    => 'integer',
-						'default' => 8,
-					),
-					'columns'           => array(
-						'type'    => 'integer',
-						'default' => 4,
-					),
-					'layout'            => array(
-						'type'    => 'string',
-						'default' => 'grid',
-					),
-					'imageShape'        => array(
-						'type'    => 'string',
-						'default' => 'square',
-					),
-					'showArtwork'       => array(
-						'type'    => 'boolean',
-						'default' => true,
-					),
-					'showPlayButton'    => array(
-						'type'    => 'boolean',
-						'default' => true,
-					),
-					'showArtist'        => array(
-						'type'    => 'boolean',
-						'default' => true,
-					),
-					'showExcerpt'       => array(
-						'type'    => 'boolean',
-						'default' => false,
-					),
-					'showDate'          => array(
-						'type'    => 'boolean',
-						'default' => false,
-					),
-					'showAction'        => array(
-						'type'    => 'boolean',
-						'default' => true,
-					),
-					'actionLabel'       => array(
-						'type'    => 'string',
-						'default' => '',
-					),
-					'sectionUrl'        => array(
-						'type'    => 'string',
-						'default' => '',
-					),
-					'sectionLinkLabel'  => array(
-						'type'    => 'string',
-						'default' => '',
-					),
-					'featuredReleaseId' => array(
-						'type'    => 'integer',
-						'default' => 0,
-					),
-					'featuredSource'    => array(
-						'type'    => 'string',
-						'default' => 'excerpt',
-					),
-					'overlay'           => array(
-						'type'    => 'integer',
-						'default' => 50,
-					),
-					'showRank'          => array(
-						'type'    => 'boolean',
-						'default' => false,
-					),
-					'showViews'         => array(
-						'type'    => 'boolean',
-						'default' => false,
-					),
-					'contentType'       => array(
-						'type'    => 'string',
-						'default' => '',
-					),
-					'ctaLabel'          => array(
-						'type'    => 'string',
-						'default' => '',
-					),
-					'ctaStyle'          => array(
-						'type'    => 'string',
-						'default' => 'solid',
-					),
-					'ctaBgColor'        => array(
-						'type'    => 'string',
-						'default' => '',
-					),
-					'ctaTextColor'      => array(
-						'type'    => 'string',
-						'default' => '',
-					),
-					'ctaRadius'         => array(
-						'type'    => 'integer',
-						'default' => 999,
-					),
-					'heroTitleColor'    => array(
-						'type'    => 'string',
-						'default' => '',
-					),
-					'heroTitleSize'     => array(
-						'type'    => 'integer',
-						'default' => 0,
-					),
-					'heroTextColor'     => array(
-						'type'    => 'string',
-						'default' => '',
-					),
-					'sideColumnWidth'   => array(
-						'type'    => 'integer',
-						'default' => 340,
-					),
-				),
-				'supports'    => array(
-					'align'     => array( 'wide', 'full' ),
-					'anchor'    => true,
-					'color'     => array(
-						'background' => true,
-						'text'       => true,
-						'gradient'   => true,
-					),
-					'spacing'   => array(
-						'margin'  => true,
-						'padding' => true,
-					),
-					'border'    => array( 'radius' => true ),
-					'dimension' => array( 'minHeight' => true ),
-				),
-			),
-		)
+		$localized
 	);
 }
 add_action( 'enqueue_block_editor_assets', 'musicwave_enqueue_presentation_editor_blocks' );
@@ -873,6 +588,10 @@ add_action( 'admin_menu', 'musicwave_register_template_repair_page' );
 /**
  * Return the theme templates that may safely fall back to their bundled files.
  *
+ * The footer-widgets and sidebar parts are the buyer-editable widget areas;
+ * they must be repairable so a broken Site Editor customization never requires
+ * PHP knowledge to recover.
+ *
  * @return array<string, array<int, string>>
  */
 function musicwave_repairable_template_slugs(): array {
@@ -886,10 +605,15 @@ function musicwave_repairable_template_slugs(): array {
 			'page',
 			'page-account',
 			'page-browse',
+			'page-playlists',
 			'page-cart',
 			'page-checkout',
 			'page-music-home',
 			'page-no-sidebar',
+			'page-wide',
+			'page-landing',
+			'page-shop',
+			'page-with-sidebar',
 			'search',
 			'single',
 			'single-mw_release',
@@ -898,9 +622,7 @@ function musicwave_repairable_template_slugs(): array {
 			'taxonomy-mw_genre',
 			'archive-product',
 		),
-		// Stale sidebar architecture removed: the theme ships no sidebar parts
-		// and no template renders one (PROJECT_PLAN.md Stage 4 deliverable 9).
-		'wp_template_part' => array( 'header', 'footer' ),
+		'wp_template_part' => array( 'header', 'header-centered', 'header-minimal', 'footer', 'footer-widgets', 'footer-simple', 'sidebar', 'sidebar-shop', 'hero' ),
 	);
 }
 
@@ -956,6 +678,117 @@ function musicwave_alias_account_template( $template, string $id, string $templa
 	return get_block_template( get_stylesheet() . '//' . musicwave_account_template_slug(), $template_type );
 }
 add_filter( 'get_block_template', 'musicwave_alias_account_template', 10, 3 );
+
+/**
+ * Make the account aliases effective for front-end template resolution.
+ *
+ * resolve_block_template() looks candidates up through the plural
+ * get_block_templates() query, which the singular alias filter above never
+ * sees; inject the canonical account template whenever a hierarchy asks for
+ * one of the alias slugs so /my-account/ and the retired slugs all render
+ * the unified Music account page.
+ *
+ * @param array<int, mixed> $templates     Found templates.
+ * @param array<string, mixed> $query      Query (contains slug__in).
+ * @param string            $template_type Template type.
+ * @return array<int, mixed>
+ */
+function musicwave_alias_account_templates_in_query( array $templates, array $query, string $template_type ) {
+	if ( 'wp_template' !== $template_type || empty( $query['slug__in'] ) || ! is_array( $query['slug__in'] ) ) {
+		return $templates;
+	}
+	$aliases = array_values( array_intersect( $query['slug__in'], musicwave_account_template_aliases() ) );
+	if ( empty( $aliases ) ) {
+		return $templates;
+	}
+	foreach ( $templates as $existing ) {
+		if ( is_object( $existing ) && in_array( $existing->slug, $aliases, true ) ) {
+			return $templates;
+		}
+	}
+
+	$canonical = get_block_template( get_stylesheet() . '//' . musicwave_account_template_slug(), 'wp_template' );
+	if ( $canonical ) {
+		// Re-slug the clone to the queried alias so the hierarchy sorter
+		// keeps it at the alias position instead of dropping it behind the
+		// generic page/index fallbacks.
+		$alias        = clone $canonical;
+		$alias->slug  = $aliases[0];
+		$alias->id    = get_stylesheet() . '//' . $aliases[0];
+		$alias->title = $canonical->title . ' (alias)';
+		$templates[]  = $alias;
+	}
+
+	return $templates;
+}
+add_filter( 'get_block_templates', 'musicwave_alias_account_templates_in_query', 10, 3 );
+
+/**
+ * Human titles for bundled templates whose slugs read like internals.
+ *
+ * Only file-based (source: theme) templates are relabeled; a template the
+ * administrator already customized in the Site Editor keeps its own title.
+ *
+ * @return array<string, string>
+ */
+function musicwave_template_titles(): array {
+	return array(
+		'page-playlists' => __( 'Public playlists', 'musicwave' ),
+	);
+}
+
+/**
+ * Apply the human title map to one resolved template object.
+ *
+ * @param mixed $template Resolved block template, or null.
+ * @return mixed
+ */
+function musicwave_apply_template_title( $template ) {
+	if ( ! is_object( $template ) || 'theme' !== ( isset( $template->source ) ? (string) $template->source : '' ) ) {
+		return $template;
+	}
+
+	$titles = musicwave_template_titles();
+	$slug   = is_object( $template ) && isset( $template->slug ) ? (string) $template->slug : '';
+	if ( '' !== $slug && isset( $titles[ $slug ] ) ) {
+		$template->title = $titles[ $slug ];
+	}
+
+	return $template;
+}
+
+/**
+ * Label bundled templates in single-template lookups (Site Editor routes).
+ *
+ * @param mixed  $template      Resolved template, or null.
+ * @param string $id            Requested theme//slug identifier.
+ * @param string $template_type Template type.
+ * @return mixed
+ */
+function musicwave_filter_block_template_title( $template, string $id, string $template_type ) {
+	unset( $id, $template_type );
+
+	return musicwave_apply_template_title( $template );
+}
+add_filter( 'get_block_template', 'musicwave_filter_block_template_title', 20, 3 );
+
+/**
+ * Label bundled templates in template lists (Site Editor navigation).
+ *
+ * @param array<int, mixed>    $templates    Found templates.
+ * @param array<string, mixed> $query        Query arguments.
+ * @param string               $template_type Template type.
+ * @return array<int, mixed>
+ */
+function musicwave_filter_block_templates_titles( array $templates, array $query, string $template_type ): array {
+	unset( $query );
+	if ( 'wp_template' !== $template_type ) {
+		return $templates;
+	}
+
+	return array_map( 'musicwave_apply_template_title', $templates );
+}
+add_filter( 'get_block_templates', 'musicwave_filter_block_templates_titles', 20, 3 );
 
 /**
  * Find customized MusicWave template records that override theme files.
@@ -1131,11 +964,6 @@ function musicwave_render_theme_text( array $attributes ): string {
 	return '<' . $tag_name . $class . '>' . esc_html( $texts[ $key ] ) . '</' . $tag_name . '>';
 }
 
-/**
- * Render the preference toggle with a translated JavaScript-free label.
- *
- * @return string
- */
 /**
  * Resolve a slider toggle against the global MusicWave setting.
  *
@@ -1329,11 +1157,157 @@ function musicwave_release_query_args( array $attributes, int $items ): array {
 }
 
 /**
+ * Render a community playlist shelf: same grid/scroll/list chrome as the
+ * release shelf, but sourced from public playlists. Reuses
+ * PlaylistRepository::public_playlists() so only `public` playlists ever
+ * appear; viewer filtering still hides unpublished release art.
+ *
+ * @param array<string, mixed> $attributes Block attributes.
+ */
+function musicwave_render_playlist_shelf( array $attributes ): string {
+	if ( ! class_exists( '\ManaCore\MusicWave\Core\Playlists\PlaylistRepository' ) ) {
+		return '';
+	}
+
+	$items   = isset( $attributes['itemsToShow'] ) ? absint( $attributes['itemsToShow'] ) : 8;
+	$items   = min( 24, max( 1, $items ) );
+	$columns = isset( $attributes['columns'] ) ? absint( $attributes['columns'] ) : 4;
+	$columns = min( 6, max( 2, $columns ) );
+	$layout  = isset( $attributes['layout'] ) ? sanitize_key( (string) $attributes['layout'] ) : 'grid';
+	$layout  = in_array( $layout, array( 'grid', 'scroll', 'list' ), true ) ? $layout : 'grid';
+	$shape   = isset( $attributes['imageShape'] ) ? sanitize_key( (string) $attributes['imageShape'] ) : 'square';
+	$shape   = in_array( $shape, array( 'square', 'landscape', 'portrait', 'circle' ), true ) ? $shape : 'square';
+
+	$orderby = isset( $attributes['playlistOrderBy'] ) ? sanitize_key( (string) $attributes['playlistOrderBy'] ) : '';
+	if ( '' === $orderby ) {
+		$orderby = isset( $attributes['orderBy'] ) ? sanitize_key( (string) $attributes['orderBy'] ) : 'updated_at';
+	}
+	$orderby = in_array( $orderby, array( 'updated_at', 'created_at', 'title', 'date' ), true ) ? $orderby : 'updated_at';
+	if ( 'date' === $orderby ) {
+		$orderby = 'updated_at';
+	}
+	$search = isset( $attributes['playlistSearch'] ) ? sanitize_text_field( (string) $attributes['playlistSearch'] ) : '';
+	$search = trim( $search );
+	if ( '' === $search && isset( $_GET['s'] ) && is_scalar( $_GET['s'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		// Allow catalog ?s= reuse for playlist shelves when placed on search archive.
+		$search = sanitize_text_field( wp_unslash( (string) $_GET['s'] ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+	}
+
+	$repo      = new \ManaCore\MusicWave\Core\Playlists\PlaylistRepository();
+	$viewer_id = get_current_user_id();
+	$playlists = $repo->public_playlists( $items, 0, $search, $orderby, $viewer_id );
+	if ( array() === $playlists ) {
+		return '';
+	}
+
+	$eyebrow            = isset( $attributes['eyebrow'] ) ? sanitize_text_field( (string) $attributes['eyebrow'] ) : '';
+	$title              = isset( $attributes['title'] ) ? sanitize_text_field( (string) $attributes['title'] ) : '';
+	$description        = isset( $attributes['description'] ) ? sanitize_text_field( (string) $attributes['description'] ) : '';
+	$section_url        = isset( $attributes['sectionUrl'] ) ? esc_url( (string) $attributes['sectionUrl'] ) : '';
+	$section_link_label = isset( $attributes['sectionLinkLabel'] ) ? sanitize_text_field( (string) $attributes['sectionLinkLabel'] ) : '';
+	$section_link_label = '' !== $section_link_label ? $section_link_label : __( 'See all playlists', 'musicwave' );
+	if ( '' === $title && 'playlists' === ( isset( $attributes['source'] ) ? sanitize_key( (string) $attributes['source'] ) : '' ) ) {
+		$title = __( 'Community playlists', 'musicwave' );
+	}
+	if ( '' === $eyebrow ) {
+		$eyebrow = __( 'Curated by listeners', 'musicwave' );
+	}
+
+	// Default to the dedicated playlists page if no URL given.
+	if ( '' === $section_url ) {
+		$page = get_page_by_path( 'playlists' );
+		if ( $page instanceof WP_Post ) {
+			$perm = get_permalink( $page );
+			if ( is_string( $perm ) && '' !== $perm ) {
+				$section_url = $perm;
+			}
+		}
+		if ( '' === $section_url ) {
+			$section_url = home_url( '/playlists/' );
+		}
+	}
+
+	$cards = array();
+	foreach ( $playlists as $p_idx => $playlist ) {
+		$pid    = (int) $playlist['id'];
+		$ptitle = (string) $playlist['title'];
+		$author = isset( $playlist['author_name'] ) ? (string) $playlist['author_name'] : '';
+		$count  = isset( $playlist['count'] ) ? (int) $playlist['count'] : 0;
+		$link   = add_query_arg( array( 'mw-playlist' => (string) $pid ), $section_url );
+
+		// Build 2x2 art grid from viewer's visible items (published only).
+		$art_grid   = '';
+		$items_view = $repo->items_for_viewer( $pid, $viewer_id );
+		$ids        = array_slice(
+			array_map(
+				static function ( $i ): int {
+					return isset( $i['release_id'] ) ? absint( $i['release_id'] ) : 0;
+				},
+				$items_view
+			),
+			0,
+			4
+		);
+		if ( array() === $ids ) {
+			$art_grid = '<span class="mw-release-shelf__placeholder" aria-hidden="true">♫</span>';
+		} else {
+			$cells = '';
+			foreach ( $ids as $cell_idx => $rid ) {
+				$is_first = 0 === $p_idx && 0 === $cell_idx;
+				$thumb    = get_the_post_thumbnail(
+					$rid,
+					'medium',
+					array(
+						'class'         => 'mw-release-shelf__image',
+						'alt'           => '',
+						'loading'       => $is_first ? 'eager' : 'lazy',
+						'fetchpriority' => $is_first ? 'high' : 'low',
+						'decoding'      => 'async',
+					)
+				);
+				if ( '' !== $thumb ) {
+					$cells .= '<span class="mw-release-shelf__art-cell">' . $thumb . '</span>';
+				} else {
+					$init   = mb_substr( $ptitle, 0, 1 );
+					$cells .= '<span class="mw-release-shelf__art-cell mw-release-shelf__art-cell--fallback" aria-hidden="true">' . esc_html( $init ) . '</span>';
+				}
+			}
+			// Pad to 4.
+			for ( $p = count( $ids ); $p < 4; $p++ ) {
+				$cells .= '<span class="mw-release-shelf__art-cell mw-release-shelf__art-cell--empty" aria-hidden="true"></span>';
+			}
+			$art_grid = '<span class="mw-release-shelf__playlist-grid">' . $cells . '</span>';
+		}
+
+		// Play button uses the same global queue as releases: data-mw-playlist-play.
+		$play = '<button type="button" class="mw-release-shelf__play mw-card-play mw-release-shelf__play--playlist" data-mw-playlist-play data-playlist-id="' . esc_attr( (string) $pid ) . '" aria-label="' . esc_attr( sprintf( /* translators: %s: playlist title. */ __( 'Play all tracks in %s', 'musicwave' ), $ptitle ) ) . '"' . ( 0 === $count ? ' disabled' : '' ) . '><span aria-hidden="true">▶</span></button>';
+
+		/* translators: %s: playlist title. */
+		$thumb_wrap = '<div class="mw-release-shelf__artwrap"><a class="mw-release-shelf__art mw-release-shelf__art--' . esc_attr( $shape ) . ' mw-release-shelf__art--playlist" href="' . esc_url( $link ) . '" aria-label="' . esc_attr( sprintf( __( 'Open %s', 'musicwave' ), $ptitle ) ) . '">' . $art_grid . '</a>' . $play . '</div>';
+		$artist_m   = '' !== $author ? '<span class="mw-release-shelf__artist">' . esc_html( $author ) . '</span>' : '';
+		/* translators: %d: number of tracks in playlist. */
+		$count_m = '<span class="mw-release-shelf__count">' . esc_html( sprintf( _n( '%d track', '%d tracks', $count, 'musicwave' ), $count ) ) . '</span>';
+		$cards[] = '<article class="mw-release-shelf__item mw-release-shelf__item--playlist">' . $thumb_wrap . '<div class="mw-release-shelf__body"><h3><a href="' . esc_url( $link ) . '">' . esc_html( $ptitle ) . '</a></h3>' . $artist_m . $count_m . '</div></article>';
+	}
+
+	$header = '';
+	if ( '' !== $eyebrow || '' !== $title || '' !== $description || '' !== $section_url ) {
+		$header = '<header class="mw-release-shelf__header"><div>' . ( '' !== $eyebrow ? '<span>' . esc_html( $eyebrow ) . '</span>' : '' ) . ( '' !== $title ? '<h2>' . esc_html( $title ) . '</h2>' : '' ) . ( '' !== $description ? '<p>' . esc_html( $description ) . '</p>' : '' ) . '</div>' . ( '' !== $section_url ? '<a class="mw-release-shelf__more" href="' . esc_url( $section_url ) . '">' . esc_html( $section_link_label ) . '<span aria-hidden="true">&rarr;</span></a>' : '' ) . '</header>';
+	}
+
+	return '<section ' . get_block_wrapper_attributes( array( 'class' => 'mw-release-shelf mw-release-shelf--' . $layout . ' mw-release-shelf--playlists mw-release-shelf--columns-' . $columns ) ) . '>' . $header . '<div class="mw-release-shelf__items">' . implode( '', $cards ) . '</div></section>';
+}
+
+/**
  * Render a configurable release shelf.
  *
  * @param array<string, mixed> $attributes Block attributes.
  */
 function musicwave_render_release_shelf( array $attributes ): string {
+	$source = isset( $attributes['source'] ) ? sanitize_key( (string) $attributes['source'] ) : 'releases';
+	if ( 'playlists' === $source || 'public_playlists' === $source ) {
+		return musicwave_render_playlist_shelf( $attributes );
+	}
 	if ( ! post_type_exists( 'mw_release' ) ) {
 		return '';
 	}
@@ -1357,7 +1331,7 @@ function musicwave_render_release_shelf( array $attributes ): string {
 	$show_play    = ! isset( $attributes['showPlayButton'] ) || false !== $attributes['showPlayButton'];
 	$cards        = array();
 
-	foreach ( $ids as $release_id ) {
+	foreach ( $ids as $idx => $release_id ) {
 		$release_id = absint( $release_id );
 		$link       = get_permalink( $release_id );
 		if ( $release_id < 1 || ! is_string( $link ) || '' === $link ) {
@@ -1367,12 +1341,16 @@ function musicwave_render_release_shelf( array $attributes ): string {
 		$title     = get_the_title( $release_id );
 		$artists   = wp_get_post_terms( $release_id, 'mw_artist', array( 'fields' => 'names' ) );
 		$artist    = is_array( $artists ) && ! empty( $artists ) ? implode( ', ', $artists ) : '';
+		$is_first  = $idx < 2;
 		$thumbnail = get_the_post_thumbnail(
 			$release_id,
 			'medium_large',
 			array(
-				'class' => 'mw-release-shelf__image',
-				'alt'   => '',
+				'class'         => 'mw-release-shelf__image',
+				'alt'           => '',
+				'loading'       => $is_first ? 'eager' : 'lazy',
+				'fetchpriority' => $is_first ? 'high' : 'low',
+				'decoding'      => 'async',
 			)
 		);
 		$initial   = function_exists( 'mb_substr' ) ? mb_substr( $title, 0, 1 ) : substr( $title, 0, 1 );
@@ -1590,6 +1568,11 @@ function musicwave_track_release_view(): void {
 }
 add_action( 'template_redirect', 'musicwave_track_release_view' );
 
+/**
+ * Render the preference toggle with a translated JavaScript-free label.
+ *
+ * @return string
+ */
 function musicwave_render_theme_toggle(): string {
 	$label = __( 'Use system theme', 'musicwave' );
 

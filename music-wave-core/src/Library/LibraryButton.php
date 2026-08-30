@@ -9,8 +9,16 @@ declare(strict_types=1);
 
 namespace ManaCore\MusicWave\Core\Library;
 
+use ManaCore\MusicWave\Core\Blocks\BlockSupport;
+
 final class LibraryButton {
 	public const SCRIPT = 'music-wave-library';
+
+	/**
+	 * Inline heart glyph for the icon-only variant; the saved state is
+	 * communicated through CSS fill and aria-pressed, never color alone.
+	 */
+	private const HEART_ICON = '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" focusable="false" aria-hidden="true"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>';
 
 	/** @var LibraryRepository|null */
 	private static $repository = null;
@@ -61,17 +69,23 @@ final class LibraryButton {
 		self::enqueue_assets();
 
 		$style     = isset( $settings['style'] ) ? sanitize_key( (string) $settings['style'] ) : 'solid';
-		$style     = in_array( $style, array( 'solid', 'outline', 'ghost' ), true ) ? $style : 'solid';
+		$style     = in_array( $style, array( 'solid', 'outline', 'ghost', 'heart' ), true ) ? $style : 'solid';
 		$compact   = ! empty( $settings['compact'] );
-		$show_icon = ! isset( $settings['showIcon'] ) || false !== $settings['showIcon'];
+		$is_heart  = 'heart' === $style;
+		$show_icon = $is_heart || ! isset( $settings['showIcon'] ) || false !== $settings['showIcon'];
 
 		$in_library = null !== self::$repository && self::$repository->has( get_current_user_id(), $type, $item_id );
 		$label      = self::label( $type, $in_library, $settings );
 		$class      = 'mw-library-button mw-library-button--' . $style . ( $compact ? ' mw-library-button--compact' : '' );
-		$icon       = $show_icon ? '<span class="mw-library-button__icon" aria-hidden="true">' . ( $in_library ? '&#10003;' : '+' ) . '</span>' : '';
+		$icon       = '';
+		if ( $show_icon ) {
+			$icon = $is_heart
+				? '<span class="mw-library-button__icon" aria-hidden="true">' . self::HEART_ICON . '</span>'
+				: '<span class="mw-library-button__icon" aria-hidden="true">' . ( $in_library ? '&#10003;' : '+' ) . '</span>';
+		}
 
 		if ( get_current_user_id() < 1 ) {
-			return '<a class="' . esc_attr( $class ) . ' mw-library-button--guest" href="' . esc_url( wp_login_url( self::current_url() ) ) . '">' . $icon . '<span class="mw-library-button__label">' . esc_html( $label ) . '</span></a>';
+			return '<a class="' . esc_attr( $class ) . ' mw-library-button--guest" href="' . esc_url( wp_login_url( BlockSupport::current_url() ) ) . '">' . $icon . '<span class="mw-library-button__label">' . esc_html( $label ) . '</span></a>';
 		}
 
 		return '<button type="button" class="' . esc_attr( $class ) . '" data-mw-library-type="' . esc_attr( $type ) . '" data-mw-library-id="' . esc_attr( (string) $item_id ) . '" data-mw-library-state="' . ( $in_library ? 'in' : 'out' ) . '" data-mw-library-label-add="' . esc_attr( self::label( $type, false, $settings ) ) . '" data-mw-library-label-added="' . esc_attr( self::label( $type, true, $settings ) ) . '" aria-pressed="' . ( $in_library ? 'true' : 'false' ) . '">' . $icon . '<span class="mw-library-button__label">' . esc_html( $label ) . '</span><span class="mw-library-button__status" role="status" aria-live="polite"></span></button>';
@@ -133,19 +147,5 @@ final class LibraryButton {
 		}
 
 		return $in_library ? __( 'In your library', 'music-wave-core' ) : __( 'Add to library', 'music-wave-core' );
-	}
-
-	/**
-	 * Best-effort current URL for the sign-in redirect.
-	 */
-	private static function current_url(): string {
-		if ( function_exists( 'get_permalink' ) && is_singular() ) {
-			$permalink = get_permalink();
-			if ( is_string( $permalink ) && '' !== $permalink ) {
-				return $permalink;
-			}
-		}
-
-		return home_url( '/' );
 	}
 }

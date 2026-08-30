@@ -1,0 +1,28 @@
+{
+	"apiVersion": 3,
+	"name": "music-wave/add-to-queue",
+	"title": "Add to queue",
+	"category": "music-wave",
+	"description": "Adds the current or pinned release to the listener's play queue — next in line or at the end — without JavaScript.",
+	"keywords": [ "queue", "play next", "add", "player" ],
+	"textdomain": "music-wave-core",
+	"icon": "controls-play",
+	"attributes": {
+		"releaseId": { "type": "integer", "default": 0 },
+		"position": { "type": "string", "default": "next" },
+		"label": { "type": "string", "default": "" }
+	},
+	"usesContext": [ "postId", "postType" ],
+	"supports": {
+		"anchor": true,
+		"align": [ "wide", "full" ],
+		"color": { "background": true, "link": true, "text": true },
+		"spacing": { "margin": true, "padding": true },
+		"typography": { "fontSize": true, "lineHeight": true }
+	},
+	"example": {
+		"attributes": {
+			"position": "next"
+		}
+	}
+}

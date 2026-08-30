@@ -11,7 +11,9 @@ namespace ManaCore\MusicWave\Core\Admin;
 
 use ManaCore\MusicWave\Core\Catalog\ReleaseArchiveQuery;
 use ManaCore\MusicWave\Core\Catalog\ReleasePostType;
+use ManaCore\MusicWave\Core\Listening\ListeningRepository;
 use ManaCore\MusicWave\Core\Migrations\MigrationRunner;
+use ManaCore\MusicWave\Core\Playlists\PlaylistRepository;
 use ManaCore\MusicWave\Core\Support\Settings;
 
 final class SettingsPage {
@@ -20,8 +22,16 @@ final class SettingsPage {
 	/** @var BulkAccessManager */
 	private $bulk_access;
 
-	public function __construct( BulkAccessManager $bulk_access ) {
+	/** @var PlaylistRepository|null */
+	private $playlists;
+
+	/** @var ListeningRepository|null */
+	private $listening;
+
+	public function __construct( BulkAccessManager $bulk_access, ?PlaylistRepository $playlists = null, ?ListeningRepository $listening = null ) {
 		$this->bulk_access = $bulk_access;
+		$this->playlists   = $playlists;
+		$this->listening   = $listening;
 	}
 
 	public function register(): void {
@@ -73,12 +83,14 @@ final class SettingsPage {
 		}
 
 		$tab = isset( $_GET['tab'] ) && is_scalar( $_GET['tab'] ) ? sanitize_key( wp_unslash( (string) $_GET['tab'] ) ) : 'overview'; // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- read-only navigation tab, sanitized and allow-listed below.
-		if ( ! in_array( $tab, array( 'overview', 'content', 'access', 'integrations', 'manage' ), true ) ) {
+		if ( ! in_array( $tab, array( 'overview', 'content', 'access', 'delivery', 'integrations', 'manage' ), true ) ) {
 			$tab = 'overview';
 		}
 
+		$this->register_help_tabs();
+
 		echo '<div class="wrap mw-settings"><h1>' . esc_html__( 'MusicWave control center', 'music-wave-core' ) . '</h1>';
-		echo '<p class="mw-settings__lead">' . esc_html__( 'Manage catalog defaults, access behavior, integrations, and the WordPress screens that control presentation.', 'music-wave-core' ) . '</p>';
+		echo '<p class="mw-settings__lead">' . esc_html__( 'Manage catalog defaults, access behavior, delivery limits, integrations, and the WordPress screens that control presentation.', 'music-wave-core' ) . '</p>';
 		$this->render_tabs( $tab );
 		settings_errors();
 
@@ -88,6 +100,9 @@ final class SettingsPage {
 				break;
 			case 'access':
 				$this->render_access();
+				break;
+			case 'delivery':
+				$this->render_delivery_settings();
 				break;
 			case 'integrations':
 				$this->render_integrations();
@@ -109,6 +124,7 @@ final class SettingsPage {
 			'overview'     => __( 'Overview', 'music-wave-core' ),
 			'content'      => __( 'Content & display', 'music-wave-core' ),
 			'access'       => __( 'Access', 'music-wave-core' ),
+			'delivery'     => __( 'Delivery & privacy', 'music-wave-core' ),
 			'integrations' => __( 'Integrations', 'music-wave-core' ),
 			'manage'       => __( 'Management links', 'music-wave-core' ),
 		);
@@ -137,6 +153,12 @@ final class SettingsPage {
 		echo '<div class="mw-settings__grid mw-settings__grid--stats">';
 		$this->stat( __( 'Published releases', 'music-wave-core' ), number_format_i18n( $published ), 'dashicons-album' );
 		$this->stat( __( 'Draft releases', 'music-wave-core' ), number_format_i18n( $drafts ), 'dashicons-edit-page' );
+		if ( null !== $this->playlists ) {
+			$this->stat( __( 'Public playlists', 'music-wave-core' ), number_format_i18n( $this->playlists->count_public() ), 'dashicons-playlist' );
+		}
+		if ( null !== $this->listening ) {
+			$this->stat( __( 'Listening events', 'music-wave-core' ), number_format_i18n( $this->listening->count_all() ), 'dashicons-controls-play' );
+		}
 		$this->stat( __( 'Active theme', 'music-wave-core' ), (string) $theme->get( 'Name' ), 'dashicons-admin-appearance' );
 		$this->stat( __( 'Core version', 'music-wave-core' ), MUSIC_WAVE_CORE_VERSION, 'dashicons-update' );
 		echo '</div>';
@@ -196,6 +218,10 @@ final class SettingsPage {
 		$this->number_row( 'slider_items', __( 'Releases loaded', 'music-wave-core' ), (int) $settings['slider_items'], 3, 12, __( 'Maximum number of release cards queried by each slider.', 'music-wave-core' ) );
 		echo '</table></section>';
 
+		echo '<section class="mw-settings__panel"><h2>' . esc_html__( 'Persistent playback', 'music-wave-core' ) . '</h2><table class="form-table" role="presentation">';
+		$this->select_row( 'persistent_navigation', __( 'Keep playing across pages', 'music-wave-core' ), (string) $settings['persistent_navigation'], $toggles, __( 'Swaps page content in the background so the music preview player keeps playing while visitors browse. Cart, checkout, and admin screens are never intercepted.', 'music-wave-core' ) );
+		echo '</table></section>';
+
 		echo '<section class="mw-settings__panel"><h2>' . esc_html__( 'SEO and structured data', 'music-wave-core' ) . '</h2><table class="form-table" role="presentation">';
 		$this->select_row(
 			'json_ld_mode',
@@ -238,6 +264,11 @@ final class SettingsPage {
 
 		$settings = Settings::all();
 		$this->settings_form_start();
+		$absent = (string) $settings['membership_absent_behavior'];
+		echo '<section class="mw-settings__panel"><h2>' . esc_html__( 'Membership module behavior', 'music-wave-core' ) . '</h2>';
+		echo '<p>' . esc_html__( 'When no membership module (such as MusicWave VIP) is active, membership-gated releases can stay usable for everyone or deny access until a module returns. Switching the VIP master switch off opens the gate the same way while secure delivery keeps running.', 'music-wave-core' ) . '</p><table class="form-table" role="presentation">';
+		echo '<tr><th>' . esc_html__( 'While no membership module is active', 'music-wave-core' ) . '</th><td><label style="display:block;margin-bottom:6px;"><input type="radio" name="' . esc_attr( Settings::OPTION ) . '[membership_absent_behavior]" value="allow" ' . checked( $absent, 'allow', false ) . '> ' . esc_html__( 'Open access — membership releases stay free (recommended)', 'music-wave-core' ) . '</label><label style="display:block;"><input type="radio" name="' . esc_attr( Settings::OPTION ) . '[membership_absent_behavior]" value="deny" ' . checked( $absent, 'deny', false ) . '> ' . esc_html__( 'Restrict — deny access until a membership module is active', 'music-wave-core' ) . '</label></td></tr>';
+		echo '</table></section>';
 		echo '<section class="mw-settings__panel"><h2>' . esc_html__( 'Customer-facing access messages', 'music-wave-core' ) . '</h2>';
 		echo '<p>' . esc_html__( 'Leave a field blank to use the translated MusicWave default. Custom text is escaped before output.', 'music-wave-core' ) . '</p><table class="form-table" role="presentation">';
 		$this->text_row( 'purchase_message', __( 'Purchase message', 'music-wave-core' ), (string) $settings['purchase_message'] );
@@ -254,6 +285,33 @@ final class SettingsPage {
 		if ( null === $job ) {
 			$this->render_bulk_form();
 		}
+	}
+
+	private function render_delivery_settings(): void {
+		$settings = Settings::all();
+		$this->settings_form_start();
+
+		echo '<section class="mw-settings__panel"><h2>' . esc_html__( 'Secure downloads', 'music-wave-core' ) . '</h2>';
+		echo '<p>' . esc_html__( 'Bound token issuance and file delivery per visitor. Download links stay signed, short-lived, and single-use regardless of these limits.', 'music-wave-core' ) . '</p><table class="form-table" role="presentation">';
+		$this->number_row( 'download_rate_limit', __( 'Token requests per window', 'music-wave-core' ), (int) $settings['download_rate_limit'], 1, 1000, __( 'Maximum download or stream tokens one visitor can request before being throttled.', 'music-wave-core' ) );
+		$this->number_row( 'download_rate_window', __( 'Rate limit window (seconds)', 'music-wave-core' ), (int) $settings['download_rate_window'], 10, 3600, __( 'Length of the fixed window used by the token rate limit.', 'music-wave-core' ) );
+		$this->number_row( 'download_daily_quota', __( 'Daily delivery quota', 'music-wave-core' ), (int) $settings['download_daily_quota'], 0, 10000, __( 'Completed file deliveries allowed per visitor per day. Set 0 for no daily cap.', 'music-wave-core' ) );
+		echo '</table></section>';
+
+		echo '<section class="mw-settings__panel"><h2>' . esc_html__( 'Catalog search & discovery', 'music-wave-core' ) . '</h2>';
+		echo '<p>' . esc_html__( 'Autocomplete, filters, and recommendations are public endpoints. These limits keep them fast and resistant to abuse.', 'music-wave-core' ) . '</p><table class="form-table" role="presentation">';
+		$this->number_row( 'discovery_rate_limit', __( 'Requests per window', 'music-wave-core' ), (int) $settings['discovery_rate_limit'], 1, 1000, __( 'Maximum discovery requests one visitor can make before being throttled.', 'music-wave-core' ) );
+		$this->number_row( 'discovery_rate_window', __( 'Rate limit window (seconds)', 'music-wave-core' ), (int) $settings['discovery_rate_window'], 10, 3600, __( 'Length of the fixed window used by the discovery rate limit.', 'music-wave-core' ) );
+		$this->number_row( 'discovery_cache_ttl', __( 'Search cache lifetime (seconds)', 'music-wave-core' ), (int) $settings['discovery_cache_ttl'], 30, 86400, __( 'How long suggestion and filter results are cached. Longer values reduce database load; catalog changes appear later.', 'music-wave-core' ) );
+		echo '</table></section>';
+
+		echo '<section class="mw-settings__panel"><h2>' . esc_html__( 'Listening history', 'music-wave-core' ) . '</h2>';
+		echo '<p>' . esc_html__( 'Playback activity is stored only for visitors who consented to listening history. Older entries are pruned during the daily cleanup, and users can erase their own history from their account.', 'music-wave-core' ) . '</p><table class="form-table" role="presentation">';
+		$this->number_row( 'listening_retention_days', __( 'Retention period (days)', 'music-wave-core' ), (int) $settings['listening_retention_days'], 1, 3650, __( 'Activity older than this window is deleted automatically.', 'music-wave-core' ) );
+		echo '</table></section>';
+
+		submit_button( __( 'Save delivery & privacy settings', 'music-wave-core' ) );
+		echo '</form>';
 	}
 
 	private function render_bulk_form(): void {
@@ -311,7 +369,7 @@ final class SettingsPage {
 				'name'        => __( 'MusicWave VIP', 'music-wave-core' ),
 				'active'      => defined( 'MUSIC_WAVE_VIP_FILE' ),
 				'description' => __( 'Protected local files and role-based membership adapter.', 'music-wave-core' ),
-				'url'         => defined( 'MUSIC_WAVE_VIP_FILE' ) ? admin_url( 'options-general.php?page=music-wave-vip' ) : admin_url( 'plugins.php' ),
+				'url'         => defined( 'MUSIC_WAVE_VIP_FILE' ) ? admin_url( 'edit.php?post_type=mw_release&page=music-wave-vip' ) : admin_url( 'plugins.php' ),
 				'action'      => defined( 'MUSIC_WAVE_VIP_FILE' ) ? __( 'Open standalone settings', 'music-wave-core' ) : __( 'Review plugins', 'music-wave-core' ),
 			),
 			array(
@@ -369,7 +427,6 @@ final class SettingsPage {
 		$this->text_row( 'spotify_client_id', __( 'Spotify client ID', 'music-wave-core' ), (string) $settings['spotify_client_id'] );
 		$this->text_row( 'spotify_client_secret', __( 'Spotify client secret', 'music-wave-core' ), (string) $settings['spotify_client_secret'] );
 		$this->text_row( 'discogs_token', __( 'Discogs personal access token', 'music-wave-core' ), (string) $settings['discogs_token'] );
-		$this->text_row( 'discogs_secret', __( 'Discogs consumer secret', 'music-wave-core' ), (string) $settings['discogs_secret'] );
 		echo '</table></section>';
 		submit_button( __( 'Save metadata provider keys', 'music-wave-core' ) );
 		echo '</form>';
@@ -391,6 +448,43 @@ final class SettingsPage {
 			echo '<a class="mw-management-link" href="' . esc_url( $link[2] ) . '"><span class="dashicons ' . esc_attr( $link[3] ) . '" aria-hidden="true"></span><span><strong>' . esc_html( $link[0] ) . '</strong><small>' . esc_html( $link[1] ) . '</small></span></a>';
 		}
 		echo '</div>';
+	}
+
+	/**
+	 * Register contextual help tabs for the settings screen.
+	 *
+	 * @return void
+	 */
+	private function register_help_tabs(): void {
+		$screen = function_exists( 'get_current_screen' ) ? get_current_screen() : null;
+		if ( ! is_object( $screen ) || ! method_exists( $screen, 'add_help_tab' ) ) {
+			return;
+		}
+
+		$screen->add_help_tab(
+			array(
+				'id'      => 'music-wave-settings-guide',
+				'title'   => __( 'MusicWave settings', 'music-wave-core' ),
+				'content' =>
+					'<p>' . esc_html__( 'The control center groups MusicWave configuration by concern:', 'music-wave-core' ) . '</p>' .
+					'<ul>' .
+					'<li>' . esc_html__( 'Content & display — new release defaults, archive behavior, sliders, playback, and structured data.', 'music-wave-core' ) . '</li>' .
+					'<li>' . esc_html__( 'Access — membership fallback behavior, customer-facing messages, and bulk access tools.', 'music-wave-core' ) . '</li>' .
+					'<li>' . esc_html__( 'Delivery & privacy — download and search rate limits, delivery quotas, caching, and listening-history retention.', 'music-wave-core' ) . '</li>' .
+					'<li>' . esc_html__( 'Integrations — WooCommerce, MusicWave VIP, the block theme, and metadata provider keys.', 'music-wave-core' ) . '</li>' .
+					'</ul>' .
+					'<p>' . esc_html__( 'Each tab saves independently; settings on the other tabs are preserved.', 'music-wave-core' ) . '</p>',
+			)
+		);
+		$screen->add_help_tab(
+			array(
+				'id'      => 'music-wave-settings-diagnostics',
+				'title'   => __( 'Help & diagnostics', 'music-wave-core' ),
+				'content' =>
+					'<p>' . esc_html__( 'If something does not behave as expected, start with the environment checks and the quick-start guide, then review the WordPress Site Health screen.', 'music-wave-core' ) . '</p>' .
+					'<p><a class="button" href="' . esc_url( admin_url( 'edit.php?post_type=' . ReleasePostType::KEY . '&page=music-wave-setup' ) ) . '">' . esc_html__( 'Open Setup & diagnostics', 'music-wave-core' ) . '</a> <a class="button" href="' . esc_url( admin_url( 'site-health.php' ) ) . '">' . esc_html__( 'Open Site Health', 'music-wave-core' ) . '</a></p>',
+			)
+		);
 	}
 
 	private function settings_form_start(): void {

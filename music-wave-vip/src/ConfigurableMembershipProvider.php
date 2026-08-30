@@ -15,9 +15,16 @@ final class ConfigurableMembershipProvider implements MembershipProvider {
 	/** @var array<int, string> */
 	private $sources;
 
-	/** @param array<int, string> $sources */
-	public function __construct( array $sources ) {
-		$this->sources = array_values( array_unique( array_map( 'sanitize_key', $sources ) ) );
+	/** @var VipPlans|null */
+	private $vip_plans;
+
+	/**
+	 * @param array<int, string> $sources
+	 * @param VipPlans|null      $vip_plans Injectable plan engine (tests/overrides).
+	 */
+	public function __construct( array $sources, ?VipPlans $vip_plans = null ) {
+		$this->sources   = array_values( array_unique( array_map( 'sanitize_key', $sources ) ) );
+		$this->vip_plans = $vip_plans;
 	}
 
 	public function has_access( int $user_id, array $levels ): bool {
@@ -53,6 +60,9 @@ final class ConfigurableMembershipProvider implements MembershipProvider {
 			if ( 'filter' === $source && $this->filter_access( $user_id, $level ) ) {
 				return true;
 			}
+			if ( 'woocommerce_plans' === $source && $this->plan_access( $user_id, $level ) ) {
+				return true;
+			}
 			if ( 'woocommerce_memberships' === $source && $this->woocommerce_membership_access( $user_id, $level ) ) {
 				return true;
 			}
@@ -66,12 +76,27 @@ final class ConfigurableMembershipProvider implements MembershipProvider {
 
 	private function role_access( int $user_id, string $level ): bool {
 		$user = get_userdata( $user_id );
-		return false !== $user && is_array( $user->roles ) && in_array( $level, array_map( 'sanitize_key', $user->roles ), true );
+		return false !== $user && isset( $user->roles ) && is_array( $user->roles ) && in_array( $level, array_map( 'sanitize_key', $user->roles ), true );
+	}
+
+	/**
+	 * VIP plan grants purchased through WooCommerce plan products.
+	 *
+	 * Grants are stored verbatim and re-checked live on every decision, so a
+	 * refund revokes access immediately (ADR 0004 parity). Fails closed when
+	 * the plans engine cannot be composed.
+	 */
+	private function plan_access( int $user_id, string $level ): bool {
+		if ( null === $this->vip_plans ) {
+			$this->vip_plans = VipPlans::from_settings();
+		}
+
+		return $this->vip_plans->user_has_access( $user_id, $level );
 	}
 
 	private function filter_access( int $user_id, string $level ): bool {
 		$user_levels = get_userdata( $user_id );
-		$roles       = false !== $user_levels && is_array( $user_levels->roles ) ? $user_levels->roles : array();
+		$roles       = false !== $user_levels && isset( $user_levels->roles ) && is_array( $user_levels->roles ) ? $user_levels->roles : array();
 		$mapped      = apply_filters( 'music_wave_vip_membership_levels_for_user', $roles, $user_id );
 
 		return is_array( $mapped ) && in_array( $level, array_map( 'sanitize_key', $mapped ), true );

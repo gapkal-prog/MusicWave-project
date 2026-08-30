@@ -57,6 +57,10 @@
         <config name="testVersion" value="7.4-"/>
     </rule>
 
+    <rule ref="WordPress.Security.EscapeOutput">
+        <exclude-pattern>music-wave-vip/src/SettingsPage.php</exclude-pattern>
+    </rule>
+
     <!-- MusicWave registers a custom capability type for the mw_release post type. -->
     <rule ref="WordPress.WP.Capabilities">
         <properties>

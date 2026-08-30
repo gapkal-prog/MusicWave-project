@@ -4,7 +4,7 @@ Tags: music, catalog, releases, woocommerce, downloads
 Requires at least: 6.6
 Tested up to: 6.8
 Requires PHP: 7.4
-Stable tag: 0.9.0
+Stable tag: 0.11.1
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -21,3 +21,20 @@ MusicWave Core provides catalog data, release relationships, WooCommerce mapping
 == Privacy ==
 
 Core does not persist download audit events by default. Integrations that store `music_wave_download_event` data must provide data retention plus exporter and eraser behavior.
+
+== Changelog ==
+
+= 0.11.1 =
+* Fix: URLs generated from the current request no longer double the install folder on subdirectory installs (playlist toggles, sign-in redirects, queue redirects, and History API updates now resolve correctly).
+* Fix: instant catalog filtering re-dispatches `mw-page-rendered` after swapping results, so the search suggest combobox and other re-entrant enhancements rebind to the fresh markup.
+
+= 0.11.0 =
+* New: dedicated playlist tables (schema 0.11.0) with a per-user playlist manager, public playlist directory with instant search and pagination, add-to-playlist picker, and shareable playlists with share tokens.
+* New: continue-listening block — server-rendered guest, consent, and history states with a one-click REST opt-in.
+* Hardening: atomic download rate limiting, per-identity guest quota buckets, one-time download tokens are consumed only after the quota check passes, and expired opaque tickets are pruned daily.
+* Hardening: follow notifications fan out in deferred batches, pre-save fulfillment is deferred off the publish request, and metadata lookup is capability-gated and rate-limited.
+* Fixes: share tokens rotate only when playlist visibility changes, playlist item swaps are transactional, library and playlist cleanup is post-type-guarded, and download asset lists are capped and validated before persistence.
+
+= 0.10.0 =
+* New: indexed listening-activity table (schema 0.10.0) with explicit consent controls, a durable playback queue with no-JavaScript reorder/remove/shuffle/repeat forms, and progress plus continue-listening REST endpoints.
+* New: wishlist and pre-save library types with automatic fulfillment when a pre-saved release ships.

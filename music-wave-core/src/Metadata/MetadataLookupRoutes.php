@@ -15,6 +15,10 @@ final class MetadataLookupRoutes {
 	public const NAMESPACE = 'music-wave/v1';
 	public const ROUTE     = '/metadata-lookup';
 
+	/** Per-user fixed-window bound for provider lookups (each fans out to external APIs with the site's keys). */
+	public const LOOKUP_LIMIT  = 10;
+	public const LOOKUP_WINDOW = 60;
+
 	/** @var MetadataResolver */
 	private $resolver;
 
@@ -194,21 +198,48 @@ final class MetadataLookupRoutes {
 	}
 
 	/**
-	 * Both endpoints require edit capability on the current release screens.
+	 * Both endpoints require the release-editing capability, so low-privilege
+	 * accounts (Contributors hold only `edit_posts`) cannot drive outbound
+	 * provider calls with the site's API credentials.
 	 *
 	 * @return bool
 	 */
 	public function can_edit(): bool {
-		return current_user_can( 'edit_posts' );
+		return current_user_can( 'edit_mw_releases' );
+	}
+
+	/**
+	 * Whether the current user exhausted the per-user lookup budget.
+	 */
+	private function rate_limited(): bool {
+		$user_id = get_current_user_id();
+		if ( $user_id < 1 ) {
+			return true;
+		}
+
+		$key   = 'mw_meta_lookup_' . $user_id . '_' . (int) floor( time() / self::LOOKUP_WINDOW );
+		$count = get_transient( $key );
+		$count = false === $count ? 0 : (int) $count;
+		if ( $count >= self::LOOKUP_LIMIT ) {
+			return true;
+		}
+
+		set_transient( $key, $count + 1, self::LOOKUP_WINDOW * 2 );
+
+		return false;
 	}
 
 	/**
 	 * Search providers and return normalized suggestions (resolver payload).
 	 *
 	 * @param \WP_REST_Request $request Request.
-	 * @return \WP_REST_Response
+	 * @return \WP_REST_Response|\WP_Error
 	 */
-	public function search( \WP_REST_Request $request ): \WP_REST_Response {
+	public function search( \WP_REST_Request $request ) {
+		if ( $this->rate_limited() ) {
+			return new \WP_Error( 'mw_metadata_rate_limited', __( 'Metadata lookup is rate limited. Try again in a minute.', 'music-wave-core' ), array( 'status' => 429 ) );
+		}
+
 		$query = MetadataQuery::from_strings(
 			(string) $request->get_param( 'q' ),
 			(string) $request->get_param( 'track' ),
@@ -230,7 +261,17 @@ final class MetadataLookupRoutes {
 	 * @param \WP_REST_Request $request Request.
 	 * @return \WP_REST_Response
 	 */
-	public function apply( \WP_REST_Request $request ): \WP_REST_Response {
+	public function apply( \WP_REST_Request $request ) {
+		if ( $this->rate_limited() ) {
+			return new \WP_REST_Response(
+				array(
+					'success' => false,
+					'message' => __( 'Metadata lookup is rate limited. Try again in a minute.', 'music-wave-core' ),
+				),
+				429
+			);
+		}
+
 		$post_id = (int) $request->get_param( 'post_id' );
 		$post    = $post_id > 0 ? get_post( $post_id ) : null;
 		if ( ! $post instanceof \WP_Post || ReleasePostType::KEY !== $post->post_type || ! current_user_can( 'edit_post', $post_id ) ) {

@@ -48,10 +48,18 @@ final class WordPressReleaseRepository implements ReleaseRepository {
 			);
 		}
 
-		return false !== update_post_meta( $release_id, $key, $value );
+		if ( false !== update_post_meta( $release_id, $key, $value ) ) {
+			return true;
+		}
+
+		// update_post_meta() returns false for failed writes AND for no-op
+		// writes (unchanged value). Re-reading distinguishes the harmless
+		// no-change case so callers do not treat identical re-saves as errors.
+		return get_post_meta( $release_id, $key, true ) === $value;
 	}
 
 	public function delete( int $release_id, string $key ): bool {
+		$this->assert_release( $release_id );
 		$this->assert_key( $key );
 
 		return delete_post_meta( $release_id, $key );

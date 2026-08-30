@@ -11,6 +11,7 @@
 	},
 	"globals": {
 		"wp": "readonly",
+		"tinymce": "readonly",
 		"musicWaveDynamicBlocks": "readonly",
 		"musicWaveDownload": "readonly",
 		"musicWaveCatalogFilters": "readonly",

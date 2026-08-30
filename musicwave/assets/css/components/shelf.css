@@ -1,6 +1,8 @@
 .mw-release-shelf {
 	--mw-shelf-columns: 4;
 	container-type: inline-size;
+	content-visibility: auto;
+	contain-intrinsic-size: 1px 600px;
 }
 
 .mw-release-shelf--columns-2 { --mw-shelf-columns: 2; }
@@ -462,4 +464,66 @@
 
 .mw-feature__more span {
 	font-size: 1.1em;
+}
+
+ /* -------------------------------------------------------------------------
+  * Community playlist shelf � reuses shelf grid but with playlist art
+  * ---------------------------------------------------------------------- */
+
+.mw-release-shelf--playlists .mw-release-shelf__header span {
+	color: var(--mw-color-accent-strong, #1ed760);
+}
+
+.mw-release-shelf__playlist-grid {
+	display: grid;
+	grid-template-columns: repeat(2, 1fr);
+	grid-template-rows: repeat(2, 1fr);
+	block-size: 100%;
+	inline-size: 100%;
+	gap: 2px;
+	background: var(--mw-color-surface, #151922);
+}
+
+.mw-release-shelf__art-cell {
+	overflow: hidden;
+	background: var(--mw-color-surface-raised);
+}
+
+.mw-release-shelf__art-cell img {
+	block-size: 100%;
+	inline-size: 100%;
+	object-fit: cover;
+}
+
+.mw-release-shelf__art-cell--fallback {
+	display: grid;
+	place-items: center;
+	color: var(--mw-color-on-accent, #fff);
+	background: var(--mw-color-accent, #1db954);
+	font-weight: 800;
+}
+
+.mw-release-shelf__art-cell--empty {
+	background: color-mix(in srgb, var(--mw-color-surface) 85%, var(--mw-color-surface-raised));
+}
+
+.mw-release-shelf__item--playlist .mw-release-shelf__body h3 {
+	font-size: 0.98rem;
+}
+
+.mw-release-shelf__count {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.25rem;
+	color: var(--mw-color-muted, #9ca3af);
+	font-size: 0.8rem;
+	margin-block-start: 0.15rem;
+}
+
+.mw-release-shelf__play--playlist {
+	background: var(--mw-color-accent, #1db954);
+}
+
+.mw-release-shelf--playlists .mw-release-shelf__items {
+	gap: clamp(1rem, 2vw, 1.35rem);
 }

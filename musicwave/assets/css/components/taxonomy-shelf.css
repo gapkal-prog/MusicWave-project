@@ -1,0 +1,109 @@
+/* ================================================================
+   Taxonomy shelf block (genres, moods, labels)
+   Layouts: grid | horizontal rail | list rows
+   Tiles: colorful (curated hue cycle) | plain (quiet surface)
+   Reuses the shared .mw-release-shelf chrome; logical properties
+   only, so every variant is RTL-safe.
+   ================================================================ */
+
+.mw-terms-shelf__tile {
+	align-items: flex-end;
+	border: 1px solid transparent;
+	border-radius: var(--mw-radius-md, 1rem);
+	color: var(--mw-color-text, #fff);
+	display: flex;
+	flex-direction: column;
+	gap: .15rem;
+	justify-content: flex-end;
+	min-block-size: clamp(7rem, 14vw, 9.5rem);
+	padding: clamp(1rem, 2.5vw, 1.5rem);
+	position: relative;
+	text-decoration: none;
+	transition: transform .25s ease, box-shadow .25s ease;
+}
+
+.mw-terms-shelf__tile:is(:hover, :focus-visible) {
+	box-shadow: 0 .75rem 2rem rgb(0 0 0 / 22%);
+	transform: translateY(-2px);
+}
+
+.mw-terms-shelf__name {
+	font-size: clamp(1.05rem, 2.2vw, 1.35rem);
+	font-weight: 800;
+	letter-spacing: -.02em;
+	line-height: 1.15;
+}
+
+.mw-terms-shelf__count {
+	font-size: .8125rem;
+	opacity: .82;
+}
+
+/* ---- Colorful curated hues (deterministic cycle) ---- */
+.mw-terms-shelf__tile--style-colorful.mw-terms-shelf__tile--hue-1 {
+	background: linear-gradient(135deg, color-mix(in srgb, var(--wp--preset--color--accent, #1db954) 82%, #000), var(--wp--preset--color--accent, #1db954));
+}
+
+.mw-terms-shelf__tile--style-colorful.mw-terms-shelf__tile--hue-2 {
+	background: linear-gradient(135deg, color-mix(in srgb, var(--wp--preset--color--editorial, #fa2d48) 82%, #000), var(--wp--preset--color--editorial, #fa2d48));
+}
+
+.mw-terms-shelf__tile--style-colorful.mw-terms-shelf__tile--hue-3 {
+	background: linear-gradient(135deg, #2743b8, #4f7cf7);
+}
+
+.mw-terms-shelf__tile--style-colorful.mw-terms-shelf__tile--hue-4 {
+	background: linear-gradient(135deg, #6c2bb0, #a55ee8);
+}
+
+.mw-terms-shelf__tile--style-colorful.mw-terms-shelf__tile--hue-5 {
+	background: linear-gradient(135deg, #a05a12, #e8933a);
+}
+
+.mw-terms-shelf__tile--style-colorful.mw-terms-shelf__tile--hue-6 {
+	background: linear-gradient(135deg, #0f766e, #2cbfae);
+}
+
+/* ---- Plain quiet surface ---- */
+.mw-terms-shelf__tile--style-plain {
+	background: var(--mw-color-surface-raised, #1d2330);
+	border-color: var(--mw-color-border, rgb(255 255 255 / 12%));
+	min-block-size: auto;
+}
+
+/* ---- List rows layout ---- */
+.mw-release-shelf--list .mw-release-shelf__items {
+	grid-template-columns: 1fr;
+	gap: .35rem;
+}
+
+.mw-release-shelf--list .mw-terms-shelf__tile {
+	align-items: center;
+	flex-direction: row;
+	gap: .75rem;
+	justify-content: space-between;
+	min-block-size: 0;
+	padding: .8rem 1rem;
+}
+
+.mw-release-shelf--list .mw-terms-shelf__name {
+	font-size: 1rem;
+}
+
+.mw-release-shelf--list .mw-terms-shelf__tile::after {
+	content: "\2192";
+	font-size: 1.1em;
+	opacity: .7;
+}
+
+/* ---- Empty state ---- */
+.mw-terms-shelf__empty {
+	color: var(--mw-color-muted, #9ca3af);
+	margin: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.mw-terms-shelf__tile {
+		transition: none;
+	}
+}

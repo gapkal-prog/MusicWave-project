@@ -1,5 +1,5 @@
 {
-  "$schema": "https://schemas.wp.org/wp/6.6/theme.json",
+  "$schema": "https://schemas.wp.org/trunk/theme.json",
   "version": 3,
   "title": "Studio",
   "settings": {
@@ -11,7 +11,13 @@
         { "slug": "text", "name": "Text", "color": "#f3f1ed" },
         { "slug": "muted", "name": "Muted text", "color": "#b7b6b1" },
         { "slug": "accent", "name": "Accent", "color": "#e2ad2e" },
-        { "slug": "accent-strong", "name": "Accent strong", "color": "#ffe08a" }
+        { "slug": "accent-strong", "name": "Accent strong", "color": "#ffe08a" },
+        { "slug": "editorial", "name": "Editorial rose", "color": "#ff4d6d" },
+        { "slug": "on-accent", "name": "On accent", "color": "#1a1400" }
+      ],
+      "gradients": [
+        { "slug": "accent-wash", "name": "Accent wash", "gradient": "radial-gradient(circle at 16% 18%, rgba(226,173,46,0.22), transparent 56%), linear-gradient(180deg, #1d1e20, #101112)" },
+        { "slug": "midnight-radio", "name": "Midnight radio", "gradient": "linear-gradient(145deg, #24272c, #0f1012)" }
       ]
     }
   },
@@ -26,14 +32,11 @@
     "elements": {
       "button": {
         "border": { "radius": "999px" },
-        "color": {
-          "background": "var:preset|color|accent",
-          "text": "var:preset|color|canvas"
-        }
+        "color": { "background": "var:preset|color|accent", "text": "var:preset|color|on-accent" },
+        "typography": { "fontWeight": "700", "letterSpacing": "0.02em", "textTransform": "uppercase" }
       },
-      "link": {
-        "color": { "text": "var:preset|color|accent-strong" }
-      }
+      "heading": { "typography": { "fontFamily": "var:preset|font-family|mono", "fontWeight": "700", "letterSpacing": "-0.01em" } },
+      "link": { "color": { "text": "var:preset|color|accent-strong" } }
     }
   }
 }

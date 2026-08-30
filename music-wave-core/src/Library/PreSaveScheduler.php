@@ -129,6 +129,10 @@ final class PreSaveScheduler {
 	/**
 	 * Fulfill pre-saves as soon as a release is published.
 	 *
+	 * Fulfillment scans every pre-saving account and fires one email per
+	 * customer, so it is handed to cron instead of running inside the publish
+	 * request — mirroring the follow-notification deferral.
+	 *
 	 * @param string $new_status New post status.
 	 * @param string $old_status Previous post status.
 	 * @param mixed  $post       Post object.
@@ -142,6 +146,15 @@ final class PreSaveScheduler {
 			return;
 		}
 
-		$this->fulfill( (int) $post->ID );
+		$release_id = (int) $post->ID;
+		if ( function_exists( 'wp_schedule_single_event' ) && function_exists( 'wp_next_scheduled' ) ) {
+			if ( false === wp_next_scheduled( self::EVENT, array( $release_id ) ) ) {
+				wp_schedule_single_event( time() + 30, self::EVENT, array( $release_id ) );
+			}
+
+			return;
+		}
+
+		$this->fulfill( $release_id );
 	}
 }

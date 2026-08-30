@@ -14,6 +14,13 @@ final class DownloadResolver {
 	/** @var ReplayStore */ private $replays;
 	/** @var DownloadProvider */ private $provider;
 	/** @var OpaqueTicketStore */ private $tickets;
+	/** @var string Last deny reason for richer REST errors. */
+	private $last_deny_reason = '';
+
+	public function last_deny_reason(): string {
+		return $this->last_deny_reason;
+	}
+
 	public function __construct( ReleaseRepository $releases, AccessPolicyEngine $policy, DownloadTokenService $tokens, ReplayStore $replays, DownloadProvider $provider, ?OpaqueTicketStore $tickets = null ) {
 		$this->releases = $releases;
 		$this->policy   = $policy;
@@ -22,16 +29,47 @@ final class DownloadResolver {
 		$this->provider = $provider;
 		$this->tickets  = null !== $tickets ? $tickets : new OpaqueTicketStore(); }
 
+	/**
+	 * Whether the current visitor may reach the delivery endpoints at all.
+	 *
+	 * Logged-in visitors always pass; guests pass exactly when the access
+	 * policy itself allows them (public releases or a policy-level open gate
+	 * such as the VIP "everyone" delivery mode).
+	 */
+	public function can_request( int $release_id ): bool {
+		if ( $release_id < 1 ) {
+			return false;
+		}
+
+		return $this->policy->decide( $release_id, AccessSubject::current() )->is_allowed();
+	}
+
 	public function issue( int $release_id, AccessSubject $subject, string $binding, string $asset_key = '', string $purpose = 'download' ): ?string {
-		if ( $subject->user_id() < 1 || ! $this->policy->decide( $release_id, $subject )->is_allowed() ) {
+		$this->last_deny_reason = '';
+		// Policy-driven issuance: the deny-by-default engine stays the single
+		// source of truth. Guests receive anonymous (user 0) tokens only when
+		// the decision itself allows them — public releases or an explicit
+		// open gate — while purchase and restricted modes keep denying.
+		if ( ! $this->policy->decide( $release_id, $subject )->is_allowed() ) {
+			$this->last_deny_reason = 'entitlement';
 			$this->audit( 'token_denied', $release_id, $subject->user_id(), array( 'reason' => 'entitlement' ) );
 			return null; }
 		$asset = $this->asset( $release_id, $asset_key );
 		if ( null === $asset ) {
+			$this->last_deny_reason = 'unknown_asset';
 			$this->audit( 'token_denied', $release_id, $subject->user_id(), array( 'reason' => 'unknown_asset' ) );
 			return null; }
+		// Graceful degradation: when VIP is inactive the Null provider cannot
+		// serve protected assets. Fail fast with a distinct audit reason so the
+		// REST layer can surface a friendly message instead of a generic 403.
+		if ( $this->provider instanceof NullDownloadProvider && ( 0 === strpos( $asset['asset_id'], 'vip:' ) || 0 === strpos( $asset['asset_id'], 'local:' ) ) ) {
+			$this->last_deny_reason = 'provider_unavailable';
+			$this->audit( 'token_denied', $release_id, $subject->user_id(), array( 'reason' => 'provider_unavailable' ) );
+			return null;
+		}
 		$purpose = in_array( $purpose, array( 'download', 'stream' ), true ) ? $purpose : 'download';
 		if ( 'stream' === $purpose && ! $this->provider instanceof StreamableDownloadProvider ) {
+			$this->last_deny_reason = 'stream_unsupported';
 			$this->audit( 'token_denied', $release_id, $subject->user_id(), array( 'reason' => 'stream_unsupported' ) );
 			return null; }
 		$this->audit(
@@ -66,14 +104,20 @@ final class DownloadResolver {
 	public function deliver( int $release_id, int $user_id, string $token, string $binding ): bool {
 		$claims = $this->tokens->verify( $this->exchange( $token ), $binding );
 		if ( null === $claims || 'download' !== $claims->purpose() || $claims->release_id() !== $release_id || $claims->user_id() !== $user_id ) {
-			$this->audit( 'download_denied', $release_id, $user_id );
+			$this->audit( 'download_denied', $release_id, $user_id, array( 'reason' => null === $claims ? 'invalid_token' : 'claim_mismatch' ) );
 			return false; }
-		$subject = new AccessSubject( $user_id );
-		if ( ! $this->policy->decide( $release_id, $subject )->is_allowed() || ! $this->replays->consume( $claims->token_id(), $claims->expires_at() ) ) {
-			$this->audit( 'download_denied', $release_id, $user_id );
+		$subject  = AccessSubject::for_user( $user_id );
+		$decision = $this->policy->decide( $release_id, $subject );
+		if ( ! $decision->is_allowed() ) {
+			$this->audit( 'download_denied', $release_id, $user_id, array( 'reason' => $decision->reason() ) );
 			return false; }
+		// Quota runs before the one-time replay token is consumed so a
+		// quota-blocked delivery does not burn the user's link.
 		if ( ! $this->within_daily_quota( $user_id ) ) {
 			$this->audit( 'download_denied', $release_id, $user_id, array( 'reason' => 'quota_exceeded' ) );
+			return false; }
+		if ( ! $this->replays->consume( $claims->token_id(), $claims->expires_at() ) ) {
+			$this->audit( 'download_denied', $release_id, $user_id, array( 'reason' => 'replay' ) );
 			return false; }
 		$asset     = $this->asset( $release_id, $claims->asset_key() );
 		$delivered = null !== $asset && $this->provider->deliver( $asset['asset_id'], $claims );
@@ -108,17 +152,39 @@ final class DownloadResolver {
 	}
 
 	private function quota_key( int $user_id ): string {
-		return 'mw_dl_quota_' . $user_id . '_' . gmdate( 'Ymd' );
+		if ( $user_id > 0 ) {
+			return 'mw_dl_quota_' . $user_id . '_' . gmdate( 'Ymd' );
+		}
+
+		// Guests get a per-IP bucket (mirroring DownloadRateLimiter) so one
+		// visitor cannot exhaust — or hide inside — a shared global counter.
+		return 'mw_dl_quota_g_' . hash( 'sha256', $this->guest_ip_identity() ) . '_' . gmdate( 'Ymd' );
+	}
+
+	/**
+	 * Stable identity for guest quota buckets: a validated REMOTE_ADDR or a
+	 * shared fallback when the address is unavailable.
+	 */
+	private function guest_ip_identity(): string {
+		$raw = isset( $_SERVER['REMOTE_ADDR'] ) && is_string( $_SERVER['REMOTE_ADDR'] ) ? $_SERVER['REMOTE_ADDR'] : ''; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput
+		$ip  = function_exists( 'filter_var' ) && false !== filter_var( $raw, FILTER_VALIDATE_IP ) ? $raw : '';
+
+		return '' !== $ip ? $ip : 'unknown';
 	}
 
 	public function stream( int $release_id, int $user_id, string $token, string $binding ): bool {
 		$claims = $this->tokens->verify( $this->exchange( $token ), $binding );
-		if ( null === $claims || 'stream' !== $claims->purpose() || $claims->release_id() !== $release_id || $claims->user_id() !== $user_id || ! $this->provider instanceof StreamableDownloadProvider ) {
-			$this->audit( 'stream_denied', $release_id, $user_id );
+		if ( null === $claims || 'stream' !== $claims->purpose() || $claims->release_id() !== $release_id || $claims->user_id() !== $user_id ) {
+			$this->audit( 'stream_denied', $release_id, $user_id, array( 'reason' => null === $claims ? 'invalid_token' : 'claim_mismatch' ) );
 			return false;
 		}
-		if ( ! $this->policy->decide( $release_id, new AccessSubject( $user_id ) )->is_allowed() ) {
-			$this->audit( 'stream_denied', $release_id, $user_id );
+		if ( ! $this->provider instanceof StreamableDownloadProvider ) {
+			$this->audit( 'stream_denied', $release_id, $user_id, array( 'reason' => 'stream_unsupported' ) );
+			return false;
+		}
+		$decision = $this->policy->decide( $release_id, AccessSubject::for_user( $user_id ) );
+		if ( ! $decision->is_allowed() ) {
+			$this->audit( 'stream_denied', $release_id, $user_id, array( 'reason' => $decision->reason() ) );
 			return false;
 		}
 		$asset    = $this->asset( $release_id, $claims->asset_key() );

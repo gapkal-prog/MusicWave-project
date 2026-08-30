@@ -108,4 +108,95 @@ final class BlockSupport {
 		$fallback_args['render_callback'] = $render_callback;
 		register_block_type( $block_name, $fallback_args );
 	}
+
+	/**
+	 * Read a sanitized plain-text attribute with a translated fallback.
+	 *
+	 * @param array<string, mixed> $attributes Block attributes.
+	 * @param string               $key        Attribute name.
+	 * @param string               $fallback   Translated default text.
+	 */
+	public static function text_attribute( array $attributes, string $key, string $fallback ): string {
+		$value = isset( $attributes[ $key ] ) && is_scalar( $attributes[ $key ] ) ? sanitize_text_field( (string) $attributes[ $key ] ) : '';
+
+		return '' !== $value ? $value : $fallback;
+	}
+
+	/**
+	 * Read an allow-listed key attribute, falling back when the value is unknown.
+	 *
+	 * @param array<string, mixed> $attributes Block attributes.
+	 * @param string               $key        Attribute name.
+	 * @param array<int, string>   $allowed    Allowed key values.
+	 * @param string               $fallback   Value used for unknown keys.
+	 */
+	public static function key_attribute( array $attributes, string $key, array $allowed, string $fallback ): string {
+		$value = isset( $attributes[ $key ] ) && is_scalar( $attributes[ $key ] ) ? sanitize_key( (string) $attributes[ $key ] ) : '';
+
+		return in_array( $value, $allowed, true ) ? $value : $fallback;
+	}
+
+	/**
+	 * Read a bounded integer attribute; out-of-range values use the fallback.
+	 *
+	 * @param array<string, mixed> $attributes Block attributes.
+	 * @param string               $key        Attribute name.
+	 * @param int                  $min        Minimum allowed value.
+	 * @param int                  $max        Maximum allowed value.
+	 * @param int                  $fallback   Value used when out of range.
+	 */
+	public static function range_attribute( array $attributes, string $key, int $min, int $max, int $fallback ): int {
+		$value = isset( $attributes[ $key ] ) ? absint( $attributes[ $key ] ) : 0;
+
+		return $value >= $min && $value <= $max ? $value : $fallback;
+	}
+
+	/**
+	 * Read a boolean block attribute with an explicit default.
+	 *
+	 * @param array<string, mixed> $attributes Block attributes.
+	 * @param string               $key        Attribute name.
+	 * @param bool                 $fallback   Value used when the attribute is absent.
+	 */
+	public static function bool_attribute( array $attributes, string $key, bool $fallback ): bool {
+		if ( ! isset( $attributes[ $key ] ) ) {
+			return $fallback;
+		}
+
+		return (bool) $attributes[ $key ];
+	}
+
+	/**
+	 * Best-effort current URL for sign-in redirects and self-referencing forms.
+	 *
+	 * Prefers the singular permalink and falls back to the raw request URI so
+	 * archive and search views still return to where the visitor was.
+	 */
+	public static function current_url(): string {
+		if ( function_exists( 'is_singular' ) && is_singular() ) {
+			$permalink = get_permalink();
+			if ( is_string( $permalink ) && '' !== $permalink ) {
+				return $permalink;
+			}
+		}
+
+		$request = isset( $_SERVER['REQUEST_URI'] ) && is_scalar( $_SERVER['REQUEST_URI'] ) ? sanitize_text_field( wp_unslash( (string) $_SERVER['REQUEST_URI'] ) ) : '';
+		if ( '' === $request ) {
+			return home_url( '/' );
+		}
+
+		// On subdirectory installs REQUEST_URI already contains the folder the
+		// site lives in (e.g. /store/…), while home_url() prepends it again.
+		// Strip the prefix so the two are never combined into a doubled path.
+		$subdirectory = (string) wp_parse_url( home_url(), PHP_URL_PATH );
+		$prefix       = '' !== $subdirectory ? rtrim( $subdirectory, '/' ) : '';
+		if ( '' !== $prefix && 0 === strpos( $request, $prefix ) ) {
+			$remainder = substr( $request, strlen( $prefix ) );
+			if ( '' === $remainder || 0 === strpos( $remainder, '/' ) || 0 === strpos( $remainder, '?' ) ) {
+				$request = '' === $remainder ? '/' : $remainder;
+			}
+		}
+
+		return home_url( $request );
+	}
 }

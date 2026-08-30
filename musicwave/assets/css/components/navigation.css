@@ -1,0 +1,328 @@
+/**
+ * MusicWave — Premium responsive navigation (Spotify / Apple Music inspired)
+ *
+ * Clean, token-driven and fully editable via Site Editor. No hard-coded
+ * colors survive a palette swap — every value derives from --mw-* / 
+ * --wp--preset--*. The hamburger and overlay are pure CSS.
+ */
+
+/* ------------------------------------------------------------------ */
+/*  Header chrome                                                     */
+/* ------------------------------------------------------------------ */
+
+.mw-site-header {
+	/* Sticky glass — behaves like Apple Music header on scroll */
+	position: sticky;
+	top: 0;
+	z-index: 30;
+	background: color-mix(in srgb, var(--mw-color-canvas) 86%, transparent);
+	border-block-end: 1px solid var(--mw-color-border);
+	backdrop-filter: blur(18px) saturate(1.15);
+	-webkit-backdrop-filter: blur(18px) saturate(1.15);
+}
+
+/* ------------------------------------------------------------------ */
+/*  Hamburger (open) button — always visible on mobile                */
+/* ------------------------------------------------------------------ */
+
+.wp-block-navigation__responsive-container-open {
+	display: grid;
+	place-items: center;
+	inline-size: 2.75rem;
+	block-size: 2.75rem;
+	padding: 0;
+	color: var(--mw-color-text);
+	background: var(--mw-color-surface-raised);
+	border: 1px solid var(--mw-color-border);
+	border-radius: 50%;
+	transition: background-color 160ms ease, border-color 160ms ease, transform 160ms ease;
+}
+
+.wp-block-navigation__responsive-container-open:hover {
+	background: var(--mw-color-surface);
+	border-color: color-mix(in srgb, var(--mw-color-accent) 35%, var(--mw-color-border));
+	transform: scale(1.04);
+}
+
+.wp-block-navigation__responsive-container-open:focus-visible {
+	outline: 3px solid var(--mw-color-accent-strong);
+	outline-offset: 3px;
+}
+
+/* Fallback SVG size */
+.wp-block-navigation__responsive-container-open svg {
+	inline-size: 1.25rem;
+	block-size: 1.25rem;
+}
+
+/* Desktop: hide hamburger */
+@media (min-width: 48.01rem) {
+	.wp-block-navigation__responsive-container-open:not(.always-shown) {
+		display: none;
+	}
+}
+
+/* ------------------------------------------------------------------ */
+/*  Overlay — hidden state                                            */
+/* ------------------------------------------------------------------ */
+
+.wp-block-navigation__responsive-container {
+	position: fixed;
+	inset: 0;
+	z-index: 40;
+	visibility: hidden;
+	opacity: 0;
+	pointer-events: none;
+	overflow: hidden;
+	background: color-mix(in srgb, var(--mw-color-canvas) 96%, transparent);
+	backdrop-filter: blur(24px) saturate(1.2);
+	-webkit-backdrop-filter: blur(24px) saturate(1.2);
+	transition: opacity 320ms var(--mw-ease-out), visibility 320ms var(--mw-ease-out);
+}
+
+/* WordPress adds .is-menu-open / .has-modal-open */
+.wp-block-navigation__responsive-container.is-menu-open,
+.wp-block-navigation__responsive-container.has-modal-open {
+	visibility: visible;
+	opacity: 1;
+	pointer-events: auto;
+}
+
+/* Dialog fills the overlay */
+.wp-block-navigation__responsive-dialog {
+	inline-size: 100%;
+	block-size: 100%;
+	margin: 0;
+	padding: 0;
+}
+
+/* ------------------------------------------------------------------ */
+/*  Overlay content — Spotify-style full-screen sheet                 */
+/* ------------------------------------------------------------------ */
+
+.wp-block-navigation__responsive-container.is-menu-open
+	.wp-block-navigation__responsive-container-content,
+.wp-block-navigation__responsive-container.has-modal-open
+	.wp-block-navigation__responsive-container-content {
+	display: grid;
+	grid-template-rows: auto 1fr auto;
+	gap: var(--wp--preset--spacing--30, 1.5rem);
+	inline-size: min(100%, 42rem);
+	block-size: 100%;
+	margin-inline: auto;
+	padding-block-start: max(1.25rem, env(safe-area-inset-top));
+	padding-block-end: max(1.25rem, env(safe-area-inset-bottom));
+	padding-inline: max(1.25rem, env(safe-area-inset-left)) max(1.25rem, env(safe-area-inset-right));
+	padding-top: 5rem; /* room for close button */
+	overflow-y: auto;
+	overscroll-behavior: contain;
+	animation: mw-nav-in 420ms var(--mw-ease-out);
+}
+
+/* Stagger in for menu items — subtle Spotify motion */
+@keyframes mw-nav-in {
+	from {
+		opacity: 0;
+		transform: translateY(14px) scale(0.98);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0) scale(1);
+	}
+}
+
+/* ------------------------------------------------------------------ */
+/*  Navigation list                                                   */
+/* ------------------------------------------------------------------ */
+
+.wp-block-navigation__responsive-container.is-menu-open .wp-block-navigation__container,
+.wp-block-navigation__responsive-container.has-modal-open .wp-block-navigation__container {
+	display: grid !important;
+	gap: 0.5rem !important;
+	align-content: start;
+	inline-size: 100%;
+	padding: 0;
+	margin: 0;
+	list-style: none;
+}
+
+/* Each item full-width */
+.wp-block-navigation__responsive-container.is-menu-open .wp-block-navigation-item,
+.wp-block-navigation__responsive-container.has-modal-open .wp-block-navigation-item {
+	inline-size: 100%;
+}
+
+/* Link — large, pill-like, Apple Music / Spotify weight */
+.wp-block-navigation__responsive-container.is-menu-open .wp-block-navigation-item__content,
+.wp-block-navigation__responsive-container.has-modal-open .wp-block-navigation-item__content {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 0.75rem;
+	inline-size: 100%;
+	min-block-size: 3.75rem;
+	padding: 0.9rem 1.15rem;
+	color: var(--mw-color-text);
+	background: color-mix(in srgb, var(--mw-color-surface) 86%, transparent);
+	border: 1px solid var(--mw-color-border);
+	border-radius: var(--mw-radius-md);
+	font-size: clamp(1.05rem, 2.8vw, 1.35rem);
+	font-weight: 750;
+	letter-spacing: -0.02em;
+	line-height: 1.15;
+	text-decoration: none;
+	transition: background-color 180ms ease, border-color 180ms ease, color 180ms ease, transform 180ms var(--mw-ease-out);
+}
+
+.wp-block-navigation__responsive-container.is-menu-open .wp-block-navigation-item__content:hover,
+.wp-block-navigation__responsive-container.has-modal-open .wp-block-navigation-item__content:hover {
+	background: var(--mw-color-surface-raised);
+	border-color: color-mix(in srgb, var(--mw-color-accent) 42%, var(--mw-color-border));
+	transform: translateX(0.22rem);
+}
+
+.wp-block-navigation__responsive-container.is-menu-open .wp-block-navigation-item__content:focus-visible,
+.wp-block-navigation__responsive-container.has-modal-open .wp-block-navigation-item__content:focus-visible {
+	outline: 3px solid var(--mw-color-accent-strong);
+	outline-offset: 2px;
+}
+
+/* Current / active — Spotify green accent */
+.wp-block-navigation__responsive-container.is-menu-open .current-menu-item > .wp-block-navigation-item__content,
+.wp-block-navigation__responsive-container.has-modal-open .current-menu-item > .wp-block-navigation-item__content,
+.wp-block-navigation__responsive-container.is-menu-open .current-menu-ancestor > .wp-block-navigation-item__content {
+	color: var(--mw-color-text);
+	background: color-mix(in srgb, var(--mw-color-accent) 16%, var(--mw-color-surface-raised));
+	border-color: color-mix(in srgb, var(--mw-color-accent) 58%, transparent);
+	box-shadow: 0 8px 24px color-mix(in srgb, var(--mw-color-accent) 14%, transparent);
+}
+
+/* Arrow for items with children (when submenu indicator exists) */
+.wp-block-navigation__responsive-container.is-menu-open
+	.wp-block-navigation-item.has-child > .wp-block-navigation-item__content::after {
+	content: "›";
+	font-size: 1.4em;
+	font-weight: 400;
+	line-height: 1;
+	color: var(--mw-color-text-muted);
+	opacity: 0.9;
+	transform: translateX(0);
+	transition: transform 180ms ease, color 180ms ease;
+}
+
+.wp-block-navigation__responsive-container.is-menu-open
+	.wp-block-navigation-item.has-child > .wp-block-navigation-item__content:hover::after {
+	color: var(--mw-color-accent-strong);
+	transform: translateX(0.2rem);
+}
+
+/* ------------------------------------------------------------------ */
+/*  Submenu — indented, subtle left border like Apple Music folders  */
+/* ------------------------------------------------------------------ */
+
+.wp-block-navigation__responsive-container.is-menu-open .wp-block-navigation__submenu-container,
+.wp-block-navigation__responsive-container.has-modal-open .wp-block-navigation__submenu-container {
+	display: grid;
+	gap: 0.35rem;
+	inline-size: 100%;
+	padding-inline-start: 1rem;
+	padding-block: 0.45rem 0.25rem;
+	margin-block-start: 0.5rem;
+	background: transparent;
+	border: 0;
+	border-inline-start: 2px solid color-mix(in srgb, var(--mw-color-accent) 22%, var(--mw-color-border));
+}
+
+.wp-block-navigation__responsive-container.is-menu-open
+	.wp-block-navigation__submenu-container .wp-block-navigation-item__content {
+	min-block-size: 3rem;
+	font-size: 1rem;
+	font-weight: 600;
+	background: color-mix(in srgb, var(--mw-color-surface) 72%, transparent);
+}
+
+/* ------------------------------------------------------------------ */
+/*  Close button — circular, top-right with safe-area                */
+/* ------------------------------------------------------------------ */
+
+.wp-block-navigation__responsive-container-close {
+	position: fixed;
+	inset-block-start: max(1rem, env(safe-area-inset-top));
+	inset-inline-end: max(1rem, env(safe-area-inset-right));
+	display: grid;
+	place-items: center;
+	inline-size: 2.85rem;
+	block-size: 2.85rem;
+	padding: 0;
+	color: var(--mw-color-text);
+	background: var(--mw-color-surface-raised);
+	border: 1px solid var(--mw-color-border);
+	border-radius: 50%;
+	box-shadow: var(--mw-shadow-card);
+	cursor: pointer;
+	transition: background-color 160ms ease, border-color 160ms ease, transform 160ms ease;
+}
+
+.wp-block-navigation__responsive-container-close:hover {
+	background: var(--mw-color-surface);
+	border-color: color-mix(in srgb, var(--mw-color-accent) 38%, var(--mw-color-border));
+	transform: rotate(90deg) scale(1.05);
+}
+
+.wp-block-navigation__responsive-container-close:focus-visible {
+	outline: 3px solid var(--mw-color-accent-strong);
+	outline-offset: 3px;
+}
+
+.wp-block-navigation__responsive-container-close svg {
+	inline-size: 1.15rem;
+	block-size: 1.15rem;
+}
+
+/* Admin bar offset */
+.admin-bar .wp-block-navigation__responsive-container-close {
+	inset-block-start: calc(46px + max(0.75rem, env(safe-area-inset-top)));
+}
+
+@media (min-width: 48rem) {
+	.admin-bar .wp-block-navigation__responsive-container-close {
+		inset-block-start: calc(32px + max(0.75rem, env(safe-area-inset-top)));
+	}
+}
+
+/* ------------------------------------------------------------------ */
+/*  RTL — mirror transforms & inset                                  */
+/* ------------------------------------------------------------------ */
+
+html[dir="rtl"] .wp-block-navigation__responsive-container.is-menu-open .wp-block-navigation-item__content:hover {
+	transform: translateX(-0.22rem);
+}
+
+html[dir="rtl"] .wp-block-navigation__responsive-container-close {
+	inset-inline-end: auto;
+	inset-inline-start: max(1rem, env(safe-area-inset-left));
+}
+
+/* ------------------------------------------------------------------ */
+/*  Light theme tweak — Apple Music lighter overlay                   */
+/* ------------------------------------------------------------------ */
+
+html[data-mw-theme="light"] .wp-block-navigation__responsive-container.is-menu-open,
+html[data-mw-theme="light"] .wp-block-navigation__responsive-container.has-modal-open {
+	background: color-mix(in srgb, var(--mw-color-canvas) 92%, white);
+}
+
+/* ------------------------------------------------------------------ */
+/*  Reduced motion                                                    */
+/* ------------------------------------------------------------------ */
+
+@media (prefers-reduced-motion: reduce) {
+	.wp-block-navigation__responsive-container,
+	.wp-block-navigation__responsive-container.is-menu-open
+		.wp-block-navigation__responsive-container-content,
+	.wp-block-navigation__responsive-container-close,
+	.wp-block-navigation__responsive-container.is-menu-open .wp-block-navigation-item__content {
+		animation: none;
+		transition: none;
+	}
+}

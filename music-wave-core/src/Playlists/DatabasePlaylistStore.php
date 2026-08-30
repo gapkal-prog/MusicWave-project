@@ -35,8 +35,8 @@ final class DatabasePlaylistStore implements PlaylistStore {
 
 		$playlists       = $this->table();
 		$items           = $this->items_table();
-		$this->available = $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $playlists ) ) === $playlists // phpcs:ignore WordPress.DB.DirectDatabaseQuery
-			&& $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $items ) ) === $items; // phpcs:ignore WordPress.DB.DirectDatabaseQuery
+		$this->available = $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $this->table_like_pattern( $playlists ) ) ) === $playlists // phpcs:ignore WordPress.DB.DirectDatabaseQuery
+			&& $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $this->table_like_pattern( $items ) ) ) === $items; // phpcs:ignore WordPress.DB.DirectDatabaseQuery
 
 		return $this->available;
 	}
@@ -149,9 +149,9 @@ final class DatabasePlaylistStore implements PlaylistStore {
 		$formats = array();
 		foreach ( array( 'title', 'visibility', 'share_token' ) as $column ) {
 			if ( array_key_exists( $column, $fields ) ) {
-				$value             = (string) $fields[ $column ];
-				$data[ $column ]   = 'share_token' === $column && '' === $value ? null : $value;
-				$formats[]         = '%s';
+				$value           = (string) $fields[ $column ];
+				$data[ $column ] = 'share_token' === $column && '' === $value ? null : $value;
+				$formats[]       = '%s';
 			}
 		}
 		$data['updated_at'] = isset( $fields['updated_at'] ) ? absint( $fields['updated_at'] ) : time();
@@ -218,6 +218,10 @@ final class DatabasePlaylistStore implements PlaylistStore {
 		$items = $this->items_table();
 		$now   = time();
 		$kept  = $this->added_at_map( $playlist_id );
+
+		// The delete-then-insert swap runs in a transaction so concurrent
+		// mutations can never observe (or leave behind) a half-written list.
+		$wpdb->query( 'START TRANSACTION' ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.NotPrepared
 		$wpdb->query( $wpdb->prepare( "DELETE FROM {$items} WHERE playlist_id = %d", $playlist_id ) ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 
 		$position = 0;
@@ -226,7 +230,7 @@ final class DatabasePlaylistStore implements PlaylistStore {
 			if ( $release_id < 1 ) {
 				continue;
 			}
-			$wpdb->insert( // phpcs:ignore WordPress.DB.DirectDatabaseQuery
+			$inserted = $wpdb->insert( // phpcs:ignore WordPress.DB.DirectDatabaseQuery
 				$items,
 				array(
 					'playlist_id' => $playlist_id,
@@ -236,8 +240,15 @@ final class DatabasePlaylistStore implements PlaylistStore {
 				),
 				array( '%d', '%d', '%d', '%d' )
 			);
+			if ( false === $inserted ) {
+				$wpdb->query( 'ROLLBACK' ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.NotPrepared
+
+				return false;
+			}
 			++$position;
 		}
+
+		$wpdb->query( 'COMMIT' ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.NotPrepared
 
 		return true;
 	}
@@ -285,6 +296,55 @@ final class DatabasePlaylistStore implements PlaylistStore {
 		}
 	}
 
+	public function public_playlists( int $limit = 24, int $offset = 0, string $search = '', string $orderby = 'updated_at' ): array {
+		global $wpdb;
+
+		if ( ! $this->available() ) {
+			return array();
+		}
+
+		$limit   = min( 50, max( 1, $limit ) );
+		$offset  = max( 0, $offset );
+		$orderby = in_array( $orderby, array( 'updated_at', 'created_at', 'title' ), true ) ? $orderby : 'updated_at';
+		$order   = 'title' === $orderby ? 'ASC' : 'DESC';
+		$field   = 'title' === $orderby ? 'title' : $orderby;
+
+		$table  = $this->table();
+		$search = trim( $search );
+		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- table name is trusted, field allow-listed.
+		$sql  = "SELECT * FROM {$table} WHERE visibility = %s";
+		$args = array( PlaylistRepository::VISIBILITY_PUBLIC );
+		if ( '' !== $search ) {
+			$sql   .= ' AND title LIKE %s';
+			$args[] = '%' . $wpdb->esc_like( $search ) . '%';
+		}
+		$sql   .= " ORDER BY {$field} {$order}, id DESC LIMIT %d OFFSET %d";
+		$args[] = $limit;
+		$args[] = $offset;
+
+		$rows = $wpdb->get_results( $wpdb->prepare( $sql, $args ), ARRAY_A ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.NotPrepared
+
+		return is_array( $rows ) ? $rows : array();
+	}
+
+	public function count_public( string $search = '' ): int {
+		global $wpdb;
+
+		if ( ! $this->available() ) {
+			return 0;
+		}
+
+		$table  = $this->table();
+		$search = trim( $search );
+		if ( '' !== $search ) {
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery
+			return (int) $wpdb->get_var( $wpdb->prepare( "SELECT COUNT(*) FROM {$table} WHERE visibility = %s AND title LIKE %s", PlaylistRepository::VISIBILITY_PUBLIC, '%' . $wpdb->esc_like( $search ) . '%' ) ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		}
+
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery
+		return (int) $wpdb->get_var( $wpdb->prepare( "SELECT COUNT(*) FROM {$table} WHERE visibility = %s", PlaylistRepository::VISIBILITY_PUBLIC ) ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+	}
+
 	/**
 	 * Preserve original add timestamps across a reorder.
 	 *
@@ -309,5 +369,14 @@ final class DatabasePlaylistStore implements PlaylistStore {
 		global $wpdb;
 
 		return $wpdb->prefix . self::ITEMS_TABLE;
+	}
+
+	/**
+	 * Escape LIKE wildcards so the existence probe matches exactly one table.
+	 */
+	private function table_like_pattern( string $table ): string {
+		global $wpdb;
+
+		return method_exists( $wpdb, 'esc_like' ) ? $wpdb->esc_like( $table ) : $table;
 	}
 }

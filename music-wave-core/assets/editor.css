@@ -68,7 +68,9 @@
 .mw-block-editor-shell > .wp-block-music-wave-preview-player,
 .mw-block-editor-shell > .wp-block-music-wave-download-button,
 .mw-block-editor-shell > .wp-block-music-wave-related-releases,
-.mw-block-editor-shell > .wp-block-music-wave-artist-profile {
+.mw-block-editor-shell > .wp-block-music-wave-artist-profile,
+.mw-block-editor-shell > .wp-block-music-wave-account-dashboard,
+.mw-block-editor-shell > .wp-block-music-wave-membership-panel {
 	margin-top: 0;
 	margin-bottom: 0;
 }

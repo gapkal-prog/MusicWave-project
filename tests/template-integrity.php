@@ -145,7 +145,13 @@ foreach ( $block_files as $block_file ) {
 	foreach ( isset( $pattern_matches[1] ) ? $pattern_matches[1] : array() as $attributes_json ) {
 		$attributes = json_decode( $attributes_json, true );
 		$slug       = is_array( $attributes ) && isset( $attributes['slug'] ) ? (string) $attributes['slug'] : '';
-		mw_assert_same( true, in_array( $slug, $registered_patterns, true ), $label . ' must reference an available bundled pattern.' );
+		// Namespaced references such as woocommerce/cart-empty-message are
+		// registered at runtime by plugins; only the theme's own namespace is
+		// verifiable from the repository.
+		$own_namespace = false === strpos( $slug, '/' ) || 0 === strpos( $slug, 'musicwave/' );
+		if ( $own_namespace ) {
+			mw_assert_same( true, in_array( $slug, $registered_patterns, true ), $label . ' must reference an available bundled pattern.' );
+		}
 	}
 
 	preg_match_all( '/<!--\s+wp:((?:music-wave|musicwave)\/[a-z0-9-]+)(.*?)-->/', $content, $dynamic_matches, PREG_SET_ORDER );
@@ -325,7 +331,7 @@ mw_assert_same(
 );
 
 $catalog_css = (string) file_get_contents( $theme_directory . '/assets/css/components/catalog.css' );
-foreach ( array( '.mw-release-meta--inline', '.mw-release-meta--stack' ) as $meta_selector ) {
+foreach ( array( '.mw-release-meta__facts--inline', '.mw-release-meta__facts--stack', '.mw-release-meta--panel', '.mw-release-meta__chip' ) as $meta_selector ) {
 	mw_assert_same(
 		true,
 		false !== strpos( $catalog_css, $meta_selector ),
@@ -481,10 +487,18 @@ $music_wave_expected_blocks    = array(
 	'preview-button',
 	'artist-profile',
 	'account-dashboard',
+	'membership-panel',
 	'music-library',
 	'library-button',
 	'playlists',
 	'add-to-playlist',
+	'public-playlists',
+	'continue-listening',
+	'artists-shelf',
+	'taxonomy-shelf',
+	'term-hero',
+	'playback-queue',
+	'add-to-queue',
 );
 foreach ( $music_wave_expected_blocks as $music_wave_block_slug ) {
 	$music_wave_metadata_file = $music_wave_block_metadata_dir . '/' . $music_wave_block_slug . '/block.json';
@@ -530,3 +544,151 @@ mw_assert_same(
 	count( glob( $music_wave_block_metadata_dir . '/*/block.json' ) ?: array() ),
 	'The blocks/ directory must hold exactly one block.json per MusicWave dynamic block.'
 );
+
+// Public playlists ship as a first-class Site Editor surface: page-playlists
+// composes the section directly from blocks — the block itself renders the
+// whole experience, so no wrapper template part or single-block pattern may
+// duplicate it.
+$page_playlists_template = (string) file_get_contents( $theme_directory . '/templates/page-playlists.html' );
+mw_assert_same(
+	true,
+	false !== strpos( $page_playlists_template, 'wp:music-wave/public-playlists' ),
+	'page-playlists.html must compose the public playlists section directly from the block.'
+);
+mw_assert_same(
+	false,
+	in_array( 'playlists', $registered_parts, true ) || is_file( $theme_directory . '/parts/playlists.html' ),
+	'The public playlists experience must live in the block itself; a wrapper template part would duplicate it.'
+);
+mw_assert_same(
+	false,
+	in_array( 'musicwave/public-playlists-section', $registered_patterns, true ),
+	'A pattern wrapping only the public playlists block would duplicate its inserter entry; keep composition in templates.'
+);
+
+foreach ( array( 'imageShape', 'showToggle', 'showPagination', 'sectionUrl', 'sectionLinkLabel' ) as $public_playlist_attribute ) {
+	mw_assert_same(
+		true,
+		false !== strpos( $editor_script, $public_playlist_attribute ),
+		'The editor must expose the public playlists ' . $public_playlist_attribute . ' control.'
+	);
+}
+
+$public_playlists_css = (string) file_get_contents( $theme_directory . '/assets/css/components/playlists.css' );
+foreach ( array( '.mw-public-playlists--minimal', '.mw-public-playlists__grid--scroll', '--mw-shelf-columns', '.mw-public-playlists__more', '.mw-public-playlists__art--circle' ) as $public_playlist_selector ) {
+	mw_assert_same(
+		true,
+		false !== strpos( $public_playlists_css, $public_playlist_selector ),
+		'The theme must style the public playlists variant ' . $public_playlist_selector . ' in coordination with the release shelf.'
+	);
+}
+
+// The artists shelf and continue-listening rails reuse the shared shelf
+// chrome, so the theme must ship their component styles and keep them
+// registered as style modules.
+$artists_shelf_css = (string) file_get_contents( $theme_directory . '/assets/css/components/artists-shelf.css' );
+foreach ( array( '.mw-artists-shelf__avatar--circle', '.mw-artists-shelf__initial', '.mw-release-shelf--list .mw-artists-shelf__item', '.mw-artists-shelf__empty' ) as $artists_shelf_selector ) {
+	mw_assert_same(
+		true,
+		false !== strpos( $artists_shelf_css, $artists_shelf_selector ),
+		'The theme must style the artists shelf variant ' . $artists_shelf_selector . ' in coordination with the release shelf.'
+	);
+}
+$listening_css = (string) file_get_contents( $theme_directory . '/assets/css/components/listening.css' );
+foreach ( array( '.mw-continue-listening__panel', '.mw-continue-listening__header', '.mw-continue-listening__empty' ) as $listening_selector ) {
+	mw_assert_same(
+		true,
+		false !== strpos( $listening_css, $listening_selector ),
+		'The theme must style the continue-listening surface ' . $listening_selector . '.'
+	);
+}
+mw_assert_same(
+	true,
+	false !== strpos( $functions_source, "'musicwave-artists-shelf'" ) && false !== strpos( $functions_source, "'musicwave-listening'" ),
+	'functions.php must register the artists-shelf and listening style modules for frontend and editor parity.'
+);
+mw_assert_same(
+	true,
+	false !== strpos( $functions_source, "'musicwave-taxonomy-shelf'" ),
+	'functions.php must register the taxonomy-shelf style module for frontend and editor parity.'
+);
+mw_assert_same(
+	true,
+	in_array( 'musicwave/popular-artists', $registered_patterns, true ),
+	'The theme must ship the popular-artists pattern so editors can drop an artists shelf anywhere.'
+);
+$taxonomy_shelf_css = (string) file_get_contents( $theme_directory . '/assets/css/components/taxonomy-shelf.css' );
+foreach ( array( '.mw-terms-shelf__tile--style-colorful.mw-terms-shelf__tile--hue-1', '.mw-terms-shelf__tile--style-plain', '.mw-release-shelf--list .mw-terms-shelf__tile', '.mw-terms-shelf__empty' ) as $taxonomy_shelf_selector ) {
+	mw_assert_same(
+		true,
+		false !== strpos( $taxonomy_shelf_css, $taxonomy_shelf_selector ),
+		'The theme must style the taxonomy shelf variant ' . $taxonomy_shelf_selector . ' in coordination with the release shelf.'
+	);
+}
+mw_assert_same(
+	true,
+	in_array( 'musicwave/genre-mood-browse', $registered_patterns, true ),
+	'The theme must ship the genre-mood-browse pattern so editors can drop browse tiles anywhere.'
+);
+
+// Archive pages must open with the shared term hero instead of hand-rolled
+// page headings, so artists and genres get the same platform-grade landing.
+$artist_archive_template = (string) file_get_contents( $theme_directory . '/templates/taxonomy-mw_artist.html' );
+mw_assert_same(
+	true,
+	false !== strpos( $artist_archive_template, 'wp:music-wave/term-hero' ),
+	'taxonomy-mw_artist.html must compose its header from the term hero block.'
+);
+mw_assert_same(
+	false,
+	false !== strpos( $artist_archive_template, 'music-wave/artist-profile' ) || false !== strpos( $artist_archive_template, 'wp:query-title' ),
+	'the artist archive must not duplicate the hero with a profile card or generic archive title.'
+);
+$genre_archive_template = (string) file_get_contents( $theme_directory . '/templates/taxonomy-mw_genre.html' );
+mw_assert_same(
+	true,
+	false !== strpos( $genre_archive_template, 'wp:music-wave/term-hero' ),
+	'taxonomy-mw_genre.html must compose its header from the term hero block.'
+);
+$term_hero_css = (string) file_get_contents( $theme_directory . '/assets/css/components/term-hero.css' );
+foreach ( array( '.mw-term-hero--banner', '.mw-term-hero__scrim', '.mw-term-hero--compact', '.mw-term-hero--hue-1 .mw-term-hero__media', '.mw-term-hero--size-tall' ) as $term_hero_selector ) {
+	mw_assert_same(
+		true,
+		false !== strpos( $term_hero_css, $term_hero_selector ),
+		'The theme must style the term hero variant ' . $term_hero_selector . '.'
+	);
+}
+mw_assert_same(
+	true,
+	false !== strpos( $functions_source, "'musicwave-term-hero'" ),
+	'functions.php must register the term-hero style module for frontend and editor parity.'
+);
+$queue_css = (string) file_get_contents( $theme_directory . '/assets/css/components/queue.css' );
+foreach ( array( '.mw-playback-queue__item', '.mw-playback-queue__notice--error', '.mw-playback-queue__controls', '.mw-playback-queue__guest-text' ) as $queue_selector ) {
+	mw_assert_same(
+		true,
+		false !== strpos( $queue_css, $queue_selector ),
+		'The theme must style the playback queue surface ' . $queue_selector . '.'
+	);
+}
+mw_assert_same(
+	true,
+	false !== strpos( $functions_source, "'musicwave-queue'" ),
+	'functions.php must register the queue style module for frontend and editor parity.'
+);
+foreach ( array( '.mw-add-to-queue--guest', '.mw-add-to-queue__in' ) as $add_queue_selector ) {
+	mw_assert_same(
+		true,
+		false !== strpos( $queue_css, $add_queue_selector ),
+		'The theme must style the add-to-queue variant ' . $add_queue_selector . '.'
+	);
+}
+
+$theme_editor_script = (string) file_get_contents( $theme_directory . '/assets/editor-blocks.js' );
+foreach ( array( 'playlistOrderBy', 'playlistSearch', "'playlists'" ) as $shelf_playlist_control ) {
+	mw_assert_same(
+		true,
+		false !== strpos( $theme_editor_script, $shelf_playlist_control ),
+		'The release shelf editor must expose the public playlist source control (' . $shelf_playlist_control . ').'
+	);
+}

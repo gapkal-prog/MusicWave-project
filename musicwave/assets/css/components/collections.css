@@ -171,6 +171,14 @@
 	font-variant-numeric: tabular-nums;
 }
 
+.mw-collection-list li {
+	transition: background-color 160ms ease;
+}
+
+.mw-collection-list li:hover {
+	background: color-mix(in srgb, var(--mw-color-surface-raised) 55%, transparent);
+}
+
 @media (max-width: 48rem) {
 	.mw-collection-list__item {
 		align-items: flex-start;

@@ -104,14 +104,15 @@ final class PreviewPlayer {
 				'restNonce'     => wp_create_nonce( 'wp_rest' ),
 				'loggedIn'      => get_current_user_id() > 0,
 				/**
-				 * Native navigation is the default: the SPA-style body swap does
-				 * not safely reconcile WordPress/WooCommerce lifecycle state and
-				 * is therefore opt-in until the persistent player is re-scoped
-				 * (PROJECT_PLAN.md Stage 4 deliverable 1).
+				 * Persistent navigation is on by default: soft body swaps keep
+				 * the global player (and its audio) mounted while visitors
+				 * browse, the way Spotify or Apple Music keep their bar.
+				 * Commerce, admin, and auth routes are always excluded, and
+				 * sites can still opt out here or via the setting.
 				 *
 				 * @param bool $enabled Whether persistent navigation is active.
 				 */
-				'persistentNav' => (bool) apply_filters( 'music_wave_persistent_navigation', 'enabled' === (string) \ManaCore\MusicWave\Core\Support\Settings::get( 'persistent_navigation' ) ),
+				'persistentNav' => (bool) apply_filters( 'music_wave_persistent_navigation', 'disabled' !== (string) \ManaCore\MusicWave\Core\Support\Settings::get( 'persistent_navigation' ) ),
 				'labels'        => array(
 					'play'         => __( 'Play preview', 'music-wave-core' ),
 					'pause'        => __( 'Pause preview', 'music-wave-core' ),
