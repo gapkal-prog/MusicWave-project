@@ -22,18 +22,18 @@
 	font-weight: 700;
 	letter-spacing: 0.01em;
 	cursor: pointer;
-	transition: background-color 160ms ease, transform 160ms ease, box-shadow 160ms ease;
+	transition: background-color 160ms ease, transform 160ms ease, box-shadow 160ms ease, scale 160ms var(--mw-ease-snap, ease);
 }
 
 .mw-preview-button:hover,
 .mw-preview-button[aria-pressed="true"] {
 	background: var(--mw-color-accent-strong);
 	box-shadow: 0 10px 28px color-mix(in srgb, var(--mw-color-accent) 45%, transparent);
-	transform: translateY(-1px);
+	scale: 1.04;
 }
 
 .mw-preview-button:active {
-	transform: translateY(0);
+	scale: 0.98;
 }
 
 .mw-preview-button__icon {
@@ -86,12 +86,13 @@
 	left: max(1rem, env(safe-area-inset-left));
 	z-index: 100;
 	display: grid;
-	grid-template-columns: minmax(12rem, 1fr) auto minmax(7rem, 14rem) auto auto auto;
+	grid-template-columns: minmax(11rem, 1fr) auto minmax(7rem, 14rem) auto auto auto;
+	grid-template-rows: auto auto;
 	gap: var(--wp--preset--spacing--20);
 	align-items: center;
 	max-width: 72rem;
 	margin-inline: auto;
-	padding: 0.75rem 1rem;
+	padding: 0.6rem 1rem 0.8rem;
 	color: var(--mw-color-text);
 	background: color-mix(in srgb, var(--mw-color-surface) 82%, transparent);
 	border: 1px solid var(--mw-color-border);
@@ -145,17 +146,16 @@
 	height: 2.5rem;
 	padding: 0;
 	place-items: center;
-	color: var(--mw-color-text);
-	background: var(--mw-color-surface-raised);
-	border: 1px solid var(--mw-color-border);
+	color: var(--mw-color-text-muted);
+	background: transparent;
+	border: 1px solid transparent;
 	border-radius: 50%;
 	cursor: pointer;
+	transition: color var(--mw-speed-fast, 150ms) var(--mw-ease-snap, ease), background-color var(--mw-speed-fast, 150ms) ease, scale var(--mw-speed-fast, 150ms) var(--mw-ease-snap, ease);
 }
 
 .mw-global-player button:hover:not(:disabled) {
-	color: var(--mw-color-on-accent);
-	background: var(--mw-color-accent);
-	border-color: transparent;
+	color: var(--mw-color-text);
 }
 
 .mw-global-player button:disabled {
@@ -163,13 +163,104 @@
 	cursor: not-allowed;
 }
 
+/*
+ * SonicStream transport: the play/pause trigger is a solid light disc with
+ * the signature green glow that scales on hover; secondary controls stay
+ * quiet until pointed at.
+ */
+.mw-global-player__toggle {
+	width: 2.25rem;
+	height: 2.25rem;
+	color: var(--mw-color-canvas);
+	background: var(--mw-color-text);
+	box-shadow: 0 0.375rem 1rem color-mix(in srgb, var(--mw-color-canvas) 55%, transparent);
+}
+
+.mw-global-player__toggle:hover:not(:disabled) {
+	color: var(--mw-color-canvas);
+	background: var(--mw-color-text);
+	scale: 1.06;
+}
+
+.mw-global-player__toggle[aria-pressed="true"] {
+	background: var(--mw-color-accent);
+	color: var(--mw-color-on-accent);
+	box-shadow: 0 0.5rem 1.5rem color-mix(in srgb, var(--mw-color-accent) 45%, rgb(0 0 0 / 30%));
+}
+
 .mw-global-player__progress {
+	grid-column: 1 / -1;
+	grid-row: 2;
 	min-width: 0;
 }
 
 .mw-global-player__progress input {
 	width: 100%;
 	accent-color: var(--mw-color-accent);
+}
+
+/* SonicStream seek bar: the filled portion carries the green-to-green
+ * gradient (--mw-progress is synced from preview-player.js) and a 12px
+ * white thumb surfaces only while the visitor points at or focuses it. */
+.mw-global-player__progress input::-webkit-slider-runnable-track {
+	height: 0.375rem;
+	border-radius: 999px;
+	background: linear-gradient(
+		to right,
+		var(--mw-color-accent) 0%,
+		var(--mw-color-accent-strong) var(--mw-progress, 0%),
+		color-mix(in srgb, var(--mw-color-text) 18%, transparent) var(--mw-progress, 0%)
+	);
+}
+
+.mw-global-player__progress input::-webkit-slider-thumb {
+	width: 0.75rem;
+	height: 0.75rem;
+	margin-block-start: calc((0.375rem - 0.75rem) / 2);
+	appearance: none;
+	background: var(--mw-color-text);
+	border: 0;
+	border-radius: 50%;
+	box-shadow: 0 0.125rem 0.5rem rgb(0 0 0 / 55%);
+	cursor: pointer;
+	opacity: 0;
+	transform: scale(0.6);
+	transition: opacity var(--mw-speed-fast, 150ms) ease, transform var(--mw-speed-fast, 150ms) var(--mw-ease-snap, ease);
+}
+
+.mw-global-player__progress:hover input::-webkit-slider-thumb,
+.mw-global-player__progress input:focus-visible::-webkit-slider-thumb {
+	opacity: 1;
+	transform: scale(1);
+}
+
+.mw-global-player__progress input::-moz-range-track {
+	height: 0.375rem;
+	border-radius: 999px;
+	background: color-mix(in srgb, var(--mw-color-text) 18%, transparent);
+}
+
+.mw-global-player__progress input::-moz-range-progress {
+	height: 0.375rem;
+	border-radius: 999px;
+	background: var(--mw-gradient-progress, linear-gradient(90deg, var(--mw-color-accent), var(--mw-color-accent-strong)));
+}
+
+.mw-global-player__progress input::-moz-range-thumb {
+	width: 0.75rem;
+	height: 0.75rem;
+	background: var(--mw-color-text);
+	border: 0;
+	border-radius: 50%;
+	box-shadow: 0 0.125rem 0.5rem rgb(0 0 0 / 55%);
+	cursor: pointer;
+	opacity: 0;
+	transition: opacity var(--mw-speed-fast, 150ms) ease, transform var(--mw-speed-fast, 150ms) var(--mw-ease-snap, ease);
+}
+
+.mw-global-player__progress:hover input::-moz-range-thumb,
+.mw-global-player__progress input:focus-visible::-moz-range-thumb {
+	opacity: 1;
 }
 
 .mw-global-player__time {
@@ -187,6 +278,17 @@
 	width: 5rem;
 	min-width: 0;
 	accent-color: var(--mw-color-accent);
+}
+
+.mw-global-player__volume::-webkit-slider-runnable-track {
+	height: 0.25rem;
+	border-radius: 999px;
+	background: color-mix(in srgb, var(--mw-color-text) 18%, transparent);
+}
+
+.mw-global-player__volume:hover::-webkit-slider-runnable-track,
+.mw-global-player__volume:focus-visible::-webkit-slider-runnable-track {
+	background: var(--mw-color-accent);
 }
 
 /* Queue panel floating above the player bar. */
@@ -366,6 +468,44 @@
 	transform: none;
 }
 
+/* -------------------------------------------------------------------------
+ * Now-playing equalizer — the four animated bars that replace the play
+ * glyph while a track is active. Pure CSS, driven by data-mw-state which
+ * preview-player.js keeps in sync with audio.play/pause.
+ * ---------------------------------------------------------------------- */
+.mw-equalizer {
+	display: inline-flex;
+	align-items: flex-end;
+	gap: 0.125rem;
+	inline-size: 0.875rem;
+	block-size: 0.875rem;
+}
+
+.mw-equalizer i {
+	inline-size: 0.1875rem;
+	block-size: 100%;
+	background: currentColor;
+	border-radius: 0.09375rem;
+	transform-origin: bottom;
+	animation: mw-equalize 1s ease-in-out infinite;
+}
+
+.mw-equalizer i:nth-child(2) { animation-delay: 0.18s; }
+.mw-equalizer i:nth-child(3) { animation-delay: 0.36s; }
+.mw-equalizer i:nth-child(4) { animation-delay: 0.54s; }
+
+@keyframes mw-equalize {
+	0%, 100% { transform: scaleY(0.3); }
+	50% { transform: scaleY(1); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.mw-equalizer i {
+		animation: none;
+		transform: scaleY(0.65);
+	}
+}
+
 @media (max-width: 64rem) {
 	.mw-global-player__volume {
 		display: none;
@@ -377,6 +517,7 @@
 		grid-template-columns: minmax(0, 1fr) auto auto;
 	}
 
+	/* Progress keeps its full-width second row on small screens. */
 	.mw-global-player__progress {
 		grid-column: 1 / -1;
 		grid-row: 2;

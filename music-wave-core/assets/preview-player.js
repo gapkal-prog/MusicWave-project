@@ -295,7 +295,7 @@
 				if ( ! track.full ) {
 					var badge = document.createElement( 'span' );
 					badge.className = 'mw-global-player__queue-badge';
-					badge.textContent = labels.previewBadge || 'Preview';
+					badge.textContent = labels.previewBadge || 'پیش‌نمایش';
 					button.appendChild( badge );
 				}
 				button.addEventListener( 'click', function () {
@@ -442,6 +442,11 @@
 				art.removeAttribute( 'src' );
 				art.hidden = true;
 			}
+			// Now-playing signal for the theme equalizer (CSS-only consumer).
+			player.setAttribute(
+				'data-mw-state',
+				audio.paused ? 'paused' : 'playing'
+			);
 			player.hidden = false;
 			if ( ! busy ) {
 				toggle.textContent = playGlyph();
@@ -449,8 +454,8 @@
 			toggle.setAttribute(
 				'aria-label',
 				audio.paused
-					? labels.play || 'Play preview'
-					: labels.pause || 'Pause preview'
+					? labels.play || 'پخش پیش‌نمایش'
+					: labels.pause || 'توقف پیش‌نمایش'
 			);
 			previous.disabled = current <= 0;
 			next.disabled = current >= queue.length - 1;
@@ -742,6 +747,7 @@
 			queue = [];
 			queueMeta = null;
 			player.hidden = true;
+			player.removeAttribute( 'data-mw-state' );
 			setQueueOpen( false );
 			hideNotice();
 			clearState();
@@ -909,6 +915,10 @@
 									( audio.currentTime / audio.duration ) * 100
 							  )
 							: '0';
+						progress.style.setProperty(
+							'--mw-progress',
+							progress.value + '%'
+						);
 						time.textContent =
 							formatTime( audio.currentTime ) +
 							( audio.duration
@@ -1003,11 +1013,14 @@
 			progress.value = duration
 				? String( ( audio.currentTime / duration ) * 100 )
 				: '0';
+			// Feeds the webkit slider gradient stop in the theme stylesheet.
+			progress.style.setProperty( '--mw-progress', progress.value + '%' );
 			time.textContent =
 				formatTime( audio.currentTime ) +
 				( duration ? ' / ' + formatTime( duration ) : '' );
 		} );
 		progress.addEventListener( 'input', function () {
+			progress.style.setProperty( '--mw-progress', progress.value + '%' );
 			if ( audio.duration ) {
 				audio.currentTime =
 					( parseFloat( progress.value ) / 100 ) * audio.duration;
@@ -1415,7 +1428,7 @@
 		request
 			.then( function ( response ) {
 				if ( ! response.ok ) {
-					throw new Error( 'Navigation failed' );
+					throw new Error( 'پیمایش ناموفق بود.' );
 				}
 
 				return response.text();
