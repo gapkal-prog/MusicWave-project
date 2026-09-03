@@ -119,6 +119,10 @@ final class ReleaseBlocks {
 					'type'    => 'boolean',
 					'default' => false,
 				),
+				'showLabel'         => array(
+					'type'    => 'boolean',
+					'default' => false,
+				),
 				'showReleaseType'   => array(
 					'type'    => 'boolean',
 					'default' => false,
@@ -637,11 +641,11 @@ final class ReleaseBlocks {
 		$use_chips   = ! $compact && BlockSupport::bool_attribute( $attributes, 'showTaxonomyChips', true );
 		$items       = array();
 		$fields      = array(
-			'mw_catalog_number' => array( __( 'Catalog number', 'music-wave-core' ), 'showCatalogNumber' ),
-			'mw_release_date'   => array( __( 'Release date', 'music-wave-core' ), 'showReleaseDate' ),
-			'mw_duration'       => array( __( 'Duration', 'music-wave-core' ), 'showDuration' ),
+			'mw_catalog_number' => array( __( 'شماره کاتالوگ', 'music-wave-core' ), 'showCatalogNumber' ),
+			'mw_release_date'   => array( __( 'تاریخ انتشار', 'music-wave-core' ), 'showReleaseDate' ),
+			'mw_duration'       => array( __( 'مدت زمان', 'music-wave-core' ), 'showDuration' ),
 			'mw_bpm'            => array( __( 'BPM', 'music-wave-core' ), 'showBpm' ),
-			'mw_musical_key'    => array( __( 'Key', 'music-wave-core' ), 'showKey' ),
+			'mw_musical_key'    => array( __( 'کلید', 'music-wave-core' ), 'showKey' ),
 		);
 		foreach ( $fields as $key => $field ) {
 			if ( ! BlockSupport::bool_attribute( $attributes, (string) $field[1], true ) ) {
@@ -658,10 +662,11 @@ final class ReleaseBlocks {
 		}
 
 		$taxonomies = array(
-			'mw_artist'       => array( __( 'Artist', 'music-wave-core' ), 'showArtist' ),
-			'mw_genre'        => array( __( 'Genre', 'music-wave-core' ), 'showGenre' ),
-			'mw_mood'         => array( __( 'Mood', 'music-wave-core' ), 'showMood' ),
-			'mw_release_type' => array( __( 'Release type', 'music-wave-core' ), 'showReleaseType' ),
+			'mw_artist'       => array( __( 'هنرمند', 'music-wave-core' ), 'showArtist' ),
+			'mw_genre'        => array( __( 'سبک', 'music-wave-core' ), 'showGenre' ),
+			'mw_mood'         => array( __( 'حال‌وهوا', 'music-wave-core' ), 'showMood' ),
+			'mw_label'        => array( __( 'برچسب', 'music-wave-core' ), 'showLabel' ),
+			'mw_release_type' => array( __( 'نوع انتشار', 'music-wave-core' ), 'showReleaseType' ),
 		);
 		foreach ( $taxonomies as $taxonomy => $field ) {
 			if ( ! BlockSupport::bool_attribute( $attributes, (string) $field[1], true ) ) {
@@ -714,7 +719,7 @@ final class ReleaseBlocks {
 			return '';
 		}
 
-		return '<section ' . BlockSupport::wrapper_attributes( 'mw-release-meta mw-release-meta--panel' ) . ' aria-label="' . esc_attr__( 'Release details', 'music-wave-core' ) . '">' . $body . '</section>';
+		return '<section ' . BlockSupport::wrapper_attributes( 'mw-release-meta mw-release-meta--panel' ) . ' aria-label="' . esc_attr__( 'جزئیات انتشار', 'music-wave-core' ) . '">' . $body . '</section>';
 	}
 
 	/**
@@ -730,6 +735,7 @@ final class ReleaseBlocks {
 			'mw_artist'       => 'showArtist',
 			'mw_genre'        => 'showGenre',
 			'mw_mood'         => 'showMood',
+			'mw_label'        => 'showLabel',
 			'mw_release_type' => 'showReleaseType',
 		);
 		$chips      = array();
@@ -829,7 +835,7 @@ final class ReleaseBlocks {
 			if ( ! BlockSupport::bool_attribute( $attributes, 'showWhenGranted', true ) ) {
 				return '';
 			}
-			$message = $this->message_attribute( $attributes, 'grantedMessage', 'access_granted_message', __( 'Access granted', 'music-wave-core' ) );
+			$message = $this->message_attribute( $attributes, 'grantedMessage', 'access_granted_message', __( 'دسترسی اعطا شد', 'music-wave-core' ) );
 			return '<aside ' . BlockSupport::wrapper_attributes( 'mw-access-panel mw-access-panel--' . $layout . ' mw-access-panel--granted' ) . '><strong class="mw-access-panel__message">' . esc_html( $message ) . '</strong></aside>';
 		}
 
@@ -838,11 +844,11 @@ final class ReleaseBlocks {
 		}
 		$this->denied_gate_rendered[ $release_id ] = true;
 
-		$message = $this->message_attribute( $attributes, 'restrictedMessage', 'restricted_message', __( 'This release is not currently available.', 'music-wave-core' ) );
+		$message = $this->message_attribute( $attributes, 'restrictedMessage', 'restricted_message', __( 'این انتشار در حال حاضر در دسترس نیست.', 'music-wave-core' ) );
 		$cta     = '';
 		if ( 'purchase_required' === $decision->reason() ) {
-			$message        = $this->message_attribute( $attributes, 'purchaseMessage', 'purchase_message', __( 'Purchase this release to unlock the full experience.', 'music-wave-core' ) );
-			$purchase_label = $this->message_attribute( $attributes, 'purchaseCtaLabel', 'purchase_cta_label', __( 'View purchase options', 'music-wave-core' ) );
+			$message        = $this->message_attribute( $attributes, 'purchaseMessage', 'purchase_message', __( 'برای باز کردن تجربهٔ کامل، این انتشار را خریداری کنید.', 'music-wave-core' ) );
+			$purchase_label = $this->message_attribute( $attributes, 'purchaseCtaLabel', 'purchase_cta_label', __( 'مشاهده گزینه‌های خرید', 'music-wave-core' ) );
 			$product_ids    = $this->repository->product_ids( $release_id );
 			foreach ( $product_ids as $product_id ) {
 				if ( 'product' !== get_post_type( $product_id ) ) {
@@ -855,13 +861,13 @@ final class ReleaseBlocks {
 				}
 			}
 		} elseif ( 'membership_required' === $decision->reason() ) {
-			$message        = $this->message_attribute( $attributes, 'membershipMessage', 'membership_message', __( 'An eligible membership is required to access this release.', 'music-wave-core' ) );
+			$message        = $this->message_attribute( $attributes, 'membershipMessage', 'membership_message', __( 'برای دسترسی به این انتشار به عضویت واجد شرایط نیاز است.', 'music-wave-core' ) );
 			$membership_url = $this->url_attribute( $attributes, 'membershipCtaUrl' );
 			if ( '' === $membership_url ) {
 				$membership_url = (string) Settings::get( 'membership_cta_url' );
 			}
 			if ( '' !== $membership_url ) {
-				$membership_label = $this->message_attribute( $attributes, 'membershipCtaLabel', 'membership_cta_label', __( 'View membership options', 'music-wave-core' ) );
+				$membership_label = $this->message_attribute( $attributes, 'membershipCtaLabel', 'membership_cta_label', __( 'مشاهده گزینه‌های عضویت', 'music-wave-core' ) );
 				$cta              = '<a class="wp-element-button mw-access-panel__cta" href="' . esc_url( $membership_url ) . '">' . esc_html( $membership_label ) . '</a>';
 			}
 		}
@@ -910,7 +916,7 @@ final class ReleaseBlocks {
 			return '';
 		}
 
-		$heading      = BlockSupport::text_attribute( $attributes, 'heading', __( 'Credits', 'music-wave-core' ) );
+		$heading      = BlockSupport::text_attribute( $attributes, 'heading', __( 'اعتبارات', 'music-wave-core' ) );
 		$show_heading = BlockSupport::bool_attribute( $attributes, 'showHeading', true );
 		$heading_html = $show_heading ? '<h2 class="mw-release-credits__heading">' . esc_html( $heading ) . '</h2>' : '';
 		$aria_label   = $show_heading ? '' : ' aria-label="' . esc_attr( $heading ) . '"';
@@ -937,7 +943,7 @@ final class ReleaseBlocks {
 	private function credit_groups_markup( array $credits ): string {
 		$groups = array();
 		foreach ( $credits as $credit ) {
-			$role = '' !== $credit['role'] ? $credit['role'] : __( 'Additional credits', 'music-wave-core' );
+			$role = '' !== $credit['role'] ? $credit['role'] : __( 'اعتبارات اضافی', 'music-wave-core' );
 			if ( ! isset( $groups[ $role ] ) ) {
 				$groups[ $role ] = array();
 			}
@@ -1005,15 +1011,18 @@ final class ReleaseBlocks {
 			$grouped = $this->collection_disc_groups( $items, $options );
 		}
 
-		$heading      = BlockSupport::text_attribute( $attributes, 'heading', __( 'Track list', 'music-wave-core' ) );
+		$heading      = BlockSupport::text_attribute( $attributes, 'heading', __( 'لیست قطعه', 'music-wave-core' ) );
 		$show_heading = BlockSupport::bool_attribute( $attributes, 'showHeading', true );
 		$heading_html = $show_heading ? '<h2 class="mw-collection-list__heading">' . esc_html( $heading ) . '</h2>' : '';
 		$aria_label   = $show_heading ? '' : ' aria-label="' . esc_attr( $heading ) . '"';
-		$list_markup  = '' !== $grouped ? $grouped : '<ol class="mw-collection-list__items">' . implode( '', $rows ) . '</ol>';
+		// SonicStream track-list table header: quiet uppercase column labels
+		// above the rows on desktop widths.
+		$table_header = '<div class="mw-collection-list__table-header" aria-hidden="true"><span class="mw-collection-list__table-position">#</span><span class="mw-collection-list__table-title">' . esc_html__( 'عنوان', 'music-wave-core' ) . '</span><span class="mw-collection-list__table-duration">' . esc_html__( 'مدت', 'music-wave-core' ) . '</span></div>';
+		$list_markup  = '' !== $grouped ? $grouped : $table_header . '<ol class="mw-collection-list__items">' . implode( '', $rows ) . '</ol>';
 		$total_html   = '';
 		if ( BlockSupport::bool_attribute( $attributes, 'showTotalDuration', false ) && $total_duration > 0 ) {
 			/* translators: %s: formatted running time, such as 42:10. */
-			$total_html = '<p class="mw-collection-list__total">' . esc_html( sprintf( __( 'Total length: %s', 'music-wave-core' ), $this->format_duration( $total_duration ) ) ) . '</p>';
+			$total_html = '<p class="mw-collection-list__total">' . esc_html( sprintf( __( 'طول کل: %s', 'music-wave-core' ), $this->format_duration( $total_duration ) ) ) . '</p>';
 		}
 
 		return '<section ' . BlockSupport::wrapper_attributes( 'mw-collection-list' ) . $aria_label . '>' . $heading_html . $list_markup . $total_html . '</section>';
@@ -1030,11 +1039,16 @@ final class ReleaseBlocks {
 		$title = get_the_title( $child_id );
 		$link  = get_permalink( $child_id );
 
-		$label = '';
+		// SonicStream track-row: the position number is swapped for a play
+		// glyph on row hover, so both stay part of the same leading column.
+		// The CSS-only equalizer lights up while the row owns the active
+		// preview (data-mw-playing is synced by preview-player.js).
+		$position = '';
 		if ( $options['show_position'] ) {
-			$position = isset( $item['position'] ) ? absint( $item['position'] ) : 0;
-			$label   .= '<span class="mw-collection-list__position">' . esc_html( $position > 0 ? (string) $position : '–' ) . '</span>';
+			$number   = isset( $item['position'] ) ? absint( $item['position'] ) : 0;
+			$position = '<span class="mw-collection-list__position"><span class="mw-collection-list__position-num">' . esc_html( $number > 0 ? (string) $number : '–' ) . '</span><span class="mw-collection-list__position-play" aria-hidden="true">▶</span><span class="mw-equalizer" aria-hidden="true"><i></i><i></i><i></i><i></i></span></span>';
 		}
+		$label = $position;
 		if ( $options['show_artwork'] ) {
 			$thumbnail = get_the_post_thumbnail(
 				$child_id,
@@ -1048,7 +1062,14 @@ final class ReleaseBlocks {
 				$label .= '<span class="mw-collection-list__artwork" aria-hidden="true">' . $thumbnail . '</span>';
 			}
 		}
-		$label .= '<span class="mw-collection-list__title">' . esc_html( $title ) . '</span>';
+
+		// Title block: the track name plus its linked artist line, so each
+		// row reads like the reference track list (name over artist). The
+		// artist links render AFTER the row link closes — nested anchors are
+		// invalid HTML and would swallow the clicks.
+		$heading = '<span class="mw-collection-list__title">' . esc_html( $title ) . '</span>';
+		$label  .= '<span class="mw-collection-list__heading">' . $heading . '</span>';
+
 		if ( $options['show_duration'] ) {
 			$duration = absint( $this->repository->get( $child_id, 'mw_duration' ) );
 			if ( $duration > 0 ) {
@@ -1056,7 +1077,13 @@ final class ReleaseBlocks {
 			}
 		}
 
-		$main    = is_string( $link ) && '' !== $link ? '<a class="mw-collection-list__link" href="' . esc_url( $link ) . '">' . $label . '</a>' : '<span class="mw-collection-list__link">' . $label . '</span>';
+		$main = is_string( $link ) && '' !== $link ? '<a class="mw-collection-list__link" href="' . esc_url( $link ) . '">' . $label . '</a>' : '<span class="mw-collection-list__link">' . $label . '</span>';
+
+		$artist_links = $this->collection_artist_links( $child_id );
+		if ( '' !== $artist_links ) {
+			$main .= '<span class="mw-collection-list__artist">' . $artist_links . '</span>';
+		}
+		$main    = '<div class="mw-collection-list__main">' . $main . '</div>';
 		$actions = '';
 		if ( $options['show_preview'] ) {
 			$actions .= $this->collection_preview_button( $child_id );
@@ -1072,6 +1099,32 @@ final class ReleaseBlocks {
 		}
 
 		return '<li><div class="mw-collection-list__item">' . $main . ( '' === $actions ? '' : '<div class="mw-collection-list__actions">' . $actions . '</div>' ) . '</div></li>';
+	}
+
+	/**
+	 * Linked artist names for a collection row, each pointing at its artist
+	 * archive. Artists without a resolvable link degrade to plain text.
+	 *
+	 * @param int $release_id Child release ID.
+	 */
+	private function collection_artist_links( int $release_id ): string {
+		$terms = wp_get_post_terms( $release_id, 'mw_artist', array( 'fields' => 'all' ) );
+		if ( is_wp_error( $terms ) || empty( $terms ) ) {
+			return '';
+		}
+
+		$links = array();
+		foreach ( $terms as $term ) {
+			if ( ! is_object( $term ) || empty( $term->name ) ) {
+				continue;
+			}
+			$url     = get_term_link( $term );
+			$links[] = ! is_wp_error( $url ) && is_string( $url ) && '' !== $url
+				? '<a href="' . esc_url( $url ) . '">' . esc_html( $term->name ) . '</a>'
+				: esc_html( $term->name );
+		}
+
+		return empty( $links ) ? '' : implode( ', ', $links );
 	}
 
 	/**
@@ -1119,7 +1172,7 @@ final class ReleaseBlocks {
 				continue;
 			}
 			/* translators: %d: disc number inside a multi-disc collection. */
-			$sections[] = '<section class="mw-collection-list__disc"><h3 class="mw-collection-list__disc-heading">' . esc_html( sprintf( __( 'Disc %d', 'music-wave-core' ), (int) $disc ) ) . '</h3><ol class="mw-collection-list__items">' . implode( '', $rows ) . '</ol></section>';
+			$sections[] = '<section class="mw-collection-list__disc"><h3 class="mw-collection-list__disc-heading">' . esc_html( sprintf( __( 'دیسک %d', 'music-wave-core' ), (int) $disc ) ) . '</h3><ol class="mw-collection-list__items">' . implode( '', $rows ) . '</ol></section>';
 		}
 
 		return empty( $sections ) ? '' : '<div class="mw-collection-list__discs">' . implode( '', $sections ) . '</div>';
@@ -1146,7 +1199,7 @@ final class ReleaseBlocks {
 		$limit   = absint( $this->repository->get( $release_id, 'mw_preview_duration' ) );
 		$limit   = $limit >= 10 && $limit <= 120 ? $limit : 30;
 
-		return '<button class="mw-preview-button mw-preview-button--compact" type="button" aria-pressed="false" data-preview-url="' . esc_url( $url ) . '" data-preview-title="' . esc_attr( $title ) . '" data-preview-artist="' . esc_attr( $artist ) . '" data-preview-image="' . esc_url( is_string( $image ) ? $image : '' ) . '" data-preview-link="' . esc_url( is_string( $link ) ? $link : '' ) . '" data-preview-limit="' . esc_attr( (string) $limit ) . '"><span class="mw-preview-button__icon" aria-hidden="true">▶</span><span>' . esc_html__( 'Preview', 'music-wave-core' ) . '</span></button>';
+		return '<button class="mw-preview-button mw-preview-button--compact" type="button" aria-pressed="false" data-preview-url="' . esc_url( $url ) . '" data-preview-title="' . esc_attr( $title ) . '" data-preview-artist="' . esc_attr( $artist ) . '" data-preview-image="' . esc_url( is_string( $image ) ? $image : '' ) . '" data-preview-link="' . esc_url( is_string( $link ) ? $link : '' ) . '" data-preview-limit="' . esc_attr( (string) $limit ) . '"><span class="mw-preview-button__icon" aria-hidden="true">▶</span><span>' . esc_html__( 'پیش‌نمایش', 'music-wave-core' ) . '</span></button>';
 	}
 
 	/**
@@ -1170,10 +1223,10 @@ final class ReleaseBlocks {
 		$max_terms   = BlockSupport::range_attribute( $attributes, 'maxTerms', 10, 200, 50 );
 
 		$filters = array(
-			'mw_artist'       => array( __( 'Artist', 'music-wave-core' ), 'showArtistFilter' ),
-			'mw_genre'        => array( __( 'Genre', 'music-wave-core' ), 'showGenreFilter' ),
-			'mw_mood'         => array( __( 'Mood', 'music-wave-core' ), 'showMoodFilter' ),
-			'mw_release_type' => array( __( 'Release type', 'music-wave-core' ), 'showTypeFilter' ),
+			'mw_artist'       => array( __( 'هنرمند', 'music-wave-core' ), 'showArtistFilter' ),
+			'mw_genre'        => array( __( 'سبک', 'music-wave-core' ), 'showGenreFilter' ),
+			'mw_mood'         => array( __( 'حال‌وهوا', 'music-wave-core' ), 'showMoodFilter' ),
+			'mw_release_type' => array( __( 'نوع انتشار', 'music-wave-core' ), 'showTypeFilter' ),
 		);
 		$fields  = array();
 		foreach ( $filters as $taxonomy => $field ) {
@@ -1198,7 +1251,7 @@ final class ReleaseBlocks {
 			$options  = '<option value="">' . esc_html(
 				sprintf(
 					/* translators: %s: filter label, e.g. Artist or Genre. */
-					__( 'All %s', 'music-wave-core' ),
+					__( 'همه %s', 'music-wave-core' ),
 					$label
 				)
 			) . '</option>';
@@ -1214,11 +1267,11 @@ final class ReleaseBlocks {
 		$search_html = '';
 		if ( $show_search ) {
 			$search      = isset( $_GET['s'] ) && is_scalar( $_GET['s'] ) ? sanitize_text_field( wp_unslash( (string) $_GET['s'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-			$placeholder = BlockSupport::text_attribute( $attributes, 'searchPlaceholder', __( 'Search releases', 'music-wave-core' ) );
+			$placeholder = BlockSupport::text_attribute( $attributes, 'searchPlaceholder', __( 'جست‌وجوی انتشار', 'music-wave-core' ) );
 			// The field is a plain input for no-JS visitors; catalog-suggest.js
 			// upgrades it to an ARIA combobox in place.
 			$search_html = '<div class="mw-catalog-suggest">'
-				. '<label><span class="screen-reader-text">' . esc_html__( 'Search releases', 'music-wave-core' ) . '</span>'
+				. '<label><span class="screen-reader-text">' . esc_html__( 'جست‌وجوی انتشار', 'music-wave-core' ) . '</span>'
 				. '<input type="search" name="s" value="' . esc_attr( $search ) . '" placeholder="' . esc_attr( $placeholder ) . '"></label>'
 				. '<span class="screen-reader-text" role="status" aria-live="polite" data-mw-suggest-status></span>'
 				. '</div>';
@@ -1233,17 +1286,17 @@ final class ReleaseBlocks {
 			$has_sort    = isset( $_GET[ $sort_var ] ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			$raw_sort    = $has_sort && is_scalar( $_GET[ $sort_var ] ) ? sanitize_key( wp_unslash( (string) $_GET[ $sort_var ] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			$sort        = \ManaCore\MusicWave\Core\Catalog\ReleaseArchiveQuery::normalize_sort( $has_sort ? $raw_sort : Settings::get( 'archive_default_sort' ) );
-			$sort_markup = '<label class="mw-catalog-filters__sort"><span class="screen-reader-text">' . esc_html__( 'Sort releases', 'music-wave-core' ) . '</span><select name="' . esc_attr( $sort_var ) . '">';
+			$sort_markup = '<label class="mw-catalog-filters__sort"><span class="screen-reader-text">' . esc_html__( 'مرتب‌سازی انتشارات', 'music-wave-core' ) . '</span><select name="' . esc_attr( $sort_var ) . '">';
 			foreach ( $sort_options as $value => $label ) {
 				$sort_markup .= '<option value="' . esc_attr( $value ) . '" ' . selected( $sort, $value, false ) . '>' . esc_html( $label ) . '</option>';
 			}
 			$sort_markup .= '</select></label>';
 		}
 
-		$submit_label = BlockSupport::text_attribute( $attributes, 'submitLabel', __( 'Apply filters', 'music-wave-core' ) );
+		$submit_label = BlockSupport::text_attribute( $attributes, 'submitLabel', __( 'اعمال فیلتر', 'music-wave-core' ) );
 		$actions      = '<button type="submit">' . esc_html( $submit_label ) . '</button>';
 		if ( $show_reset ) {
-			$reset_label = BlockSupport::text_attribute( $attributes, 'resetLabel', __( 'Reset', 'music-wave-core' ) );
+			$reset_label = BlockSupport::text_attribute( $attributes, 'resetLabel', __( 'بازنشانی', 'music-wave-core' ) );
 			$actions    .= '<a href="' . esc_url( $archive_url ) . '">' . esc_html( $reset_label ) . '</a>';
 		}
 
@@ -1279,15 +1332,15 @@ final class ReleaseBlocks {
 			array(
 				'endpoint'     => esc_url_raw( rest_url( 'music-wave/v1/catalog/suggest' ) ),
 				'minLength'    => \ManaCore\MusicWave\Core\Discovery\CatalogSearch::MIN_TERM_LENGTH,
-				'noResults'    => __( 'No catalog matches found.', 'music-wave-core' ),
+				'noResults'    => __( 'هیچ منطبق با کاتالوگ یافت نشد.', 'music-wave-core' ),
 				/* translators: %d: number of autocomplete suggestions. */
-				'resultsCount' => __( '%d catalog suggestions available.', 'music-wave-core' ),
+				'resultsCount' => __( 'پیشنهادها کاتالوگ %d در دسترس است.', 'music-wave-core' ),
 				'typeLabels'   => array(
-					'release'      => __( 'Release', 'music-wave-core' ),
-					'artist'       => __( 'Artist', 'music-wave-core' ),
-					'genre'        => __( 'Genre', 'music-wave-core' ),
-					'mood'         => __( 'Mood', 'music-wave-core' ),
-					'release_type' => __( 'Release type', 'music-wave-core' ),
+					'release'      => __( 'انتشار', 'music-wave-core' ),
+					'artist'       => __( 'هنرمند', 'music-wave-core' ),
+					'genre'        => __( 'سبک', 'music-wave-core' ),
+					'mood'         => __( 'حال‌وهوا', 'music-wave-core' ),
+					'release_type' => __( 'نوع انتشار', 'music-wave-core' ),
 				),
 			)
 		);
@@ -1311,7 +1364,7 @@ final class ReleaseBlocks {
 			'music-wave-catalog-filters',
 			'musicWaveCatalogFilters',
 			array(
-				'applying' => __( 'Applying…', 'music-wave-core' ),
+				'applying' => __( 'در حال اعمال…', 'music-wave-core' ),
 			)
 		);
 	}
@@ -1340,14 +1393,14 @@ final class ReleaseBlocks {
 			$count   = is_object( $wp_query ) && isset( $wp_query->found_posts ) ? absint( $wp_query->found_posts ) : 0;
 			$summary = sprintf(
 				/* translators: %s: number of releases matching the current catalog filters. */
-				_n( '%s release found', '%s releases found', $count, 'music-wave-core' ),
+				_n( 'انتشار %s پیدا شد', 'انتشارهای %s پیدا شد', $count, 'music-wave-core' ),
 				number_format_i18n( $count )
 			);
 			$count_html = '<p class="mw-catalog-results__count">' . esc_html( $summary ) . '</p>';
 		}
 
 		$chips      = $show_chips ? $this->active_catalog_filter_chips( $archive_url ) : array();
-		$chips_html = empty( $chips ) ? '' : '<ul class="mw-catalog-results__filters" aria-label="' . esc_attr__( 'Active catalog filters', 'music-wave-core' ) . '">' . implode( '', $chips ) . '</ul>';
+		$chips_html = empty( $chips ) ? '' : '<ul class="mw-catalog-results__filters" aria-label="' . esc_attr__( 'فیلترهای کاتالوگ فعال', 'music-wave-core' ) . '">' . implode( '', $chips ) . '</ul>';
 
 		return '<div ' . BlockSupport::wrapper_attributes( 'mw-catalog-results' ) . ' role="status" aria-live="polite">' . $count_html . $chips_html . '</div>';
 	}
@@ -1360,7 +1413,11 @@ final class ReleaseBlocks {
 		}
 		$preview_url = $this->repository->get( $release_id, 'mw_preview_url' );
 		if ( ! is_string( $preview_url ) || 'https' !== wp_parse_url( $preview_url, PHP_URL_SCHEME ) ) {
-			return '';
+			// Releases without a public preview URL still play through the
+			// secure playback-queue flow when the visitor has access (the
+			// same path the global card play buttons use), so the primary
+			// action bar keeps its play trigger instead of losing it.
+			return $this->release_play_button( $release_id, $attributes );
 		}
 
 		$title     = get_the_title( $release_id );
@@ -1371,7 +1428,7 @@ final class ReleaseBlocks {
 		$limit     = absint( $this->repository->get( $release_id, 'mw_preview_duration' ) );
 		$limit     = $limit >= 10 && $limit <= 120 ? $limit : 30;
 		$label     = isset( $attributes['label'] ) ? sanitize_text_field( (string) $attributes['label'] ) : '';
-		$label     = '' !== $label ? $label : __( 'Play preview', 'music-wave-core' );
+		$label     = '' !== $label ? $label : __( 'پخش پیش‌نمایش', 'music-wave-core' );
 		$style     = BlockSupport::key_attribute( $attributes, 'style', array( 'solid', 'outline', 'ghost' ), 'solid' );
 		$variation = BlockSupport::style_variation( $attributes, array( 'outline', 'ghost' ) );
 		if ( '' !== $variation ) {
@@ -1380,7 +1437,47 @@ final class ReleaseBlocks {
 		$button = 'mw-preview-button' . ( 'solid' !== $style ? ' mw-preview-button--' . $style : '' );
 		$icon   = BlockSupport::bool_attribute( $attributes, 'showIcon', true ) ? '<span class="mw-preview-button__icon" aria-hidden="true">&#9654;</span>' : '';
 
-		return '<section ' . BlockSupport::wrapper_attributes( 'mw-preview-player' ) . '><h2 class="screen-reader-text">' . esc_html__( 'Audio preview', 'music-wave-core' ) . '</h2><button class="' . esc_attr( $button ) . '" type="button" aria-pressed="false" data-preview-url="' . esc_url( $preview_url ) . '" data-preview-title="' . esc_attr( $title ) . '" data-preview-artist="' . esc_attr( $artist ) . '" data-preview-image="' . esc_url( is_string( $image ) ? $image : '' ) . '" data-preview-link="' . esc_url( is_string( $link ) ? $link : '' ) . '" data-preview-limit="' . esc_attr( (string) $limit ) . '">' . $icon . '<span>' . esc_html( $label ) . '</span></button></section>';
+		return '<section ' . BlockSupport::wrapper_attributes( 'mw-preview-player' ) . '><h2 class="screen-reader-text">' . esc_html__( 'پیش‌نمایش صوتی', 'music-wave-core' ) . '</h2><button class="' . esc_attr( $button ) . '" type="button" aria-pressed="false" data-preview-url="' . esc_url( $preview_url ) . '" data-preview-title="' . esc_attr( $title ) . '" data-preview-artist="' . esc_attr( $artist ) . '" data-preview-image="' . esc_url( is_string( $image ) ? $image : '' ) . '" data-preview-link="' . esc_url( $link ) . '" data-preview-limit="' . esc_attr( (string) $limit ) . '">' . $icon . '<span>' . esc_html( $label ) . '</span></button></section>';
+	}
+
+	/**
+	 * Fallback play trigger for releases without a public preview URL.
+	 *
+	 * Delegates to preview-player.js through the shared `mw-card-play`
+	 * contract: the script resolves the release's playback queue and streams
+	 * each track via the signed-token endpoint. Renders nothing when the
+	 * release has no streamable audio for the current visitor.
+	 *
+	 * @param array<string, mixed> $attributes Block attributes.
+	 */
+	private function release_play_button( int $release_id, array $attributes ): string {
+		if ( null === $this->policy || ! $this->policy->decide( $release_id, AccessSubject::current() )->is_allowed() ) {
+			return '';
+		}
+
+		$assets = $this->repository->get( $release_id, 'mw_download_assets' );
+		if ( ! is_array( $assets ) ) {
+			return '';
+		}
+		$streamable = false;
+		foreach ( $assets as $asset ) {
+			if ( ! is_array( $asset ) || empty( $asset['asset_id'] ) ) {
+				continue;
+			}
+			$format = isset( $asset['format'] ) && is_scalar( $asset['format'] ) ? sanitize_key( strtolower( (string) $asset['format'] ) ) : '';
+			if ( in_array( $format, array( 'mp3', 'm4a', 'aac', 'ogg', 'wav', 'flac' ), true ) ) {
+				$streamable = true;
+				break;
+			}
+		}
+		if ( ! $streamable ) {
+			return '';
+		}
+
+		/* translators: %s: release title. */
+		$label = sprintf( __( 'پخش %s', 'music-wave-core' ), get_the_title( $release_id ) );
+
+		return '<section ' . BlockSupport::wrapper_attributes( 'mw-preview-player' ) . '><h2 class="screen-reader-text">' . esc_html__( 'پخش انتشار', 'music-wave-core' ) . '</h2><button class="mw-card-play mw-release-actions__play" type="button" data-mw-release-id="' . esc_attr( (string) $release_id ) . '" aria-label="' . esc_attr( $label ) . '" aria-pressed="false"><span class="mw-card-play__icon" aria-hidden="true">&#9654;</span></button></section>';
 	}
 
 	/**
@@ -1415,11 +1512,11 @@ final class ReleaseBlocks {
 			array(
 				'restUrl'      => esc_url_raw( rest_url() ),
 				'restNonce'    => wp_create_nonce( 'wp_rest' ),
-				'errorMessage' => __( 'The download could not be started.', 'music-wave-core' ),
-				'streamError'  => __( 'Secure playback could not be started.', 'music-wave-core' ),
-				'sessionError' => __( 'Your session has expired. Refresh the page or sign in again.', 'music-wave-core' ),
-				'playLabel'    => __( 'Play', 'music-wave-core' ),
-				'pauseLabel'   => __( 'Pause', 'music-wave-core' ),
+				'errorMessage' => __( 'دانلود شروع نشد.', 'music-wave-core' ),
+				'streamError'  => __( 'پخش امن شروع نشد.', 'music-wave-core' ),
+				'sessionError' => __( 'جلسه شما تمام شده است. صفحه را تازه کنید یا دوباره وارد شوید.', 'music-wave-core' ),
+				'playLabel'    => __( 'پخش', 'music-wave-core' ),
+				'pauseLabel'   => __( 'مکث', 'music-wave-core' ),
 			)
 		);
 
@@ -1431,10 +1528,10 @@ final class ReleaseBlocks {
 		$heading = '';
 		if ( ! $compact ) {
 			$heading_html     = BlockSupport::bool_attribute( $attributes, 'showHeading', true )
-				? '<strong>' . esc_html( BlockSupport::text_attribute( $attributes, 'heading', __( 'Download this release', 'music-wave-core' ) ) ) . '</strong>'
+				? '<strong>' . esc_html( BlockSupport::text_attribute( $attributes, 'heading', __( 'دانلود این انتشار', 'music-wave-core' ) ) ) . '</strong>'
 				: '';
 			$description_html = BlockSupport::bool_attribute( $attributes, 'showDescription', true )
-				? '<span>' . esc_html( BlockSupport::text_attribute( $attributes, 'description', __( 'Play an available audio file or download your preferred quality.', 'music-wave-core' ) ) ) . '</span>'
+				? '<span>' . esc_html( BlockSupport::text_attribute( $attributes, 'description', __( 'یک فایل صوتی موجود را پخش کنید یا کیفیت دلخواه خود را دانلود کنید.', 'music-wave-core' ) ) ) . '</span>'
 				: '';
 			if ( '' !== $heading_html || '' !== $description_html ) {
 				$heading = '<div class="mw-download-action__heading">' . $heading_html . $description_html . '</div>';
@@ -1444,7 +1541,7 @@ final class ReleaseBlocks {
 		$row_options = array(
 			'show_quality'   => BlockSupport::bool_attribute( $attributes, 'showQuality', true ),
 			'show_stream'    => BlockSupport::bool_attribute( $attributes, 'showStream', true ),
-			'download_label' => BlockSupport::text_attribute( $attributes, 'downloadLabel', __( 'Secure download', 'music-wave-core' ) ),
+			'download_label' => BlockSupport::text_attribute( $attributes, 'downloadLabel', __( 'دانلود ایمن', 'music-wave-core' ) ),
 			'play_label'     => isset( $attributes['playLabel'] ) && is_scalar( $attributes['playLabel'] ) ? sanitize_text_field( (string) $attributes['playLabel'] ) : '',
 		);
 
@@ -1454,9 +1551,9 @@ final class ReleaseBlocks {
 		if ( ! $compact ) {
 			$protected = (bool) has_filter( 'music_wave_download_provider' );
 			$message   = $protected
-				? __( 'Protected by MusicWave VIP: files stream from a protected directory through signed, expiring links. Direct file URLs are never exposed.', 'music-wave-core' )
-				: __( 'Delivered through signed, expiring links. Direct file URLs are never exposed.', 'music-wave-core' );
-			$badge     = $protected ? '<span class="mw-download-action__security-badge">' . esc_html__( 'VIP protected', 'music-wave-core' ) . '</span>' : '';
+				? __( 'حفاظت‌شده توسط MusicWave VIP: فایل‌ها از پوشه‌ای حفاظت‌شده و از طریق پیوندهای امضاشده و زمان‌دار پخش می‌شوند. نشانی مستقیم فایل هرگز نمایش داده نمی‌شود.', 'music-wave-core' )
+				: __( 'از طریق پیوندهای امضاشده و منقضی‌شده تحویل داده می‌شود. نشانی مستقیم فایل هرگز در معرض دید قرار نمی‌گیرد.', 'music-wave-core' );
+			$badge     = $protected ? '<span class="mw-download-action__security-badge">' . esc_html__( 'VIP حفاظت‌شده', 'music-wave-core' ) . '</span>' : '';
 			$security  = '<p class="mw-download-action__security"><svg class="mw-download-action__security-icon" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg><span>' . esc_html( $message ) . '</span>' . $badge . '</p>';
 		}
 
@@ -1489,10 +1586,10 @@ final class ReleaseBlocks {
 		$excluded = array( $release_id );
 		$sections = array();
 
-		$same_artist_heading = BlockSupport::text_attribute( $attributes, 'sameArtistHeading', __( 'More from this artist', 'music-wave-core' ) );
-		$similar_heading     = BlockSupport::text_attribute( $attributes, 'similarHeading', __( 'Similar releases', 'music-wave-core' ) );
+		$same_artist_heading = BlockSupport::text_attribute( $attributes, 'sameArtistHeading', __( 'انتشارهای بیشتر از این هنرمند', 'music-wave-core' ) );
+		$similar_heading     = BlockSupport::text_attribute( $attributes, 'similarHeading', __( 'انتشارهای مشابه', 'music-wave-core' ) );
 		$show_section_link   = BlockSupport::bool_attribute( $attributes, 'showSectionLink', false );
-		$section_link_label  = BlockSupport::text_attribute( $attributes, 'sectionLinkLabel', __( 'See all', 'music-wave-core' ) );
+		$section_link_label  = BlockSupport::text_attribute( $attributes, 'sectionLinkLabel', __( 'همه را ببینید', 'music-wave-core' ) );
 
 		if ( $this->visibility_attribute( $attributes, 'sameArtistSection', 'show_same_artist_releases' ) ) {
 			$artist_ids = wp_get_post_terms( $release_id, 'mw_artist', array( 'fields' => 'ids' ) );
@@ -1591,7 +1688,7 @@ final class ReleaseBlocks {
 			'show_excerpt' => BlockSupport::bool_attribute( $attributes, 'showExcerpt', false ),
 			'show_preview' => BlockSupport::bool_attribute( $attributes, 'showPreview', true ),
 			'show_action'  => BlockSupport::bool_attribute( $attributes, 'showAction', false ),
-			'action_label' => BlockSupport::text_attribute( $attributes, 'actionLabel', __( 'Open release', 'music-wave-core' ) ),
+			'action_label' => BlockSupport::text_attribute( $attributes, 'actionLabel', __( 'انتشار را باز کنید', 'music-wave-core' ) ),
 		);
 	}
 
@@ -1732,7 +1829,7 @@ final class ReleaseBlocks {
 			);
 			$initial = function_exists( 'mb_substr' ) ? mb_substr( $title, 0, 1 ) : substr( $title, 0, 1 );
 			/* translators: %s: music release title. */
-			$open_label = sprintf( __( 'Open %s', 'music-wave-core' ), $title );
+			$open_label = sprintf( __( 'باز کردن %s', 'music-wave-core' ), $title );
 			$overlay    = '';
 			if ( $options['show_preview'] ) {
 				$overlay = apply_filters( 'music_wave_card_play_button', '', $release_id, 'mw-release-shelf__play' );
@@ -1792,7 +1889,7 @@ final class ReleaseBlocks {
 		$files = array();
 		foreach ( $assets as $asset ) {
 			$file_key   = isset( $asset['file_key'] ) && '' !== $asset['file_key'] ? sanitize_key( $asset['file_key'] ) : 'main-download';
-			$file_label = isset( $asset['file_label'] ) && '' !== $asset['file_label'] ? sanitize_text_field( $asset['file_label'] ) : __( 'Main download', 'music-wave-core' );
+			$file_label = isset( $asset['file_label'] ) && '' !== $asset['file_label'] ? sanitize_text_field( $asset['file_label'] ) : __( 'دانلود اصلی', 'music-wave-core' );
 			if ( ! isset( $files[ $file_key ] ) ) {
 				$files[ $file_key ] = array(
 					'key'       => $file_key,
@@ -1820,7 +1917,7 @@ final class ReleaseBlocks {
 	private function download_file_rows( int $release_id, array $files, array $options ): string {
 		$show_quality   = ! empty( $options['show_quality'] );
 		$show_stream    = ! empty( $options['show_stream'] );
-		$download_label = isset( $options['download_label'] ) && '' !== (string) $options['download_label'] ? (string) $options['download_label'] : __( 'Secure download', 'music-wave-core' );
+		$download_label = isset( $options['download_label'] ) && '' !== (string) $options['download_label'] ? (string) $options['download_label'] : __( 'دانلود ایمن', 'music-wave-core' );
 		$play_label     = isset( $options['play_label'] ) ? (string) $options['play_label'] : '';
 
 		$rows = array();
@@ -1846,19 +1943,20 @@ final class ReleaseBlocks {
 			$first_streamable = ! empty( $file['qualities'][0]['streamable'] );
 			$default_quality  = $show_quality ? '' : ' data-download-quality="' . esc_attr( $first_key ) . '"';
 			$quality_select   = $show_quality
-				? '<label class="mw-download-action__quality"><span>' . esc_html__( 'Quality', 'music-wave-core' ) . '</span><select class="mw-download-quality">' . implode( '', $qualities ) . '</select></label>'
+				? '<label class="mw-download-action__quality"><span>' . esc_html__( 'کیفیت', 'music-wave-core' ) . '</span><select class="mw-download-quality">' . implode( '', $qualities ) . '</select></label>'
 				: '';
 
 			$play = '';
 			if ( $show_stream && $has_streamable ) {
 				$play_labels = '' !== $play_label
-					? ' data-play-label="' . esc_attr( $play_label ) . '" data-pause-label="' . esc_attr( __( 'Pause', 'music-wave-core' ) ) . '"'
+					? ' data-play-label="' . esc_attr( $play_label ) . '" data-pause-label="' . esc_attr( __( 'مکث', 'music-wave-core' ) ) . '"'
 					: '';
-				$play        = '<button class="mw-secure-play-button" type="button" data-release-id="' . esc_attr( (string) $release_id ) . '"' . $default_quality . $play_labels . ( $first_streamable || ! $show_quality ? '' : ' disabled' ) . '><span aria-hidden="true">▶</span><span>' . esc_html( '' !== $play_label ? $play_label : __( 'Play', 'music-wave-core' ) ) . '</span></button>';
+				$play_title  = '' !== $play_label ? $play_label : __( 'پخش', 'music-wave-core' );
+				$play        = '<button class="mw-secure-play-button" type="button" aria-label="' . esc_attr( $play_title ) . '" data-release-id="' . esc_attr( (string) $release_id ) . '"' . $default_quality . $play_labels . ( $first_streamable || ! $show_quality ? '' : ' disabled' ) . '><span class="mw-secure-play-button__icon" aria-hidden="true">▶</span></button>';
 			}
 
 			$row_class = 'mw-download-file-row' . ( $show_quality ? '' : ' mw-download-file-row--no-quality' );
-			$rows[]    = '<div class="' . esc_attr( $row_class ) . '" role="listitem"><div class="mw-download-file-row__title"><span class="mw-download-file-row__icon" aria-hidden="true">♫</span><strong>' . esc_html( (string) $file['label'] ) . '</strong></div>' . $quality_select . '<div class="mw-download-file-row__actions">' . $play . '<button class="wp-element-button mw-download-button" type="button" data-release-id="' . esc_attr( (string) $release_id ) . '"' . $default_quality . '>' . esc_html( $download_label ) . '</button></div></div>';
+			$rows[]    = '<div class="' . esc_attr( $row_class ) . '" role="listitem"><div class="mw-download-file-row__title"><span class="mw-download-file-row__icon" aria-hidden="true">♫</span><strong>' . esc_html( (string) $file['label'] ) . '</strong></div>' . $quality_select . '<div class="mw-download-file-row__actions">' . $play . '<button class="wp-element-button mw-download-button" type="button" aria-label="' . esc_attr( $download_label ) . '" data-release-id="' . esc_attr( (string) $release_id ) . '"' . $default_quality . '><span class="mw-download-button__icon" aria-hidden="true">⤓</span></button></div></div>';
 		}
 
 		return empty( $rows ) ? '' : '<div class="mw-download-file-list" role="list">' . implode( '', $rows ) . '</div>';
@@ -1897,10 +1995,10 @@ final class ReleaseBlocks {
 		$args    = $this->current_catalog_query_args();
 		$chips   = array();
 		$filters = array(
-			'mw_artist'       => __( 'Artist', 'music-wave-core' ),
-			'mw_genre'        => __( 'Genre', 'music-wave-core' ),
-			'mw_mood'         => __( 'Mood', 'music-wave-core' ),
-			'mw_release_type' => __( 'Release type', 'music-wave-core' ),
+			'mw_artist'       => __( 'هنرمند', 'music-wave-core' ),
+			'mw_genre'        => __( 'سبک', 'music-wave-core' ),
+			'mw_mood'         => __( 'حال‌وهوا', 'music-wave-core' ),
+			'mw_release_type' => __( 'نوع انتشار', 'music-wave-core' ),
 		);
 
 		if ( isset( $args['s'] ) ) {
@@ -1909,7 +2007,7 @@ final class ReleaseBlocks {
 			$chips[] = $this->catalog_filter_chip(
 				sprintf(
 					/* translators: %s: current search phrase. */
-					__( 'Search: %s', 'music-wave-core' ),
+					__( 'جست‌وجو: %s', 'music-wave-core' ),
 					$args['s']
 				),
 				$without_search,
@@ -1984,7 +2082,7 @@ final class ReleaseBlocks {
 	private function catalog_filter_chip( string $label, array $args, string $archive_url ): string {
 		$url = empty( $args ) ? $archive_url : add_query_arg( $args, $archive_url );
 
-		return '<li><a href="' . esc_url( $url ) . '"><span>' . esc_html( $label ) . '</span><span class="screen-reader-text"> ' . esc_html__( 'Remove filter', 'music-wave-core' ) . '</span><span aria-hidden="true">×</span></a></li>';
+		return '<li><a href="' . esc_url( $url ) . '"><span>' . esc_html( $label ) . '</span><span class="screen-reader-text"> ' . esc_html__( 'حذف فیلتر', 'music-wave-core' ) . '</span><span aria-hidden="true">×</span></a></li>';
 	}
 
 	/**
@@ -1999,7 +2097,7 @@ final class ReleaseBlocks {
 		if ( empty( $assets ) && is_string( $legacy ) && '' !== $legacy ) {
 			$assets[] = array(
 				'key'      => 'standard',
-				'label'    => __( 'Standard download', 'music-wave-core' ),
+				'label'    => __( 'دانلود استاندارد', 'music-wave-core' ),
 				'asset_id' => $legacy,
 			);
 		}

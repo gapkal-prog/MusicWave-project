@@ -57,6 +57,19 @@ MusicWave Core `0.9.0` (schema `0.8.0`) provides the canonical release catalog, 
 
 The release archive deliberately relies on WordPress-native archive queries. It allow-lists only `latest`, `oldest`, `title_asc`, and `title_desc` for the `mw_sort` query argument, and never queries or exposes protected access metadata. The translation pipeline and RTL QA guidance are now available. Full compatibility QA and the final license/asset audit remain before a public release.
 
+### SonicStream presentation pass (UI/UX polish)
+
+The theme and plugin front-end are aligned with the SonicStream design reference (`MusicWave-SonicStream/design-reference.html`), token-driven so all six style variations and the light theme keep working:
+
+- Global player: in-row seek bar with green-to-green gradient (`--mw-progress` synced from `preview-player.js`), white hover thumb, accent-glow play toggle, and a `data-mw-state` now-playing hook.
+- Track rows: `data-mw-playing` flag from the player JS lights a CSS-only equalizer in the position column and tints the active title.
+- Horizontal shelves: floating prev/next arrows (hover-reveal, edge-aware disabling) driven by `slider.js` `initializeShelves()`; the `scroll` layout enqueues `musicwave-slider` at render time.
+- Genre/browse tiles: reference gradient spectrum (nth-child defaults, editor backgrounds win) plus lift-on-hover.
+- Catalog filters: RTL-aware shimmer sweep while `[data-mw-busy]` is set (reduced-motion safe).
+- Membership/commerce: upsell gradient frame, plan-card lift, pill-shaped WC form fields with accent primary buttons.
+
+All motion respects `prefers-reduced-motion`; RTL uses logical properties throughout.
+
 ## Local checks
 
 Run `composer install` once, then:
@@ -64,6 +77,7 @@ Run `composer install` once, then:
 ```bash
 composer validate --strict
 composer check:syntax    # recursive php -l over all three packages, tools, and tests
+composer check:site-editor # static Template/Part/Pattern/Block metadata integrity gate
 composer test            # dependency-free domain + security regression smoke tests
 composer check:phpcs     # WordPress standards for music-wave-core, music-wave-vip, musicwave
 composer check:phpstan   # static analysis for all three packages
@@ -90,6 +104,7 @@ npx @wordpress/env run cli wp theme activate musicwave
 WooCommerce is optional; install it inside the fixture with
 `npx @wordpress/env run cli wp plugin install woocommerce --activate` when testing commerce paths.
 
+See `docs/site-editor-audit-fa.md` for the current FSE audit, architecture rules, and staged Site Editor upgrade plan.
 See `docs/translations.md` for the text-domain contract, dependency-free POT generation, and Persian/RTL release checklist.
 See `docs/download-qualities-and-hosting.md` for the protected multi-quality workflow, shared-hosting boundaries, and WooCommerce membership adapter contract.
 
