@@ -3,7 +3,7 @@
 	color: var(--mw-color-text);
 	background: var(--mw-color-surface-raised);
 	border: 1px solid var(--mw-color-border);
-	border-radius: 999px;
+	border-radius: var(--mw-radius-pill);
 }
 
 .mw-shop-page .wc-block-components-product-price,
@@ -15,6 +15,46 @@
 .mw-shop-page .wc-block-components-product-button,
 .mw-shop-page .wc-block-grid__product-add-to-cart {
 	margin-top: auto;
+}
+
+/*
+ * SonicStream commerce: WC form fields and buttons follow the shared pill
+ * vocabulary — rounded controls on raised surfaces, accent fill on the
+ * primary action — so shop routes read like the rest of the app.
+ */
+.mw-shop-page .wc-block-components-text-input input,
+.mw-shop-page .wc-block-components-select .wc-block-components-select__input,
+.mw-shop-page .wc-block-components-select .wc-block-components-select__button {
+	background: var(--mw-color-surface-raised);
+	border: 1px solid transparent;
+	border-radius: var(--mw-radius-pill);
+}
+
+.mw-shop-page .wc-block-components-text-input input:focus,
+.mw-shop-page .wc-block-components-select .wc-block-components-select__button:focus {
+	border-color: color-mix(in srgb, var(--mw-color-accent) 55%, transparent);
+	box-shadow: 0 0 0 3px color-mix(in srgb, var(--mw-color-accent) 22%, transparent);
+	outline: none;
+}
+
+.mw-shop-page .wc-block-components-button {
+	border-radius: var(--mw-radius-pill);
+	font-weight: 700;
+}
+
+.mw-shop-page .wc-block-components-button:not(.is-link).is-primary {
+	color: var(--mw-color-on-accent);
+	background: var(--mw-color-accent);
+}
+
+.mw-shop-page .wc-block-components-button:not(.is-link).is-primary:hover:not(:disabled) {
+	color: var(--mw-color-on-accent);
+	background: var(--mw-color-accent-strong);
+}
+
+.mw-shop-page .wc-block-components-chip {
+	background: var(--mw-color-surface-raised);
+	border-radius: var(--mw-radius-pill);
 }
 
 .mw-product-hero {

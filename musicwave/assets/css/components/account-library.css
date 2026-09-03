@@ -189,7 +189,7 @@
 	padding: 0.6rem 1rem;
 	background: color-mix(in srgb, var(--mw-color-accent) 12%, transparent);
 	border-inline-start: 3px solid var(--mw-color-accent-strong);
-	border-radius: 4px;
+	border-radius: var(--mw-radius-sm, 0.5rem);
 }
 
 .mw-membership__empty,
@@ -257,7 +257,7 @@
 .mw-user-dashboard__address {
 	padding: var(--wp--preset--spacing--20);
 	border: 1px solid var(--mw-color-border);
-	border-radius: 8px;
+	border-radius: var(--mw-radius-md, 0.75rem);
 	background: var(--mw-color-surface);
 }
 
