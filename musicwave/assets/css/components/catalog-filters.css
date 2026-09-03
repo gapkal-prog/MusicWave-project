@@ -1,3 +1,6 @@
+/* Catalog filter toolbar rendered by music-wave/catalog-filters.
+ * Markup: form.mw-catalog-filters > label>select* (taxonomies) +
+ * .mw-catalog-suggest + label.mw-catalog-filters__sort>select + button/a. */
 .mw-catalog-filters {
 	display: flex;
 	flex-wrap: wrap;
@@ -5,7 +8,7 @@
 	gap: var(--wp--preset--spacing--20);
 	margin: var(--wp--preset--spacing--30) 0 var(--wp--preset--spacing--20);
 	padding: var(--wp--preset--spacing--20);
-	background: color-mix(in srgb, var(--mw-color-surface) 88%, transparent);
+	background: color-mix(in srgb, var(--mw-color-surface) 92%, transparent);
 	border: 1px solid var(--mw-color-border);
 	border-radius: var(--mw-radius-lg);
 	box-shadow: var(--mw-shadow-card);
@@ -17,15 +20,68 @@
 .mw-catalog-filters select {
 	min-height: 2.75rem;
 	max-width: 100%;
-	padding: 0.5rem 0.75rem;
+	padding: 0.5rem 0.9rem;
 	color: var(--mw-color-text);
+	font: inherit;
+	line-height: 1.4;
 	background: var(--mw-color-surface-raised);
-	border: 1px solid var(--mw-color-border);
-	border-radius: var(--mw-radius-sm);
+	border: 1px solid transparent;
+	border-radius: var(--mw-radius-pill);
+	transition: border-color var(--mw-speed-fast, 150ms) ease, box-shadow var(--mw-speed-fast, 150ms) ease;
+}
+
+.mw-catalog-filters select {
+	appearance: none;
+	padding-inline-end: 2rem;
+	cursor: pointer;
+	background-image: linear-gradient(45deg, transparent 50%, var(--mw-color-text-muted) 50%),
+		linear-gradient(135deg, var(--mw-color-text-muted) 50%, transparent 50%);
+	background-position: calc(100% - 1.15rem) calc(50% + 0.1rem), calc(100% - 0.8rem) calc(50% + 0.1rem);
+	background-size: 0.3rem 0.3rem, 0.3rem 0.3rem;
+	background-repeat: no-repeat;
 }
 
 .mw-catalog-filters input {
-	min-width: min(100%, 16rem);
+	min-width: min(100%, 14rem);
+}
+
+.mw-catalog-filters input:focus-visible,
+.mw-catalog-filters select:focus-visible {
+	border-color: color-mix(in srgb, var(--mw-color-accent) 55%, transparent);
+	box-shadow: 0 0 0 3px color-mix(in srgb, var(--mw-color-accent) 22%, transparent);
+}
+
+.mw-catalog-filters button {
+	min-height: 2.75rem;
+	padding-inline: 1.15rem;
+	color: var(--mw-color-on-accent);
+	background: var(--mw-color-accent);
+	border: 1px solid transparent;
+	border-radius: var(--mw-radius-pill);
+	font: inherit;
+	font-weight: 750;
+	cursor: pointer;
+	transition: background-color var(--mw-speed-fast, 150ms) ease, box-shadow var(--mw-speed-fast, 150ms) ease;
+}
+
+.mw-catalog-filters button:hover:not(:disabled) {
+	background: var(--mw-color-accent-strong);
+	box-shadow: 0 0.5rem 1.25rem color-mix(in srgb, var(--mw-color-accent) 24%, transparent);
+}
+
+.mw-catalog-filters a {
+	display: inline-flex;
+	align-items: center;
+	min-height: 2.75rem;
+	padding-inline: 1rem;
+	color: var(--mw-color-text-muted);
+	font-weight: 600;
+	text-decoration: none;
+	border-radius: var(--mw-radius-pill);
+}
+
+.mw-catalog-filters a:hover {
+	color: var(--mw-color-text);
 }
 
 /* Stacked layout: every control gets its own full-width row. */
@@ -44,21 +100,59 @@
 	width: 100%;
 }
 
-.mw-catalog-filters a {
-	font-weight: 650;
-}
-
-/* Instant filtering: dim the form while results load in place. */
+/* Instant filtering: dim the form while results load in place and run a
+ * SonicStream shimmer sweep across its surface. */
 .mw-catalog-filters[data-mw-busy="true"] {
+	position: relative;
+	overflow: hidden;
 	opacity: 0.65;
 	pointer-events: none;
 	transition: opacity 140ms ease;
+}
+
+.mw-catalog-filters[data-mw-busy="true"]::after {
+	content: "";
+	position: absolute;
+	inset: 0;
+	background: linear-gradient(
+		100deg,
+		transparent 30%,
+		color-mix(in srgb, var(--mw-color-text) 8%, transparent) 50%,
+		transparent 70%
+	);
+	transform: translateX(-100%);
+	animation: mw-shimmer 1.1s ease-in-out infinite;
+}
+
+/* RTL-aware shimmer direction: the sweep follows the reading direction. */
+html[dir="rtl"] .mw-catalog-filters[data-mw-busy="true"]::after {
+	transform: translateX(100%);
+	animation-name: mw-shimmer-rtl;
+}
+
+@keyframes mw-shimmer {
+	to {
+		transform: translateX(100%);
+	}
+}
+
+@keyframes mw-shimmer-rtl {
+	to {
+		transform: translateX(-100%);
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.mw-catalog-filters[data-mw-busy="true"]::after {
+		animation: none;
+	}
 }
 
 .mw-catalog-filters button[disabled] {
 	cursor: wait;
 }
 
+/* Result summary + removable active-filter chips. */
 .mw-catalog-results {
 	display: flex;
 	flex-wrap: wrap;
@@ -83,26 +177,36 @@
 	list-style: none;
 }
 
+/* -------------------------------------------------------------------------
+ * SonicStream filter chips
+ * Inactive chips sit on the raised surface; the active chip carries the
+ * accent with bold text, matching the reference search page.
+ * ------------------------------------------------------------------------- */
 .mw-catalog-results__filters a {
 	display: inline-flex;
 	align-items: center;
-	gap: 0.35rem;
 	min-height: 2rem;
-	padding: 0.3rem 0.8rem;
-	color: var(--mw-color-text);
+	padding: 0.35rem 0.9rem;
+	color: color-mix(in srgb, var(--mw-color-text) 70%, transparent);
 	font-size: 0.8125rem;
 	font-weight: 600;
 	text-decoration: none;
-	background: var(--mw-color-surface);
-	border: 1px solid var(--mw-color-border);
-	border-radius: 999px;
-	transition: background-color 160ms ease, color 160ms ease, border-color 160ms ease;
+	background: var(--mw-color-surface-raised);
+	border: 1px solid transparent;
+	border-radius: var(--mw-radius-pill);
+	cursor: pointer;
+	transition: color var(--mw-speed-fast, 150ms) var(--mw-ease-snap, ease), background-color var(--mw-speed-fast, 150ms) ease;
 }
 
 .mw-catalog-results__filters a:hover {
+	color: var(--mw-color-text);
+}
+
+.mw-catalog-results__filters a[aria-current="page"],
+.mw-catalog-results__filters a[aria-current="true"] {
 	color: var(--mw-color-on-accent);
 	background: var(--mw-color-accent);
-	border-color: transparent;
+	font-weight: 700;
 }
 
 @media (max-width: 42rem) {
