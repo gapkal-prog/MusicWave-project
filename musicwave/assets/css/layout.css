@@ -1,5 +1,5 @@
 /**
- * MusicWave layout — site shell, brand, sidebar, page headings
+ * MusicWave layout — site shell, sidebar, and page headings
  *
  * Token-driven, logical properties and container queries. Navigation chrome
  * lives in components/navigation.css.
@@ -7,35 +7,15 @@
 
 .wp-site-blocks {
 	min-height: 100vh;
-	overflow: clip;
 }
 
-/* Brand + header inner (header chrome in navigation.css) */
-.mw-site-header__inner {
-	min-height: 4.25rem;
-}
-
-.mw-brand {
-	min-width: 0;
-	gap: 0.65rem;
-}
-
-.mw-brand .wp-block-site-title {
-	overflow: hidden;
-	text-overflow: ellipsis;
-	white-space: nowrap;
-}
-
-.mw-brand .wp-block-site-logo {
-	flex: 0 0 auto;
-}
-
-.mw-header-actions {
-	align-items: center;
-	gap: var(--wp--preset--spacing--20);
-}
-
-/* App shell — sidebar + main */
+/* App shell — sidebar + main.
+ *
+ * The :has() rules support an administrator who inserts the Sidebar template
+ * part directly into the shell. The bundled two-column page templates use the
+ * explicit modifier below because their sidebar is intentionally nested inside
+ * core/columns; this avoids relying on DOM shape or browser-specific heuristics.
+ */
 .mw-app-shell:not(:has(> .mw-sidebar)) {
 	display: block;
 }
@@ -45,6 +25,18 @@
 	grid-template-columns: minmax(12rem, 15rem) minmax(0, 1fr);
 	gap: clamp(1.25rem, 3vw, 3.5rem);
 	align-items: start;
+}
+
+.mw-app-shell--with-sidebar {
+	display: block;
+}
+
+.mw-app-shell--with-sidebar > .wp-block-columns {
+	align-items: start;
+}
+
+.mw-app-shell--with-sidebar > .wp-block-columns > .wp-block-column {
+	min-width: 0;
 }
 
 .mw-app-shell > main {
@@ -111,10 +103,6 @@
 	container-type: inline-size;
 }
 
-.mw-release-page > .wp-block-post-title {
-	max-width: 18ch;
-}
-
 .mw-page-heading {
 	display: grid;
 	gap: 0.5rem;
@@ -123,11 +111,6 @@
 
 .mw-page-heading > * {
 	margin: 0;
-}
-
-.mw-page-heading .wp-block-query-title,
-.mw-page-heading .wp-block-post-title {
-	font-size: clamp(2rem, 4vw, 4rem);
 }
 
 .mw-content-page {
@@ -160,6 +143,36 @@
 	overflow: hidden;
 	border: 1px solid color-mix(in srgb, currentColor 12%, transparent);
 	border-radius: var(--mw-radius-lg);
+	transition: transform var(--mw-speed-normal, 300ms) var(--mw-ease-snap, ease), box-shadow var(--mw-speed-normal, 300ms) ease;
+}
+
+/* SonicStream genre tile: the card lifts on hover like the reference tiles. */
+.mw-category-tile:is(:hover, :focus-within) {
+	transform: translateY(-0.25rem);
+	box-shadow: var(--mw-shadow-card);
+}
+
+/* Gradient spectrum for un-styled tiles, echoing the reference genre grid
+ * (Pop red, Rock blue, Hip-Hop amber, Electronic green, Classical violet).
+ * Editor-chosen gradients or colors in the pattern markup win. */
+.mw-browse-categories .mw-category-tile:not(.has-background):nth-child(5n + 1) {
+	background: linear-gradient(135deg, #e13300, #e8115b);
+}
+
+.mw-browse-categories .mw-category-tile:not(.has-background):nth-child(5n + 2) {
+	background: linear-gradient(135deg, #1e3264, #283593);
+}
+
+.mw-browse-categories .mw-category-tile:not(.has-background):nth-child(5n + 3) {
+	background: linear-gradient(135deg, #ba5d07, #e8a000);
+}
+
+.mw-browse-categories .mw-category-tile:not(.has-background):nth-child(5n + 4) {
+	background: linear-gradient(135deg, #0d73ec, #1db954);
+}
+
+.mw-browse-categories .mw-category-tile:not(.has-background):nth-child(5n + 5) {
+	background: linear-gradient(135deg, #503750, #8b5cf6);
 }
 
 .mw-category-tile > * {
@@ -195,18 +208,12 @@
 		grid-template-columns: minmax(0, 1fr);
 	}
 
+	.mw-app-shell--with-sidebar > .wp-block-columns > .wp-block-column {
+		flex-basis: 100% !important;
+	}
+
 	.mw-sidebar {
 		position: static;
 		order: 2;
-	}
-}
-
-@media (max-width: 36rem) {
-	.mw-site-header__inner {
-		min-height: 3.75rem;
-	}
-
-	.mw-brand .wp-block-site-logo {
-		display: none;
 	}
 }

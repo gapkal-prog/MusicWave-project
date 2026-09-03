@@ -54,7 +54,7 @@
 		}
 
 		// Measured independently of the dots markup so arrow navigation works
-		// even when "Pagination dots" is switched off.
+		// even when "نقاط صفحه‌بندی" is switched off.
 		function measurePageCount() {
 			pageCount = Math.max(
 				1,
@@ -101,7 +101,7 @@
 			}
 			if ( status ) {
 				status.textContent = (
-					labels.status || 'Slide group %1$d of %2$d'
+					labels.status || 'گروه اسلاید %1$d از %2$d'
 				)
 					.replace( '%1$d', page + 1 )
 					.replace( '%2$d', pageCount );
@@ -143,10 +143,9 @@
 					dot.type = 'button';
 					dot.setAttribute(
 						'aria-label',
-						( labels.goToGroup || 'Go to slide group %d' ).replace(
-							'%d',
-							page + 1
-						)
+						(
+							labels.goToGroup || 'رفتن به گروه اسلاید %d'
+						).replace( '%d', page + 1 )
 					);
 					dot.addEventListener( 'click', function () {
 						goTo( page );
@@ -246,6 +245,100 @@
 				}
 				slider.setAttribute( 'data-mw-slider-ready', '1' );
 				initialize( slider );
+			} );
+		initializeShelves();
+	}
+
+	/*
+	 * SonicStream horizontal shelves: the scroll shelf renders floating
+	 * prev/next arrows around a scroll-snap row. Scrolling advances by one
+	 * card step; disabled states follow the row edges so the arrows mirror
+	 * the slider arrows' behavior without paging.
+	 */
+	function initializeShelves() {
+		document
+			.querySelectorAll( '.mw-release-shelf--scroll' )
+			.forEach( function ( shelf ) {
+				if ( shelf.getAttribute( 'data-mw-shelf-ready' ) ) {
+					return;
+				}
+				var viewport = shelf.querySelector(
+					'[data-mw-shelf-viewport]'
+				);
+				var previous = shelf.querySelector(
+					'[data-mw-shelf-previous]'
+				);
+				var next = shelf.querySelector( '[data-mw-shelf-next]' );
+
+				if ( ! viewport || ( ! previous && ! next ) ) {
+					return;
+				}
+				shelf.setAttribute( 'data-mw-shelf-ready', '1' );
+
+				function step() {
+					var first = viewport.firstElementChild;
+					var second = first ? first.nextElementSibling : null;
+
+					if ( second ) {
+						return Math.abs( second.offsetLeft - first.offsetLeft );
+					}
+					if ( first ) {
+						return first.offsetWidth || 1;
+					}
+					return viewport.clientWidth || 1;
+				}
+
+				function atStart() {
+					return viewport.scrollLeft <= 2;
+				}
+
+				function atEnd() {
+					return (
+						viewport.scrollLeft + viewport.clientWidth >=
+						viewport.scrollWidth - 2
+					);
+				}
+
+				function sync() {
+					if ( previous ) {
+						previous.disabled = atStart();
+					}
+					if ( next ) {
+						next.disabled = atEnd();
+					}
+				}
+
+				function move( direction ) {
+					var max = viewport.scrollWidth - viewport.clientWidth;
+					var target = viewport.scrollLeft + direction * step();
+					// offsetLeft is layout-relative (always LTR-positive), so
+					// clamp against the row edges instead of trusting sign.
+					target = Math.max( 0, Math.min( max, target ) );
+					viewport.scrollTo( {
+						left: target,
+						behavior: reducedMotion.matches ? 'auto' : 'smooth',
+					} );
+				}
+
+				if ( previous ) {
+					previous.addEventListener( 'click', function () {
+						move( -1 );
+					} );
+				}
+				if ( next ) {
+					next.addEventListener( 'click', function () {
+						move( 1 );
+					} );
+				}
+				viewport.addEventListener(
+					'scroll',
+					function () {
+						window.requestAnimationFrame( sync );
+					},
+					{ passive: true }
+				);
+				window.addEventListener( 'resize', sync );
+				sync();
 			} );
 	}
 
