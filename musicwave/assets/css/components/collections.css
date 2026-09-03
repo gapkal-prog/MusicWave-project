@@ -1,11 +1,20 @@
-.mw-release-credits,
-.mw-collection-list {
+/* Credits keep the boxed panel; the collection track list renders as an
+ * open SonicStream-style list directly on the canvas. */
+.mw-release-credits {
 	margin: var(--wp--preset--spacing--40) 0;
 	padding: var(--wp--preset--spacing--30);
 	background: var(--mw-color-surface);
 	border: 1px solid var(--mw-color-border);
 	border-radius: var(--mw-radius-lg);
 	box-shadow: var(--mw-shadow-card);
+}
+
+.mw-collection-list {
+	margin: 0 0 var(--wp--preset--spacing--40);
+	padding: 0;
+	background: transparent;
+	border: 0;
+	box-shadow: none;
 }
 
 .mw-release-credits h2,
@@ -21,14 +30,12 @@
 	list-style: none;
 }
 
-.mw-release-credits li,
-.mw-collection-list li {
+.mw-release-credits li {
 	padding: 0.75rem 0;
 	border-top: 1px solid var(--mw-color-border);
 }
 
-.mw-release-credits ul > li:first-child,
-.mw-collection-list ol > li:first-child {
+.mw-release-credits ul > li:first-child {
 	border-top: 0;
 }
 
@@ -76,21 +83,78 @@
 	border-top: 0;
 }
 
-/* Collection rows. */
+/* Collection rows — SonicStream track list: an open list of rounded quiet
+ * rows; no boxed panel, hover raises the elevated surface and the row
+ * actions stay visually quiet until the visitor points at them. */
+.mw-collection-list__heading {
+	margin: 0 0 0.9rem;
+	font-family: var(--wp--preset--font-family--display, 'Syne', sans-serif);
+	font-size: 1.5rem;
+	font-weight: 800;
+	letter-spacing: -0.02em;
+}
+
+/* Row main column: track link (title + duration) with the linked artist
+ * line beside it — artists render outside the anchor so their own links
+ * stay clickable (no nested anchors). */
+.mw-collection-list__main {
+	display: flex;
+	flex: 1 1 auto;
+	min-width: 0;
+	align-items: baseline;
+	gap: 0.75rem;
+}
+
 .mw-collection-list__link {
 	display: flex;
 	flex: 1 1 auto;
 	min-width: 0;
 	align-items: center;
 	gap: 1rem;
+	padding-inline: 0.85rem;
 	color: inherit;
 	text-decoration: none;
+}
+
+.mw-collection-list__heading {
+	display: grid;
+	min-width: 0;
+	gap: 0.1rem;
 }
 
 .mw-collection-list__title {
 	overflow: hidden;
 	text-overflow: ellipsis;
 	white-space: nowrap;
+	font-size: 0.9375rem;
+	font-weight: 600;
+}
+
+.mw-collection-list__link:hover .mw-collection-list__title {
+	text-decoration: underline;
+	text-underline-offset: 0.2em;
+}
+
+.mw-collection-list__artist {
+	overflow: hidden;
+	flex: 0 1 auto;
+	max-width: 40%;
+	color: var(--mw-color-text-muted);
+	font-size: 0.8125rem;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+}
+
+.mw-collection-list__artist a {
+	color: inherit;
+	text-decoration: none;
+}
+
+.mw-collection-list__artist a:hover,
+.mw-collection-list__artist a:focus-visible {
+	color: var(--mw-color-text);
+	text-decoration: underline;
+	text-underline-offset: 0.18em;
 }
 
 .mw-collection-list__artwork {
@@ -111,7 +175,7 @@
 .mw-collection-list__duration {
 	margin-inline-start: auto;
 	color: var(--mw-color-text-muted);
-	font-size: 0.875rem;
+	font-size: 0.8125rem;
 	font-variant-numeric: tabular-nums;
 }
 
@@ -128,6 +192,14 @@
 	align-items: center;
 	justify-content: flex-end;
 	gap: 0.5rem;
+	padding-inline-end: 0.75rem;
+	opacity: 0.6;
+	transition: opacity var(--mw-speed-fast, 150ms) ease;
+}
+
+.mw-collection-list li:hover .mw-collection-list__actions,
+.mw-collection-list__actions:focus-within {
+	opacity: 1;
 }
 
 .mw-collection-list__actions .mw-preview-button,
@@ -146,14 +218,6 @@
 	white-space: nowrap;
 }
 
-.mw-collection-list__position {
-	width: 1.5rem;
-	flex: 0 0 1.5rem;
-	color: var(--mw-color-text-muted);
-	font-variant-numeric: tabular-nums;
-}
-
-/* Multi-disc grouping. */
 .mw-collection-list__discs {
 	display: grid;
 	gap: var(--wp--preset--spacing--30);
@@ -166,17 +230,123 @@
 
 .mw-collection-list__total {
 	margin: var(--wp--preset--spacing--20) 0 0;
+	padding-inline-start: 0.85rem;
+	color: var(--mw-color-text-muted);
+	font-size: 0.8125rem;
+	font-variant-numeric: tabular-nums;
+}
+
+.mw-collection-list li {
+	padding-block: 0.15rem;
+	transition: background-color var(--mw-speed-fast, 150ms) ease;
+}
+
+/* SonicStream track-row: rounded quiet rows that raise onto the elevated
+ * surface on hover and reveal the row actions. */
+.mw-collection-list li:hover {
+	background: var(--mw-color-surface-raised);
+	border-radius: var(--mw-radius-sm);
+}
+
+/* -------------------------------------------------------------------------
+ * SonicStream track-row affordances — the leading position number is
+ * replaced by a play glyph while the row is hovered or focused, exactly
+ * like the reference playlist table (# → ▶ swap).
+ * ---------------------------------------------------------------------- */
+.mw-collection-list__position {
+	position: relative;
+	display: inline-grid;
+	width: 1.75rem;
+	flex: 0 0 1.75rem;
+	place-items: center;
 	color: var(--mw-color-text-muted);
 	font-size: 0.875rem;
 	font-variant-numeric: tabular-nums;
 }
 
-.mw-collection-list li {
-	transition: background-color 160ms ease;
+.mw-collection-list__position-play {
+	display: none;
+	font-size: 0.7em;
 }
 
-.mw-collection-list li:hover {
-	background: color-mix(in srgb, var(--mw-color-surface-raised) 55%, transparent);
+.mw-collection-list__position-num {
+	display: block;
+}
+
+.mw-collection-list li:hover .mw-collection-list__position-num,
+.mw-collection-list li:focus-within .mw-collection-list__position-num {
+	display: none;
+}
+
+.mw-collection-list li:hover .mw-collection-list__position-play,
+.mw-collection-list li:focus-within .mw-collection-list__position-play {
+	display: block;
+	color: var(--mw-color-text);
+}
+
+/* Now-playing row: the equalizer replaces the number and the title takes
+ * the accent, mirroring the reference's active track state. */
+.mw-collection-list__position .mw-equalizer {
+	display: none;
+	color: var(--mw-color-accent, #1db954);
+}
+
+.mw-collection-list li[data-mw-playing] .mw-collection-list__position-num,
+.mw-collection-list li[data-mw-playing] .mw-collection-list__position-play {
+	display: none;
+}
+
+.mw-collection-list li[data-mw-playing] .mw-collection-list__position .mw-equalizer {
+	display: inline-flex;
+}
+
+.mw-collection-list li[data-mw-playing] .mw-collection-list__title {
+	color: var(--mw-color-accent, #1db954);
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.mw-collection-list li[data-mw-playing] .mw-equalizer i {
+		animation: none;
+		transform: scaleY(0.65);
+	}
+}
+
+/* Desktop column header, matching the reference "# / Title / duration"
+ * table header: quiet uppercase labels over a hairline rule. */
+.mw-collection-list__table-header {
+	display: none;
+	gap: 1rem;
+	align-items: center;
+	margin-bottom: 0.25rem;
+	padding: 0.5rem 0.85rem;
+	border-block-end: 1px solid color-mix(in srgb, var(--mw-color-border) 60%, transparent);
+	color: var(--mw-color-text-muted);
+	font-size: 0.6875rem;
+	font-weight: 700;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+}
+
+.mw-collection-list__table-header .mw-collection-list__table-position {
+	width: 1.75rem;
+	flex: 0 0 1.75rem;
+	text-align: center;
+}
+
+.mw-collection-list__table-header .mw-collection-list__table-title {
+	flex: 1 1 auto;
+	min-width: 0;
+}
+
+.mw-collection-list__table-header .mw-collection-list__table-duration {
+	flex: 0 0 auto;
+	margin-inline-start: auto;
+}
+
+@media (min-width: 48rem) {
+	.mw-collection-list__table-header {
+		display: flex;
+	}
 }
 
 @media (max-width: 48rem) {
@@ -191,5 +361,34 @@
 
 	.mw-collection-list__actions {
 		justify-content: flex-start;
+		opacity: 1;
+		padding-inline-start: 0.85rem;
+		padding-inline-end: 0;
+	}
+}
+
+/* Track-row fallback art and keyboard affordances. */
+.mw-collection-list__artwork {
+	align-items: center;
+	justify-content: center;
+	background:
+		radial-gradient(circle at 25% 20%, color-mix(in srgb, var(--mw-color-accent) 38%, transparent), transparent 60%),
+		var(--mw-color-surface-raised);
+}
+
+.mw-collection-list__link:focus-visible {
+	border-radius: var(--mw-radius-sm);
+	outline: 3px solid var(--mw-color-accent-strong);
+	outline-offset: 3px;
+}
+
+.mw-collection-list li:focus-within {
+	background: color-mix(in srgb, var(--mw-color-accent) 8%, var(--mw-color-surface-raised));
+	border-radius: var(--mw-radius-sm);
+}
+
+@media (max-width: 48rem) {
+	.mw-collection-list {
+		padding: var(--wp--preset--spacing--20);
 	}
 }

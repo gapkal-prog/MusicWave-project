@@ -241,6 +241,44 @@
 						icon.textContent = active ? '❚❚' : '▶';
 					}
 				} );
+			// Now-playing rows: flag the list item that owns the active
+			// trigger so the theme can light up an equalizer (CSS-only).
+			document
+				.querySelectorAll(
+					'.mw-collection-list__item, .mw-global-player__queue-item'
+				)
+				.forEach( function ( row ) {
+					var trigger = row.querySelector(
+						'.mw-preview-button[data-preview-url], ' +
+							'.mw-card-play[data-mw-release-id]'
+					);
+					var active = false;
+					if ( trigger && playing ) {
+						if ( trigger.matches( '.mw-card-play' ) ) {
+							var rowReleaseId =
+								parseInt(
+									trigger.getAttribute(
+										'data-mw-release-id'
+									),
+									10
+								) || 0;
+							active =
+								rowReleaseId > 0 &&
+								( track.rootId === rowReleaseId ||
+									track.releaseId === rowReleaseId );
+						} else {
+							active =
+								track.url !== '' &&
+								trigger.getAttribute( 'data-preview-url' ) ===
+									track.url;
+						}
+					}
+					if ( active ) {
+						row.setAttribute( 'data-mw-playing', 'true' );
+					} else {
+						row.removeAttribute( 'data-mw-playing' );
+					}
+				} );
 			// Playlist Play all buttons: active when current queue is that playlist
 			var playlistId =
 				queueMeta && queueMeta.playlist
