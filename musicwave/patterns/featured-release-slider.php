@@ -1,6 +1,6 @@
 <?php
 /**
- * Title: Featured release slider
+ * Title: اسلایدر انتشارهای منتخب
  * Slug: musicwave/featured-release-slider
  * Categories: musicwave, featured
  * Inserter: true
@@ -9,4 +9,4 @@
  */
 
 ?>
-<!-- wp:musicwave/release-slider {"align":"wide","eyebrow":"<?php echo esc_attr__( 'MADE FOR YOU', 'musicwave' ); ?>","title":"<?php echo esc_attr__( 'Featured releases', 'musicwave' ); ?>"} /-->
+<!-- wp:music-wave/release-slider {"align":"wide","eyebrow":"<?php echo esc_attr__( 'ساخته‌شده برای شما', 'musicwave' ); ?>","title":"<?php echo esc_attr__( 'انتشارهای منتخب', 'musicwave' ); ?>"} /-->

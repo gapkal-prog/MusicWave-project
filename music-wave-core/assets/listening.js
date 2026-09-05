@@ -62,7 +62,7 @@
 				button.removeAttribute( 'aria-busy' );
 				setStatus(
 					section,
-					labels.enabled || 'Listening history is on.'
+					labels.enabled || 'سابقهٔ گوش‌دادن روشن است.'
 				);
 			} )
 			.catch( function () {
@@ -71,7 +71,7 @@
 				setStatus(
 					section,
 					labels.error ||
-						'Listening history could not be enabled. Try again.'
+						'سابقهٔ گوش‌دادن فعال نشد. دوباره امتحان کنید.'
 				);
 			} );
 	} );

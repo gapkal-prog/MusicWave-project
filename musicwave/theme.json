@@ -6,7 +6,8 @@
     "useRootPaddingAwareAlignments": true,
     "layout": {
       "contentSize": "760px",
-      "wideSize": "1440px"
+      "wideSize": "1440px",
+      "allowEditing": true
     },
     "border": {
       "color": true,
@@ -25,22 +26,22 @@
       "presets": [
         {
           "slug": "card",
-          "name": "Card",
+          "name": "کارت",
           "shadow": "0 18px 50px rgb(0 0 0 / 24%)"
         },
         {
           "slug": "floating",
-          "name": "Floating player",
+          "name": "پخش‌کننده شناور",
           "shadow": "0 24px 70px rgb(0 0 0 / 40%)"
         },
         {
           "slug": "subtle",
-          "name": "Subtle",
+          "name": "ظریف",
           "shadow": "0 8px 24px rgb(0 0 0 / 12%)"
         },
         {
           "slug": "elevated",
-          "name": "Elevated",
+          "name": "برجسته",
           "shadow": "0 24px 48px rgb(0 0 0 / 18%)"
         }
       ]
@@ -56,56 +57,56 @@
       "gradients": [
         {
           "slug": "accent-wash",
-          "name": "Accent wash",
+          "name": "گرادیان تأکیدی",
           "gradient": "radial-gradient(circle at 15% 20%, rgba(29,185,84,0.35), transparent 55%), linear-gradient(180deg, #283040, #0b0d12)"
         },
         {
           "slug": "accent-button",
-          "name": "Accent button",
+          "name": "دکمه تأکیدی",
           "gradient": "linear-gradient(135deg, #1ed760, #17a34a)"
         },
         {
           "slug": "editorial-rose",
-          "name": "Editorial rose",
+          "name": "رز تحریریه",
           "gradient": "linear-gradient(135deg, #fa2d48, #a91267 55%, #341550)"
         },
         {
           "slug": "midnight-radio",
-          "name": "Midnight radio",
+          "name": "رادیوی نیمه‌شب",
           "gradient": "radial-gradient(circle at 75% 15%, rgba(124,58,237,0.55), transparent 42%), linear-gradient(145deg, #1f2937, #08090d)"
         },
         {
           "slug": "sunset-glow",
-          "name": "Sunset glow",
+          "name": "درخشش غروب",
           "gradient": "linear-gradient(135deg, #ff7a18 0%, #fa2d48 55%, #9a1b8f 100%)"
         },
         {
           "slug": "midnight-ink",
-          "name": "Midnight ink",
+          "name": "جوهر نیمه‌شب",
           "gradient": "linear-gradient(180deg, #111827, #0b0d12)"
         }
       ],
       "palette": [
-        { "slug": "canvas", "name": "Canvas", "color": "#090a0f" },
-        { "slug": "surface", "name": "Surface", "color": "#15171e" },
-        { "slug": "surface-raised", "name": "Raised surface", "color": "#222631" },
-        { "slug": "text", "name": "Text", "color": "#f7f8fb" },
-        { "slug": "muted", "name": "Muted text", "color": "#a9b0c0" },
-        { "slug": "accent", "name": "Accent", "color": "#1db954" },
-        { "slug": "accent-strong", "name": "Accent strong", "color": "#1ed760" },
-        { "slug": "editorial", "name": "Editorial rose", "color": "#fa2d48" },
-        { "slug": "on-accent", "name": "On accent", "color": "#052e16" }
+        { "slug": "canvas", "name": "بوم", "color": "#0a0a0a" },
+        { "slug": "surface", "name": "سطح", "color": "#181818" },
+        { "slug": "surface-raised", "name": "سطح برجسته", "color": "#282828" },
+        { "slug": "text", "name": "متن", "color": "#f7f8fb" },
+        { "slug": "muted", "name": "متن کم‌رنگ", "color": "#a0a0a0" },
+        { "slug": "accent", "name": "رنگ تأکیدی", "color": "#1db954" },
+        { "slug": "accent-strong", "name": "رنگ تأکیدی پررنگ", "color": "#1ed760" },
+        { "slug": "editorial", "name": "رز تحریریه", "color": "#fa2d48" },
+        { "slug": "on-accent", "name": "روی رنگ تأکیدی", "color": "#052e16" }
       ],
       "duotone": [
         {
           "slug": "accent-on-canvas",
           "colors": ["#0b0d12", "#1db954"],
-          "name": "Accent on canvas"
+          "name": "تأکید روی بوم"
         },
         {
           "slug": "editorial-on-canvas",
           "colors": ["#090a0f", "#fa2d48"],
-          "name": "Editorial on canvas"
+          "name": "تحریریه روی بوم"
         }
       ]
     },
@@ -115,12 +116,12 @@
       "padding": true,
       "spacingScale": { "steps": 0 },
       "spacingSizes": [
-        { "slug": "10", "size": "clamp(0.5rem, 0.45rem + 0.2vw, 0.75rem)", "name": "X Small" },
-        { "slug": "20", "size": "clamp(0.75rem, 0.7rem + 0.25vw, 1rem)", "name": "Small" },
-        { "slug": "30", "size": "clamp(1rem, 0.85rem + 0.7vw, 1.5rem)", "name": "Medium" },
-        { "slug": "40", "size": "clamp(1.5rem, 1.2rem + 1.5vw, 2.5rem)", "name": "Large" },
-        { "slug": "50", "size": "clamp(2.5rem, 1.8rem + 3vw, 5rem)", "name": "X Large" },
-        { "slug": "60", "size": "clamp(3.5rem, 2.8rem + 3vw, 6.5rem)", "name": "XX Large" }
+        { "slug": "10", "size": "clamp(0.5rem, 0.45rem + 0.2vw, 0.75rem)", "name": "خیلی کوچک" },
+        { "slug": "20", "size": "clamp(0.75rem, 0.7rem + 0.25vw, 1rem)", "name": "کوچک" },
+        { "slug": "30", "size": "clamp(1rem, 0.85rem + 0.7vw, 1.5rem)", "name": "متوسط" },
+        { "slug": "40", "size": "clamp(1.5rem, 1.2rem + 1.5vw, 2.5rem)", "name": "بزرگ" },
+        { "slug": "50", "size": "clamp(2.5rem, 1.8rem + 3vw, 5rem)", "name": "خیلی بزرگ" },
+        { "slug": "60", "size": "clamp(3.5rem, 2.8rem + 3vw, 6.5rem)", "name": "بسیار بزرگ" }
       ],
       "units": ["px", "rem", "em", "%", "vw", "vh"]
     },
@@ -137,39 +138,40 @@
       "fontFamilies": [
         {
           "slug": "system",
-          "name": "System Sans",
-          "fontFamily": "-apple-system, BlinkMacSystemFont, 'Segoe UI', Tahoma, Arial, sans-serif"
+          "name": "بدنه پلاس جاکارتا",
+          "fontFamily": "'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Tahoma, Arial, sans-serif"
         },
         {
           "slug": "serif",
-          "name": "Editorial Serif",
+          "name": "سریف تحریریه",
           "fontFamily": "Iowan Old Style, Baskerville, 'Times New Roman', serif"
         },
         {
           "slug": "mono",
-          "name": "Studio Mono",
+          "name": "تک‌فاصله استودیو",
           "fontFamily": "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace"
         },
         {
           "slug": "display",
-          "name": "Display Sans",
-          "fontFamily": "\"General Sans\", -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif"
+          "name": "نمایشی ساین",
+          "fontFamily": "'Syne', 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif"
         }
       ],
       "fontSizes": [
-        { "slug": "x-small", "size": "0.75rem", "name": "X Small" },
-        { "slug": "small", "size": "0.875rem", "name": "Small" },
-        { "slug": "medium", "size": "1rem", "name": "Medium" },
-        { "slug": "large", "size": "clamp(1.25rem, 1.1rem + 0.7vw, 1.75rem)", "name": "Large" },
-        { "slug": "x-large", "size": "clamp(2rem, 1.4rem + 2.8vw, 4.5rem)", "name": "Display" },
-        { "slug": "xx-large", "size": "clamp(2.75rem, 1.8rem + 4vw, 5.5rem)", "name": "Hero" }
+        { "slug": "x-small", "size": "0.75rem", "name": "خیلی کوچک" },
+        { "slug": "small", "size": "0.875rem", "name": "کوچک" },
+        { "slug": "medium", "size": "1rem", "name": "متوسط" },
+        { "slug": "large", "size": "clamp(1.25rem, 1.1rem + 0.7vw, 1.75rem)", "name": "بزرگ" },
+        { "slug": "x-large", "size": "clamp(2rem, 1.4rem + 2.8vw, 4.5rem)", "name": "نمایشی" },
+        { "slug": "xx-large", "size": "clamp(2.75rem, 1.8rem + 4vw, 5.5rem)", "name": "تیتر اصلی" }
       ]
     },
     "custom": {
       "radius": {
         "small": "0.5rem",
-        "medium": "1rem",
-        "large": "1.5rem",
+        "medium": "0.75rem",
+        "large": "1rem",
+        "xlarge": "1.5rem",
         "pill": "999px"
       },
       "contentSize": "760px",
@@ -346,6 +348,29 @@
         "spacing": { "margin": true, "padding": true },
         "border": { "radius": true }
       },
+      "music-wave/release-shelf": {
+        "color": { "background": true, "text": true, "gradient": true },
+        "spacing": { "margin": true, "padding": true, "blockGap": true },
+        "border": { "color": true, "radius": true, "style": true, "width": true },
+        "typography": { "fontSize": true, "lineHeight": true },
+        "shadow": true
+      },
+      "music-wave/release-slider": {
+        "color": { "background": true, "text": true },
+        "spacing": { "margin": true, "padding": true, "blockGap": true },
+        "border": { "color": true, "radius": true, "style": true, "width": true },
+        "shadow": true
+      },
+      "music-wave/theme-text": {
+        "color": { "background": true, "text": true },
+        "spacing": { "margin": true, "padding": true },
+        "typography": { "fontSize": true, "fontWeight": true }
+      },
+      "music-wave/theme-toggle": {
+        "color": { "background": true, "text": true },
+        "spacing": { "margin": true, "padding": true },
+        "border": { "radius": true }
+      },
       "musicwave/release-shelf": {
         "color": { "background": true, "text": true, "gradient": true },
         "spacing": { "margin": true, "padding": true, "blockGap": true },
@@ -399,7 +424,7 @@
           "color": { "background": "var:preset|color|accent-strong", "text": "var:preset|color|on-accent" }
         }
       },
-      "heading": { "typography": { "fontWeight": "750", "lineHeight": "1.15", "letterSpacing": "-0.02em" } },
+      "heading": { "typography": { "fontFamily": "var:preset|font-family|display", "fontWeight": "800", "lineHeight": "1.05", "letterSpacing": "-0.02em" } },
       "link": { "color": { "text": "var:preset|color|accent-strong" }, "typography": { "textDecoration": "none" }, ":hover": { "typography": { "textDecoration": "underline" } } },
       "caption": { "color": { "text": "var:preset|color|muted" }, "typography": { "fontSize": "var:preset|font-size|small" } },
       "cite": { "typography": { "fontSize": "var:preset|font-size|small", "fontStyle": "normal" }, "color": { "text": "var:preset|color|muted" } }
@@ -418,6 +443,12 @@
       "core/list": {
         "spacing": { "blockGap": "var:preset|spacing|10" }
       },
+      "music-wave/release-shelf": {
+        "spacing": { "blockGap": "var:preset|spacing|30" }
+      },
+      "music-wave/release-slider": {
+        "spacing": { "blockGap": "var:preset|spacing|30" }
+      },
       "musicwave/release-shelf": {
         "spacing": { "blockGap": "var:preset|spacing|30" }
       },
@@ -427,55 +458,71 @@
     }
   },
   "templateParts": [
-    { "name": "header", "title": "Header", "area": "header" },
-    { "name": "header-centered", "title": "Header (centered)", "area": "header" },
-    { "name": "header-minimal", "title": "Header (minimal)", "area": "header" },
-    { "name": "footer", "title": "Footer", "area": "footer" },
-    { "name": "footer-widgets", "title": "Footer widgets", "area": "footer" },
-    { "name": "footer-simple", "title": "Footer (simple)", "area": "footer" },
-    { "name": "sidebar", "title": "Sidebar", "area": "uncategorized" },
-    { "name": "sidebar-shop", "title": "Shop sidebar", "area": "uncategorized" },
-    { "name": "hero", "title": "Hero", "area": "uncategorized" }
+    { "name": "header", "title": "سربرگ", "area": "header" },
+    { "name": "header-centered", "title": "سربرگ (وسط‌چین)", "area": "header" },
+    { "name": "header-minimal", "title": "سربرگ (ساده)", "area": "header" },
+    { "name": "header-stream", "title": "سربرگ (استریم)", "area": "header" },
+    { "name": "footer", "title": "پابرگ", "area": "footer" },
+    { "name": "footer-widgets", "title": "ابزارک‌های پابرگ", "area": "footer" },
+    { "name": "footer-simple", "title": "پابرگ (ساده)", "area": "footer" },
+    { "name": "sidebar", "title": "نوار کناری", "area": "uncategorized" },
+    { "name": "sidebar-shop", "title": "نوار کناری فروشگاه", "area": "uncategorized" },
+    { "name": "hero", "title": "بخش معرفی", "area": "uncategorized" }
   ],
   "customTemplates": [
     {
       "name": "page-no-sidebar",
-      "title": "Page (no sidebar)",
+      "title": "برگه (بدون نوار کناری)",
       "postTypes": ["page"]
     },
     {
       "name": "page-account",
-      "title": "Music account",
+      "title": "حساب موسیقی",
+      "postTypes": ["page"]
+    },
+    {
+      "name": "page-playlists",
+      "title": "فهرست‌های پخش عمومی",
+      "postTypes": ["page"]
+    },
+    {
+      "name": "page-cart",
+      "title": "سبد خرید",
+      "postTypes": ["page"]
+    },
+    {
+      "name": "page-checkout",
+      "title": "تسویه‌حساب",
       "postTypes": ["page"]
     },
     {
       "name": "page-music-home",
-      "title": "Music editorial home",
+      "title": "صفحه سرمقاله موسیقی",
       "postTypes": ["page"]
     },
     {
       "name": "page-browse",
-      "title": "Browse music",
+      "title": "مرور موسیقی",
       "postTypes": ["page"]
     },
     {
       "name": "page-with-sidebar",
-      "title": "Page with sidebar",
+      "title": "برگه با نوار کناری",
       "postTypes": ["page"]
     },
     {
       "name": "page-wide",
-      "title": "Page (wide)",
+      "title": "برگه (عریض)",
       "postTypes": ["page"]
     },
     {
       "name": "page-landing",
-      "title": "Landing (no header/footer)",
+      "title": "صفحه فرود (بدون سربرگ/پابرگ)",
       "postTypes": ["page"]
     },
     {
       "name": "page-shop",
-      "title": "Shop with sidebar",
+      "title": "فروشگاه با نوار کناری",
       "postTypes": ["page"]
     }
   ]

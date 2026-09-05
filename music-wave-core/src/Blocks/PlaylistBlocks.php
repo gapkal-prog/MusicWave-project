@@ -118,41 +118,42 @@ final class PlaylistBlocks {
 				'restNonce'  => wp_create_nonce( 'wp_rest' ),
 				'isLoggedIn' => get_current_user_id() > 0,
 				'labels'     => array(
-					'playAll'            => __( 'Play all', 'music-wave-core' ),
-					'playing'            => __( 'Playing…', 'music-wave-core' ),
-					'addToPlaylist'      => __( 'Add to playlist', 'music-wave-core' ),
-					'added'              => __( 'Added to the playlist.', 'music-wave-core' ),
-					'created'            => __( 'Playlist created.', 'music-wave-core' ),
-					'createPlaylist'     => __( 'Create playlist', 'music-wave-core' ),
-					'createAndAdd'       => __( 'Create & add', 'music-wave-core' ),
-					'newPlaylist'        => __( 'New playlist name', 'music-wave-core' ),
-					'noPlayable'         => __( 'This playlist has no playable audio right now.', 'music-wave-core' ),
-					'error'              => __( 'That playlist request was not valid. Try again.', 'music-wave-core' ),
-					'sessionError'       => __( 'Your session has expired. Refresh the page or sign in again.', 'music-wave-core' ),
-					'addedBadge'         => __( 'Added', 'music-wave-core' ),
-					'updated'            => __( 'Playlist updated.', 'music-wave-core' ),
-					'deleted'            => __( 'Playlist deleted.', 'music-wave-core' ),
-					'itemRemoved'        => __( 'Removed from the playlist.', 'music-wave-core' ),
-					'orderUpdated'       => __( 'Playlist order updated.', 'music-wave-core' ),
-					'confirmDelete'      => __( 'Delete this playlist permanently?', 'music-wave-core' ),
-					'loading'            => __( 'Loading…', 'music-wave-core' ),
-					'emptyPlaylist'      => __( 'This playlist is empty. Use “Add to playlist” on any release.', 'music-wave-core' ),
-					'oneTrack'           => __( '1 track', 'music-wave-core' ),
-					'trackSingular'      => __( 'track', 'music-wave-core' ),
-					'trackPlural'        => __( 'tracks', 'music-wave-core' ),
-					'showTracks'         => __( 'Show tracks', 'music-wave-core' ),
-					'hideTracks'         => __( 'Hide tracks', 'music-wave-core' ),
-					'noResults'          => __( 'No playlists found.', 'music-wave-core' ),
-					'paginationLabel'    => __( 'Public playlists pages', 'music-wave-core' ),
+					'playAll'            => __( 'پخش همه', 'music-wave-core' ),
+					'playing'            => __( 'در حال پخش…', 'music-wave-core' ),
+					'addToPlaylist'      => __( 'افزودن به فهرست پخش', 'music-wave-core' ),
+					'added'              => __( 'به فهرست پخش اضافه شد.', 'music-wave-core' ),
+					'created'            => __( 'فهرست پخش ایجاد شد.', 'music-wave-core' ),
+					'createPlaylist'     => __( 'ایجاد فهرست پخش', 'music-wave-core' ),
+					'createAndAdd'       => __( 'ایجاد و اضافه کردن', 'music-wave-core' ),
+					'newPlaylist'        => __( 'نام فهرست پخش جدید', 'music-wave-core' ),
+					'noPlayable'         => __( 'این فهرست پخش در حال حاضر صدای قابل پخش ندارد.', 'music-wave-core' ),
+					'error'              => __( 'آن درخواست فهرست پخش معتبر نبود. دوباره امتحان کنید.', 'music-wave-core' ),
+					'sessionError'       => __( 'جلسه شما تمام شده است. صفحه را تازه کنید یا دوباره وارد شوید.', 'music-wave-core' ),
+					'addedBadge'         => __( 'اضافه شد', 'music-wave-core' ),
+					'updated'            => __( 'فهرست پخش به‌روز شد.', 'music-wave-core' ),
+					'deleted'            => __( 'فهرست پخش حذف شد', 'music-wave-core' ),
+					'itemRemoved'        => __( 'از فهرست پخش حذف شد.', 'music-wave-core' ),
+					'orderUpdated'       => __( 'ترتیب فهرست پخش به‌روز شد.', 'music-wave-core' ),
+					'confirmDelete'      => __( 'این فهرست پخش برای همیشه حذف شود؟', 'music-wave-core' ),
+					'loading'            => __( 'در حال بارگذاری…', 'music-wave-core' ),
+					'emptyPlaylist'      => __( 'این فهرست پخش خالی است. در هر انتشار از «افزودن به فهرست پخش» استفاده کنید.', 'music-wave-core' ),
+					'oneTrack'           => __( '1 قطعه', 'music-wave-core' ),
+					'trackSingular'      => __( 'قطعه', 'music-wave-core' ),
+					'trackPlural'        => __( 'قطعه‌ها', 'music-wave-core' ),
+					'private'            => __( 'خصوصی', 'music-wave-core' ),
+					'showTracks'         => __( 'نمایش قطعه‌ها', 'music-wave-core' ),
+					'hideTracks'         => __( 'مخفی کردن قطعه‌ها', 'music-wave-core' ),
+					'noResults'          => __( 'هیچ فهرست پخشی یافت نشد.', 'music-wave-core' ),
+					'paginationLabel'    => __( 'صفحات فهرست پخش عمومی', 'music-wave-core' ),
 					/* translators: 1: number shown, 2: total number of playlists. */
-					'showingCount'       => __( 'Showing %1$d of %2$d playlists', 'music-wave-core' ),
+					'showingCount'       => __( 'نمایش %1$d از فهرست‌های پخش %2$d', 'music-wave-core' ),
 					/* translators: %s: playlist title. */
-					'playAllAria'        => __( 'Play all tracks in %s', 'music-wave-core' ),
+					'playAllAria'        => __( 'پخش تمام قطعه‌ها در %s', 'music-wave-core' ),
 					/* translators: %s: release title. */
-					'playTrackAria'      => __( 'Play %s', 'music-wave-core' ),
-					'emptyOrNotPlayable' => __( 'This playlist is empty or not playable.', 'music-wave-core' ),
+					'playTrackAria'      => __( 'پخش %s', 'music-wave-core' ),
+					'emptyOrNotPlayable' => __( 'این فهرست پخش خالی است یا قابل پخش نیست.', 'music-wave-core' ),
 					/* translators: %d: release ID. */
-					'releaseFallback'    => __( 'Release #%d', 'music-wave-core' ),
+					'releaseFallback'    => __( 'انتشار #%d', 'music-wave-core' ),
 				),
 			)
 		);
@@ -165,14 +166,14 @@ final class PlaylistBlocks {
 	 */
 	public function render_manager( array $attributes ): string {
 		$user_id = get_current_user_id();
-		$heading = BlockSupport::text_attribute( $attributes, 'heading', __( 'Your playlists', 'music-wave-core' ) );
+		$heading = BlockSupport::text_attribute( $attributes, 'heading', __( 'فهرست‌های پخش شما', 'music-wave-core' ) );
 
 		if ( $user_id < 1 ) {
 			return '<section ' . BlockSupport::wrapper_attributes( 'mw-playlists mw-playlists--guest' ) . '>'
-				. '<div class="mw-playlists__guest"><span class="mw-playlists__eyebrow mw-playlists__eyebrow--guest"><span aria-hidden="true">♫</span> ' . esc_html__( 'Your playlists', 'music-wave-core' ) . '</span>'
+				. '<div class="mw-playlists__guest"><span class="mw-playlists__eyebrow mw-playlists__eyebrow--guest"><span aria-hidden="true">♫</span> ' . esc_html__( 'فهرست‌های پخش شما', 'music-wave-core' ) . '</span>'
 				. '<h2 class="mw-playlists__title">' . esc_html( $heading ) . '</h2>'
-				. '<p class="mw-playlists__guest-text">' . esc_html__( 'Sign in to build playlists from your catalog.', 'music-wave-core' ) . '</p>'
-				. '<a class="wp-element-button mw-playlists__guest-cta" href="' . esc_url( wp_login_url( BlockSupport::current_url() ) ) . '">' . esc_html__( 'Sign in', 'music-wave-core' ) . '</a></div>'
+				. '<p class="mw-playlists__guest-text">' . esc_html__( 'برای ایجاد فهرست پخش از کاتالوگ خود وارد سیستم شوید.', 'music-wave-core' ) . '</p>'
+				. '<a class="wp-element-button mw-playlists__guest-cta" href="' . esc_url( wp_login_url( BlockSupport::current_url() ) ) . '">' . esc_html__( 'وارد شوید', 'music-wave-core' ) . '</a></div>'
 				. '</section>';
 		}
 
@@ -186,17 +187,17 @@ final class PlaylistBlocks {
 		}
 
 		$body = array() === $rows
-			? '<div class="mw-playlists__empty-state"><div class="mw-playlists__empty-icon" aria-hidden="true">♫</div><p class="mw-playlists__empty">' . esc_html__( 'You have no playlists yet. Create your first one below.', 'music-wave-core' ) . '</p><p class="mw-playlists__empty-hint">' . esc_html__( 'Playlists are private to you and separate from your Music Library.', 'music-wave-core' ) . '</p></div>'
+			? '<div class="mw-playlists__empty-state"><div class="mw-playlists__empty-icon" aria-hidden="true">♫</div><p class="mw-playlists__empty">' . esc_html__( 'شما هنوز هیچ فهرست پخشی ندارید. اولین مورد خود را در زیر ایجاد کنید.', 'music-wave-core' ) . '</p><p class="mw-playlists__empty-hint">' . esc_html__( 'فهرست‌های پخش برای شما خصوصی هستند و از کتابخانه موسیقی شما جدا هستند.', 'music-wave-core' ) . '</p></div>'
 			: '<ul class="mw-playlists__list">' . implode( '', $rows ) . '</ul>';
 
 		$header = '<header class="mw-playlists__header">'
 			. '<div class="mw-playlists__heading">'
-			. '<span class="mw-playlists__eyebrow"><span class="mw-playlists__eyebrow-icon" aria-hidden="true">♫</span> ' . esc_html__( 'Personal playlists', 'music-wave-core' ) . ' <span class="mw-playlists__eyebrow-divider" aria-hidden="true">·</span> <span class="mw-playlists__eyebrow-sub">' . esc_html__( 'Separate from Music Library', 'music-wave-core' ) . '</span></span>'
+			. '<span class="mw-playlists__eyebrow"><span class="mw-playlists__eyebrow-icon" aria-hidden="true">♫</span> ' . esc_html__( 'فهرست‌های پخش شخصی', 'music-wave-core' ) . ' <span class="mw-playlists__eyebrow-divider" aria-hidden="true">·</span> <span class="mw-playlists__eyebrow-sub">' . esc_html__( 'جدا از کتابخانه موسیقی', 'music-wave-core' ) . '</span></span>'
 			. '<h2 class="mw-playlists__title">' . esc_html( $heading ) . '</h2>'
-			. '<p class="mw-playlists__intro">' . esc_html__( 'Create, order, and share your personal collections — separate from your Music Library. Play any playlist with one click.', 'music-wave-core' ) . '</p>'
+			. '<p class="mw-playlists__intro">' . esc_html__( 'مجموعه‌های شخصی خود را ایجاد کنید، سفارش دهید و به‌اشتراک بگذارید — جدا از کتابخانه موسیقی خود. هر فهرست پخش را با یک کلیک پخش کنید.', 'music-wave-core' ) . '</p>'
 			. '</div>'
 			/* translators: %d: number of playlists. */
-			. '<div class="mw-playlists__header-actions"><span class="mw-playlists__total" aria-label="' . esc_attr( sprintf( __( '%d playlists', 'music-wave-core' ), $total ) ) . '">' . esc_html( (string) $total ) . '<span class="mw-playlists__total-label"> ' . esc_html( /* translators: number of playlists. */ _n( 'playlist', 'playlists', $total, 'music-wave-core' ) ) . '</span></span></div>'
+			. '<div class="mw-playlists__header-actions"><span class="mw-playlists__total" aria-label="' . esc_attr( sprintf( __( 'فهرست‌های پخش %d', 'music-wave-core' ), $total ) ) . '">' . esc_html( (string) $total ) . '<span class="mw-playlists__total-label"> ' . esc_html( /* translators: number of playlists. */ _n( 'فهرست پخش', 'فهرست‌های پخش', $total, 'music-wave-core' ) ) . '</span></span></div>'
 			. '</header>';
 
 		return '<section ' . BlockSupport::wrapper_attributes( 'mw-playlists' ) . ' data-mw-playlists>'
@@ -217,14 +218,14 @@ final class PlaylistBlocks {
 	 */
 	public function render_public( array $attributes ): string {
 		$viewer_id    = get_current_user_id();
-		$heading      = BlockSupport::text_attribute( $attributes, 'heading', __( 'Community playlists', 'music-wave-core' ) );
-		$intro        = BlockSupport::text_attribute( $attributes, 'intro', __( 'Discover playlists curated by fellow listeners. Every public playlist can be played in one click.', 'music-wave-core' ) );
-		$eyebrow      = BlockSupport::text_attribute( $attributes, 'eyebrow', __( 'Community curations', 'music-wave-core' ) );
+		$heading      = BlockSupport::text_attribute( $attributes, 'heading', __( 'فهرست‌های پخش انجمن', 'music-wave-core' ) );
+		$intro        = BlockSupport::text_attribute( $attributes, 'intro', __( 'فهرست‌های پخش تنظیم‌شده توسط شنوندگان دیگر را کشف کنید. هر فهرست پخش عمومی را می‌توان با یک کلیک پخش کرد.', 'music-wave-core' ) );
+		$eyebrow      = BlockSupport::text_attribute( $attributes, 'eyebrow', __( 'سرپرستی انجمن', 'music-wave-core' ) );
 		$show_heading = ! isset( $attributes['showHeading'] ) || false !== $attributes['showHeading'];
 		$show_search  = ! isset( $attributes['showSearch'] ) || false !== $attributes['showSearch'];
 		$show_count   = ! isset( $attributes['showCount'] ) || false !== $attributes['showCount'];
-		$empty_msg    = BlockSupport::text_attribute( $attributes, 'emptyMessage', __( 'No public playlists yet. Be the first to share one!', 'music-wave-core' ) );
-		$placeholder  = BlockSupport::text_attribute( $attributes, 'searchPlaceholder', __( 'Search playlists…', 'music-wave-core' ) );
+		$empty_msg    = BlockSupport::text_attribute( $attributes, 'emptyMessage', __( 'هنوز فهرست پخش عمومی وجود ندارد. اولین نفری باشید که یکی را به اشتراک می‌گذارد!', 'music-wave-core' ) );
+		$placeholder  = BlockSupport::text_attribute( $attributes, 'searchPlaceholder', __( 'جست‌وجو در فهرست‌های پخش…', 'music-wave-core' ) );
 
 		// Card display options shared by server markup and the JS renderer.
 		$card_options = array(
@@ -256,7 +257,7 @@ final class PlaylistBlocks {
 
 		// Section header link, mirroring the release-shelf "See all" affordance.
 		$section_url = isset( $attributes['sectionUrl'] ) && is_scalar( $attributes['sectionUrl'] ) ? esc_url_raw( (string) $attributes['sectionUrl'] ) : '';
-		$more_label  = BlockSupport::text_attribute( $attributes, 'sectionLinkLabel', __( 'See all playlists', 'music-wave-core' ) );
+		$more_label  = BlockSupport::text_attribute( $attributes, 'sectionLinkLabel', __( 'مشاهدهٔ همهٔ فهرست‌های پخش', 'music-wave-core' ) );
 
 		// Read search & pagination from public query string (no nonce needed, read-only).
 		$search = '';
@@ -288,7 +289,7 @@ final class PlaylistBlocks {
 
 		$header_actions = '';
 		if ( $show_count && $total > 0 ) {
-			$header_actions .= '<span class="mw-public-playlists__total" aria-label="' . esc_attr( sprintf( /* translators: %d: number of public playlists. */ __( '%d public playlists', 'music-wave-core' ), $total ) ) . '">' . esc_html( (string) $total ) . '</span>';
+			$header_actions .= '<span class="mw-public-playlists__total" aria-label="' . esc_attr( sprintf( /* translators: %d: number of public playlists. */ __( 'فهرست‌های پخش عمومی %d', 'music-wave-core' ), $total ) ) . '">' . esc_html( (string) $total ) . '</span>';
 		}
 		if ( '' !== $section_url ) {
 			$header_actions .= '<a class="mw-public-playlists__more" href="' . esc_url( $section_url ) . '">' . esc_html( $more_label ) . '<span aria-hidden="true">&rarr;</span></a>';
@@ -308,11 +309,11 @@ final class PlaylistBlocks {
 
 		$toolbar = '';
 		if ( $show_search ) {
-			$toolbar = '<form class="mw-public-playlists__toolbar" method="get" action="' . esc_url( remove_query_arg( array( 'mw-playlist', 'mw-playlists-page' ) ) ) . '" role="search" aria-label="' . esc_attr__( 'Search public playlists', 'music-wave-core' ) . '" data-mw-public-search-form data-orderby="' . esc_attr( $orderby ) . '" data-per-page="' . esc_attr( (string) $items_to_show ) . '">'
-				. '<label class="screen-reader-text" for="mw-playlist-search">' . esc_html__( 'Search playlists', 'music-wave-core' ) . '</label>'
+			$toolbar = '<form class="mw-public-playlists__toolbar" method="get" action="' . esc_url( remove_query_arg( array( 'mw-playlist', 'mw-playlists-page' ) ) ) . '" role="search" aria-label="' . esc_attr__( 'فهرست‌های پخش عمومی را جست‌وجو', 'music-wave-core' ) . '" data-mw-public-search-form data-orderby="' . esc_attr( $orderby ) . '" data-per-page="' . esc_attr( (string) $items_to_show ) . '">'
+				. '<label class="screen-reader-text" for="mw-playlist-search">' . esc_html__( 'جست‌وجو در فهرست‌های پخش', 'music-wave-core' ) . '</label>'
 				. '<input id="mw-playlist-search" type="search" name="mw-playlist-search" value="' . esc_attr( $search ) . '" placeholder="' . esc_attr( $placeholder ) . '" maxlength="60" data-mw-public-search-input autocomplete="off" spellcheck="false">'
-				. '<button type="submit">' . esc_html__( 'Search', 'music-wave-core' ) . '</button>'
-				. ( '' !== $search ? '<a class="mw-public-playlists__reset" href="' . esc_url( remove_query_arg( array( 'mw-playlist-search', 'mw-playlists-page' ) ) ) . '" data-mw-public-clear>' . esc_html__( 'Clear', 'music-wave-core' ) . '</a>' : '' )
+				. '<button type="submit">' . esc_html__( 'جست‌وجو', 'music-wave-core' ) . '</button>'
+				. ( '' !== $search ? '<a class="mw-public-playlists__reset" href="' . esc_url( remove_query_arg( array( 'mw-playlist-search', 'mw-playlists-page' ) ) ) . '" data-mw-public-clear>' . esc_html__( 'پاک کردن', 'music-wave-core' ) . '</a>' : '' )
 				. '<span class="mw-public-playlists__live" role="status" aria-live="polite" aria-atomic="true" data-mw-public-live></span>'
 				. '</form>';
 			// Preserve other query args? Keep it simple.
@@ -321,7 +322,7 @@ final class PlaylistBlocks {
 		if ( array() === $playlists ) {
 			$body = '<div class="mw-public-playlists__empty"><p>' . esc_html( $empty_msg ) . '</p>';
 			if ( '' !== $search ) {
-				$body .= '<p><a href="' . esc_url( remove_query_arg( 'mw-playlist-search' ) ) . '">' . esc_html__( 'Clear search', 'music-wave-core' ) . '</a></p>';
+				$body .= '<p><a href="' . esc_url( remove_query_arg( 'mw-playlist-search' ) ) . '">' . esc_html__( 'پاک کردن جست‌وجو', 'music-wave-core' ) . '</a></p>';
 			}
 			$body .= '</div>';
 
@@ -380,12 +381,12 @@ final class PlaylistBlocks {
 		// Public playlists never expose share_token; play uses public queue.
 		$play_button = '';
 		if ( ! empty( $options['showPlayButton'] ) ) {
-			$play_button = '<button type="button" class="mw-public-playlists__play" data-mw-playlist-play data-playlist-id="' . esc_attr( (string) $playlist_id ) . '" aria-label="' . esc_attr( sprintf( /* translators: %s: playlist title. */ __( 'Play all tracks in %s', 'music-wave-core' ), $title ) ) . '"' . ( 0 === $count ? ' disabled aria-disabled="true"' : '' ) . '><span aria-hidden="true">▶</span><span>' . esc_html__( 'Play all', 'music-wave-core' ) . '</span><span class="mw-public-playlists__play-count" aria-hidden="true">' . esc_html( (string) $count ) . '</span></button>';
+			$play_button = '<button type="button" class="mw-public-playlists__play" data-mw-playlist-play data-playlist-id="' . esc_attr( (string) $playlist_id ) . '" aria-label="' . esc_attr( sprintf( /* translators: %s: playlist title. */ __( 'پخش تمام قطعه‌ها در %s', 'music-wave-core' ), $title ) ) . '"' . ( 0 === $count ? ' disabled aria-disabled="true"' : '' ) . '><span aria-hidden="true">▶</span><span>' . esc_html__( 'پخش همه', 'music-wave-core' ) . '</span><span class="mw-public-playlists__play-count" aria-hidden="true">' . esc_html( (string) $count ) . '</span></button>';
 		}
 
 		$toggle = '';
 		if ( ! empty( $options['showToggle'] ) ) {
-			$toggle = '<a class="mw-public-playlists__toggle" href="' . esc_url( add_query_arg( array( 'mw-playlist' => (string) $playlist_id ), remove_query_arg( array( 'mw-playlists-page', 'mw-playlist-search' ), BlockSupport::current_url() ) ) . '#' . $panel_id ) . '" aria-expanded="' . ( $expanded ? 'true' : 'false' ) . '" aria-controls="' . esc_attr( $panel_id ) . '" data-mw-public-toggle data-playlist-id="' . esc_attr( (string) $playlist_id ) . '">' . esc_html( $expanded ? __( 'Hide tracks', 'music-wave-core' ) : __( 'Show tracks', 'music-wave-core' ) ) . '</a>';
+			$toggle = '<a class="mw-public-playlists__toggle" href="' . esc_url( add_query_arg( array( 'mw-playlist' => (string) $playlist_id ), remove_query_arg( array( 'mw-playlists-page', 'mw-playlist-search' ), BlockSupport::current_url() ) ) . '#' . $panel_id ) . '" aria-expanded="' . ( $expanded ? 'true' : 'false' ) . '" aria-controls="' . esc_attr( $panel_id ) . '" data-mw-public-toggle data-playlist-id="' . esc_attr( (string) $playlist_id ) . '">' . esc_html( $expanded ? __( 'مخفی کردن قطعه‌ها', 'music-wave-core' ) : __( 'نمایش قطعه‌ها', 'music-wave-core' ) ) . '</a>';
 		}
 
 		$meta       = '<p class="mw-public-playlists__meta">';
@@ -393,7 +394,7 @@ final class PlaylistBlocks {
 		if ( $has_author ) {
 			$meta .= '<span class="mw-public-playlists__author">' . esc_html( $author ) . '</span><span class="mw-public-playlists__dot" aria-hidden="true">·</span>';
 		}
-		$meta .= '<span class="mw-public-playlists__count">' . esc_html( sprintf( /* translators: %d: number of releases. */ _n( '%d track', '%d tracks', $count, 'music-wave-core' ), $count ) ) . '</span>';
+		$meta .= '<span class="mw-public-playlists__count">' . esc_html( sprintf( /* translators: %d: number of releases. */ _n( '%d قطعه', '%d قطعه', $count, 'music-wave-core' ), $count ) ) . '</span>';
 		if ( ! empty( $options['showUpdated'] ) && $updated > 0 ) {
 			$meta .= '<span class="mw-public-playlists__dot" aria-hidden="true">·</span><time datetime="' . esc_attr( gmdate( 'c', $updated ) ) . '">' . esc_html( $this->human_time_diff( $updated ) ) . '</time>';
 		}
@@ -421,18 +422,18 @@ final class PlaylistBlocks {
 	private function public_tracks_markup( int $playlist_id, array $view ): string {
 		$items = isset( $view['items'] ) && is_array( $view['items'] ) ? $view['items'] : array();
 		if ( array() === $items ) {
-			return '<p class="mw-public-playlists__empty">' . esc_html__( 'This playlist is empty.', 'music-wave-core' ) . '</p>';
+			return '<p class="mw-public-playlists__empty">' . esc_html__( 'این فهرست پخش خالی است.', 'music-wave-core' ) . '</p>';
 		}
 		$rows = array();
 		foreach ( $items as $index => $item ) {
 			$release_id = (int) $item['release_id'];
 			$title      = get_the_title( $release_id );
-			$title      = '' !== $title ? $title : __( 'Untitled release', 'music-wave-core' );
+			$title      = '' !== $title ? $title : __( 'انتشار بدون عنوان', 'music-wave-core' );
 			$link       = get_permalink( $release_id );
 			$art        = get_the_post_thumbnail_url( $release_id, 'thumbnail' );
 			$art_markup = is_string( $art ) && '' !== $art ? '<img src="' . esc_url( $art ) . '" alt="" loading="lazy">' : '<span class="mw-public-playlists__track-fallback" aria-hidden="true">' . esc_html( mb_substr( $title, 0, 1 ) ) . '</span>';
 			/* translators: %s: release title. */
-			$rows[] = '<div class="mw-public-playlists__track"><span class="mw-public-playlists__position">' . esc_html( (string) ( $index + 1 ) ) . '</span><span class="mw-public-playlists__track-art">' . $art_markup . '</span><span class="mw-public-playlists__track-title">' . ( is_string( $link ) && '' !== $link ? '<a href="' . esc_url( $link ) . '">' . esc_html( $title ) . '</a>' : esc_html( $title ) ) . '</span><button type="button" class="mw-public-playlists__track-play mw-card-play" data-mw-release-id="' . esc_attr( (string) $release_id ) . '" aria-label="' . esc_attr( sprintf( __( 'Play %s', 'music-wave-core' ), $title ) ) . '"><span aria-hidden="true">▶</span></button></div>';
+			$rows[] = '<div class="mw-public-playlists__track"><span class="mw-public-playlists__position">' . esc_html( (string) ( $index + 1 ) ) . '</span><span class="mw-public-playlists__track-art">' . $art_markup . '</span><span class="mw-public-playlists__track-title">' . ( is_string( $link ) && '' !== $link ? '<a href="' . esc_url( $link ) . '">' . esc_html( $title ) . '</a>' : esc_html( $title ) ) . '</span><button type="button" class="mw-public-playlists__track-play mw-card-play" data-mw-release-id="' . esc_attr( (string) $release_id ) . '" aria-label="' . esc_attr( sprintf( __( 'پخش %s', 'music-wave-core' ), $title ) ) . '"><span aria-hidden="true">▶</span></button></div>';
 		}
 
 		return '<div class="mw-public-playlists__tracks-list">' . implode( '', $rows ) . '</div>';
@@ -456,24 +457,24 @@ final class PlaylistBlocks {
 			}
 		}
 		/* translators: 1: current page, 2: total pages. */
-		$label = sprintf( __( 'Public playlists page %1$d of %2$d', 'music-wave-core' ), $page, $pages );
+		$label = sprintf( __( 'صفحه فهرست‌های پخش عمومی %1$d از %2$d', 'music-wave-core' ), $page, $pages );
 
-		return '<nav class="mw-public-playlists__pagination" aria-label="' . esc_attr__( 'Public playlists pages', 'music-wave-core' ) . '"><span class="screen-reader-text">' . esc_html( $label ) . '</span>' . implode( '', $links ) . '</nav>';
+		return '<nav class="mw-public-playlists__pagination" aria-label="' . esc_attr__( 'صفحات فهرست پخش عمومی', 'music-wave-core' ) . '"><span class="screen-reader-text">' . esc_html( $label ) . '</span>' . implode( '', $links ) . '</nav>';
 	}
 
 	private function human_time_diff( int $timestamp ): string {
 		$diff = time() - $timestamp;
 		if ( $diff < 60 ) {
-			return __( 'Just now', 'music-wave-core' );
+			return __( 'همین الان', 'music-wave-core' );
 		}
 		if ( $diff < 3600 ) {
-			return sprintf( /* translators: %d: minutes. */ _n( '%d minute ago', '%d minutes ago', (int) floor( $diff / 60 ), 'music-wave-core' ), (int) floor( $diff / 60 ) );
+			return sprintf( /* translators: %d: minutes. */ _n( '%d دقیقه پیش', '%d دقیقه پیش', (int) floor( $diff / 60 ), 'music-wave-core' ), (int) floor( $diff / 60 ) );
 		}
 		if ( $diff < 86400 ) {
-			return sprintf( /* translators: %d: hours. */ _n( '%d hour ago', '%d hours ago', (int) floor( $diff / 3600 ), 'music-wave-core' ), (int) floor( $diff / 3600 ) );
+			return sprintf( /* translators: %d: hours. */ _n( '%d ساعت قبل', '%d ساعت پیش', (int) floor( $diff / 3600 ), 'music-wave-core' ), (int) floor( $diff / 3600 ) );
 		}
 		if ( $diff < 30 * 86400 ) {
-			return sprintf( /* translators: %d: days. */ _n( '%d day ago', '%d days ago', (int) floor( $diff / 86400 ), 'music-wave-core' ), (int) floor( $diff / 86400 ) );
+			return sprintf( /* translators: %d: days. */ _n( '%d روز پیش', '%d روز پیش', (int) floor( $diff / 86400 ), 'music-wave-core' ), (int) floor( $diff / 86400 ) );
 		}
 
 		return gmdate( 'Y-m-d', $timestamp );
@@ -499,9 +500,9 @@ final class PlaylistBlocks {
 		$page_id = wp_insert_post(
 			array(
 				'post_type'    => 'page',
-				'post_title'   => __( 'Playlists', 'music-wave-core' ),
+				'post_title'   => __( 'فهرست‌های پخش', 'music-wave-core' ),
 				'post_name'    => 'playlists',
-				'post_content' => '<!-- wp:music-wave/public-playlists {"heading":"Community playlists","itemsToShow":12,"columns":3} /-->',
+				'post_content' => '<!-- wp:music-wave/public-playlists {"heading":"فهرست‌های پخش عمومی","itemsToShow":12,"columns":3} /-->',
 				'post_status'  => 'publish',
 			)
 		);
@@ -523,7 +524,7 @@ final class PlaylistBlocks {
 		}
 
 		$user_id = get_current_user_id();
-		$label   = BlockSupport::text_attribute( $attributes, 'label', __( 'Add to playlist', 'music-wave-core' ) );
+		$label   = BlockSupport::text_attribute( $attributes, 'label', __( 'افزودن به فهرست پخش', 'music-wave-core' ) );
 		if ( $user_id < 1 ) {
 			return '<div ' . BlockSupport::wrapper_attributes( 'mw-playlist-picker mw-playlist-picker--guest' ) . '>'
 				. '<a class="wp-element-button mw-playlist-picker__guest-cta" href="' . esc_url( wp_login_url( BlockSupport::current_url() ) ) . '">' . esc_html( $label ) . '</a>'
@@ -538,23 +539,23 @@ final class PlaylistBlocks {
 		if ( array() === $playlists ) {
 			// No playlists yet: inline create panel + fallback form.
 			$panel_id = 'mw-playlist-picker-panel-' . $release_id;
-			$trigger  = '<button type="button" class="mw-playlist-picker__trigger" aria-expanded="false" aria-controls="' . esc_attr( $panel_id ) . '" aria-haspopup="dialog" data-mw-picker-trigger><span class="mw-playlist-picker__trigger-icon" aria-hidden="true">+</span><span>' . esc_html( $label ) . '</span></button>';
+			$trigger  = '<button type="button" class="mw-playlist-picker__trigger" aria-expanded="false" aria-controls="' . esc_attr( $panel_id ) . '" aria-haspopup="dialog" data-mw-picker-trigger><span class="mw-playlist-picker__trigger-icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" focusable="false" aria-hidden="true"><rect x="3" y="3" width="14" height="14" rx="2"></rect><path d="M7 7h6"></path><path d="M7 11h6"></path><path d="M7 15h4"></path><path d="M18 14v6"></path><path d="M15 17h6"></path></svg></span><span>' . esc_html( $label ) . '</span></button>';
 
-			$js_panel = '<div id="' . esc_attr( $panel_id ) . '" class="mw-playlist-picker__panel" hidden role="dialog" aria-label="' . esc_attr__( 'Create playlist', 'music-wave-core' ) . '" data-mw-picker-panel>'
-				. '<div class="mw-playlist-picker__panel-header"><strong>' . esc_html__( 'Create your first playlist', 'music-wave-core' ) . '</strong><button type="button" class="mw-playlist-picker__close" aria-label="' . esc_attr__( 'Close', 'music-wave-core' ) . '" data-mw-picker-close>×</button></div>'
-				. '<p class="mw-playlist-picker__hint">' . esc_html__( 'Pick a name and we’ll add this release for you.', 'music-wave-core' ) . '</p>'
+			$js_panel = '<div id="' . esc_attr( $panel_id ) . '" class="mw-playlist-picker__panel" hidden role="dialog" aria-label="' . esc_attr__( 'ایجاد فهرست پخش', 'music-wave-core' ) . '" data-mw-picker-panel>'
+				. '<div class="mw-playlist-picker__panel-header"><strong>' . esc_html__( 'اولین فهرست پخش خود را بسازید', 'music-wave-core' ) . '</strong><button type="button" class="mw-playlist-picker__close" aria-label="' . esc_attr__( 'بستن', 'music-wave-core' ) . '" data-mw-picker-close>×</button></div>'
+				. '<p class="mw-playlist-picker__hint">' . esc_html__( 'نامی‌انتخاب کنید تا این انتشار را برای شما اضافه کنیم.', 'music-wave-core' ) . '</p>'
 				. '<form class="mw-playlist-picker__create mw-playlist-picker__create--js" data-mw-picker-create data-release-id="' . esc_attr( (string) $release_id ) . '">'
-				. '<label for="' . esc_attr( $field_id ) . '-js">' . esc_html__( 'New playlist name', 'music-wave-core' ) . '</label>'
-				. '<div class="mw-playlist-picker__create-row"><input id="' . esc_attr( $field_id ) . '-js" type="text" maxlength="' . esc_attr( (string) PlaylistRepository::MAX_TITLE ) . '" required placeholder="' . esc_attr__( 'e.g. Late night drives', 'music-wave-core' ) . '"><button type="submit">' . esc_html__( 'Create & add', 'music-wave-core' ) . '</button></div>'
+				. '<label for="' . esc_attr( $field_id ) . '-js">' . esc_html__( 'نام فهرست پخش جدید', 'music-wave-core' ) . '</label>'
+				. '<div class="mw-playlist-picker__create-row"><input id="' . esc_attr( $field_id ) . '-js" type="text" maxlength="' . esc_attr( (string) PlaylistRepository::MAX_TITLE ) . '" required placeholder="' . esc_attr__( 'به عنوان مثال رانندگی در اواخر شب', 'music-wave-core' ) . '"><button type="submit">' . esc_html__( 'ایجاد و اضافه کردن', 'music-wave-core' ) . '</button></div>'
 				. '</form>'
 				. '<div class="mw-playlist-picker__status" role="status" aria-live="polite" data-mw-picker-status></div>'
 				. '</div>';
 
 			$fallback = '<form class="mw-playlist-picker__form mw-playlist-picker__form--fallback" method="post" action="' . esc_url( admin_url( 'admin-post.php' ) ) . '">'
 				. $this->hidden_fields( 'create' )
-				. '<label for="' . esc_attr( $field_id ) . '">' . esc_html__( 'New playlist name', 'music-wave-core' ) . '</label>'
+				. '<label for="' . esc_attr( $field_id ) . '">' . esc_html__( 'نام فهرست پخش جدید', 'music-wave-core' ) . '</label>'
 				. '<input id="' . esc_attr( $field_id ) . '" type="text" name="mw_title" maxlength="' . esc_attr( (string) PlaylistRepository::MAX_TITLE ) . '" required>'
-				. '<button type="submit">' . esc_html__( 'Create playlist', 'music-wave-core' ) . '</button>'
+				. '<button type="submit">' . esc_html__( 'ایجاد فهرست پخش', 'music-wave-core' ) . '</button>'
 				. '</form>';
 
 			return '<div ' . BlockSupport::wrapper_attributes( 'mw-playlist-picker' ) . ' data-mw-playlist-picker data-release-id="' . esc_attr( (string) $release_id ) . '">'
@@ -572,7 +573,7 @@ final class PlaylistBlocks {
 		}
 
 		$panel_id = 'mw-playlist-picker-panel-' . $release_id;
-		$trigger  = '<button type="button" class="mw-playlist-picker__trigger" aria-expanded="false" aria-controls="' . esc_attr( $panel_id ) . '" aria-haspopup="dialog" data-mw-picker-trigger><span class="mw-playlist-picker__trigger-icon" aria-hidden="true">+</span><span>' . esc_html( $label ) . '</span><span class="mw-playlist-picker__trigger-count" aria-hidden="true">' . esc_html( (string) count( $playlists ) ) . '</span></button>';
+		$trigger  = '<button type="button" class="mw-playlist-picker__trigger" aria-expanded="false" aria-controls="' . esc_attr( $panel_id ) . '" aria-haspopup="dialog" data-mw-picker-trigger><span class="mw-playlist-picker__trigger-icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" focusable="false" aria-hidden="true"><rect x="3" y="3" width="14" height="14" rx="2"></rect><path d="M7 7h6"></path><path d="M7 11h6"></path><path d="M7 15h4"></path><path d="M18 14v6"></path><path d="M15 17h6"></path></svg></span><span>' . esc_html( $label ) . '</span><span class="mw-playlist-picker__trigger-count" aria-hidden="true">' . esc_html( (string) count( $playlists ) ) . '</span></button>';
 
 		$js_options = '';
 		foreach ( $playlists as $playlist ) {
@@ -580,16 +581,16 @@ final class PlaylistBlocks {
 			$title = (string) $playlist['title'];
 			$count = isset( $playlist['count'] ) ? (int) $playlist['count'] : 0;
 			/* translators: %d: number of tracks in playlist. */
-			$js_options .= '<button type="button" class="mw-playlist-picker__option" role="option" aria-selected="false" data-mw-picker-option data-playlist-id="' . esc_attr( (string) $pid ) . '"><span class="mw-playlist-picker__option-title">' . esc_html( $title ) . '</span><span class="mw-playlist-picker__option-meta">' . esc_html( sprintf( _n( '%d track', '%d tracks', $count, 'music-wave-core' ), $count ) ) . '</span><span class="mw-playlist-picker__option-check" aria-hidden="true">✓</span></button>';
+			$js_options .= '<button type="button" class="mw-playlist-picker__option" role="option" aria-selected="false" data-mw-picker-option data-playlist-id="' . esc_attr( (string) $pid ) . '"><span class="mw-playlist-picker__option-title">' . esc_html( $title ) . '</span><span class="mw-playlist-picker__option-meta">' . esc_html( sprintf( _n( '%d قطعه', '%d قطعه', $count, 'music-wave-core' ), $count ) ) . '</span><span class="mw-playlist-picker__option-check" aria-hidden="true">✓</span></button>';
 		}
 
 		$js_panel = '<div id="' . esc_attr( $panel_id ) . '" class="mw-playlist-picker__panel" hidden role="dialog" aria-label="' . esc_attr( $label ) . '" data-mw-picker-panel>'
-			. '<div class="mw-playlist-picker__panel-header"><strong>' . esc_html( $label ) . '</strong><button type="button" class="mw-playlist-picker__close" aria-label="' . esc_attr__( 'Close', 'music-wave-core' ) . '" data-mw-picker-close>×</button></div>'
-			. '<div class="mw-playlist-picker__options" role="listbox" aria-label="' . esc_attr__( 'Your playlists', 'music-wave-core' ) . '" data-mw-picker-options>' . $js_options . '</div>'
-			. '<div class="mw-playlist-picker__divider"><span>' . esc_html__( 'or', 'music-wave-core' ) . '</span></div>'
+			. '<div class="mw-playlist-picker__panel-header"><strong>' . esc_html( $label ) . '</strong><button type="button" class="mw-playlist-picker__close" aria-label="' . esc_attr__( 'بستن', 'music-wave-core' ) . '" data-mw-picker-close>×</button></div>'
+			. '<div class="mw-playlist-picker__options" role="listbox" aria-label="' . esc_attr__( 'فهرست‌های پخش شما', 'music-wave-core' ) . '" data-mw-picker-options>' . $js_options . '</div>'
+			. '<div class="mw-playlist-picker__divider"><span>' . esc_html__( 'یا', 'music-wave-core' ) . '</span></div>'
 			. '<form class="mw-playlist-picker__create mw-playlist-picker__create--js" data-mw-picker-create data-release-id="' . esc_attr( (string) $release_id ) . '">'
-			. '<label for="' . esc_attr( $field_id ) . '-js">' . esc_html__( 'New playlist name', 'music-wave-core' ) . '</label>'
-			. '<div class="mw-playlist-picker__create-row"><input id="' . esc_attr( $field_id ) . '-js" type="text" maxlength="' . esc_attr( (string) PlaylistRepository::MAX_TITLE ) . '" placeholder="' . esc_attr__( 'New playlist…', 'music-wave-core' ) . '" required><button type="submit">' . esc_html__( 'Create & add', 'music-wave-core' ) . '</button></div>'
+			. '<label for="' . esc_attr( $field_id ) . '-js">' . esc_html__( 'نام فهرست پخش جدید', 'music-wave-core' ) . '</label>'
+			. '<div class="mw-playlist-picker__create-row"><input id="' . esc_attr( $field_id ) . '-js" type="text" maxlength="' . esc_attr( (string) PlaylistRepository::MAX_TITLE ) . '" placeholder="' . esc_attr__( 'فهرست پخش جدید…', 'music-wave-core' ) . '" required><button type="submit">' . esc_html__( 'ایجاد و اضافه کردن', 'music-wave-core' ) . '</button></div>'
 			. '</form>'
 			. '<div class="mw-playlist-picker__status" role="status" aria-live="polite" data-mw-picker-status></div>'
 			. '</div>';
@@ -599,7 +600,7 @@ final class PlaylistBlocks {
 			. '<input type="hidden" name="mw_release_id" value="' . esc_attr( (string) $release_id ) . '">'
 			. '<label for="' . esc_attr( $field_id ) . '">' . esc_html( $label ) . '</label>'
 			. '<select id="' . esc_attr( $field_id ) . '" name="mw_playlist_id">' . $options . '</select>'
-			. '<button type="submit">' . esc_html__( 'Add', 'music-wave-core' ) . '</button>'
+			. '<button type="submit">' . esc_html__( 'افزودن', 'music-wave-core' ) . '</button>'
 			. '</form>';
 
 		return '<div ' . BlockSupport::wrapper_attributes( 'mw-playlist-picker' ) . ' data-mw-playlist-picker data-release-id="' . esc_attr( (string) $release_id ) . '">'
@@ -630,7 +631,7 @@ final class PlaylistBlocks {
 		}
 
 		$toggle = '<a class="mw-playlists__toggle" href="' . esc_url( $this->playlist_url( $expanded ? 0 : $playlist_id ) ) . '#' . esc_attr( $panel_id ) . '" aria-expanded="' . ( $expanded ? 'true' : 'false' ) . '" aria-controls="' . esc_attr( $panel_id ) . '">'
-			. esc_html( $expanded ? __( 'Hide tracks', 'music-wave-core' ) : __( 'Show tracks', 'music-wave-core' ) )
+			. esc_html( $expanded ? __( 'مخفی کردن قطعه‌ها', 'music-wave-core' ) : __( 'نمایش قطعه‌ها', 'music-wave-core' ) )
 			. '</a>';
 
 		$covers      = $this->playlist_covers_markup( $playlist, $user_id );
@@ -647,7 +648,7 @@ final class PlaylistBlocks {
 			. '<span class="mw-playlists__count" data-mw-playlist-count="' . esc_attr( (string) $playlist_id ) . '">' . esc_html(
 				sprintf(
 					/* translators: %d: number of releases in the playlist. */
-					_n( '%d release', '%d releases', $count, 'music-wave-core' ),
+					_n( '%d انتشار', '%d انتشار', $count, 'music-wave-core' ),
 					$count
 				)
 			) . '</span>'
@@ -716,13 +717,13 @@ final class PlaylistBlocks {
 		$disabled    = 0 === $count ? ' disabled aria-disabled="true"' : '';
 		$label       = sprintf(
 			/* translators: %s: playlist title. */
-			__( 'Play all tracks in %s', 'music-wave-core' ),
+			__( 'پخش تمام قطعه‌ها در %s', 'music-wave-core' ),
 			$title
 		);
 
 		return '<button type="button" class="mw-playlists__play-all" data-mw-playlist-play data-playlist-id="' . esc_attr( (string) $playlist_id ) . '" data-mw-share="' . esc_attr( $share ) . '" aria-label="' . esc_attr( $label ) . '"' . $disabled . '>'
 			. '<span class="mw-playlists__play-icon" aria-hidden="true">▶</span>'
-			. '<span class="mw-playlists__play-label">' . esc_html__( 'Play all', 'music-wave-core' ) . '</span>'
+			. '<span class="mw-playlists__play-label">' . esc_html__( 'پخش همه', 'music-wave-core' ) . '</span>'
 			. '<span class="mw-playlists__play-count" aria-hidden="true">' . esc_html( (string) $count ) . '</span>'
 			. '</button>';
 	}
@@ -735,7 +736,7 @@ final class PlaylistBlocks {
 	private function items_markup( int $playlist_id, array $view ): string {
 		$items = isset( $view['items'] ) && is_array( $view['items'] ) ? $view['items'] : array();
 		if ( array() === $items ) {
-			return '<p class="mw-playlists__empty">' . esc_html__( 'This playlist is empty. Use “Add to playlist” on any release.', 'music-wave-core' ) . '</p>';
+			return '<p class="mw-playlists__empty">' . esc_html__( 'این فهرست پخش خالی است. در هر انتشار از «افزودن به فهرست پخش» استفاده کنید.', 'music-wave-core' ) . '</p>';
 		}
 
 		$total = count( $items );
@@ -743,7 +744,7 @@ final class PlaylistBlocks {
 		foreach ( $items as $index => $item ) {
 			$release_id = (int) $item['release_id'];
 			$title      = get_the_title( $release_id );
-			$title      = '' !== $title ? $title : __( 'Untitled release', 'music-wave-core' );
+			$title      = '' !== $title ? $title : __( 'انتشار بدون عنوان', 'music-wave-core' );
 			$permalink  = get_permalink( $release_id );
 
 			$thumb = get_the_post_thumbnail_url( $release_id, 'thumbnail' );
@@ -753,12 +754,12 @@ final class PlaylistBlocks {
 
 			$controls = '';
 			if ( $index > 0 ) {
-				$controls .= $this->item_button( $playlist_id, $release_id, 'move-up', __( 'Move up', 'music-wave-core' ), $title );
+				$controls .= $this->item_button( $playlist_id, $release_id, 'move-up', __( 'حرکت به بالا', 'music-wave-core' ), $title );
 			}
 			if ( $index < $total - 1 ) {
-				$controls .= $this->item_button( $playlist_id, $release_id, 'move-down', __( 'Move down', 'music-wave-core' ), $title );
+				$controls .= $this->item_button( $playlist_id, $release_id, 'move-down', __( 'حرکت به پایین', 'music-wave-core' ), $title );
 			}
-			$controls .= $this->item_button( $playlist_id, $release_id, 'remove-item', __( 'Remove', 'music-wave-core' ), $title );
+			$controls .= $this->item_button( $playlist_id, $release_id, 'remove-item', __( 'حذف', 'music-wave-core' ), $title );
 
 			$rows[] = '<li class="mw-playlists__track" data-mw-playlist-track="' . esc_attr( (string) $release_id ) . '">'
 				. '<span class="mw-playlists__position" aria-hidden="true">' . esc_html( (string) ( (int) $index + 1 ) ) . '</span>'
@@ -809,21 +810,21 @@ final class PlaylistBlocks {
 		return '<form class="mw-playlists__settings" method="post" action="' . esc_url( admin_url( 'admin-post.php' ) ) . '" data-mw-playlist-action="update">'
 			. $this->hidden_fields( 'update' )
 			. '<input type="hidden" name="mw_playlist_id" value="' . esc_attr( (string) $playlist_id ) . '">'
-			. '<label for="' . esc_attr( $title_id ) . '">' . esc_html__( 'Playlist name', 'music-wave-core' ) . '</label>'
+			. '<label for="' . esc_attr( $title_id ) . '">' . esc_html__( 'نام فهرست پخش', 'music-wave-core' ) . '</label>'
 			. '<input id="' . esc_attr( $title_id ) . '" type="text" name="mw_title" value="' . esc_attr( (string) $playlist['title'] ) . '" maxlength="' . esc_attr( (string) PlaylistRepository::MAX_TITLE ) . '">'
-			. '<label for="' . esc_attr( $vis_id ) . '">' . esc_html__( 'Who can see it', 'music-wave-core' ) . '</label>'
+			. '<label for="' . esc_attr( $vis_id ) . '">' . esc_html__( 'چه کسی می‌تواند آن را ببیند', 'music-wave-core' ) . '</label>'
 			. '<select id="' . esc_attr( $vis_id ) . '" name="mw_visibility">' . $options . '</select>'
-			. '<button type="submit">' . esc_html__( 'Save', 'music-wave-core' ) . '</button>'
+			. '<button type="submit">' . esc_html__( 'ذخیره', 'music-wave-core' ) . '</button>'
 			. '</form>'
 			. '<form class="mw-playlists__delete" method="post" action="' . esc_url( admin_url( 'admin-post.php' ) ) . '" data-mw-playlist-action="delete">'
 			. $this->hidden_fields( 'delete' )
 			. '<input type="hidden" name="mw_playlist_id" value="' . esc_attr( (string) $playlist_id ) . '">'
 			. '<button type="submit">'
-			. '<span aria-hidden="true">' . esc_html__( 'Delete', 'music-wave-core' ) . '</span>'
+			. '<span aria-hidden="true">' . esc_html__( 'حذف', 'music-wave-core' ) . '</span>'
 			. '<span class="screen-reader-text">' . esc_html(
 				sprintf(
 					/* translators: %s: playlist name. */
-					__( 'Delete playlist: %s', 'music-wave-core' ),
+					__( 'حذف فهرست پخش: %s', 'music-wave-core' ),
 					(string) $playlist['title']
 				)
 			) . '</span>'
@@ -850,9 +851,9 @@ final class PlaylistBlocks {
 			BlockSupport::current_url()
 		);
 
-		return '<p class="mw-playlists__share"><label>' . esc_html__( 'Share link', 'music-wave-core' )
+		return '<p class="mw-playlists__share"><label>' . esc_html__( 'پیوند را به‌اشتراک بگذارید', 'music-wave-core' )
 			. '<input type="text" readonly value="' . esc_attr( $url ) . '" spellcheck="false"></label>'
-			. '<span class="mw-playlists__share-hint">' . esc_html__( 'Anyone with this link can open the playlist. Switch the playlist back to private to revoke it.', 'music-wave-core' ) . '</span></p>';
+			. '<span class="mw-playlists__share-hint">' . esc_html__( 'هر کسی که این پیوند را داشته باشد می‌تواند فهرست پخش را باز کند. فهرست پخش را به حالت خصوصی برگردانید تا آن را لغو کنید.', 'music-wave-core' ) . '</span></p>';
 	}
 
 	/**
@@ -861,9 +862,9 @@ final class PlaylistBlocks {
 	private function create_form(): string {
 		return '<form class="mw-playlists__create" method="post" action="' . esc_url( admin_url( 'admin-post.php' ) ) . '">'
 			. $this->hidden_fields( 'create' )
-			. '<label for="mw-playlist-new-title">' . esc_html__( 'New playlist name', 'music-wave-core' ) . '</label>'
-			. '<input id="mw-playlist-new-title" type="text" name="mw_title" maxlength="' . esc_attr( (string) PlaylistRepository::MAX_TITLE ) . '" required placeholder="' . esc_attr__( 'e.g. Late night drives', 'music-wave-core' ) . '">'
-			. '<button type="submit">' . esc_html__( 'Create playlist', 'music-wave-core' ) . '</button>'
+			. '<label for="mw-playlist-new-title">' . esc_html__( 'نام فهرست پخش جدید', 'music-wave-core' ) . '</label>'
+			. '<input id="mw-playlist-new-title" type="text" name="mw_title" maxlength="' . esc_attr( (string) PlaylistRepository::MAX_TITLE ) . '" required placeholder="' . esc_attr__( 'به عنوان مثال رانندگی در اواخر شب', 'music-wave-core' ) . '">'
+			. '<button type="submit">' . esc_html__( 'ایجاد فهرست پخش', 'music-wave-core' ) . '</button>'
 			. '</form>';
 	}
 
@@ -910,13 +911,13 @@ final class PlaylistBlocks {
 
 	private function visibility_label( string $visibility ): string {
 		if ( PlaylistRepository::VISIBILITY_PUBLIC === $visibility ) {
-			return __( 'Public', 'music-wave-core' );
+			return __( 'عمومی', 'music-wave-core' );
 		}
 		if ( PlaylistRepository::VISIBILITY_UNLISTED === $visibility ) {
-			return __( 'Anyone with the link', 'music-wave-core' );
+			return __( 'هر کسی پیوند', 'music-wave-core' );
 		}
 
-		return __( 'Private', 'music-wave-core' );
+		return __( 'خصوصی', 'music-wave-core' );
 	}
 
 	/**

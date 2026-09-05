@@ -29,17 +29,17 @@ final class PlanProducts {
 		return array(
 			array(
 				'level' => 'vip-1m',
-				'title' => __( 'VIP Membership — 1 Month', 'music-wave-vip' ),
+				'title' => __( 'عضویت VIP — ۱ ماه', 'music-wave-vip' ),
 				'days'  => 30,
 			),
 			array(
 				'level' => 'vip-6m',
-				'title' => __( 'VIP Membership — 6 Months', 'music-wave-vip' ),
+				'title' => __( 'عضویت VIP — ۶ ماه', 'music-wave-vip' ),
 				'days'  => 180,
 			),
 			array(
 				'level' => 'vip-12m',
-				'title' => __( 'VIP Membership — 12 Months', 'music-wave-vip' ),
+				'title' => __( 'عضویت VIP — ۱۲ ماه', 'music-wave-vip' ),
 				'days'  => 365,
 			),
 		);
@@ -97,7 +97,7 @@ final class PlanProducts {
 					'post_title'   => $preset['title'],
 					'post_status'  => 'publish',
 					'post_type'    => 'product',
-					'post_content' => __( 'MusicWave VIP membership plan. Purchasing this plan instantly grants the matching membership level for the plan duration; refunds or cancellations revoke it immediately.', 'music-wave-vip' ),
+					'post_content' => __( 'طرح عضویت VIP MusicWave. خرید این طرح سطح عضویت منطبق را برای مدت طرح فوراً اعطا می‌کند؛ بازپرداخت یا لغو، آن را بلافاصله پس می‌گیرد.', 'music-wave-vip' ),
 				),
 				true
 			);
@@ -131,7 +131,7 @@ final class PlanProducts {
 	 */
 	public function handle_create_defaults(): void {
 		if ( ! current_user_can( 'manage_options' ) ) {
-			wp_die( esc_html__( 'You are not allowed to manage VIP plans.', 'music-wave-vip' ) );
+			wp_die( esc_html__( 'اجازهٔ مدیریت طرح‌های VIP را ندارید.', 'music-wave-vip' ) );
 		}
 		check_admin_referer( self::ACTION_CREATE_DEFAULTS );
 
@@ -160,7 +160,7 @@ final class PlanProducts {
 	 */
 	public function handle_remove_plan(): void {
 		if ( ! current_user_can( 'manage_options' ) ) {
-			wp_die( esc_html__( 'You are not allowed to manage VIP plans.', 'music-wave-vip' ) );
+			wp_die( esc_html__( 'اجازهٔ مدیریت طرح‌های VIP را ندارید.', 'music-wave-vip' ) );
 		}
 		check_admin_referer( self::ACTION_REMOVE_PLAN );
 
@@ -224,7 +224,7 @@ final class PlanProducts {
 				}
 				$active[] = array(
 					'level'   => sanitize_key( (string) $level ),
-					'expires' => $lifetime ? __( 'Lifetime', 'music-wave-vip' ) : ( $expires > 0 && function_exists( 'date_i18n' ) ? date_i18n( (string) get_option( 'date_format' ), $expires ) : '' ),
+					'expires' => $lifetime ? __( 'مادام‌العمر', 'music-wave-vip' ) : ( $expires > 0 && function_exists( 'date_i18n' ) ? date_i18n( (string) get_option( 'date_format' ), $expires ) : '' ),
 				);
 			}
 		}
@@ -275,17 +275,17 @@ final class PlanProducts {
 	 */
 	public static function duration_label( int $days ): string {
 		if ( $days < 1 ) {
-			return __( 'Lifetime', 'music-wave-vip' );
+			return __( 'مادام‌العمر', 'music-wave-vip' );
 		}
 		if ( 0 === $days % 365 ) {
 			/* translators: %d: number of years. */
-			return sprintf( _n( '%d year', '%d years', intdiv( $days, 365 ), 'music-wave-vip' ), intdiv( $days, 365 ) );
+			return sprintf( _n( '%d سال', '%d سال', intdiv( $days, 365 ), 'music-wave-vip' ), intdiv( $days, 365 ) );
 		}
 		if ( 0 === $days % 30 ) {
 			/* translators: %d: number of months. */
-			return sprintf( _n( '%d month', '%d months', intdiv( $days, 30 ), 'music-wave-vip' ), intdiv( $days, 30 ) );
+			return sprintf( _n( '%d ماه', '%d ماه', intdiv( $days, 30 ), 'music-wave-vip' ), intdiv( $days, 30 ) );
 		}
 		/* translators: %d: number of days. */
-		return sprintf( _n( '%d day', '%d days', $days, 'music-wave-vip' ), $days );
+		return sprintf( _n( '%d روز', '%d روز', $days, 'music-wave-vip' ), $days );
 	}
 }

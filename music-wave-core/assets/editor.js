@@ -3,6 +3,7 @@
 
 	var el = wp.element.createElement;
 	var render = wp.element.render;
+	var useCallback = wp.element.useCallback;
 	var useEffect = wp.element.useEffect;
 	var useState = wp.element.useState;
 	var Button = wp.components.Button;
@@ -107,7 +108,7 @@
 	function qualityPresets() {
 		return [
 			{
-				label: __( 'Custom / detected', 'music-wave-core' ),
+				label: __( 'سفارشی / شناسایی شده', 'music-wave-core' ),
 				value: '',
 				key: '',
 				format: '',
@@ -156,21 +157,21 @@
 				bitrate: 320,
 			},
 			{
-				label: __( 'FLAC lossless', 'music-wave-core' ),
+				label: __( 'FLAC بدون اتلاف', 'music-wave-core' ),
 				value: 'flac',
 				key: 'flac',
 				format: 'flac',
 				bitrate: 0,
 			},
 			{
-				label: __( 'WAV lossless', 'music-wave-core' ),
+				label: __( 'WAV بدون اتلاف', 'music-wave-core' ),
 				value: 'wav',
 				key: 'wav',
 				format: 'wav',
 				bitrate: 0,
 			},
 			{
-				label: __( 'ZIP bundle', 'music-wave-core' ),
+				label: __( 'بسته نرم افزاری ZIP', 'music-wave-core' ),
 				value: 'zip',
 				key: 'zip',
 				format: 'zip',
@@ -202,7 +203,7 @@
 		var bitrate = numericValue( asset.bitrate );
 		var label =
 			format === 'download'
-				? __( 'Download', 'music-wave-core' )
+				? __( 'دانلود', 'music-wave-core' )
 				: format.toUpperCase();
 
 		if ( bitrate ) {
@@ -229,7 +230,7 @@
 	}
 
 	function fileLabelFor( asset ) {
-		return asset.file_label || __( 'Main download', 'music-wave-core' );
+		return asset.file_label || __( 'دانلود اصلی', 'music-wave-core' );
 	}
 
 	function fileTitleFromAsset( asset ) {
@@ -239,7 +240,7 @@
 			.replace( /[_-]+/g, ' ' )
 			.replace( /\s+/g, ' ' )
 			.trim();
-		return title || __( 'New downloadable file', 'music-wave-core' );
+		return title || __( 'فایل دانلودی جدید', 'music-wave-core' );
 	}
 
 	function uniqueFileKey( base, assets ) {
@@ -344,13 +345,13 @@
 							error && error.message
 								? error.message
 								: __(
-										'Protected files are unavailable.',
+										'فایل‌های حفاظت‌شده در دسترس نیستند.',
 										'music-wave-core'
 								  )
 						);
 					} );
 			},
-			[ releaseId ]
+			[ releaseId, setPrivateAssets, setStatus ]
 		);
 
 		function updateReleaseDuration( duration ) {
@@ -368,7 +369,7 @@
 				.then( function () {
 					setStatus(
 						__(
-							'Release duration was filled from the protected file. Review it before publishing.',
+							'مدت زمان انتشار از فایل حفاظت‌شده پر شد. قبل از انتشار آن را مرور کنید.',
 							'music-wave-core'
 						)
 					);
@@ -376,7 +377,7 @@
 				.catch( function () {
 					setStatus(
 						__(
-							'File details were read, but release duration could not be saved automatically.',
+							'جزئیات فایل خوانده شد، اما مدت زمان انتشار به‌طور خودکار ذخیره نشد.',
 							'music-wave-core'
 						)
 					);
@@ -414,7 +415,7 @@
 			maybeUpdateReleaseDuration( nextAssets, quality.duration );
 			setStatus(
 				__(
-					'A quality was added to the selected downloadable file. Review it, then save all changes.',
+					'کیفیتی به فایل قابل دانلود انتخابی اضافه شد. آن را مرور کنید، سپس همه تغییرات را ذخیره کنید.',
 					'music-wave-core'
 				)
 			);
@@ -437,7 +438,7 @@
 			maybeUpdateReleaseDuration( nextAssets, quality.duration );
 			setStatus(
 				__(
-					'A new downloadable file was added. Add more qualities to it when needed, then save all changes.',
+					'فایل قابل دانلود جدیدی اضافه شد. در صورت نیاز کیفیت‌های بیشتری را به آن اضافه کنید، سپس همه تغییرات را ذخیره کنید.',
 					'music-wave-core'
 				)
 			);
@@ -466,7 +467,7 @@
 				: null;
 			var fileLabel = selectedGroup
 				? selectedGroup.label
-				: __( 'Download file', 'music-wave-core' ) + ' ' + number;
+				: __( 'دانلود فایل', 'music-wave-core' ) + ' ' + number;
 			if ( targetFileKey && ! selectedGroup ) {
 				fileKey = uniqueFileKey(
 					'download-file-' + number,
@@ -480,7 +481,7 @@
 						'download-' + number,
 						privateAssets
 					),
-					label: __( 'Download', 'music-wave-core' ) + ' ' + number,
+					label: __( 'دانلود', 'music-wave-core' ) + ' ' + number,
 					asset_id: '',
 					file_name: '',
 					file_key: fileKey,
@@ -496,11 +497,11 @@
 			setStatus(
 				targetFileKey
 					? __(
-							'Enter a secure provider asset ID for this file quality.',
+							'یک دارایی ارائه‌دهنده امن ID برای کیفیت این فایل وارد کنید.',
 							'music-wave-core'
 					  )
 					: __(
-							'Enter a secure provider asset ID for the new downloadable file.',
+							'یک دارایی ارائه‌دهنده امن ID برای فایل قابل دانلود جدید وارد کنید.',
 							'music-wave-core'
 					  )
 			);
@@ -516,7 +517,7 @@
 			formData.append( 'file', files[ 0 ] );
 			setStatus(
 				__(
-					'Uploading protected file and reading its metadata…',
+					'آپلود فایل حفاظت‌شده و خواندن فرادادهٔ آن…',
 					'music-wave-core'
 				)
 			);
@@ -536,7 +537,7 @@
 						error && error.message
 							? error.message
 							: __(
-									'The protected file could not be uploaded.',
+									'فایل حفاظت‌شده آپلود نشد.',
 									'music-wave-core'
 							  )
 					);
@@ -548,7 +549,7 @@
 			if ( ! wp.media ) {
 				setStatus(
 					__(
-						'The WordPress Media Library is unavailable on this screen.',
+						'کتابخانهٔ رسانه WordPress در این صفحه در دسترس نیست.',
 						'music-wave-core'
 					)
 				);
@@ -557,11 +558,14 @@
 
 			var frame = wp.media( {
 				title: __(
-					'Select an audio file from Media Library',
+					'یک فایل صوتی را از کتابخانهٔ رسانه انتخاب کنید',
 					'music-wave-core'
 				),
 				button: {
-					text: __( 'Copy to protected storage', 'music-wave-core' ),
+					text: __(
+						'کپی در ذخیره‌سازی حفاظت‌شده',
+						'music-wave-core'
+					),
 				},
 				library: { type: 'audio' },
 				multiple: false,
@@ -579,7 +583,7 @@
 
 				setStatus(
 					__(
-						'Copying the Media Library file to protected storage…',
+						'در حال کپی کردن فایل کتابخانهٔ رسانه در فضای ذخیره‌سازی حفاظت‌شده…',
 						'music-wave-core'
 					)
 				);
@@ -599,7 +603,7 @@
 							error && error.message
 								? error.message
 								: __(
-										'The Media Library file could not be copied to protected storage.',
+										'فایل کتابخانهٔ رسانه را نمی‌توان در فضای ذخیره‌سازی حفاظت‌شده کپی کرد.',
 										'music-wave-core'
 								  )
 						);
@@ -629,7 +633,7 @@
 						error && error.message
 							? error.message
 							: __(
-									'Protected files are unavailable.',
+									'فایل‌های حفاظت‌شده در دسترس نیستند.',
 									'music-wave-core'
 							  )
 					);
@@ -645,7 +649,7 @@
 
 		function setDownloadFileLabel( fileKey, value ) {
 			var label =
-				value || __( 'Untitled downloadable file', 'music-wave-core' );
+				value || __( 'فایل دانلودی بدون عنوان', 'music-wave-core' );
 			var next = privateAssets.map( function ( asset ) {
 				if ( fileKeyFor( asset ) !== fileKey ) {
 					return asset;
@@ -736,7 +740,7 @@
 			if ( ! validQualities() ) {
 				setStatus(
 					__(
-						'Each quality needs a unique technical key, customer label, and secure non-public asset ID.',
+						'هر کیفیت به یک کلید فنی منحصر به فرد، برچسب مشتری و دارایی ایمن غیر عمومی ID نیاز دارد.',
 						'music-wave-core'
 					)
 				);
@@ -745,7 +749,7 @@
 
 			setStatus(
 				__(
-					'Saving protected files and download qualities…',
+					'ذخیره فایل‌های حفاظت‌شده و کیفیت دانلود…',
 					'music-wave-core'
 				)
 			);
@@ -759,7 +763,7 @@
 					setPrivateAssets( response.items || [] );
 					setStatus(
 						__(
-							'Protected files and download qualities saved.',
+							'فایل‌های حفاظت‌شده و کیفیت دانلود ذخیره شدند.',
 							'music-wave-core'
 						)
 					);
@@ -769,7 +773,7 @@
 						error && error.message
 							? error.message
 							: __(
-									'The protected files could not be saved.',
+									'فایل‌های حفاظت‌شده ذخیره نمی‌شوند.',
 									'music-wave-core'
 							  )
 					);
@@ -790,7 +794,7 @@
 						'strong',
 						{},
 						asset.label ||
-							__( 'New download quality', 'music-wave-core' )
+							__( 'کیفیت دانلود جدید', 'music-wave-core' )
 					),
 					el(
 						Button,
@@ -801,13 +805,13 @@
 								removeQuality( index );
 							},
 						},
-						__( 'Remove', 'music-wave-core' )
+						__( 'حذف', 'music-wave-core' )
 					)
 				),
 				el( SelectControl, {
-					label: __( 'Quality preset', 'music-wave-core' ),
+					label: __( 'کیفیت از پیش تعیین شده', 'music-wave-core' ),
 					help: __(
-						'Fills the technical key, customer label, format, and bitrate.',
+						'کلید فنی، برچسب مشتری، قالب و میزان بیت را پر می‌کند.',
 						'music-wave-core'
 					),
 					value: matchingQualityPreset( asset ),
@@ -822,28 +826,31 @@
 					'div',
 					{ className: 'mw-editor-grid' },
 					el( TextControl, {
-						label: __( 'Technical key', 'music-wave-core' ),
+						label: __( 'کلید فنی', 'music-wave-core' ),
 						value: asset.key || '',
 						onChange( value ) {
 							setQualityValue( index, 'key', value );
 						},
 					} ),
 					el( TextControl, {
-						label: __( 'Customer label', 'music-wave-core' ),
+						label: __( 'برچسب مشتری', 'music-wave-core' ),
 						value: asset.label || '',
 						onChange( value ) {
 							setQualityValue( index, 'label', value );
 						},
 					} ),
 					el( TextControl, {
-						label: __( 'Format', 'music-wave-core' ),
+						label: __( 'قالب', 'music-wave-core' ),
 						value: asset.format || '',
 						onChange( value ) {
 							setQualityValue( index, 'format', value );
 						},
 					} ),
 					el( TextControl, {
-						label: __( 'Bitrate (kbps)', 'music-wave-core' ),
+						label: __(
+							'نرخ بیت (کیلوبیت بر ثانیه)',
+							'music-wave-core'
+						),
 						type: 'number',
 						min: 0,
 						value: asset.bitrate || '',
@@ -857,7 +864,7 @@
 					} ),
 					el( TextControl, {
 						label: __(
-							'File duration in seconds',
+							'مدت زمان فایل بر حسب ثانیه',
 							'music-wave-core'
 						),
 						type: 'number',
@@ -872,7 +879,10 @@
 						},
 					} ),
 					el( TextControl, {
-						label: __( 'File size in bytes', 'music-wave-core' ),
+						label: __(
+							'اندازه فایل بر حسب بایت',
+							'music-wave-core'
+						),
 						type: 'number',
 						min: 0,
 						value: asset.file_size || '',
@@ -887,11 +897,11 @@
 				),
 				el( TextControl, {
 					label: __(
-						'Protected provider asset ID',
+						'دارایی ارائه‌دهنده حفاظت‌شده ID',
 						'music-wave-core'
 					),
 					help: __(
-						'Use an opaque ID such as local:album/track.flac. Public URLs are blocked.',
+						'از یک شناسهٔ غیرشفاف مانند local:album/track.flac استفاده کنید. نشانی‌های عمومی مجاز نیستند.',
 						'music-wave-core'
 					),
 					value: asset.asset_id || '',
@@ -900,15 +910,12 @@
 					},
 				} ),
 				el( TextControl, {
-					label: __( 'Stored file name', 'music-wave-core' ),
+					label: __( 'نام فایل ذخیره‌شده', 'music-wave-core' ),
 					help: qualitySummary( asset )
-						? __( 'Detected:', 'music-wave-core' ) +
+						? __( 'شناسایی شد:', 'music-wave-core' ) +
 						  ' ' +
 						  qualitySummary( asset )
-						: __(
-								'Private editor reference only.',
-								'music-wave-core'
-						  ),
+						: __( 'فقط مرجع ویرایشگر خصوصی', 'music-wave-core' ),
 					value: asset.file_name || '',
 					onChange( value ) {
 						setQualityValue( index, 'file_name', value );
@@ -926,13 +933,16 @@
 									);
 									setStatus(
 										__(
-											'Release duration was set from this file.',
+											'مدت زمان انتشار از این فایل تنظیم شد.',
 											'music-wave-core'
 										)
 									);
 								},
 							},
-							__( 'Use this file duration', 'music-wave-core' )
+							__(
+								'استفاده از این فایل مدت زمان',
+								'music-wave-core'
+							)
 					  )
 					: null
 			);
@@ -953,11 +963,11 @@
 							'span',
 							{ className: 'description' },
 							group.assets.length === 1
-								? __( '1 download quality', 'music-wave-core' )
+								? __( '1 دانلود با کیفیت', 'music-wave-core' )
 								: group.assets.length +
 										' ' +
 										__(
-											'download qualities',
+											'کیفیت‌های دانلود',
 											'music-wave-core'
 										)
 						)
@@ -971,13 +981,13 @@
 								removeDownloadFile( group.key );
 							},
 						},
-						__( 'Remove file', 'music-wave-core' )
+						__( 'حذف فایل', 'music-wave-core' )
 					)
 				),
 				el( TextControl, {
-					label: __( 'Downloadable file title', 'music-wave-core' ),
+					label: __( 'عنوان فایل قابل دانلود', 'music-wave-core' ),
 					help: __(
-						'This title groups all versions of the same song, episode, or bonus file.',
+						'این عنوان همه نسخه‌های یک آهنگ، قسمت یا فایل جایزه را گروه‌بندی می‌کند.',
 						'music-wave-core'
 					),
 					value: group.label,
@@ -994,16 +1004,12 @@
 		return el(
 			'section',
 			{ className: 'mw-release-manager' },
-			el(
-				'h2',
-				{},
-				__( 'Files and download qualities', 'music-wave-core' )
-			),
+			el( 'h2', {}, __( 'فایل‌ها و کیفیت دانلود', 'music-wave-core' ) ),
 			el(
 				'p',
 				{ className: 'description' },
 				__(
-					'Create a downloadable file for every song, episode, or bundle. Then add all available qualities to that file. This keeps albums and podcasts organized without uploading the same audio again.',
+					'برای هر آهنگ، قسمت یا بسته یک فایل قابل دانلود ایجاد کنید. سپس تمام کیفیت‌های موجود را به آن فایل اضافه کنید. این کار آلبوم‌ها و پادکست‌ها را بدون آپلود مجدد همان صدا سازماندهی می‌کند.',
 					'music-wave-core'
 				)
 			),
@@ -1013,12 +1019,15 @@
 				{ className: 'mw-editor-actions' },
 				privateAssets.length
 					? el( SelectControl, {
-							label: __( 'Add next file to', 'music-wave-core' ),
+							label: __(
+								'افزودن فایل بعدی به',
+								'music-wave-core'
+							),
 							value: targetFileKey,
 							options: [
 								{
 									label: __(
-										'Create a new downloadable file',
+										'یک فایل قابل دانلود جدید ایجاد کنید',
 										'music-wave-core'
 									),
 									value: '',
@@ -1040,9 +1049,9 @@
 					Button,
 					{ variant: 'secondary', onClick: addProviderAsset },
 					targetFileKey
-						? __( 'Add manual quality', 'music-wave-core' )
+						? __( 'افزودن کیفیت دستی', 'music-wave-core' )
 						: __(
-								'Add manual downloadable file',
+								'افزودن فایل قابل دانلود دستی',
 								'music-wave-core'
 						  )
 				),
@@ -1053,8 +1062,8 @@
 							'components-button is-secondary mw-editor-upload',
 					},
 					targetFileKey
-						? __( 'Upload a quality', 'music-wave-core' )
-						: __( 'Upload a new file', 'music-wave-core' ),
+						? __( 'بارگذاری یک کیفیت', 'music-wave-core' )
+						: __( 'آپلود فایل جدید', 'music-wave-core' ),
 					el( 'input', {
 						type: 'file',
 						accept: '.mp3,.m4a,.aac,.ogg,.wav,.flac,.zip',
@@ -1066,18 +1075,18 @@
 					{ variant: 'secondary', onClick: selectMediaLibraryAsset },
 					targetFileKey
 						? __(
-								'Choose a quality from Media Library',
+								'یک کیفیت را از رسانه‌ها انتخاب کنید',
 								'music-wave-core'
 						  )
 						: __(
-								'Choose a file from Media Library',
+								'فایلی را از کتابخانهٔ رسانه انتخاب کنید',
 								'music-wave-core'
 						  )
 				),
 				el(
 					Button,
 					{ variant: 'primary', onClick: saveQualities },
-					__( 'Save downloadable files', 'music-wave-core' )
+					__( 'ذخیره فایل‌های دانلود', 'music-wave-core' )
 				)
 			),
 			el(
@@ -1085,7 +1094,7 @@
 				{ className: 'mw-editor-browser' },
 				el( TextControl, {
 					label: __(
-						'Find files already in protected storage',
+						'فایل‌هایی را که از قبل در فضای ذخیره‌سازی حفاظت‌شده هستند پیدا کنید',
 						'music-wave-core'
 					),
 					value: assetSearch,
@@ -1099,7 +1108,7 @@
 							loadAssets( false );
 						},
 					},
-					__( 'Browse protected files', 'music-wave-core' )
+					__( 'مرور فایل‌های حفاظت‌شده', 'music-wave-core' )
 				)
 			),
 			assets.map( function ( asset ) {
@@ -1126,12 +1135,15 @@
 								addDownloadFileFromAsset( asset );
 							},
 						},
-						__( 'Add as new downloadable file', 'music-wave-core' )
+						__(
+							'افزودن به عنوان فایل دانلودی جدید',
+							'music-wave-core'
+						)
 					),
 					privateAssets.length
 						? el( SelectControl, {
 								label: __(
-									'Use as a quality for',
+									'استفاده به عنوان کیفیت برای',
 									'music-wave-core'
 								),
 								hideLabelFromVision: true,
@@ -1139,7 +1151,7 @@
 								options: [
 									{
 										label: __(
-											'Add as a quality for…',
+											'افزودن به عنوان کیفیت برای…',
 											'music-wave-core'
 										),
 										value: '',
@@ -1172,7 +1184,7 @@
 								loadAssets( true );
 							},
 						},
-						__( 'Load more files', 'music-wave-core' )
+						__( 'بارگذاری فایل‌های بیشتر', 'music-wave-core' )
 				  )
 				: null,
 			status
@@ -1201,8 +1213,8 @@
 		var setStatus = statusState[ 1 ];
 		var itemLabel =
 			role === 'episode'
-				? __( 'Episode', 'music-wave-core' )
-				: __( 'Track / single', 'music-wave-core' );
+				? __( 'اپیزود', 'music-wave-core' )
+				: __( 'قطعه / تک', 'music-wave-core' );
 
 		useEffect(
 			function () {
@@ -1219,14 +1231,11 @@
 					} )
 					.catch( function () {
 						setStatus(
-							__(
-								'Collection items could not be loaded.',
-								'music-wave-core'
-							)
+							__( 'موارد مجموعه بارگیری نشد.', 'music-wave-core' )
 						);
 					} );
 			},
-			[ releaseId ]
+			[ releaseId, setItems, setStatus ]
 		);
 
 		useEffect(
@@ -1258,7 +1267,7 @@
 					setTitles( next );
 				} );
 			},
-			[ items ]
+			[ items, setTitles, titles ]
 		);
 
 		useEffect(
@@ -1274,7 +1283,7 @@
 					window.clearTimeout( timer );
 				};
 			},
-			[ search ]
+			[ search, searchCandidates, setResults ]
 		);
 
 		function normalize( itemsToSave ) {
@@ -1290,7 +1299,7 @@
 
 		function saveItems( itemsToSave ) {
 			var normalized = normalize( itemsToSave );
-			setStatus( __( 'Saving collection items…', 'music-wave-core' ) );
+			setStatus( __( 'ذخیره اقلام مجموعه…', 'music-wave-core' ) );
 			wp.apiFetch( {
 				path: '/wp/v2/mw_release/' + releaseId,
 				method: 'POST',
@@ -1304,7 +1313,7 @@
 							: normalized;
 					setItems( saved );
 					setStatus(
-						__( 'Collection items saved.', 'music-wave-core' )
+						__( 'موارد مجموعه ذخیره شد.', 'music-wave-core' )
 					);
 				} )
 				.catch( function ( error ) {
@@ -1312,43 +1321,46 @@
 						error && error.message
 							? error.message
 							: __(
-									'The collection items could not be saved.',
+									'موارد مجموعه را نمی‌توان ذخیره کرد.',
 									'music-wave-core'
 							  )
 					);
 				} );
 		}
 
-		function searchCandidates() {
-			if ( search.trim().length < 2 ) {
-				setResults( [] );
-				return;
-			}
-
-			wp.apiFetch( {
-				path:
-					'/music-wave/v1/collection-candidates?collection_id=' +
-					releaseId +
-					'&role=' +
-					role +
-					'&search=' +
-					encodeURIComponent( search.trim() ),
-			} )
-				.then( function ( response ) {
-					setResults( response.items || [] );
-				} )
-				.catch( function ( error ) {
+		var searchCandidates = useCallback(
+			function () {
+				if ( search.trim().length < 2 ) {
 					setResults( [] );
-					setStatus(
-						error && error.message
-							? error.message
-							: __(
-									'No compatible releases could be found.',
-									'music-wave-core'
-							  )
-					);
-				} );
-		}
+					return;
+				}
+
+				wp.apiFetch( {
+					path:
+						'/music-wave/v1/collection-candidates?collection_id=' +
+						releaseId +
+						'&role=' +
+						role +
+						'&search=' +
+						encodeURIComponent( search.trim() ),
+				} )
+					.then( function ( response ) {
+						setResults( response.items || [] );
+					} )
+					.catch( function ( error ) {
+						setResults( [] );
+						setStatus(
+							error && error.message
+								? error.message
+								: __(
+										'هیچ انتشار سازگاری یافت نشد.',
+										'music-wave-core'
+								  )
+						);
+					} );
+			},
+			[ search, releaseId, role, setResults, setStatus ]
+		);
 
 		function addItem( item ) {
 			if (
@@ -1387,14 +1399,14 @@
 				'h2',
 				{},
 				role === 'episode'
-					? __( 'Podcast episodes', 'music-wave-core' )
-					: __( 'Tracks and singles', 'music-wave-core' )
+					? __( 'قسمت‌های پادکست', 'music-wave-core' )
+					: __( 'قطعه و تک قطعه', 'music-wave-core' )
 			),
 			el(
 				'p',
 				{ className: 'description' },
 				__(
-					'Search by release title or the protected file name already attached to a Track, Single, or Episode. Add it once to reuse its preview and secure downloads.',
+					'جست‌وجو بر اساس عنوان انتشار یا نام فایل حفاظت‌شده که قبلاً به یک قطعه، تک قطعه یا قسمت متصل شده است. برای استفادهٔ مجدد از پیش‌نمایش و دانلودهای امن، آن را یک‌بار اضافه کنید.',
 					'music-wave-core'
 				)
 			),
@@ -1403,11 +1415,11 @@
 				{ className: 'mw-editor-browser' },
 				el( TextControl, {
 					label: __(
-						'Search release or file name',
+						'جست‌وجوی انتشار یا نام فایل',
 						'music-wave-core'
 					),
 					help: __(
-						'Results update while typing. Enter at least 2 characters.',
+						'نتایج هنگام تایپ به‌روز می‌شوند. حداقل 2 کاراکتر وارد کنید.',
 						'music-wave-core'
 					),
 					value: search,
@@ -1422,7 +1434,7 @@
 				el(
 					Button,
 					{ variant: 'secondary', onClick: searchCandidates },
-					__( 'Search', 'music-wave-core' )
+					__( 'جست‌وجو', 'music-wave-core' )
 				)
 			),
 			results.map( function ( item ) {
@@ -1435,13 +1447,13 @@
 				}
 				if ( item.file_names && item.file_names.length ) {
 					details.push(
-						__( 'File:', 'music-wave-core' ) +
+						__( 'فایل:', 'music-wave-core' ) +
 							' ' +
 							item.file_names.join( ', ' )
 					);
 				} else if ( item.matched_post ) {
 					details.push(
-						__( 'Matched release title', 'music-wave-core' )
+						__( 'عنوان انتشار همسان', 'music-wave-core' )
 					);
 				}
 				return el(
@@ -1470,7 +1482,7 @@
 								addItem( item );
 							},
 						},
-						__( 'Add to collection', 'music-wave-core' )
+						__( 'افزودن به مجموعه', 'music-wave-core' )
 					)
 				);
 			} ),
@@ -1541,7 +1553,7 @@
 												);
 											},
 										},
-										__( 'Remove', 'music-wave-core' )
+										__( 'حذف', 'music-wave-core' )
 									)
 								)
 							);

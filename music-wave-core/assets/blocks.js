@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Editor counterparts for the PHP-rendered MusicWave blocks.
  *
  * @package
@@ -45,67 +45,73 @@
 			compact: true,
 			groups: [
 				{
-					title: __( 'Fields', 'music-wave-core' ),
+					title: __( 'فیلدها', 'music-wave-core' ),
 					controls: [
 						[
 							'toggle',
 							'showCatalogNumber',
-							__( 'Show catalog number', 'music-wave-core' ),
+							__( 'نمایش شماره کاتالوگ', 'music-wave-core' ),
 							true,
 						],
 						[
 							'toggle',
 							'showReleaseDate',
-							__( 'Show release date', 'music-wave-core' ),
+							__( 'نمایش تاریخ انتشار', 'music-wave-core' ),
 							true,
 						],
 						[
 							'toggle',
 							'showDuration',
-							__( 'Show duration', 'music-wave-core' ),
+							__( 'نمایش مدت زمان', 'music-wave-core' ),
 							true,
 						],
 						[
 							'toggle',
 							'showBpm',
-							__( 'Show BPM', 'music-wave-core' ),
+							__( 'نمایش BPM', 'music-wave-core' ),
 							true,
 						],
 						[
 							'toggle',
 							'showKey',
-							__( 'Show musical key', 'music-wave-core' ),
+							__( 'نمایش کلید موسیقی', 'music-wave-core' ),
 							true,
 						],
 						[
 							'toggle',
 							'showArtist',
-							__( 'Show artist', 'music-wave-core' ),
+							__( 'نمایش هنرمند', 'music-wave-core' ),
 							true,
 						],
 						[
 							'toggle',
 							'showGenre',
-							__( 'Show genre', 'music-wave-core' ),
+							__( 'نمایش ژانر', 'music-wave-core' ),
 							true,
 						],
 						[
 							'toggle',
 							'showMood',
-							__( 'Show mood', 'music-wave-core' ),
+							__( 'نمایش حال و هوا', 'music-wave-core' ),
+							false,
+						],
+						[
+							'toggle',
+							'showLabel',
+							__( 'نمایش برچسب ناشر', 'music-wave-core' ),
 							false,
 						],
 						[
 							'toggle',
 							'showReleaseType',
-							__( 'Show release type', 'music-wave-core' ),
+							__( 'نمایش نوع انتشار', 'music-wave-core' ),
 							false,
 						],
 						[
 							'toggle',
 							'showLibraryButton',
 							__(
-								'Show add-to-library button',
+								'نمایش دکمه افزودنی به کتابخانه',
 								'music-wave-core'
 							),
 							true,
@@ -114,7 +120,7 @@
 							'toggle',
 							'showTaxonomyChips',
 							__(
-								'Show taxonomy chips',
+								'نمایش برچسب‌های طبقه‌بندی',
 								'music-wave-core'
 							),
 							true,
@@ -123,59 +129,59 @@
 							'toggle',
 							'showActions',
 							__(
-								'Show library and playlist actions',
+								'نمایش اقدامات کتابخانه و فهرست پخش',
 								'music-wave-core'
 							),
 							true,
 						],
 					],
 					help: __(
-						'Fields without a value on the selected release are hidden automatically.',
+						'فیلدهای بدون مقدار در انتشار انتخاب‌شده به‌طور خودکار پنهان می‌شوند.',
 						'music-wave-core'
 					),
 				},
 				{
-					title: __( 'Layout', 'music-wave-core' ),
+					title: __( 'چیدمان', 'music-wave-core' ),
 					controls: [
 						[
 							'select',
 							'layout',
-							__( 'Metadata layout', 'music-wave-core' ),
+							__( 'چیدمان فراداده', 'music-wave-core' ),
 							[
 								[
 									'grid',
 									__(
-										'Grid (cards of label and value)',
+										'شبکه (کارت‌های برچسب و ارزش)',
 										'music-wave-core'
 									),
 								],
 								[
 									'inline',
 									__(
-										'Inline (one flowing row)',
+										'خطی (یک ردیف روان)',
 										'music-wave-core'
 									),
 								],
 								[
 									'stack',
 									__(
-										'Stacked rows (label beside value)',
+										'ردیف‌های پشته ای (برچسب در کنار مقدار)',
 										'music-wave-core'
 									),
 								],
 							],
 							__(
-								'Inline and Stacked rows are also available in the block Styles panel.',
+								'ردیف‌های درون‌خطی و روی‌هم‌چیده نیز در پنل سبک‌های بلوک در دسترس هستند.',
 								'music-wave-core'
 							),
 						],
 						[
 							'toggle',
 							'showLabels',
-							__( 'Show field labels', 'music-wave-core' ),
+							__( 'نمایش برچسب‌های فیلد', 'music-wave-core' ),
 							true,
 							__(
-								'Hidden labels stay available to screen readers.',
+								'برچسب‌های پنهان در دسترس صفحه‌خوان‌ها باقی می‌مانند.',
 								'music-wave-core'
 							),
 						],
@@ -183,7 +189,7 @@
 							'toggle',
 							'linkTerms',
 							__(
-								'Link artists, genres, moods, and types to their archives',
+								'هنرمندان، ژانرها، حال‌وهواها، و انواع را به آرشیو آن‌ها پیوند دهید',
 								'music-wave-core'
 							),
 							false,
@@ -196,24 +202,24 @@
 			releaseId: true,
 			groups: [
 				{
-					title: __( 'Display', 'music-wave-core' ),
+					title: __( 'نمایش', 'music-wave-core' ),
 					controls: [
 						[
 							'select',
 							'layout',
-							__( 'Panel layout', 'music-wave-core' ),
+							__( 'چیدمان پنل', 'music-wave-core' ),
 							[
 								[
 									'banner',
 									__(
-										'Banner (message and action in one row)',
+										'بنر (پیام و اقدام در یک ردیف)',
 										'music-wave-core'
 									),
 								],
 								[
 									'stack',
 									__(
-										'Stacked (action below the message)',
+										'روی‌هم‌چیده (اقدام زیر پیام)',
 										'music-wave-core'
 									),
 								],
@@ -222,63 +228,66 @@
 						[
 							'toggle',
 							'showWhenGranted',
-							__( 'Show the granted state', 'music-wave-core' ),
+							__(
+								'نمایش وضعیت دسترسی اعطاشده',
+								'music-wave-core'
+							),
 							true,
 							__(
-								'When off, the block stays hidden for visitors who already have access.',
+								'وقتی خاموش است، بلوک برای بازدیدکنندگانی که از قبل دسترسی دارند پنهان می‌ماند.',
 								'music-wave-core'
 							),
 						],
 					],
 				},
 				{
-					title: __( 'Message overrides', 'music-wave-core' ),
+					title: __( 'جایگزینی پیام‌ها', 'music-wave-core' ),
 					controls: [
 						[
 							'text',
 							'grantedMessage',
-							__( 'Access granted message', 'music-wave-core' ),
+							__( 'پیام دسترسی اعطاشده', 'music-wave-core' ),
 							'',
 						],
 						[
 							'text',
 							'restrictedMessage',
-							__( 'Restricted message', 'music-wave-core' ),
+							__( 'پیام دسترسی محدودشده', 'music-wave-core' ),
 							'',
 						],
 						[
 							'text',
 							'purchaseMessage',
-							__( 'Purchase message', 'music-wave-core' ),
+							__( 'پیام خرید', 'music-wave-core' ),
 							'',
 						],
 						[
 							'text',
 							'purchaseCtaLabel',
-							__( 'Purchase button label', 'music-wave-core' ),
+							__( 'برچسب دکمه خرید', 'music-wave-core' ),
 							'',
 						],
 						[
 							'text',
 							'membershipMessage',
-							__( 'Membership message', 'music-wave-core' ),
+							__( 'پیام عضویت', 'music-wave-core' ),
 							'',
 						],
 						[
 							'text',
 							'membershipCtaLabel',
-							__( 'Membership button label', 'music-wave-core' ),
+							__( 'برچسب دکمه عضویت', 'music-wave-core' ),
 							'',
 						],
 						[
 							'text',
 							'membershipCtaUrl',
-							__( 'Membership button URL', 'music-wave-core' ),
+							__( 'نشانی دکمهٔ عضویت', 'music-wave-core' ),
 							'',
 						],
 					],
 					help: __(
-						'Leave empty to use the global MusicWave message or setting.',
+						'برای استفاده از پیام یا تنظیم جهانی MusicWave، خالی بگذارید.',
 						'music-wave-core'
 					),
 				},
@@ -288,45 +297,51 @@
 			releaseId: true,
 			groups: [
 				{
-					title: __( 'Content', 'music-wave-core' ),
+					title: __( 'محتوا', 'music-wave-core' ),
 					controls: [
 						[
 							'text',
 							'heading',
-							__( 'Section heading', 'music-wave-core' ),
+							__( 'عنوان بخش', 'music-wave-core' ),
 							'',
 						],
 						[
 							'toggle',
 							'showHeading',
-							__( 'Show section heading', 'music-wave-core' ),
+							__( 'نمایش عنوان بخش', 'music-wave-core' ),
 							true,
 						],
 						[
 							'toggle',
 							'showRole',
-							__( 'Show credit roles', 'music-wave-core' ),
+							__( 'نمایش نقش عوامل', 'music-wave-core' ),
 							true,
 						],
 						[
 							'toggle',
 							'groupByRole',
-							__( 'Group credits by role', 'music-wave-core' ),
+							__(
+								'گروه‌بندی عوامل بر اساس نقش',
+								'music-wave-core'
+							),
 							false,
 						],
 					],
 				},
 				{
-					title: __( 'Layout', 'music-wave-core' ),
+					title: __( 'چیدمان', 'music-wave-core' ),
 					controls: [
 						[
 							'select',
 							'layout',
-							__( 'Credits layout', 'music-wave-core' ),
+							__( 'چیدمان عوامل', 'music-wave-core' ),
 							[
-								[ 'list', __( 'List', 'music-wave-core' ) ],
-								[ 'grid', __( 'Grid', 'music-wave-core' ) ],
-								[ 'inline', __( 'Inline', 'music-wave-core' ) ],
+								[ 'list', __( 'فهرست', 'music-wave-core' ) ],
+								[ 'grid', __( 'شبکه', 'music-wave-core' ) ],
+								[
+									'inline',
+									__( 'درون‌خطی', 'music-wave-core' ),
+								],
 							],
 						],
 					],
@@ -337,70 +352,73 @@
 			releaseId: true,
 			groups: [
 				{
-					title: __( 'Content', 'music-wave-core' ),
+					title: __( 'محتوا', 'music-wave-core' ),
 					controls: [
 						[
 							'text',
 							'heading',
-							__( 'Section heading', 'music-wave-core' ),
+							__( 'عنوان بخش', 'music-wave-core' ),
 							'',
 						],
 						[
 							'toggle',
 							'showHeading',
-							__( 'Show section heading', 'music-wave-core' ),
+							__( 'نمایش عنوان بخش', 'music-wave-core' ),
 							true,
 						],
 						[
 							'toggle',
 							'showPosition',
-							__( 'Show track numbers', 'music-wave-core' ),
+							__( 'نمایش شماره قطعه', 'music-wave-core' ),
 							true,
 						],
 						[
 							'toggle',
 							'showArtwork',
-							__( 'Show track artwork', 'music-wave-core' ),
+							__( 'نمایش تصاویر جلد قطعه', 'music-wave-core' ),
 							false,
 						],
 						[
 							'toggle',
 							'showDuration',
-							__( 'Show track duration', 'music-wave-core' ),
+							__( 'نمایش مدت زمان قطعه', 'music-wave-core' ),
 							true,
 						],
 						[
 							'toggle',
 							'showTotalDuration',
-							__( 'Show total running time', 'music-wave-core' ),
+							__( 'نمایش کل زمان اجرا', 'music-wave-core' ),
 							false,
 						],
 						[
 							'toggle',
 							'groupByDisc',
-							__( 'Group tracks by disc', 'music-wave-core' ),
+							__(
+								'گروه‌بندی قطعه‌ها بر اساس دیسک',
+								'music-wave-core'
+							),
 							false,
 							__(
-								'Applies when every track has a disc number and the collection spans multiple discs.',
+								'زمانی اعمال می‌شود که هر قطعه دارای شماره دیسک باشد و مجموعه شامل چندین دیسک باشد.',
 								'music-wave-core'
 							),
 						],
 					],
 				},
 				{
-					title: __( 'Track actions', 'music-wave-core' ),
+					title: __( 'پیگیری اقدامات', 'music-wave-core' ),
 					controls: [
 						[
 							'toggle',
 							'showPreview',
-							__( 'Show preview buttons', 'music-wave-core' ),
+							__( 'نمایش دکمه‌های پیش‌نمایش', 'music-wave-core' ),
 							true,
 						],
 						[
 							'toggle',
 							'showDownload',
 							__(
-								'Show secure download buttons',
+								'نمایش دکمه‌های دانلود امن',
 								'music-wave-core'
 							),
 							true,
@@ -412,89 +430,89 @@
 		'music-wave/catalog-filters': {
 			groups: [
 				{
-					title: __( 'Filter fields', 'music-wave-core' ),
+					title: __( 'فیلدهای فیلتر', 'music-wave-core' ),
 					controls: [
 						[
 							'toggle',
 							'showSearch',
-							__( 'Show search field', 'music-wave-core' ),
+							__( 'نمایش فیلد جست‌وجو', 'music-wave-core' ),
 							true,
 						],
 						[
 							'toggle',
 							'showArtistFilter',
-							__( 'Show artist filter', 'music-wave-core' ),
+							__( 'نمایش فیلتر هنرمند', 'music-wave-core' ),
 							true,
 						],
 						[
 							'toggle',
 							'showGenreFilter',
-							__( 'Show genre filter', 'music-wave-core' ),
+							__( 'نمایش فیلتر ژانر', 'music-wave-core' ),
 							true,
 						],
 						[
 							'toggle',
 							'showMoodFilter',
-							__( 'Show mood filter', 'music-wave-core' ),
+							__( 'نمایش فیلتر حال‌وهوا', 'music-wave-core' ),
 							true,
 						],
 						[
 							'toggle',
 							'showTypeFilter',
-							__( 'Show release type filter', 'music-wave-core' ),
+							__( 'نمایش فیلتر نوع انتشار', 'music-wave-core' ),
 							true,
 						],
 						[
 							'toggle',
 							'showSort',
-							__( 'Show sort selector', 'music-wave-core' ),
+							__( 'نمایش انتخابگر مرتب‌سازی', 'music-wave-core' ),
 							true,
 						],
 						[
 							'toggle',
 							'showReset',
-							__( 'Show reset link', 'music-wave-core' ),
+							__( 'نمایش پیوند بازنشانی', 'music-wave-core' ),
 							true,
 						],
 					],
 					help: __(
-						'Dropdowns without published terms are hidden automatically.',
+						'کشویی بدون عبارات منتشرشده به‌طور خودکار پنهان می‌شود.',
 						'music-wave-core'
 					),
 				},
 				{
-					title: __( 'Layout and labels', 'music-wave-core' ),
+					title: __( 'چیدمان و برچسب‌ها', 'music-wave-core' ),
 					controls: [
 						[
 							'select',
 							'layout',
-							__( 'Filters layout', 'music-wave-core' ),
+							__( 'چیدمان فیلترها', 'music-wave-core' ),
 							[
 								[
 									'inline',
-									__( 'Inline bar', 'music-wave-core' ),
+									__( 'نوار درون‌خطی', 'music-wave-core' ),
 								],
 								[
 									'stacked',
 									__(
-										'Stacked full-width rows',
+										'ردیف‌های تمام عرض',
 										'music-wave-core'
 									),
 								],
 							],
 							__(
-								'Stacked is also available in the block Styles panel.',
+								'حالت روی‌هم‌چیده نیز در پنل سبک‌های بلوک در دسترس است.',
 								'music-wave-core'
 							),
 						],
 						[
 							'range',
 							'maxTerms',
-							__( 'Options per filter', 'music-wave-core' ),
+							__( 'گزینه‌های هر فیلتر', 'music-wave-core' ),
 							10,
 							200,
 							__(
-								'Limits how many terms each dropdown lists.',
+								'تعداد اصطلاحات را در هر فهرست کشویی محدود می‌کند.',
 								'music-wave-core'
 							),
 							50,
@@ -502,24 +520,24 @@
 						[
 							'text',
 							'searchPlaceholder',
-							__( 'Search placeholder', 'music-wave-core' ),
+							__( 'متن جایگزین جست‌وجو', 'music-wave-core' ),
 							'',
 						],
 						[
 							'text',
 							'submitLabel',
-							__( 'Apply button label', 'music-wave-core' ),
+							__( 'اعمال برچسب دکمه', 'music-wave-core' ),
 							'',
 						],
 						[
 							'text',
 							'resetLabel',
-							__( 'Reset link label', 'music-wave-core' ),
+							__( 'بازنشانی برچسب پیوند', 'music-wave-core' ),
 							'',
 						],
 					],
 					help: __(
-						'Leave labels empty to use the translated defaults. The default sort follows the MusicWave archive setting.',
+						'برای استفاده از پیش‌فرض‌های ترجمه‌شده، برچسب‌ها را خالی بگذارید. مرتب‌سازی پیش‌فرض از تنظیمات بایگانی MusicWave پیروی می‌کند.',
 						'music-wave-core'
 					),
 				},
@@ -529,19 +547,19 @@
 			toggles: [
 				[
 					'showCount',
-					__( 'Show result count', 'music-wave-core' ),
+					__( 'نمایش تعداد نتایج', 'music-wave-core' ),
 					true,
 					__(
-						'Shows how many releases match the current filters.',
+						'نشان می‌دهد که چند انتشار با فیلترهای فعلی مطابقت دارند.',
 						'music-wave-core'
 					),
 				],
 				[
 					'showChips',
-					__( 'Show active filter chips', 'music-wave-core' ),
+					__( 'نمایش تراشه‌های فیلتر فعال', 'music-wave-core' ),
 					true,
 					__(
-						'Each chip links back to the catalog without that filter.',
+						'هر تراشه بدون آن فیلتر به کاتالوگ بازمی‌گردد.',
 						'music-wave-core'
 					),
 				],
@@ -549,37 +567,38 @@
 		},
 		'music-wave/preview-player': {
 			releaseId: true,
-			textFields: [
-				[ 'label', __( 'Button label', 'music-wave-core' ) ],
-			],
+			textFields: [ [ 'label', __( 'برچسب دکمه', 'music-wave-core' ) ] ],
 			groups: [
 				{
-					title: __( 'Appearance', 'music-wave-core' ),
+					title: __( 'ظاهر', 'music-wave-core' ),
 					controls: [
 						[
 							'select',
 							'style',
-							__( 'Button style', 'music-wave-core' ),
+							__( 'سبک دکمه', 'music-wave-core' ),
 							[
-								[ 'solid', __( 'Solid', 'music-wave-core' ) ],
+								[ 'solid', __( 'جامد', 'music-wave-core' ) ],
 								[
 									'outline',
-									__( 'Outline', 'music-wave-core' ),
+									__( 'طرح کلی', 'music-wave-core' ),
 								],
-								[ 'ghost', __( 'Ghost', 'music-wave-core' ) ],
+								[
+									'ghost',
+									__( 'بی‌زمینه', 'music-wave-core' ),
+								],
 							],
 							__(
-								'The same choices are available in the block Styles panel.',
+								'همین گزینه‌ها در پنل سبک‌های بلوک نیز در دسترس هستند.',
 								'music-wave-core'
 							),
 						],
 						[
 							'toggle',
 							'showIcon',
-							__( 'Show play icon', 'music-wave-core' ),
+							__( 'نمایش نماد پخش', 'music-wave-core' ),
 							true,
 							__(
-								'The icon stays available to assistive technology when hidden.',
+								'این نماد در صورت پنهان‌شدن در دسترس فناوری کمکی قرار می‌گیرد.',
 								'music-wave-core'
 							),
 						],
@@ -592,74 +611,74 @@
 			compact: true,
 			groups: [
 				{
-					title: __( 'Header', 'music-wave-core' ),
+					title: __( 'سربرگ', 'music-wave-core' ),
 					controls: [
 						[
 							'text',
 							'heading',
-							__( 'Section heading', 'music-wave-core' ),
+							__( 'عنوان بخش', 'music-wave-core' ),
 							'',
 						],
 						[
 							'text',
 							'description',
-							__( 'Section description', 'music-wave-core' ),
+							__( 'توضیحات بخش', 'music-wave-core' ),
 							'',
 						],
 						[
 							'toggle',
 							'showHeading',
-							__( 'Show heading', 'music-wave-core' ),
+							__( 'نمایش عنوان', 'music-wave-core' ),
 							true,
 						],
 						[
 							'toggle',
 							'showDescription',
-							__( 'Show description', 'music-wave-core' ),
+							__( 'نمایش توضیحات', 'music-wave-core' ),
 							true,
 						],
 					],
 				},
 				{
-					title: __( 'Download rows', 'music-wave-core' ),
+					title: __( 'دانلود ردیف', 'music-wave-core' ),
 					controls: [
 						[
 							'toggle',
 							'showQuality',
-							__( 'Show quality selector', 'music-wave-core' ),
+							__( 'نمایش انتخابگر کیفیت', 'music-wave-core' ),
 							true,
 							__(
-								'When hidden, each file downloads its first listed quality.',
+								'وقتی مخفی شود، هر فایل اولین کیفیت فهرست‌شده خود را دانلود می‌کند.',
 								'music-wave-core'
 							),
 						],
 						[
 							'toggle',
 							'showStream',
-							__( 'Show secure play buttons', 'music-wave-core' ),
+							__( 'نمایش دکمه‌های پخش امن', 'music-wave-core' ),
 							true,
 						],
 						[
 							'text',
 							'downloadLabel',
-							__( 'Download button label', 'music-wave-core' ),
+							__( 'برچسب دکمه دانلود', 'music-wave-core' ),
 							'',
 						],
 						[
 							'text',
 							'playLabel',
-							__( 'Play button label', 'music-wave-core' ),
+							__( 'برچسب دکمه پخش', 'music-wave-core' ),
 							'',
 						],
 						[
 							'text',
 							'loginLabel',
-							__( 'Sign-in button label', 'music-wave-core' ),
+							__( 'برچسب دکمه ورود', 'music-wave-core' ),
 							'',
 						],
 					],
 					help: __(
-						'Leave a label empty to use the translated default.',
+						'برای استفاده از پیش‌فرض ترجمه‌شده، یک برچسب خالی بگذارید.',
 						'music-wave-core'
 					),
 				},
@@ -669,87 +688,93 @@
 			releaseId: true,
 			groups: [
 				{
-					title: __( 'Sections', 'music-wave-core' ),
+					title: __( 'بخش‌ها', 'music-wave-core' ),
 					controls: [
 						[
 							'select',
 							'sameArtistSection',
-							__( 'Same-artist section', 'music-wave-core' ),
+							__( 'بخش همان هنرمند', 'music-wave-core' ),
 							[
 								[
 									'inherit',
 									__(
-										'Default (global setting)',
+										'پیش‌فرض (تنظیم جهانی)',
 										'music-wave-core'
 									),
 								],
 								[
 									'enabled',
-									__( 'Always show', 'music-wave-core' ),
+									__( 'همیشه نشان دهید', 'music-wave-core' ),
 								],
-								[ 'disabled', __( 'Hide', 'music-wave-core' ) ],
+								[
+									'disabled',
+									__( 'پنهان کردن', 'music-wave-core' ),
+								],
 							],
 						],
 						[
 							'select',
 							'similarSection',
-							__( 'Similar releases section', 'music-wave-core' ),
+							__( 'بخش انتشارات مشابه', 'music-wave-core' ),
 							[
 								[
 									'inherit',
 									__(
-										'Default (global setting)',
+										'پیش‌فرض (تنظیم جهانی)',
 										'music-wave-core'
 									),
 								],
 								[
 									'enabled',
-									__( 'Always show', 'music-wave-core' ),
+									__( 'همیشه نشان دهید', 'music-wave-core' ),
 								],
-								[ 'disabled', __( 'Hide', 'music-wave-core' ) ],
+								[
+									'disabled',
+									__( 'پنهان کردن', 'music-wave-core' ),
+								],
 							],
 						],
 						[
 							'text',
 							'sameArtistHeading',
-							__( 'Same-artist heading', 'music-wave-core' ),
+							__( 'عنوان همان هنرمند', 'music-wave-core' ),
 							'',
 						],
 						[
 							'text',
 							'similarHeading',
-							__( 'Similar releases heading', 'music-wave-core' ),
+							__( 'عنوان انتشارهای مشابه', 'music-wave-core' ),
 							'',
 						],
 						[
 							'toggle',
 							'showSectionLink',
-							__( 'Show section link', 'music-wave-core' ),
+							__( 'نمایش پیوند بخش', 'music-wave-core' ),
 							false,
 							__(
-								'Links the same-artist section to the artist archive and the similar section to the catalog.',
+								'بخش مربوط به همان هنرمند را به آرشیو هنرمند و بخش مشابه را به کاتالوگ پیوند می‌دهد.',
 								'music-wave-core'
 							),
 						],
 						[
 							'text',
 							'sectionLinkLabel',
-							__( 'Section link label', 'music-wave-core' ),
+							__( 'برچسب پیوند بخش', 'music-wave-core' ),
 							'',
 						],
 					],
 				},
 				{
-					title: __( 'Query', 'music-wave-core' ),
+					title: __( 'پرس‌وجو', 'music-wave-core' ),
 					controls: [
 						[
 							'range',
 							'itemsToShow',
-							__( 'Items per section', 'music-wave-core' ),
+							__( 'موارد در هر بخش', 'music-wave-core' ),
 							2,
 							12,
 							__(
-								'Uses the global default until changed.',
+								'تا زمان تغییر از پیش‌فرض جهانی استفاده می‌کند.',
 								'music-wave-core'
 							),
 							4,
@@ -757,75 +782,72 @@
 						[
 							'select',
 							'orderBy',
-							__( 'Order by', 'music-wave-core' ),
+							__( 'به ترتیب', 'music-wave-core' ),
 							[
 								[
 									'date',
-									__( 'Release date', 'music-wave-core' ),
+									__( 'تاریخ انتشار', 'music-wave-core' ),
 								],
 								[
 									'modified',
-									__( 'Recently updated', 'music-wave-core' ),
+									__(
+										'به‌تازگی به‌روزشده',
+										'music-wave-core'
+									),
 								],
-								[ 'title', __( 'Title', 'music-wave-core' ) ],
-								[ 'rand', __( 'Random', 'music-wave-core' ) ],
+								[ 'title', __( 'عنوان', 'music-wave-core' ) ],
+								[ 'rand', __( 'تصادفی', 'music-wave-core' ) ],
 							],
 						],
 						[
 							'select',
 							'order',
-							__( 'Order', 'music-wave-core' ),
+							__( 'سفارش', 'music-wave-core' ),
 							[
-								[
-									'DESC',
-									__( 'Descending', 'music-wave-core' ),
-								],
-								[ 'ASC', __( 'Ascending', 'music-wave-core' ) ],
+								[ 'DESC', __( 'نزولی', 'music-wave-core' ) ],
+								[ 'ASC', __( 'صعودی', 'music-wave-core' ) ],
 							],
 						],
 						[
 							'toggle',
 							'matchGenre',
-							__( 'Match shared genres', 'music-wave-core' ),
+							__( 'مطابقت با ژانرهای مشترک', 'music-wave-core' ),
 							true,
 						],
 						[
 							'toggle',
 							'matchMood',
-							__( 'Match shared moods', 'music-wave-core' ),
+							__( 'تطبیق حال‌وهواهای مشترک', 'music-wave-core' ),
 							true,
 						],
 						[
 							'toggle',
 							'matchType',
-							__( 'Match the release type', 'music-wave-core' ),
+							__( 'مطابقت با نوع انتشار', 'music-wave-core' ),
 							true,
 						],
 					],
 				},
 				{
-					title: __( 'Layout', 'music-wave-core' ),
+					title: __( 'چیدمان', 'music-wave-core' ),
 					controls: [
 						[
 							'select',
 							'layout',
-							__( 'Layout', 'music-wave-core' ),
+							__( 'چیدمان', 'music-wave-core' ),
 							[
-								[ 'grid', __( 'Grid', 'music-wave-core' ) ],
+								[ 'grid', __( 'شبکه', 'music-wave-core' ) ],
 								[
 									'scroll',
-									__(
-										'Horizontal scroll',
-										'music-wave-core'
-									),
+									__( 'طومار افقی', 'music-wave-core' ),
 								],
-								[ 'list', __( 'List', 'music-wave-core' ) ],
+								[ 'list', __( 'فهرست', 'music-wave-core' ) ],
 							],
 						],
 						[
 							'range',
 							'columns',
-							__( 'Grid columns', 'music-wave-core' ),
+							__( 'ستون‌های شبکه', 'music-wave-core' ),
 							2,
 							6,
 							undefined,
@@ -834,65 +856,65 @@
 						[
 							'select',
 							'imageShape',
-							__( 'Artwork shape', 'music-wave-core' ),
+							__( 'شکل اثر هنری', 'music-wave-core' ),
 							[
-								[ 'square', __( 'Square', 'music-wave-core' ) ],
+								[ 'square', __( 'مربع', 'music-wave-core' ) ],
 								[
 									'landscape',
-									__( 'Landscape', 'music-wave-core' ),
+									__( 'منظره', 'music-wave-core' ),
 								],
 								[
 									'portrait',
-									__( 'Portrait', 'music-wave-core' ),
+									__( 'پرتره', 'music-wave-core' ),
 								],
-								[ 'circle', __( 'Circle', 'music-wave-core' ) ],
+								[ 'circle', __( 'دایره', 'music-wave-core' ) ],
 							],
 						],
 					],
 				},
 				{
-					title: __( 'Card content', 'music-wave-core' ),
+					title: __( 'محتوای کارت', 'music-wave-core' ),
 					controls: [
 						[
 							'toggle',
 							'showArtwork',
-							__( 'Show artwork', 'music-wave-core' ),
+							__( 'نمایش آثار هنری', 'music-wave-core' ),
 							true,
 						],
 						[
 							'toggle',
 							'showArtist',
-							__( 'Show artist', 'music-wave-core' ),
+							__( 'نمایش هنرمند', 'music-wave-core' ),
 							true,
 						],
 						[
 							'toggle',
 							'showDate',
-							__( 'Show release date', 'music-wave-core' ),
+							__( 'نمایش تاریخ انتشار', 'music-wave-core' ),
 							false,
 						],
 						[
 							'toggle',
 							'showExcerpt',
-							__( 'Show excerpt', 'music-wave-core' ),
+							__( 'نمایش گزیده', 'music-wave-core' ),
 							false,
 						],
 						[
 							'toggle',
 							'showPreview',
-							__( 'Show preview button', 'music-wave-core' ),
+							__( 'نمایش دکمه پیش‌نمایش', 'music-wave-core' ),
 							true,
 						],
 						[
 							'toggle',
 							'showAction',
-							__( 'Show action link', 'music-wave-core' ),
+							__( 'نمایش پیوند اقدام', 'music-wave-core' ),
 							false,
 						],
 						[
 							'text',
 							'actionLabel',
-							__( 'Action link label', 'music-wave-core' ),
+							__( 'برچسب پیوند اقدام', 'music-wave-core' ),
 							'',
 						],
 					],
@@ -902,43 +924,44 @@
 		'music-wave/preview-button': {
 			releaseId: true,
 			compact: true,
-			textFields: [
-				[ 'label', __( 'Button label', 'music-wave-core' ) ],
-			],
+			textFields: [ [ 'label', __( 'برچسب دکمه', 'music-wave-core' ) ] ],
 			groups: [
 				{
-					title: __( 'Appearance', 'music-wave-core' ),
+					title: __( 'ظاهر', 'music-wave-core' ),
 					controls: [
 						[
 							'select',
 							'style',
-							__( 'Button style', 'music-wave-core' ),
+							__( 'سبک دکمه', 'music-wave-core' ),
 							[
-								[ 'solid', __( 'Solid', 'music-wave-core' ) ],
+								[ 'solid', __( 'جامد', 'music-wave-core' ) ],
 								[
 									'outline',
-									__( 'Outline', 'music-wave-core' ),
+									__( 'طرح کلی', 'music-wave-core' ),
 								],
-								[ 'ghost', __( 'Ghost', 'music-wave-core' ) ],
+								[
+									'ghost',
+									__( 'بی‌زمینه', 'music-wave-core' ),
+								],
 							],
 							__(
-								'The same choices are available in the block Styles panel.',
+								'همین گزینه‌ها در پنل سبک‌های بلوک نیز در دسترس هستند.',
 								'music-wave-core'
 							),
 						],
 						[
 							'toggle',
 							'showIcon',
-							__( 'Show play icon', 'music-wave-core' ),
+							__( 'نمایش نماد پخش', 'music-wave-core' ),
 							true,
 						],
 						[
 							'toggle',
 							'fullWidth',
-							__( 'Full width button', 'music-wave-core' ),
+							__( 'دکمه عرض کامل', 'music-wave-core' ),
 							false,
 							__(
-								'Stretches the button to fill its container.',
+								'دکمه را کشیده تا ظرف آن پر شود.',
 								'music-wave-core'
 							),
 						],
@@ -949,216 +972,216 @@
 		'music-wave/account-dashboard': {
 			groups: [
 				{
-					title: __( 'Sections', 'music-wave-core' ),
+					title: __( 'بخش‌ها', 'music-wave-core' ),
 					controls: [
 						[
 							'toggle',
 							'showLibrary',
-							__( 'Music library panel', 'music-wave-core' ),
+							__( 'پنل کتابخانه موسیقی', 'music-wave-core' ),
 							true,
 							__(
-								'Saved releases plus every protected download the visitor is entitled to.',
+								'انتشارهای ذخیره‌شده به علاوه بر هر بارگیری حفاظت‌شده‌ای که بازدیدکننده حق آن را دارد.',
 								'music-wave-core'
 							),
 						],
 						[
 							'toggle',
 							'showMembershipPanel',
-							__( 'Membership panel', 'music-wave-core' ),
+							__( 'پنل عضویت', 'music-wave-core' ),
 							true,
 							__(
-								'Active levels with expiry and purchasable VIP plan products. Appears only while MusicWave VIP is active.',
+								'سطوح فعال با انقضا و محصولات طرح VIP قابل خرید. فقط زمانی که MusicWave VIP فعال است ظاهر می‌شود.',
 								'music-wave-core'
 							),
 						],
 						[
 							'toggle',
 							'showOrders',
-							__( 'Orders panel', 'music-wave-core' ),
+							__( 'پنل سفارشات', 'music-wave-core' ),
 							true,
 							__(
-								'WooCommerce order history and single-order views.',
+								'تاریخچه سفارش WooCommerce و نمایش‌های تک سفارشی.',
 								'music-wave-core'
 							),
 						],
 						[
 							'toggle',
 							'showDownloads',
-							__( 'Downloads panel', 'music-wave-core' ),
+							__( 'پنل دانلودها', 'music-wave-core' ),
 							true,
 							__(
-								'Files attached to WooCommerce purchases.',
+								'فایل‌های پیوست‌شده به خریدهای WooCommerce.',
 								'music-wave-core'
 							),
 						],
 						[
 							'toggle',
 							'showAddresses',
-							__( 'Addresses panel', 'music-wave-core' ),
+							__( 'پنل آدرس‌ها', 'music-wave-core' ),
 							true,
 							__(
-								'Editable billing and shipping address forms.',
+								'فرم‌های آدرس صورتحساب و حمل‌ونقل قابل ویرایش.',
 								'music-wave-core'
 							),
 						],
 						[
 							'toggle',
 							'showPaymentMethods',
-							__( 'Payment methods panel', 'music-wave-core' ),
+							__( 'پنل روش‌های پرداخت', 'music-wave-core' ),
 							true,
 							__(
-								'Saved cards and gateway methods.',
+								'کارت‌های ذخیره‌شده و روش‌های پرداخت.',
 								'music-wave-core'
 							),
 						],
 						[
 							'toggle',
 							'showAccountDetails',
-							__( 'Account details panel', 'music-wave-core' ),
+							__( 'پنل مشخصات حساب', 'music-wave-core' ),
 							true,
 							__(
-								'The real editable name, email, and password form.',
+								'فرم واقعی نام، ایمیل و رمز عبور قابل ویرایش.',
 								'music-wave-core'
 							),
 						],
 						[
 							'toggle',
 							'showSignOut',
-							__( 'Sign out shortcut', 'music-wave-core' ),
+							__( 'میانبر خروج از سیستم', 'music-wave-core' ),
 							true,
 						],
 					],
 					help: __(
-						'WooCommerce panels appear only while WooCommerce is active; the membership panel needs MusicWave VIP.',
+						'پنل‌های WooCommerce فقط زمانی ظاهر می‌شوند که WooCommerce فعال است. پنل عضویت به MusicWave VIP نیاز دارد.',
 						'music-wave-core'
 					),
 				},
 				{
-					title: __( 'Panel order & style', 'music-wave-core' ),
+					title: __( 'سفارش و سبک پنل', 'music-wave-core' ),
 					controls: [
 						[
 							'select',
 							'panelOrder',
-							__( 'Panel order', 'music-wave-core' ),
+							__( 'سفارش پنل', 'music-wave-core' ),
 							[
 								[
 									'default',
 									__(
-										'Music first (default)',
+										'موسیقی اول (پیش‌فرض)',
 										'music-wave-core'
 									),
 								],
 								[
 									'commerce_first',
-									__( 'Commerce first', 'music-wave-core' ),
+									__( 'تجارت اول', 'music-wave-core' ),
 								],
 								[
 									'membership_first',
-									__( 'Membership first', 'music-wave-core' ),
+									__( 'ابتدا عضویت', 'music-wave-core' ),
 								],
 							],
 							__(
-								'Changes the tab sequence only; every enabled panel stays available. Switch Tabs vs Stacked from the Styles panel.',
+								'فقط ترتیب زبانه‌ها را تغییر می‌دهد؛ همهٔ پنل‌های فعال همچنان در دسترس هستند. حالت زبانه‌ای یا روی‌هم‌چیده را از پنل سبک‌ها انتخاب کنید.',
 								'music-wave-core'
 							),
 						],
 					],
 				},
 				{
-					title: __( 'Header', 'music-wave-core' ),
+					title: __( 'سربرگ', 'music-wave-core' ),
 					controls: [
 						[
 							'toggle',
 							'showStats',
-							__( 'Statistics row', 'music-wave-core' ),
+							__( 'ردیف آمار', 'music-wave-core' ),
 							true,
 							__(
-								'Counts available downloads, saved releases, and followed artists.',
+								'تعداد دانلودهای موجود، انتشارهای ذخیره‌شده، و هنرمندانی که دنبال می‌شوند را می‌شمارد.',
 								'music-wave-core'
 							),
 						],
 						[
 							'toggle',
 							'showQuickLinks',
-							__( 'Tab bar', 'music-wave-core' ),
+							__( 'نوار برگه', 'music-wave-core' ),
 							true,
 							__(
-								'With the tab bar hidden, panels render as one continuous page (ideal with the Stacked style).',
+								'وقتی نوار زبانه پنهان باشد، پنل‌ها به‌صورت یک صفحهٔ پیوسته نمایش داده می‌شوند (مناسب برای سبک روی‌هم‌چیده).',
 								'music-wave-core'
 							),
 						],
 						[
 							'text',
 							'introText',
-							__( 'Welcome text', 'music-wave-core' ),
+							__( 'متن خوش آمدگویی', 'music-wave-core' ),
 							'',
 							__(
-								'Shown under the customer name. Leave empty for the default greeting.',
+								'زیر نام مشتری نشان داده شده است. برای تبریک پیش‌فرض خالی بگذارید.',
 								'music-wave-core'
 							),
 						],
 					],
 				},
 				{
-					title: __( 'Panel headings', 'music-wave-core' ),
+					title: __( 'عناوین پنل‌ها', 'music-wave-core' ),
 					controls: [
 						[
 							'text',
 							'libraryHeading',
-							__( 'Music library heading', 'music-wave-core' ),
+							__( 'عنوان کتابخانه موسیقی', 'music-wave-core' ),
 							'',
 						],
 						[
 							'text',
 							'membershipHeading',
-							__( 'Membership heading', 'music-wave-core' ),
+							__( 'عنوان عضویت', 'music-wave-core' ),
 							'',
 						],
 						[
 							'text',
 							'ordersHeading',
-							__( 'Orders heading', 'music-wave-core' ),
+							__( 'سرفصل سفارشات', 'music-wave-core' ),
 							'',
 						],
 						[
 							'text',
 							'downloadsHeading',
-							__( 'Downloads heading', 'music-wave-core' ),
+							__( 'عنوان دانلودها', 'music-wave-core' ),
 							'',
 						],
 						[
 							'text',
 							'addressesHeading',
-							__( 'Addresses heading', 'music-wave-core' ),
+							__( 'عنوان آدرس‌ها', 'music-wave-core' ),
 							'',
 						],
 						[
 							'text',
 							'paymentHeading',
-							__( 'Payment methods heading', 'music-wave-core' ),
+							__( 'عنوان روش‌های پرداخت', 'music-wave-core' ),
 							'',
 						],
 						[
 							'text',
 							'accountHeading',
-							__( 'Account details heading', 'music-wave-core' ),
+							__( 'سرفصل جزئیات حساب', 'music-wave-core' ),
 							'',
 						],
 						[
 							'text',
 							'playlistsHeading',
-							__( 'Playlists heading', 'music-wave-core' ),
+							__( 'عنوان فهرست‌های پخش', 'music-wave-core' ),
 							'',
 						],
 						[
 							'text',
 							'notificationsHeading',
-							__( 'Notifications heading', 'music-wave-core' ),
+							__( 'عنوان اعلان‌ها', 'music-wave-core' ),
 							'',
 						],
 					],
 					help: __(
-						'Leave a field empty to use the translated MusicWave default label.',
+						'برای استفاده از برچسب پیش‌فرض MusicWave ترجمه‌شده، یک فیلد خالی بگذارید.',
 						'music-wave-core'
 					),
 				},
@@ -1168,104 +1191,104 @@
 			toggles: [
 				[
 					'showActive',
-					__( 'Show active levels and expiry', 'music-wave-core' ),
+					__( 'نمایش سطوح فعال و انقضا', 'music-wave-core' ),
 					true,
 					__(
-						"Lists the viewer's current membership grants.",
+						'کمک هزینه عضویت فعلی بیننده را فهرست می‌کند.',
 						'music-wave-core'
 					),
 				],
 				[
 					'showPlans',
-					__( 'Show plan products', 'music-wave-core' ),
+					__( 'نمایش محصولات طرح', 'music-wave-core' ),
 					true,
 					__(
-						'Lists the configured WooCommerce VIP plan products.',
+						'محصولات برنامه VIP پیکربندی‌شده WooCommerce را فهرست می‌کند.',
 						'music-wave-core'
 					),
 				],
 				[
 					'showBuyButtons',
-					__( 'Show purchase buttons', 'music-wave-core' ),
+					__( 'نمایش دکمه‌های خرید', 'music-wave-core' ),
 					true,
 					__(
-						'Adds an add-to-cart button to every plan product.',
+						'یک دکمه افزودن به سبد خرید را به هر محصول طرح اضافه می‌کند.',
 						'music-wave-core'
 					),
 				],
 			],
 			textFields: [
-				[ 'heading', __( 'Section heading', 'music-wave-core' ) ],
-				[ 'emptyText', __( 'Empty state message', 'music-wave-core' ) ],
+				[ 'heading', __( 'عنوان بخش', 'music-wave-core' ) ],
+				[ 'emptyText', __( 'پیام حالت خالی', 'music-wave-core' ) ],
 			],
 		},
 		'music-wave/music-library': {
 			groups: [
 				{
-					title: __( 'Header', 'music-wave-core' ),
+					title: __( 'سربرگ', 'music-wave-core' ),
 					controls: [
 						[
 							'text',
 							'heading',
-							__( 'Section heading', 'music-wave-core' ),
+							__( 'عنوان بخش', 'music-wave-core' ),
 							'',
 						],
 						[
 							'text',
 							'intro',
-							__( 'Intro text', 'music-wave-core' ),
+							__( 'متن مقدمه', 'music-wave-core' ),
 							'',
 						],
 						[
 							'toggle',
 							'showHeading',
-							__( 'Show heading', 'music-wave-core' ),
+							__( 'نمایش عنوان', 'music-wave-core' ),
 							true,
 						],
 						[
 							'toggle',
 							'showFilters',
-							__( 'Show filter tabs', 'music-wave-core' ),
+							__( 'نمایش زبانه‌های فیلتر', 'music-wave-core' ),
 							true,
 							__(
-								'Tabs group saved items by release type and followed artists.',
+								'زبانه‌ها موارد ذخیره‌شده را بر اساس نوع انتشار و هنرمندان دنبال‌شده گروه‌بندی می‌کنند.',
 								'music-wave-core'
 							),
 						],
 						[
 							'toggle',
 							'showCounts',
-							__( 'Show item counts', 'music-wave-core' ),
+							__( 'نمایش تعداد اقلام', 'music-wave-core' ),
 							true,
 						],
 						[
 							'text',
 							'emptyMessage',
-							__( 'Empty state message', 'music-wave-core' ),
+							__( 'پیام حالت خالی', 'music-wave-core' ),
 							'',
 						],
 					],
 					help: __(
-						'Leave texts empty to use the translated defaults.',
+						'برای استفاده از پیش‌فرض‌های ترجمه‌شده، متون را خالی بگذارید.',
 						'music-wave-core'
 					),
 				},
 				{
-					title: __( 'Layout', 'music-wave-core' ),
+					title: __( 'چیدمان', 'music-wave-core' ),
 					controls: [
 						[
 							'select',
 							'layout',
-							__( 'Library layout', 'music-wave-core' ),
+							__( 'طرح کتابخانه', 'music-wave-core' ),
 							[
-								[ 'list', __( 'List', 'music-wave-core' ) ],
-								[ 'grid', __( 'Grid', 'music-wave-core' ) ],
+								[ 'list', __( 'فهرست', 'music-wave-core' ) ],
+								[ 'grid', __( 'شبکه', 'music-wave-core' ) ],
 							],
 						],
 						[
 							'range',
 							'columns',
-							__( 'Grid columns', 'music-wave-core' ),
+							__( 'ستون‌های شبکه', 'music-wave-core' ),
 							2,
 							6,
 							undefined,
@@ -1274,7 +1297,7 @@
 						[
 							'range',
 							'itemsToShow',
-							__( 'Items per page', 'music-wave-core' ),
+							__( 'موارد در هر صفحه', 'music-wave-core' ),
 							1,
 							100,
 							undefined,
@@ -1283,34 +1306,34 @@
 					],
 				},
 				{
-					title: __( 'Item display', 'music-wave-core' ),
+					title: __( 'نمایش آیتم', 'music-wave-core' ),
 					controls: [
 						[
 							'toggle',
 							'showArtist',
-							__( 'Show artist name', 'music-wave-core' ),
+							__( 'نمایش نام هنرمند', 'music-wave-core' ),
 							true,
 						],
 						[
 							'toggle',
 							'showType',
-							__( 'Show type badge', 'music-wave-core' ),
+							__( 'نمایش نوع نشان', 'music-wave-core' ),
 							true,
 							__(
-								'Displays the song, album, podcast, or artist label.',
+								'آهنگ، آلبوم، پادکست یا برچسب هنرمند را نمایش می‌دهد.',
 								'music-wave-core'
 							),
 						],
 						[
 							'toggle',
 							'showYear',
-							__( 'Show release year', 'music-wave-core' ),
+							__( 'نمایش سال انتشار', 'music-wave-core' ),
 							false,
 						],
 						[
 							'toggle',
 							'showRemove',
-							__( 'Show remove buttons', 'music-wave-core' ),
+							__( 'نمایش دکمه‌های حذف', 'music-wave-core' ),
 							true,
 						],
 					],
@@ -1322,77 +1345,89 @@
 			compact: true,
 			groups: [
 				{
-					title: __( 'Button', 'music-wave-core' ),
+					title: __( 'دکمه', 'music-wave-core' ),
 					controls: [
 						[
 							'select',
 							'itemType',
-							__( 'What the button saves', 'music-wave-core' ),
+							__(
+								'چیزی که دکمه ذخیره می‌کند',
+								'music-wave-core'
+							),
 							[
 								[
 									'release',
-									__( 'Add to library', 'music-wave-core' ),
+									__(
+										'افزودن به کتابخانه',
+										'music-wave-core'
+									),
 								],
 								[
 									'wishlist',
-									__( 'Add to wishlist', 'music-wave-core' ),
+									__(
+										'افزودن به فهرست علاقه‌مندی‌ها',
+										'music-wave-core'
+									),
 								],
 								[
 									'presave',
 									__(
-										'Pre-save (upcoming releases only)',
+										'پیش ذخیره (فقط انتشارهای آینده)',
 										'music-wave-core'
 									),
 								],
 							],
 							__(
-								'Pre-save buttons only render while the release date is still in the future.',
+								'دکمه‌های ذخیره‌سازی پیش از ذخیره تنها زمانی ارائه می‌شوند که تاریخ انتشار هنوز در آینده است.',
 								'music-wave-core'
 							),
 						],
 						[
 							'text',
 							'label',
-							__( 'Button label', 'music-wave-core' ),
+							__( 'برچسب دکمه', 'music-wave-core' ),
 							'',
 						],
 						[
 							'text',
 							'addedLabel',
-							__( 'Saved state label', 'music-wave-core' ),
+							__( 'برچسب حالت ذخیره‌شده', 'music-wave-core' ),
 							'',
 						],
 						[
 							'select',
 							'style',
-							__( 'Button style', 'music-wave-core' ),
+							__( 'سبک دکمه', 'music-wave-core' ),
 							[
-								[ 'solid', __( 'Solid', 'music-wave-core' ) ],
+								[ 'solid', __( 'جامد', 'music-wave-core' ) ],
 								[
 									'outline',
-									__( 'Outline', 'music-wave-core' ),
+									__( 'طرح کلی', 'music-wave-core' ),
 								],
-								[ 'ghost', __( 'Ghost', 'music-wave-core' ) ],
+								[
+									'ghost',
+									__( 'بی‌زمینه', 'music-wave-core' ),
+								],
 							],
 						],
 					],
 					help: __(
-						'Use the artist term ID to turn this into a follow-artist button for a fixed artist.',
+						'از اصطلاح هنرمند ID برای تبدیل این دکمه به یک دکمه هنرمند برای یک هنرمند ثابت استفاده کنید.',
 						'music-wave-core'
 					),
 				},
 				{
-					title: __( 'Artist target', 'music-wave-core' ),
+					title: __( 'هدف هنرمند', 'music-wave-core' ),
 					controls: [
 						[
 							'intText',
 							'termId',
-							__( 'Artist term ID', 'music-wave-core' ),
+							__( 'اصطلاح هنرمند ID', 'music-wave-core' ),
 							'',
 						],
 					],
 					help: __(
-						'Leave 0 to target the selected release. Enter a numeric artist taxonomy ID to follow that artist instead.',
+						'برای هدف‌گرفتن انتشار انتخاب‌شده، مقدار ۰ را وارد کنید. برای دنبال‌کردن آن هنرمند، به‌جای آن شناسهٔ عددی طبقه‌بندی هنرمند را وارد کنید.',
 						'music-wave-core'
 					),
 				},
@@ -1404,133 +1439,132 @@
 		'music-wave/artists-shelf': {
 			groups: [
 				{
-					title: __( 'Header', 'music-wave-core' ),
+					title: __( 'سربرگ', 'music-wave-core' ),
 					controls: [
-						[
-							'text',
-							'eyebrow',
-							__( 'Eyebrow', 'music-wave-core' ),
-						],
+						[ 'text', 'eyebrow', __( 'ابرو', 'music-wave-core' ) ],
 						[
 							'text',
 							'heading',
-							__( 'Section heading', 'music-wave-core' ),
+							__( 'عنوان بخش', 'music-wave-core' ),
 							'',
 							__(
-								'Leave empty to use the translated default heading.',
+								'برای استفاده از عنوان پیش‌فرض ترجمه‌شده خالی بگذارید.',
 								'music-wave-core'
 							),
 						],
 						[
 							'text',
 							'description',
-							__( 'Intro text', 'music-wave-core' ),
+							__( 'متن مقدمه', 'music-wave-core' ),
 						],
 						[
 							'toggle',
 							'showHeading',
-							__( 'Show heading', 'music-wave-core' ),
+							__( 'نمایش عنوان', 'music-wave-core' ),
 							true,
 						],
 						[
 							'text',
 							'sectionUrl',
-							__( 'See-all link URL', 'music-wave-core' ),
+							__( 'مشاهدهٔ همهٔ نشانی پیوند', 'music-wave-core' ),
 							'',
 							__(
-								'Usually the catalog page or an artist directory page.',
+								'معمولاً صفحه کاتالوگ یا صفحه فهرست هنرمندان.',
 								'music-wave-core'
 							),
 						],
 						[
 							'text',
 							'sectionLinkLabel',
-							__( 'See-all link label', 'music-wave-core' ),
+							__(
+								'برچسب پیوند «مشاهدهٔ همه»',
+								'music-wave-core'
+							),
 						],
 					],
 				},
 				{
-					title: __( 'Source', 'music-wave-core' ),
+					title: __( 'منبع', 'music-wave-core' ),
 					controls: [
 						[
 							'select',
 							'source',
-							__( 'Which artists appear', 'music-wave-core' ),
+							__(
+								'کدام هنرمندان ظاهر می‌شوند',
+								'music-wave-core'
+							),
 							[
 								[
 									'all',
 									__(
-										'All catalog artists',
+										'همه هنرمندان کاتالوگ',
 										'music-wave-core'
 									),
 								],
 								[
 									'genre',
-									__(
-										'Artists behind one genre',
-										'music-wave-core'
-									),
+									__( 'هنرمندان یک ژانر', 'music-wave-core' ),
 								],
 								[
 									'mood',
 									__(
-										'Artists behind one mood',
+										'هنرمندان یک حال‌وهوا',
 										'music-wave-core'
 									),
 								],
 								[
 									'manual',
-									__( 'Hand-picked list', 'music-wave-core' ),
+									__(
+										'فهرست دست‌چین‌شده',
+										'music-wave-core'
+									),
 								],
 							],
 						],
 						[
 							'text',
 							'termSlug',
-							__( 'Genre or mood slug', 'music-wave-core' ),
+							__( 'ژانر یا حال‌وهوا', 'music-wave-core' ),
 							'',
 							__(
-								'Used by the genre and mood sources. Example: pop.',
+								'برای منبع ژانر و حال‌وهوا استفاده می‌شود. مثال: پاپ.',
 								'music-wave-core'
 							),
 						],
 						[
 							'text',
 							'artistIds',
-							__( 'Artist term IDs', 'music-wave-core' ),
+							__( 'شناسه‌های اصطلاح هنرمند', 'music-wave-core' ),
 							'',
 							__(
-								'Used by the hand-picked source. Comma-separated numeric IDs keep your exact order.',
+								'استفاده شده توسط منبع منتخب. شناسه‌های عددی جداشده با ویرگول، ترتیب دقیق شما را حفظ می‌کنند.',
 								'music-wave-core'
 							),
 						],
 						[
 							'select',
 							'orderBy',
-							__( 'Order by', 'music-wave-core' ),
+							__( 'به ترتیب', 'music-wave-core' ),
 							[
 								[
 									'count',
 									__(
-										'Most releases first',
+										'بیشترین انتشار اول',
 										'music-wave-core'
 									),
 								],
-								[ 'name', __( 'Name A–Z', 'music-wave-core' ) ],
-								[
-									'rand',
-									__( 'Random shuffle', 'music-wave-core' ),
-								],
+								[ 'name', __( 'نام A–Z', 'music-wave-core' ) ],
+								[ 'rand', __( 'تصادفی', 'music-wave-core' ) ],
 							],
 							__(
-								'Counts cover published releases only.',
+								'شمارش فقط انتشارهای منتشرشده را پوشش می‌دهد.',
 								'music-wave-core'
 							),
 						],
 						[
 							'range',
 							'itemsToShow',
-							__( 'Maximum artists', 'music-wave-core' ),
+							__( 'حداکثر هنرمندان', 'music-wave-core' ),
 							1,
 							24,
 							undefined,
@@ -1539,37 +1573,37 @@
 						[
 							'text',
 							'emptyMessage',
-							__( 'Empty state message', 'music-wave-core' ),
+							__( 'پیام حالت خالی', 'music-wave-core' ),
 						],
 					],
 				},
 				{
-					title: __( 'Layout', 'music-wave-core' ),
+					title: __( 'چیدمان', 'music-wave-core' ),
 					controls: [
 						[
 							'select',
 							'layout',
-							__( 'Layout', 'music-wave-core' ),
+							__( 'چیدمان', 'music-wave-core' ),
 							[
-								[ 'grid', __( 'Grid', 'music-wave-core' ) ],
+								[ 'grid', __( 'شبکه', 'music-wave-core' ) ],
 								[
 									'scroll',
-									__( 'Horizontal shelf', 'music-wave-core' ),
+									__( 'قفسه افقی', 'music-wave-core' ),
 								],
 								[
 									'list',
-									__( 'Compact list', 'music-wave-core' ),
+									__( 'فهرست جمع‌وجور', 'music-wave-core' ),
 								],
 							],
 							__(
-								'Reuses the shared release-shelf chrome, so it matches every other shelf.',
+								'از کروم اشتراک‌گذاری قفسه استفادهٔ مجدد می‌کند، بنابراین با قفسه‌های دیگر مطابقت دارد.',
 								'music-wave-core'
 							),
 						],
 						[
 							'range',
 							'columns',
-							__( 'Grid columns', 'music-wave-core' ),
+							__( 'ستون‌های شبکه', 'music-wave-core' ),
 							2,
 							6,
 							undefined,
@@ -1578,58 +1612,58 @@
 						[
 							'select',
 							'imageShape',
-							__( 'Avatar shape', 'music-wave-core' ),
+							__( 'شکل آواتار', 'music-wave-core' ),
 							[
-								[ 'circle', __( 'Circle', 'music-wave-core' ) ],
+								[ 'circle', __( 'دایره', 'music-wave-core' ) ],
 								[
 									'rounded',
-									__( 'Rounded corners', 'music-wave-core' ),
+									__( 'گوشه‌های گرد', 'music-wave-core' ),
 								],
-								[ 'square', __( 'Square', 'music-wave-core' ) ],
+								[ 'square', __( 'مربع', 'music-wave-core' ) ],
 							],
 						],
 						[
 							'select',
 							'imageSize',
-							__( 'Image size', 'music-wave-core' ),
+							__( 'اندازه تصویر', 'music-wave-core' ),
 							[
 								[
 									'thumbnail',
-									__( 'Thumbnail', 'music-wave-core' ),
+									__( 'تصویر کوچک', 'music-wave-core' ),
 								],
-								[ 'medium', __( 'Medium', 'music-wave-core' ) ],
-								[ 'large', __( 'Large', 'music-wave-core' ) ],
-								[ 'full', __( 'Full', 'music-wave-core' ) ],
+								[ 'medium', __( 'متوسط', 'music-wave-core' ) ],
+								[ 'large', __( 'بزرگ', 'music-wave-core' ) ],
+								[ 'full', __( 'کامل', 'music-wave-core' ) ],
 							],
 						],
 						[
 							'toggle',
 							'showImage',
-							__( 'Show avatar', 'music-wave-core' ),
+							__( 'نمایش آواتار', 'music-wave-core' ),
 							true,
 						],
 						[
 							'toggle',
 							'showName',
-							__( 'Show artist name', 'music-wave-core' ),
+							__( 'نمایش نام هنرمند', 'music-wave-core' ),
 							true,
 						],
 						[
 							'toggle',
 							'showReleaseCount',
-							__( 'Show release count', 'music-wave-core' ),
+							__( 'نمایش تعداد انتشارها', 'music-wave-core' ),
 							true,
 						],
 						[
 							'toggle',
 							'showBio',
-							__( 'Show biography excerpt', 'music-wave-core' ),
+							__( 'نمایش گزیده بیوگرافی', 'music-wave-core' ),
 							false,
 						],
 						[
 							'range',
 							'bioLength',
-							__( 'Biography length (words)', 'music-wave-core' ),
+							__( 'طول بیوگرافی (کلمات)', 'music-wave-core' ),
 							5,
 							80,
 							undefined,
@@ -1638,13 +1672,10 @@
 						[
 							'toggle',
 							'showFollowButton',
-							__(
-								'Show follow-artist button',
-								'music-wave-core'
-							),
+							__( 'نمایش دکمه دنبال هنرمند', 'music-wave-core' ),
 							true,
 							__(
-								'Reuses the personal library follow button, so followers stay in sync everywhere.',
+								'از دکمه دنبال‌کردن کتابخانه شخصی دوباره استفاده می‌کند، بنابراین دنبال کنندگان در همه جا همگام می‌مانند.',
 								'music-wave-core'
 							),
 						],
@@ -1655,113 +1686,121 @@
 		'music-wave/taxonomy-shelf': {
 			groups: [
 				{
-					title: __( 'Header', 'music-wave-core' ),
+					title: __( 'سربرگ', 'music-wave-core' ),
 					controls: [
-						[
-							'text',
-							'eyebrow',
-							__( 'Eyebrow', 'music-wave-core' ),
-						],
+						[ 'text', 'eyebrow', __( 'ابرو', 'music-wave-core' ) ],
 						[
 							'text',
 							'heading',
-							__( 'Section heading', 'music-wave-core' ),
+							__( 'عنوان بخش', 'music-wave-core' ),
 							'',
 							__(
-								'Leave empty to use the translated default heading.',
+								'برای استفاده از عنوان پیش‌فرض ترجمه‌شده خالی بگذارید.',
 								'music-wave-core'
 							),
 						],
 						[
 							'text',
 							'description',
-							__( 'Intro text', 'music-wave-core' ),
+							__( 'متن مقدمه', 'music-wave-core' ),
 						],
 						[
 							'toggle',
 							'showHeading',
-							__( 'Show heading', 'music-wave-core' ),
+							__( 'نمایش عنوان', 'music-wave-core' ),
 							true,
 						],
 						[
 							'text',
 							'sectionUrl',
-							__( 'See-all link URL', 'music-wave-core' ),
+							__( 'مشاهدهٔ همهٔ نشانی پیوند', 'music-wave-core' ),
 						],
 						[
 							'text',
 							'sectionLinkLabel',
-							__( 'See-all link label', 'music-wave-core' ),
+							__(
+								'برچسب پیوند «مشاهدهٔ همه»',
+								'music-wave-core'
+							),
 						],
 					],
 				},
 				{
-					title: __( 'Source', 'music-wave-core' ),
+					title: __( 'منبع', 'music-wave-core' ),
 					controls: [
 						[
 							'select',
 							'taxonomy',
-							__( 'Which taxonomy to browse', 'music-wave-core' ),
+							__(
+								'کدام طبقه‌بندی را مرور کنیم؟',
+								'music-wave-core'
+							),
 							[
 								[
 									'mw_genre',
-									__( 'Genres', 'music-wave-core' ),
+									__( 'سبک‌ها', 'music-wave-core' ),
 								],
-								[ 'mw_mood', __( 'Moods', 'music-wave-core' ) ],
+								[
+									'mw_mood',
+									__( 'حال‌وهواها', 'music-wave-core' ),
+								],
 								[
 									'mw_label',
-									__( 'Labels', 'music-wave-core' ),
+									__( 'برچسب‌ها', 'music-wave-core' ),
 								],
 							],
 						],
 						[
 							'select',
 							'source',
-							__( 'Which terms appear', 'music-wave-core' ),
+							__( 'کدام عبارت ظاهر می‌شود', 'music-wave-core' ),
 							[
 								[
 									'all',
-									__( 'All terms in use', 'music-wave-core' ),
+									__(
+										'همه اصطلاحات در حال استفاده',
+										'music-wave-core'
+									),
 								],
 								[
 									'manual',
-									__( 'Hand-picked list', 'music-wave-core' ),
+									__(
+										'فهرست دست‌چین‌شده',
+										'music-wave-core'
+									),
 								],
 							],
 						],
 						[
 							'text',
 							'termIds',
-							__( 'Term IDs', 'music-wave-core' ),
+							__( 'اصطلاح شناسه‌ها', 'music-wave-core' ),
 							'',
 							__(
-								'Used by the hand-picked source. Comma-separated numeric IDs keep your exact order.',
+								'استفاده شده توسط منبع منتخب. شناسه‌های عددی جداشده با ویرگول، ترتیب دقیق شما را حفظ می‌کنند.',
 								'music-wave-core'
 							),
 						],
 						[
 							'select',
 							'orderBy',
-							__( 'Order by', 'music-wave-core' ),
+							__( 'به ترتیب', 'music-wave-core' ),
 							[
 								[
 									'count',
 									__(
-										'Most releases first',
+										'بیشترین انتشار اول',
 										'music-wave-core'
 									),
 								],
-								[ 'name', __( 'Name A–Z', 'music-wave-core' ) ],
-								[
-									'rand',
-									__( 'Random shuffle', 'music-wave-core' ),
-								],
+								[ 'name', __( 'نام A–Z', 'music-wave-core' ) ],
+								[ 'rand', __( 'تصادفی', 'music-wave-core' ) ],
 							],
 						],
 						[
 							'range',
 							'itemsToShow',
-							__( 'Maximum tiles', 'music-wave-core' ),
+							__( 'حداکثر کاشی', 'music-wave-core' ),
 							1,
 							24,
 							undefined,
@@ -1770,37 +1809,37 @@
 						[
 							'text',
 							'emptyMessage',
-							__( 'Empty state message', 'music-wave-core' ),
+							__( 'پیام حالت خالی', 'music-wave-core' ),
 						],
 					],
 				},
 				{
-					title: __( 'Tiles', 'music-wave-core' ),
+					title: __( 'کاشی', 'music-wave-core' ),
 					controls: [
 						[
 							'select',
 							'layout',
-							__( 'Layout', 'music-wave-core' ),
+							__( 'چیدمان', 'music-wave-core' ),
 							[
-								[ 'grid', __( 'Grid', 'music-wave-core' ) ],
+								[ 'grid', __( 'شبکه', 'music-wave-core' ) ],
 								[
 									'scroll',
-									__( 'Horizontal rail', 'music-wave-core' ),
+									__( 'ریل افقی', 'music-wave-core' ),
 								],
 								[
 									'list',
-									__( 'List rows', 'music-wave-core' ),
+									__( 'لیست ردیف‌ها', 'music-wave-core' ),
 								],
 							],
 							__(
-								'Reuses the shared release-shelf chrome, so it matches every other shelf.',
+								'از کروم اشتراک‌گذاری قفسه استفادهٔ مجدد می‌کند، بنابراین با قفسه‌های دیگر مطابقت دارد.',
 								'music-wave-core'
 							),
 						],
 						[
 							'range',
 							'columns',
-							__( 'Grid columns', 'music-wave-core' ),
+							__( 'ستون‌های شبکه', 'music-wave-core' ),
 							2,
 							6,
 							undefined,
@@ -1809,28 +1848,25 @@
 						[
 							'select',
 							'cardStyle',
-							__( 'Tile style', 'music-wave-core' ),
+							__( 'سبک کاشی', 'music-wave-core' ),
 							[
 								[
 									'colorful',
 									__(
-										'Colorful (curated hues)',
+										'رنگارنگ (رنگ‌های انتخاب‌شده)',
 										'music-wave-core'
 									),
 								],
 								[
 									'plain',
-									__(
-										'Plain (quiet surface)',
-										'music-wave-core'
-									),
+									__( 'ساده (سطح آرام)', 'music-wave-core' ),
 								],
 							],
 						],
 						[
 							'toggle',
 							'showCount',
-							__( 'Show release counts', 'music-wave-core' ),
+							__( 'نمایش تعداد انتشارها', 'music-wave-core' ),
 							true,
 						],
 					],
@@ -1840,24 +1876,24 @@
 		'music-wave/term-hero': {
 			groups: [
 				{
-					title: __( 'Layout', 'music-wave-core' ),
+					title: __( 'چیدمان', 'music-wave-core' ),
 					controls: [
 						[
 							'select',
 							'layout',
-							__( 'Layout', 'music-wave-core' ),
+							__( 'چیدمان', 'music-wave-core' ),
 							[
 								[
 									'banner',
 									__(
-										'Banner (full-width cover)',
+										'بنر (جلد تمام عرض)',
 										'music-wave-core'
 									),
 								],
 								[
 									'compact',
 									__(
-										'Compact (small row)',
+										'فشرده (ردیف کوچک)',
 										'music-wave-core'
 									),
 								],
@@ -1866,72 +1902,72 @@
 						[
 							'select',
 							'size',
-							__( 'Banner height', 'music-wave-core' ),
+							__( 'ارتفاع بنر', 'music-wave-core' ),
 							[
-								[ 'short', __( 'Short', 'music-wave-core' ) ],
-								[ 'medium', __( 'Medium', 'music-wave-core' ) ],
-								[ 'tall', __( 'Tall', 'music-wave-core' ) ],
+								[ 'short', __( 'کوتاه', 'music-wave-core' ) ],
+								[ 'medium', __( 'متوسط', 'music-wave-core' ) ],
+								[ 'tall', __( 'بلند', 'music-wave-core' ) ],
 							],
 						],
 						[
 							'select',
 							'imageShape',
-							__( 'Compact art shape', 'music-wave-core' ),
+							__( 'شکل تصویر فشرده', 'music-wave-core' ),
 							[
 								[
 									'rounded',
-									__( 'Rounded corners', 'music-wave-core' ),
+									__( 'گوشه‌های گرد', 'music-wave-core' ),
 								],
-								[ 'circle', __( 'Circle', 'music-wave-core' ) ],
-								[ 'square', __( 'Square', 'music-wave-core' ) ],
+								[ 'circle', __( 'دایره', 'music-wave-core' ) ],
+								[ 'square', __( 'مربع', 'music-wave-core' ) ],
 							],
 						],
 					],
 				},
 				{
-					title: __( 'Content', 'music-wave-core' ),
+					title: __( 'محتوا', 'music-wave-core' ),
 					controls: [
 						[
 							'toggle',
 							'showImage',
-							__( 'Show cover media', 'music-wave-core' ),
+							__( 'نمایش تصویر جلد', 'music-wave-core' ),
 							true,
 						],
 						[
 							'toggle',
 							'showEyebrow',
-							__( 'Show taxonomy eyebrow', 'music-wave-core' ),
+							__(
+								'نمایش برچسب بالای طبقه‌بندی',
+								'music-wave-core'
+							),
 							true,
 						],
 						[
 							'toggle',
 							'showName',
-							__( 'Show name heading', 'music-wave-core' ),
+							__( 'نمایش نام', 'music-wave-core' ),
 							true,
 						],
 						[
 							'toggle',
 							'showCount',
-							__( 'Show release count', 'music-wave-core' ),
+							__( 'نمایش تعداد انتشارها', 'music-wave-core' ),
 							true,
 						],
 						[
 							'toggle',
 							'showDescription',
-							__( 'Show description', 'music-wave-core' ),
+							__( 'نمایش توضیحات', 'music-wave-core' ),
 							true,
 						],
 						[
 							'range',
 							'descriptionLength',
-							__(
-								'Description length (words)',
-								'music-wave-core'
-							),
+							__( 'طول توضیحات (کلمات)', 'music-wave-core' ),
 							0,
 							120,
 							__(
-								'0 keeps the full description. Any other value shows a trimmed excerpt.',
+								'۰ برای نمایش توضیحات کامل است؛ هر مقدار دیگری گزیده‌ای کوتاه‌شده را نشان می‌دهد.',
 								'music-wave-core'
 							),
 							40,
@@ -1939,56 +1975,53 @@
 						[
 							'toggle',
 							'showFollowButton',
-							__(
-								'Show follow-artist button',
-								'music-wave-core'
-							),
+							__( 'نمایش دکمه دنبال هنرمند', 'music-wave-core' ),
 							true,
 							__(
-								'Renders for artists only; genres, moods, and labels stay clean.',
+								'دکمه فقط برای هنرمندان نمایش داده می‌شود؛ برای ژانرها، حال‌وهواها و برچسب‌ها پنهان می‌ماند.',
 								'music-wave-core'
 							),
 						],
 					],
 				},
 				{
-					title: __( 'Pin a term', 'music-wave-core' ),
+					title: __( 'یک اصطلاح را سنجاق کنید', 'music-wave-core' ),
 					controls: [
 						[
 							'select',
 							'taxonomy',
-							__( 'Taxonomy', 'music-wave-core' ),
+							__( 'طبقه‌بندی', 'music-wave-core' ),
 							[
 								[
 									'',
 									__(
-										'Automatic (current archive)',
+										'خودکار (بایگانی فعلی)',
 										'music-wave-core'
 									),
 								],
 								[
 									'mw_artist',
-									__( 'Artist', 'music-wave-core' ),
+									__( 'هنرمند', 'music-wave-core' ),
 								],
+								[ 'mw_genre', __( 'سبک', 'music-wave-core' ) ],
 								[
-									'mw_genre',
-									__( 'Genre', 'music-wave-core' ),
+									'mw_mood',
+									__( 'حال‌وهوا', 'music-wave-core' ),
 								],
-								[ 'mw_mood', __( 'Mood', 'music-wave-core' ) ],
 								[
 									'mw_label',
-									__( 'Label', 'music-wave-core' ),
+									__( 'برچسب', 'music-wave-core' ),
 								],
 							],
 						],
 						[
 							'intText',
 							'termId',
-							__( 'Term ID', 'music-wave-core' ),
+							__( 'اصطلاح ID', 'music-wave-core' ),
 						],
 					],
 					help: __(
-						'Leave term ID at 0 to render the currently viewed archive automatically.',
+						'عبارت ID را روی 0 بگذارید تا آرشیو مشاهده‌شده به‌طور خودکار نمایش داده شود.',
 						'music-wave-core'
 					),
 				},
@@ -1997,17 +2030,17 @@
 		'music-wave/playlists': {
 			groups: [
 				{
-					title: __( 'Heading', 'music-wave-core' ),
+					title: __( 'عنوان', 'music-wave-core' ),
 					controls: [
 						[
 							'text',
 							'heading',
-							__( 'Section heading', 'music-wave-core' ),
+							__( 'عنوان بخش', 'music-wave-core' ),
 							'',
 						],
 					],
 					help: __(
-						'Listeners manage playlists here. Every control works without JavaScript.',
+						'شنوندگان فهرست‌های پخش را در اینجا مدیریت می‌کنند. هر کنترل بدون JavaScript کار می‌کند.',
 						'music-wave-core'
 					),
 				},
@@ -2016,37 +2049,37 @@
 		'music-wave/playback-queue': {
 			groups: [
 				{
-					title: __( 'Display', 'music-wave-core' ),
+					title: __( 'نمایش', 'music-wave-core' ),
 					controls: [
 						[
 							'text',
 							'heading',
-							__( 'Section heading', 'music-wave-core' ),
+							__( 'عنوان بخش', 'music-wave-core' ),
 							'',
 						],
 						[
 							'toggle',
 							'showArtwork',
-							__( 'Show artwork', 'music-wave-core' ),
+							__( 'نمایش آثار هنری', 'music-wave-core' ),
 							true,
 						],
 						[
 							'toggle',
 							'showPosition',
-							__( 'Show position numbers', 'music-wave-core' ),
+							__( 'نمایش شماره موقعیت', 'music-wave-core' ),
 							true,
 						],
 						[
 							'toggle',
 							'showArtist',
-							__( 'Show artist names', 'music-wave-core' ),
+							__( 'نمایش نام هنرمندان', 'music-wave-core' ),
 							true,
 						],
 						[
 							'toggle',
 							'showControls',
 							__(
-								'Show shuffle and repeat controls',
+								'نمایش کنترل‌های کلیک و تکرار',
 								'music-wave-core'
 							),
 							true,
@@ -2054,17 +2087,17 @@
 						[
 							'toggle',
 							'showClear',
-							__( 'Show clear-queue button', 'music-wave-core' ),
+							__( 'نمایش دکمه صف پاک', 'music-wave-core' ),
 							true,
 						],
 						[
 							'text',
 							'emptyMessage',
-							__( 'Empty state message', 'music-wave-core' ),
+							__( 'پیام حالت خالی', 'music-wave-core' ),
 						],
 					],
 					help: __(
-						'Every control is a plain form post, so the queue works with JavaScript disabled.',
+						'هر کنترل یک پست فرم ساده است، بنابراین صف با JavaScript غیرفعال کار می‌کند.',
 						'music-wave-core'
 					),
 				},
@@ -2074,14 +2107,54 @@
 			releaseId: true,
 			groups: [
 				{
-					title: __( 'Control', 'music-wave-core' ),
+					title: __( 'کنترل', 'music-wave-core' ),
 					controls: [
 						[
 							'text',
 							'label',
-							__( 'Field label', 'music-wave-core' ),
+							__( 'برچسب فیلد', 'music-wave-core' ),
 						],
 					],
+				},
+			],
+		},
+		'music-wave/share-button': {
+			releaseId: true,
+			textFields: [ [ 'label', __( 'برچسب دکمه', 'music-wave-core' ) ] ],
+			groups: [
+				{
+					title: __( 'نمایش', 'music-wave-core' ),
+					controls: [
+						[
+							'text',
+							'label',
+							__( 'برچسب دکمه', 'music-wave-core' ),
+						],
+					],
+					help: __(
+						'برای استفاده از برچسب پیش‌فرض ترجمه‌شده خالی بگذارید.',
+						'music-wave-core'
+					),
+				},
+			],
+		},
+		'music-wave/shuffle-button': {
+			releaseId: true,
+			textFields: [ [ 'label', __( 'برچسب دکمه', 'music-wave-core' ) ] ],
+			groups: [
+				{
+					title: __( 'نمایش', 'music-wave-core' ),
+					controls: [
+						[
+							'text',
+							'label',
+							__( 'برچسب دکمه', 'music-wave-core' ),
+						],
+					],
+					help: __(
+						'پخش تصادفی صف پیش‌نمایش را به‌صورت تصادفی مرتب می‌کند.',
+						'music-wave-core'
+					),
 				},
 			],
 		},
@@ -2089,40 +2162,40 @@
 			releaseId: true,
 			groups: [
 				{
-					title: __( 'Control', 'music-wave-core' ),
+					title: __( 'کنترل', 'music-wave-core' ),
 					controls: [
 						[
 							'select',
 							'position',
-							__( 'Where it lands', 'music-wave-core' ),
+							__( 'موقعیت فرود', 'music-wave-core' ),
 							[
 								[
 									'next',
 									__(
-										'Play next (after current)',
+										'پخش بعدی (بعد از فعلی)',
 										'music-wave-core'
 									),
 								],
 								[
 									'end',
 									__(
-										'Add to end of queue',
+										'به انتهای صف اضافه کنید',
 										'music-wave-core'
 									),
 								],
 							],
 							__(
-								'Once queued, the button turns into an in-queue badge.',
+								'پس از قرار گرفتن در صف، دکمه به یک نشان درون صف تبدیل می‌شود.',
 								'music-wave-core'
 							),
 						],
 						[
 							'text',
 							'label',
-							__( 'Button label', 'music-wave-core' ),
+							__( 'برچسب دکمه', 'music-wave-core' ),
 							'',
 							__(
-								'Leave empty to use the default Play next or Add to queue label.',
+								'برای استفاده از برچسب پخش بعدی یا افزودن به صف، خالی بگذارید.',
 								'music-wave-core'
 							),
 						],
@@ -2133,102 +2206,105 @@
 		'music-wave/public-playlists': {
 			groups: [
 				{
-					title: __( 'Header', 'music-wave-core' ),
+					title: __( 'سربرگ', 'music-wave-core' ),
 					controls: [
 						[
 							'text',
 							'eyebrow',
-							__( 'Eyebrow', 'music-wave-core' ),
+							__( 'ابرو', 'music-wave-core' ),
 							'',
 						],
 						[
 							'text',
 							'heading',
-							__( 'Section heading', 'music-wave-core' ),
+							__( 'عنوان بخش', 'music-wave-core' ),
 							'',
 						],
 						[
 							'text',
 							'intro',
-							__( 'Intro text', 'music-wave-core' ),
+							__( 'متن مقدمه', 'music-wave-core' ),
 							'',
 						],
 						[
 							'toggle',
 							'showHeading',
-							__( 'Show heading', 'music-wave-core' ),
+							__( 'نمایش عنوان', 'music-wave-core' ),
 							true,
 						],
 						[
 							'toggle',
 							'showSearch',
-							__( 'Show search', 'music-wave-core' ),
+							__( 'نمایش جست‌وجو', 'music-wave-core' ),
 							true,
 						],
 						[
 							'toggle',
 							'showCount',
-							__( 'Show playlist total', 'music-wave-core' ),
+							__( 'نمایش کل فهرست پخش', 'music-wave-core' ),
 							true,
 						],
 						[
 							'text',
 							'searchPlaceholder',
-							__( 'Search placeholder', 'music-wave-core' ),
+							__( 'متن جایگزین جست‌وجو', 'music-wave-core' ),
 							'',
 						],
 						[
 							'text',
 							'emptyMessage',
-							__( 'Empty state message', 'music-wave-core' ),
+							__( 'پیام حالت خالی', 'music-wave-core' ),
 							'',
 						],
 						[
 							'text',
 							'sectionUrl',
-							__( 'See-all link URL', 'music-wave-core' ),
+							__( 'مشاهدهٔ همهٔ نشانی پیوند', 'music-wave-core' ),
 							'',
 							__(
-								'Mirrors the release shelf header link. Leave empty to hide it.',
+								'پیوند سربرگ قفسه انتشار را منعکس می‌کند. خالی بگذارید تا پنهان شود.',
 								'music-wave-core'
 							),
 						],
 						[
 							'text',
 							'sectionLinkLabel',
-							__( 'See-all link label', 'music-wave-core' ),
+							__(
+								'برچسب پیوند «مشاهدهٔ همه»',
+								'music-wave-core'
+							),
 							'',
 							__(
-								'Leave empty to inherit the translated MusicWave default label.',
+								'برای به ارث بردن برچسب پیش‌فرض MusicWave ترجمه‌شده، خالی بگذارید.',
 								'music-wave-core'
 							),
 						],
 					],
 				},
 				{
-					title: __( 'Layout', 'music-wave-core' ),
+					title: __( 'چیدمان', 'music-wave-core' ),
 					controls: [
 						[
 							'select',
 							'layout',
-							__( 'Layout', 'music-wave-core' ),
+							__( 'چیدمان', 'music-wave-core' ),
 							[
-								[ 'grid', __( 'Grid', 'music-wave-core' ) ],
+								[ 'grid', __( 'شبکه', 'music-wave-core' ) ],
 								[
 									'scroll',
-									__( 'Horizontal shelf', 'music-wave-core' ),
+									__( 'قفسه افقی', 'music-wave-core' ),
 								],
-								[ 'list', __( 'List', 'music-wave-core' ) ],
+								[ 'list', __( 'فهرست', 'music-wave-core' ) ],
 							],
 							__(
-								'Horizontal shelf matches the MusicWave release shelf behavior.',
+								'قفسه افقی با رفتار قفسه انتشار MusicWave مطابقت دارد.',
 								'music-wave-core'
 							),
 						],
 						[
 							'range',
 							'columns',
-							__( 'Grid columns', 'music-wave-core' ),
+							__( 'ستون‌های شبکه', 'music-wave-core' ),
 							2,
 							6,
 							undefined,
@@ -2237,24 +2313,24 @@
 						[
 							'select',
 							'imageShape',
-							__( 'Artwork shape', 'music-wave-core' ),
+							__( 'شکل اثر هنری', 'music-wave-core' ),
 							[
-								[ 'square', __( 'Square', 'music-wave-core' ) ],
+								[ 'square', __( 'مربع', 'music-wave-core' ) ],
 								[
 									'landscape',
-									__( 'Landscape', 'music-wave-core' ),
+									__( 'منظره', 'music-wave-core' ),
 								],
 								[
 									'portrait',
-									__( 'Portrait', 'music-wave-core' ),
+									__( 'پرتره', 'music-wave-core' ),
 								],
-								[ 'circle', __( 'Circle', 'music-wave-core' ) ],
+								[ 'circle', __( 'دایره', 'music-wave-core' ) ],
 							],
 						],
 						[
 							'range',
 							'itemsToShow',
-							__( 'Items per page', 'music-wave-core' ),
+							__( 'موارد در هر صفحه', 'music-wave-core' ),
 							4,
 							24,
 							undefined,
@@ -2263,50 +2339,53 @@
 						[
 							'select',
 							'orderby',
-							__( 'Order by', 'music-wave-core' ),
+							__( 'به ترتیب', 'music-wave-core' ),
 							[
 								[
 									'updated_at',
-									__( 'Recently updated', 'music-wave-core' ),
+									__(
+										'به‌تازگی به‌روزشده',
+										'music-wave-core'
+									),
 								],
 								[
 									'created_at',
-									__( 'Newest first', 'music-wave-core' ),
+									__( 'جدیدترین اول', 'music-wave-core' ),
 								],
 								[
 									'title',
-									__( 'Title A–Z', 'music-wave-core' ),
+									__( 'عنوان A–Z', 'music-wave-core' ),
 								],
 							],
 						],
 						[
 							'toggle',
 							'showPagination',
-							__( 'Show pagination', 'music-wave-core' ),
+							__( 'نمایش صفحه‌بندی', 'music-wave-core' ),
 							true,
 						],
 					],
 				},
 				{
-					title: __( 'Card details', 'music-wave-core' ),
+					title: __( 'مشخصات کارت', 'music-wave-core' ),
 					controls: [
 						[
 							'toggle',
 							'showArt',
-							__( 'Show cover art grid', 'music-wave-core' ),
+							__( 'نمایش شبکهٔ تصاویر جلد', 'music-wave-core' ),
 							true,
 						],
 						[
 							'toggle',
 							'showPlayButton',
-							__( 'Show play button', 'music-wave-core' ),
+							__( 'نمایش دکمه پخش', 'music-wave-core' ),
 							true,
 						],
 						[
 							'toggle',
 							'showToggle',
 							__(
-								'Show the track list toggle',
+								'نمایش تغییر فهرست قطعه‌ها',
 								'music-wave-core'
 							),
 							true,
@@ -2314,13 +2393,13 @@
 						[
 							'toggle',
 							'showAuthor',
-							__( 'Show curator name', 'music-wave-core' ),
+							__( 'نمایش نام متصدی', 'music-wave-core' ),
 							true,
 						],
 						[
 							'toggle',
 							'showUpdated',
-							__( 'Show updated date', 'music-wave-core' ),
+							__( 'نمایش تاریخ به‌روزرسانی', 'music-wave-core' ),
 							true,
 						],
 					],
@@ -2330,48 +2409,48 @@
 		'music-wave/continue-listening': {
 			groups: [
 				{
-					title: __( 'Header', 'music-wave-core' ),
+					title: __( 'سربرگ', 'music-wave-core' ),
 					controls: [
 						[
 							'text',
 							'heading',
-							__( 'Section heading', 'music-wave-core' ),
+							__( 'عنوان بخش', 'music-wave-core' ),
 							'',
 							__(
-								'Leave empty to use the state-aware default: Continue listening or Recently played.',
+								'برای استفاده از پیش‌فرض هوشمند، خالی بگذارید: به گوش‌دادن ادامه دهید یا اخیراً پخش‌شده است.',
 								'music-wave-core'
 							),
 						],
 						[
 							'text',
 							'intro',
-							__( 'Intro text', 'music-wave-core' ),
+							__( 'متن مقدمه', 'music-wave-core' ),
 						],
 						[
 							'toggle',
 							'showHeading',
-							__( 'Show heading', 'music-wave-core' ),
+							__( 'نمایش عنوان', 'music-wave-core' ),
 							true,
 						],
 						[
 							'select',
 							'source',
 							__(
-								'Which activity feeds the rail',
+								'کدام فعالیت ریل را تغذیه می‌کند',
 								'music-wave-core'
 							),
 							[
 								[
 									'continue',
 									__(
-										'In-progress releases',
+										'انتشارهای در حال پیشرفت',
 										'music-wave-core'
 									),
 								],
 								[
 									'played',
 									__(
-										'Recently played releases',
+										'انتشارهای اخیراً پخش‌شده',
 										'music-wave-core'
 									),
 								],
@@ -2380,39 +2459,42 @@
 						[
 							'text',
 							'sectionUrl',
-							__( 'See-all link URL', 'music-wave-core' ),
+							__( 'مشاهدهٔ همهٔ نشانی پیوند', 'music-wave-core' ),
 						],
 						[
 							'text',
 							'sectionLinkLabel',
-							__( 'See-all link label', 'music-wave-core' ),
+							__(
+								'برچسب پیوند «مشاهدهٔ همه»',
+								'music-wave-core'
+							),
 						],
 					],
 				},
 				{
-					title: __( 'Layout', 'music-wave-core' ),
+					title: __( 'چیدمان', 'music-wave-core' ),
 					controls: [
 						[
 							'select',
 							'layout',
-							__( 'Layout', 'music-wave-core' ),
+							__( 'چیدمان', 'music-wave-core' ),
 							[
 								[
 									'scroll',
-									__( 'Horizontal shelf', 'music-wave-core' ),
+									__( 'قفسه افقی', 'music-wave-core' ),
 								],
-								[ 'grid', __( 'Grid', 'music-wave-core' ) ],
-								[ 'list', __( 'List', 'music-wave-core' ) ],
+								[ 'grid', __( 'شبکه', 'music-wave-core' ) ],
+								[ 'list', __( 'فهرست', 'music-wave-core' ) ],
 							],
 							__(
-								'Reuses the shared release-shelf chrome, so it matches every other shelf.',
+								'از کروم اشتراک‌گذاری قفسه استفادهٔ مجدد می‌کند، بنابراین با قفسه‌های دیگر مطابقت دارد.',
 								'music-wave-core'
 							),
 						],
 						[
 							'range',
 							'columns',
-							__( 'Grid columns', 'music-wave-core' ),
+							__( 'ستون‌های شبکه', 'music-wave-core' ),
 							2,
 							6,
 							undefined,
@@ -2421,7 +2503,7 @@
 						[
 							'range',
 							'itemsToShow',
-							__( 'Maximum items', 'music-wave-core' ),
+							__( 'حداکثر موارد', 'music-wave-core' ),
 							2,
 							24,
 							undefined,
@@ -2430,72 +2512,72 @@
 						[
 							'select',
 							'imageShape',
-							__( 'Artwork shape', 'music-wave-core' ),
+							__( 'شکل اثر هنری', 'music-wave-core' ),
 							[
-								[ 'square', __( 'Square', 'music-wave-core' ) ],
-								[ 'circle', __( 'Circle', 'music-wave-core' ) ],
+								[ 'square', __( 'مربع', 'music-wave-core' ) ],
+								[ 'circle', __( 'دایره', 'music-wave-core' ) ],
 								[
 									'landscape',
-									__( 'Landscape', 'music-wave-core' ),
+									__( 'منظره', 'music-wave-core' ),
 								],
 								[
 									'portrait',
-									__( 'Portrait', 'music-wave-core' ),
+									__( 'پرتره', 'music-wave-core' ),
 								],
 							],
 						],
 						[
 							'toggle',
 							'showArtwork',
-							__( 'Show artwork', 'music-wave-core' ),
+							__( 'نمایش آثار هنری', 'music-wave-core' ),
 							true,
 						],
 						[
 							'toggle',
 							'showArtist',
-							__( 'Show artist names', 'music-wave-core' ),
+							__( 'نمایش نام هنرمندان', 'music-wave-core' ),
 							true,
 						],
 						[
 							'toggle',
 							'showWhen',
-							__( 'Show played-ago time', 'music-wave-core' ),
+							__( 'نمایش زمان پخش قبلی', 'music-wave-core' ),
 							true,
 						],
 						[
 							'toggle',
 							'showPreview',
-							__( 'Show play overlay', 'music-wave-core' ),
+							__( 'نمایش همپوشانی پخش', 'music-wave-core' ),
 							true,
 						],
 					],
 				},
 				{
-					title: __( 'Messages', 'music-wave-core' ),
+					title: __( 'پیام‌ها', 'music-wave-core' ),
 					controls: [
 						[
 							'text',
 							'emptyMessage',
-							__( 'Empty state message', 'music-wave-core' ),
+							__( 'پیام حالت خالی', 'music-wave-core' ),
 						],
 						[
 							'text',
 							'guestMessage',
-							__( 'Guest prompt', 'music-wave-core' ),
+							__( 'درخواست مهمان', 'music-wave-core' ),
 						],
 						[
 							'text',
 							'consentMessage',
-							__( 'Consent panel text', 'music-wave-core' ),
+							__( 'متن پانل رضایت', 'music-wave-core' ),
 						],
 						[
 							'text',
 							'consentButtonLabel',
-							__( 'Consent button label', 'music-wave-core' ),
+							__( 'برچسب دکمه رضایت', 'music-wave-core' ),
 						],
 					],
 					help: __(
-						'Listening history records nothing until each listener opts in; withdrawing consent erases stored history immediately.',
+						'تاریخچه گوش‌دادن چیزی را ضبط نمی‌کند تا زمانی که هر شنونده ای را انتخاب کند. پس گرفتن رضایت، تاریخچه ذخیره‌شده را فوراً پاک می‌کند.',
 						'music-wave-core'
 					),
 				},
@@ -2505,95 +2587,103 @@
 
 	var emptyStateCopy = {
 		'music-wave/release-meta': __(
-			'Add catalog number, release date, duration, BPM, key, artist, or genre to the selected release.',
+			'شماره کاتالوگ، تاریخ انتشار، مدت زمان، BPM، کلید، هنرمند یا ژانر را به انتشار انتخابی اضافه کنید.',
 			'music-wave-core'
 		),
 		'music-wave/access-panel': __(
-			'The public access mode intentionally has no panel. Choose a protected, purchase, or membership release to preview this block.',
+			'حالت دسترسی عمومی عمداًً هیچ پنلی ندارد. برای پیش‌نمایش این بلوک، انتشار حفاظت‌شده، خرید یا عضویت را انتخاب کنید.',
 			'music-wave-core'
 		),
 		'music-wave/release-credits': __(
-			'Add at least one credit in the release details to display the credits section.',
+			'برای نمایش بخش اعتبار، حداقل یک اعتبار در جزئیات انتشار اضافه کنید.',
 			'music-wave-core'
 		),
 		'music-wave/collection-list': __(
-			'Add tracks or episodes to the selected collection to display its ordered track list.',
+			'قطعه‌ها یا قسمت‌ها را به مجموعه انتخابی اضافه کنید تا لیست قطعه‌های مرتب‌شده آن نمایش داده شود.',
 			'music-wave-core'
 		),
 		'music-wave/catalog-filters': __(
-			'Catalog filters are generated from your artist, genre, mood, and release-type terms on the public archive.',
+			'فیلترهای کاتالوگ از هنرمند، ژانر، حال و هوا و شرایط انتشار در آرشیو عمومی شما ایجاد می‌شوند.',
 			'music-wave-core'
 		),
 		'music-wave/catalog-results': __(
-			'The result summary appears when the public catalog has an active search, filter, or sort option.',
+			'خلاصهٔ نتایج زمانی ظاهر می‌شود که کاتالوگ عمومی دارای گزینه جست‌وجو، فیلتر یا مرتب‌سازی فعال باشد.',
 			'music-wave-core'
 		),
 		'music-wave/preview-player': __(
-			'Add a secure HTTPS preview URL to the selected release to display the player.',
+			'برای نمایش پخش‌کننده، یک نشانی HTTPS امنِ پیش‌نمایش به انتشار انتخاب‌شده اضافه کنید.',
 			'music-wave-core'
 		),
 		'music-wave/download-button': __(
-			'Add at least one protected download file and preview this block as an eligible signed-in user.',
+			'حداقل یک فایل دانلود حفاظت‌شده اضافه کنید و این بلوک را به عنوان یک کاربر واجد شرایط واردشده به سیستم پیش‌نمایش کنید.',
 			'music-wave-core'
 		),
 		'music-wave/related-releases': __(
-			'Related sections appear when the selected release shares artists, genres, moods, or release types with other releases.',
+			'بخش‌های مرتبط زمانی ظاهر می‌شوند که انتشار انتخابی هنرمندان، ژانرها، حال‌وهواها یا انواع انتشار را با انتشارهای دیگر به اشتراک بگذارد.',
 			'music-wave-core'
 		),
 		'music-wave/artist-profile': __(
-			'Artist profile content is displayed on an artist archive after an image, biography, or official URL is added to that artist.',
+			'محتوای نمایهٔ هنرمند پس از اضافه‌شدن تصویر، بیوگرافی یا URL رسمی به آن هنرمند، در بایگانی هنرمند نمایش داده می‌شود.',
 			'music-wave-core'
 		),
 		'music-wave/preview-button': __(
-			'Add a secure HTTPS preview URL to the selected release to display the play button.',
+			'برای نمایش دکمه پخش، نشانی HTTPS امنِ پیش‌نمایش را به انتشار انتخاب‌شده اضافه کنید.',
 			'music-wave-core'
 		),
 		'music-wave/music-library': __(
-			'The personal library lists every song, album, podcast, and artist a signed-in visitor saves with the add-to-library button.',
+			'کتابخانه شخصی هر آهنگ، آلبوم، پادکست و هنرمندی را فهرست می‌کند که بازدیدکننده واردشده با دکمه افزودن به کتابخانه ذخیره می‌کند.',
 			'music-wave-core'
 		),
 		'music-wave/library-button': __(
-			"The button saves the selected release to a visitor's personal library, or follows an artist when an artist term ID is set.",
+			'این دکمه انتشار انتخاب‌شده را در کتابخانه شخصی یک بازدیدکننده ذخیره می‌کند، یا زمانی که یک اصطلاح هنرمند ID تنظیم می‌شود، هنرمند را دنبال می‌کند.',
 			'music-wave-core'
 		),
 		'music-wave/playlists': __(
-			'Signed-in listeners see their playlists here, with create, rename, share, reorder, and delete controls.',
+			'شنوندگانی که به سیستم واردشده‌اند، فهرست‌های پخش خود را با کنترل‌های ایجاد، تغییر نام، اشتراک‌گذاری، مرتب‌سازی مجدد و حذف در اینجا می‌بینند.',
 			'music-wave-core'
 		),
 		'music-wave/public-playlists': __(
-			'Browse community public playlists â€” searchable, paginated, and playable in one click.',
+			'فهرست‌های پخش عمومی جامعه را جست‌وجو کنید، صفحه‌بندی کنید و با یک کلیک پخش کنید.',
 			'music-wave-core'
 		),
 		'music-wave/membership-panel': __(
-			'Active membership levels with expiry and the configured VIP plan products appear here for signed-in visitors. Requires MusicWave VIP.',
+			'سطوح عضویت فعالِ دارای تاریخ انقضا و محصولات طرح VIP که برای بازدیدکنندگان واردشده پیکربندی‌شده‌اند، اینجا نمایش داده می‌شوند. به MusicWave VIP نیاز دارد.',
 			'music-wave-core'
 		),
 		'music-wave/add-to-playlist': __(
-			'Signed-in listeners can add the selected release to one of their playlists.',
+			'شنوندگانی که به سیستم واردشده‌اند می‌توانند انتشار انتخاب‌شده را به یکی از فهرست‌های پخش خود اضافه کنند.',
 			'music-wave-core'
 		),
 		'music-wave/continue-listening': __(
-			'Each listener sees this rail after they opt in and play something. Guests see a sign-in prompt and opted-out listeners see a one-click consent panel.',
+			'هر شنونده پس از انتخاب و پخش چیزی، این ریل را می‌بیند. مهمان‌ها پیام ورود به سیستم را می‌بینند و شنوندگانی که انصراف داده‌اند، پنل رضایت را با یک کلیک مشاهده می‌کنند.',
 			'music-wave-core'
 		),
 		'music-wave/artists-shelf': __(
-			'Artists with published releases appear automatically. Assign artist images in the release editor for the best presentation.',
+			'هنرمندان با انتشارهای منتشرشده به‌طور خودکار ظاهر می‌شوند. برای بهترین نمایش، تصاویر هنرمند را در ویرایشگر انتشار اختصاص دهید.',
 			'music-wave-core'
 		),
 		'music-wave/taxonomy-shelf': __(
-			'Genres, moods, or labels assigned to releases appear here automatically as tappable browse tiles.',
+			'ژانرها، حال‌وهواها یا برچسب‌های اختصاص‌داده‌شده به انتشارها به‌طور خودکار در اینجا به‌عنوان کاشی‌های مرور قابل کلیک ظاهر می‌شوند.',
 			'music-wave-core'
 		),
 		'music-wave/term-hero': __(
-			'On artist, genre, mood, and label archives this header renders automatically. Pin a term ID to use it anywhere else.',
+			'این سربرگ در بایگانی‌های هنرمند، ژانر، حال‌وهوا و برچسب به‌طور خودکار نمایش داده می‌شود. برای استفاده در هر جای دیگر، یک شناسهٔ اصطلاح را سنجاق کنید.',
 			'music-wave-core'
 		),
 		'music-wave/playback-queue': __(
-			'Signed-in listeners see their durable play queue here; guests see a sign-in prompt.',
+			'شنوندگانی که وارد سیستم شده‌اند، صف پخش پایدار خود را اینجا می‌بینند. مهمانان پیام ورود به سیستم را مشاهده می‌کنند.',
+			'music-wave-core'
+		),
+		'music-wave/share-button': __(
+			'دکمه اشتراک‌گذاری انتشار را در نوار اقدام انتشار نمایش می‌دهد.',
+			'music-wave-core'
+		),
+		'music-wave/shuffle-button': __(
+			'دکمه پخش تصادفی مجموعه یا انتشار فعلی را نمایش می‌دهد.',
 			'music-wave-core'
 		),
 		'music-wave/add-to-queue': __(
-			'Preview this block on a release, or pin one with the release picker. Signed-in listeners queue it instantly.',
+			'این بلوک را در یک انتشار پیش‌نمایش کنید یا با انتخابگر انتشار، یک مورد را سنجاق کنید. شنوندگان واردشده آن را فوراً در صف قرار می‌دهند.',
 			'music-wave-core'
 		),
 	};
@@ -2674,11 +2764,8 @@
 			{
 				label:
 					contextualId > 0
-						? __( 'Current release', 'music-wave-core' )
-						: __(
-								'Automatic / current release',
-								'music-wave-core'
-						  ),
+						? __( 'انتشار فعلی', 'music-wave-core' )
+						: __( 'خودکار / انتشار فعلی', 'music-wave-core' ),
 				value: 0,
 			},
 		];
@@ -2688,7 +2775,7 @@
 		} );
 
 		return createElement( components.SelectControl, {
-			label: __( 'Preview release', 'music-wave-core' ),
+			label: __( 'پیش‌نمایش انتشار', 'music-wave-core' ),
 			value: props.attributes.releaseId || 0,
 			options: choices,
 			onChange( value ) {
@@ -2697,7 +2784,7 @@
 				} );
 			},
 			help: __(
-				'Leave this automatic in release templates and Query Loops. Select a fixed release only when the block should always show that release.',
+				'این خودکار را در قالب‌های انتشار و حلقه‌های پرس‌وجو بگذارید. تنها زمانی یک انتشار ثابت را انتخاب کنید که بلوک همیشه آن انتشار را نشان دهد.',
 				'music-wave-core'
 			),
 		} );
@@ -2707,9 +2794,9 @@
 		return [
 			createElement( components.TextControl, {
 				key: 'termId',
-				label: __( 'Artist term ID', 'music-wave-core' ),
+				label: __( 'اصطلاح هنرمند ID', 'music-wave-core' ),
 				help: __(
-					'Enter a numeric artist taxonomy ID to pin this block to that artist on any page. Leave 0 to use the currently viewed artist archive.',
+					'یک شناسهٔ عددیِ طبقه‌بندی هنرمند وارد کنید تا این بلوک در هر صفحه‌ای به آن هنرمند سنجاق شود. برای استفاده از بایگانی هنرمندی که اکنون مشاهده می‌کنید، ۰ را وارد کنید.',
 					'music-wave-core'
 				),
 				value: String( props.attributes.termId || '' ),
@@ -2720,16 +2807,16 @@
 			} ),
 			createElement( components.SelectControl, {
 				key: 'layout',
-				label: __( 'Layout', 'music-wave-core' ),
+				label: __( 'چیدمان', 'music-wave-core' ),
 				value: props.attributes.layout || 'card',
 				options: [
-					{ label: __( 'Card', 'music-wave-core' ), value: 'card' },
+					{ label: __( 'کارت', 'music-wave-core' ), value: 'card' },
 					{
-						label: __( 'List (side-by-side)', 'music-wave-core' ),
+						label: __( 'فهرست (کنار به پهلو)', 'music-wave-core' ),
 						value: 'list',
 					},
 					{
-						label: __( 'Slider / featured', 'music-wave-core' ),
+						label: __( 'لغزنده / برجسته', 'music-wave-core' ),
 						value: 'slider',
 					},
 				],
@@ -2739,19 +2826,19 @@
 			} ),
 			createElement( components.SelectControl, {
 				key: 'imageSize',
-				label: __( 'Image size', 'music-wave-core' ),
+				label: __( 'اندازه تصویر', 'music-wave-core' ),
 				value: props.attributes.imageSize || 'medium',
 				options: [
 					{
-						label: __( 'Thumbnail', 'music-wave-core' ),
+						label: __( 'تصویر کوچک', 'music-wave-core' ),
 						value: 'thumbnail',
 					},
 					{
-						label: __( 'Medium', 'music-wave-core' ),
+						label: __( 'متوسط', 'music-wave-core' ),
 						value: 'medium',
 					},
-					{ label: __( 'Large', 'music-wave-core' ), value: 'large' },
-					{ label: __( 'Full', 'music-wave-core' ), value: 'full' },
+					{ label: __( 'بزرگ', 'music-wave-core' ), value: 'large' },
+					{ label: __( 'کامل', 'music-wave-core' ), value: 'full' },
 				],
 				onChange( value ) {
 					props.setAttributes( { imageSize: value } );
@@ -2759,19 +2846,19 @@
 			} ),
 			createElement( components.SelectControl, {
 				key: 'imageShape',
-				label: __( 'Image shape', 'music-wave-core' ),
+				label: __( 'شکل تصویر', 'music-wave-core' ),
 				value: props.attributes.imageShape || 'rounded',
 				options: [
 					{
-						label: __( 'Rounded corners', 'music-wave-core' ),
+						label: __( 'گوشه‌های گرد', 'music-wave-core' ),
 						value: 'rounded',
 					},
 					{
-						label: __( 'Square', 'music-wave-core' ),
+						label: __( 'مربع', 'music-wave-core' ),
 						value: 'square',
 					},
 					{
-						label: __( 'Circle', 'music-wave-core' ),
+						label: __( 'دایره', 'music-wave-core' ),
 						value: 'circle',
 					},
 				],
@@ -2781,7 +2868,7 @@
 			} ),
 			createElement( components.ToggleControl, {
 				key: 'showImage',
-				label: __( 'Show artist image', 'music-wave-core' ),
+				label: __( 'نمایش تصویر هنرمند', 'music-wave-core' ),
 				checked: false !== props.attributes.showImage,
 				onChange( value ) {
 					props.setAttributes( { showImage: !! value } );
@@ -2789,7 +2876,7 @@
 			} ),
 			createElement( components.ToggleControl, {
 				key: 'showTitle',
-				label: __( 'Show artist name', 'music-wave-core' ),
+				label: __( 'نمایش نام هنرمند', 'music-wave-core' ),
 				checked: false !== props.attributes.showTitle,
 				onChange( value ) {
 					props.setAttributes( { showTitle: !! value } );
@@ -2797,7 +2884,7 @@
 			} ),
 			createElement( components.ToggleControl, {
 				key: 'showBio',
-				label: __( 'Show biography', 'music-wave-core' ),
+				label: __( 'نمایش بیوگرافی', 'music-wave-core' ),
 				checked: false !== props.attributes.showBio,
 				onChange( value ) {
 					props.setAttributes( { showBio: !! value } );
@@ -2805,7 +2892,7 @@
 			} ),
 			createElement( components.ToggleControl, {
 				key: 'showLink',
-				label: __( 'Show external link', 'music-wave-core' ),
+				label: __( 'نمایش پیوند خارجی', 'music-wave-core' ),
 				checked: false !== props.attributes.showLink,
 				onChange( value ) {
 					props.setAttributes( { showLink: !! value } );
@@ -2813,9 +2900,9 @@
 			} ),
 			createElement( components.ToggleControl, {
 				key: 'showLibraryButton',
-				label: __( 'Show follow-artist button', 'music-wave-core' ),
+				label: __( 'نمایش دکمه دنبال هنرمند', 'music-wave-core' ),
 				help: __(
-					'Lets visitors save this artist to their personal music library.',
+					'به بازدیدکنندگان اجازه می‌دهد این هنرمند را در کتابخانه موسیقی شخصی خود ذخیره کنند.',
 					'music-wave-core'
 				),
 				checked: false !== props.attributes.showLibraryButton,
@@ -2825,9 +2912,9 @@
 			} ),
 			createElement( components.ToggleControl, {
 				key: 'showReleaseCount',
-				label: __( 'Show release count', 'music-wave-core' ),
+				label: __( 'نمایش تعداد انتشارها', 'music-wave-core' ),
 				help: __(
-					'Displays a badge with the number of published releases assigned to this artist.',
+					'نشانی با تعداد انتشارات منتشرشده اختصاص‌داده‌شده به این هنرمند نشان می‌دهد.',
 					'music-wave-core'
 				),
 				checked: !! props.attributes.showReleaseCount,
@@ -2837,9 +2924,9 @@
 			} ),
 			createElement( components.RangeControl, {
 				key: 'bioLength',
-				label: __( 'Biography length (words)', 'music-wave-core' ),
+				label: __( 'طول بیوگرافی (کلمات)', 'music-wave-core' ),
 				help: __(
-					'0 keeps the full biography. Any other value shows a trimmed excerpt.',
+					'۰ برای نگه‌داشتن بیوگرافی کامل است؛ هر مقدار دیگری گزیده‌ای کوتاه‌شده را نشان می‌دهد.',
 					'music-wave-core'
 				),
 				value: props.attributes.bioLength || 0,
@@ -2853,9 +2940,9 @@
 			} ),
 			createElement( components.TextControl, {
 				key: 'ctaLabel',
-				label: __( 'Link button label', 'music-wave-core' ),
+				label: __( 'برچسب دکمه پیوند', 'music-wave-core' ),
 				help: __(
-					'Leave empty to use the default label.',
+					'برای استفاده از برچسب پیش‌فرض خالی بگذارید.',
 					'music-wave-core'
 				),
 				value: props.attributes.ctaLabel || '',
@@ -2872,7 +2959,7 @@
 				createElement(
 					'p',
 					{ className: 'components-base-control__label' },
-					__( 'Accent color', 'music-wave-core' )
+					__( 'رنگ تأکیدی', 'music-wave-core' )
 				),
 				createElement( components.ColorPalette, {
 					value: props.attributes.accentColor || undefined,
@@ -2885,7 +2972,7 @@
 					'p',
 					{ className: 'components-base-control__help' },
 					__(
-						'Overrides the theme accent for the name and link. Clear it to use the default.',
+						'لهجه موضوع را برای نام و پیوند لغو می‌کند. برای استفاده از پیش‌فرض آن را پاک کنید.',
 						'music-wave-core'
 					)
 				)
@@ -3010,13 +3097,13 @@
 			controls.push(
 				createElement( components.ToggleControl, {
 					key: 'compact',
-					label: __( 'Compact display', 'music-wave-core' ),
+					label: __( 'نمایشگر فشرده', 'music-wave-core' ),
 					checked: !! props.attributes.compact,
 					onChange( value ) {
 						props.setAttributes( { compact: !! value } );
 					},
 					help: __(
-						'Use the denser layout for cards, lists, and sidebars.',
+						'از چیدمان متراکم‌تر برای کارت‌ها، فهرست‌ها و نوارهای کناری استفاده کنید.',
 						'music-wave-core'
 					),
 				} )
@@ -3035,7 +3122,7 @@
 						props.setAttributes( update );
 					},
 					help: __(
-						'Leave empty to inherit the translated MusicWave default label.',
+						'برای به ارث بردن برچسب پیش‌فرض MusicWave ترجمه‌شده، خالی بگذارید.',
 						'music-wave-core'
 					),
 				} )
@@ -3086,7 +3173,7 @@
 					components.PanelBody,
 					{
 						title: __(
-							'MusicWave block settings',
+							'تنظیمات بلوک MusicWave',
 							'music-wave-core'
 						),
 						initialOpen: true,
@@ -3153,7 +3240,7 @@
 				{ key: 'message' },
 				emptyStateCopy[ block.name ] ||
 					__(
-						'This block is ready and will render when its required MusicWave data is available.',
+						'این بلوک آماده است و وقتی داده‌های موردنیاز MusicWave در دسترس باشند، نمایش داده می‌شود.',
 						'music-wave-core'
 					)
 			),
@@ -3225,7 +3312,7 @@
 						components.Notice,
 						{ status: 'error', isDismissible: false },
 						__(
-							'MusicWave could not load this preview. Check that MusicWave Core is active and the selected release still exists.',
+							'MusicWave نتوانست این پیش‌نمایش را بارگذاری کند. بررسی کنید MusicWave Core فعال باشد و انتشار انتخاب‌شده هنوز وجود داشته باشد.',
 							'music-wave-core'
 						)
 					);

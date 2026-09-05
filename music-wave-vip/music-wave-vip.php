@@ -75,7 +75,7 @@ function music_wave_vip_module_enabled(): bool {
  */
 add_filter(
 	'music_wave_access_decision',
-	static function ( $decision, $release_id, $subject ) {
+	static function ( $decision ) {
 		if ( ! $decision instanceof ManaCore\MusicWave\Core\Access\AccessDecision || $decision->is_allowed() ) {
 			return $decision;
 		}
@@ -94,7 +94,7 @@ add_filter(
 		return $decision;
 	},
 	20,
-	3
+	1
 );
 
 /**

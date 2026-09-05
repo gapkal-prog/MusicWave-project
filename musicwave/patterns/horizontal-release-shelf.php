@@ -1,6 +1,6 @@
 <?php
 /**
- * Title: Horizontal release shelf
+ * Title: ویترین افقی انتشارها
  * Slug: musicwave/horizontal-release-shelf
  * Categories: musicwave
  * Inserter: true
@@ -8,4 +8,4 @@
  * @package MusicWave
  */
 ?>
-<!-- wp:musicwave/release-shelf {"eyebrow":"MADE FOR YOU","title":"Keep exploring","orderBy":"rand","itemsToShow":12,"columns":5,"layout":"scroll","showArtwork":true,"showArtist":true,"showAction":false} /-->
+<!-- wp:music-wave/release-shelf {"eyebrow":"ساخته‌شده برای شما","title":"بیشتر کشف کنید","orderBy":"rand","itemsToShow":12,"columns":5,"layout":"scroll","showArtwork":true,"showArtist":true,"showAction":false} /-->

@@ -114,22 +114,22 @@ final class PreviewPlayer {
 				 */
 				'persistentNav' => (bool) apply_filters( 'music_wave_persistent_navigation', 'disabled' !== (string) \ManaCore\MusicWave\Core\Support\Settings::get( 'persistent_navigation' ) ),
 				'labels'        => array(
-					'play'         => __( 'Play preview', 'music-wave-core' ),
-					'pause'        => __( 'Pause preview', 'music-wave-core' ),
-					'previous'     => __( 'Previous preview', 'music-wave-core' ),
-					'next'         => __( 'Next preview', 'music-wave-core' ),
-					'close'        => __( 'Close player', 'music-wave-core' ),
-					'queue'        => __( 'Preview queue', 'music-wave-core' ),
-					'queueHeading' => __( 'Up next', 'music-wave-core' ),
-					'previewBadge' => __( 'Preview', 'music-wave-core' ),
-					'loading'      => __( 'Loading…', 'music-wave-core' ),
-					'error'        => __( 'Playback could not be started.', 'music-wave-core' ),
-					'streamError'  => __( 'Secure playback could not be started.', 'music-wave-core' ),
-					'sessionError' => __( 'Your session has expired. Refresh the page or sign in again.', 'music-wave-core' ),
-					'volume'       => __( 'Volume', 'music-wave-core' ),
-					'closeNotice'  => __( 'Dismiss notice', 'music-wave-core' ),
+					'play'         => __( 'پخش پیش‌نمایش', 'music-wave-core' ),
+					'pause'        => __( 'توقف پیش‌نمایش', 'music-wave-core' ),
+					'previous'     => __( 'پیش‌نمایش قبلی', 'music-wave-core' ),
+					'next'         => __( 'پیش‌نمایش بعدی', 'music-wave-core' ),
+					'close'        => __( 'بستن پخش‌کننده', 'music-wave-core' ),
+					'queue'        => __( 'صف پیش‌نمایش', 'music-wave-core' ),
+					'queueHeading' => __( 'بعدی', 'music-wave-core' ),
+					'previewBadge' => __( 'پیش‌نمایش', 'music-wave-core' ),
+					'loading'      => __( 'در حال بارگذاری…', 'music-wave-core' ),
+					'error'        => __( 'پخش شروع نشد.', 'music-wave-core' ),
+					'streamError'  => __( 'پخش امن شروع نشد.', 'music-wave-core' ),
+					'sessionError' => __( 'جلسه شما تمام شده است. صفحه را تازه کنید یا دوباره وارد شوید.', 'music-wave-core' ),
+					'volume'       => __( 'حجم', 'music-wave-core' ),
+					'closeNotice'  => __( 'رد اطلاعیه', 'music-wave-core' ),
 					/* translators: %s: release title. */
-					'playRelease'  => __( 'Play %s', 'music-wave-core' ),
+					'playRelease'  => __( 'پخش %s', 'music-wave-core' ),
 				),
 			)
 		);
@@ -162,7 +162,7 @@ final class PreviewPlayer {
 
 		$title_class = is_string( $button_class ) && '' !== $button_class ? sanitize_html_class( $button_class ) : 'mw-release-shelf__play';
 		/* translators: %s: music release title. */
-		$label = sprintf( __( 'Play %s', 'music-wave-core' ), get_the_title( $release_id ) );
+		$label = sprintf( __( 'پخش %s', 'music-wave-core' ), get_the_title( $release_id ) );
 
 		return '<button type="button" class="' . esc_attr( $title_class ) . ' mw-card-play" data-mw-release-id="' . esc_attr( (string) $release_id ) . '" aria-label="' . esc_attr( $label ) . '" aria-pressed="false"><span class="mw-card-play__icon" aria-hidden="true">&#9654;</span></button>';
 	}
@@ -267,7 +267,7 @@ final class PreviewPlayer {
 			. ( $compact ? ' mw-preview-button--compact' : '' )
 			. ( 'solid' !== $style ? ' mw-preview-button--' . $style : '' )
 			. ( $full_width ? ' mw-preview-button--block' : '' );
-		$label   = '' !== $custom_label ? $custom_label : ( $compact ? __( 'Preview', 'music-wave-core' ) : __( 'Play preview', 'music-wave-core' ) );
+		$label   = '' !== $custom_label ? $custom_label : ( $compact ? __( 'پیش‌نمایش', 'music-wave-core' ) : __( 'پخش پیش‌نمایش', 'music-wave-core' ) );
 		$icon    = $show_icon ? '<span class="mw-preview-button__icon" aria-hidden="true">▶</span>' : '';
 		$wrapper = $is_block_root ? BlockSupport::wrapper_attributes( $class ) : 'class="' . esc_attr( $class ) . '"';
 
@@ -284,9 +284,9 @@ final class PreviewPlayer {
 			return;
 		}
 
-		$queue  = '<div class="mw-global-player__queue" data-mw-queue hidden><div class="mw-global-player__queue-header"><h3>' . esc_html__( 'Up next', 'music-wave-core' ) . '</h3><button type="button" class="mw-global-player__queue-close" aria-label="' . esc_attr__( 'Close queue', 'music-wave-core' ) . '">×</button></div><ol class="mw-global-player__queue-list"></ol></div>';
-		$notice = '<div class="mw-global-player__notice" role="status" hidden><span class="mw-global-player__notice-message"></span><a class="mw-global-player__notice-cta wp-element-button" href="#" hidden></a><a class="mw-global-player__notice-login" href="#" hidden></a><button type="button" class="mw-global-player__notice-close" aria-label="' . esc_attr__( 'Dismiss notice', 'music-wave-core' ) . '">×</button></div>';
+		$queue  = '<div class="mw-global-player__queue" data-mw-queue hidden><div class="mw-global-player__queue-header"><h3>' . esc_html__( 'بعدی', 'music-wave-core' ) . '</h3><button type="button" class="mw-global-player__queue-close" aria-label="' . esc_attr__( 'بستن صف', 'music-wave-core' ) . '">×</button></div><ol class="mw-global-player__queue-list"></ol></div>';
+		$notice = '<div class="mw-global-player__notice" role="status" hidden><span class="mw-global-player__notice-message"></span><a class="mw-global-player__notice-cta wp-element-button" href="#" hidden></a><a class="mw-global-player__notice-login" href="#" hidden></a><button type="button" class="mw-global-player__notice-close" aria-label="' . esc_attr__( 'رد اطلاعیه', 'music-wave-core' ) . '">×</button></div>';
 
-		echo '<aside class="mw-global-player" data-mw-preview-player hidden aria-label="' . esc_attr__( 'Music preview player', 'music-wave-core' ) . '">' . $queue . $notice . '<audio preload="metadata"></audio><div class="mw-global-player__track"><img class="mw-global-player__art" alt="" hidden><div><strong class="mw-global-player__title"></strong><span class="mw-global-player__artist"></span></div></div><div class="mw-global-player__controls"><button type="button" class="mw-global-player__previous" aria-label="' . esc_attr__( 'Previous preview', 'music-wave-core' ) . '">⏮</button><button type="button" class="mw-global-player__toggle" aria-label="' . esc_attr__( 'Play preview', 'music-wave-core' ) . '">▶</button><button type="button" class="mw-global-player__next" aria-label="' . esc_attr__( 'Next preview', 'music-wave-core' ) . '">⏭</button><button type="button" class="mw-global-player__queue-toggle" aria-expanded="false" aria-label="' . esc_attr__( 'Preview queue', 'music-wave-core' ) . '" hidden>♫</button></div><label class="mw-global-player__progress"><span class="screen-reader-text">' . esc_html__( 'Preview progress', 'music-wave-core' ) . '</span><input type="range" min="0" max="100" value="0" step="0.1"></label><span class="mw-global-player__time">0:00</span><input type="range" class="mw-global-player__volume" min="0" max="100" value="100" step="1" aria-label="' . esc_attr__( 'Volume', 'music-wave-core' ) . '"><button type="button" class="mw-global-player__close" aria-label="' . esc_attr__( 'Close player', 'music-wave-core' ) . '">×</button></aside>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- $queue and $notice are assembled from fully escaped fragments above.
+		echo '<aside class="mw-global-player" data-mw-preview-player hidden aria-label="' . esc_attr__( 'پخش‌کننده پیش‌نمایش موسیقی', 'music-wave-core' ) . '">' . $queue . $notice . '<audio preload="metadata"></audio><div class="mw-global-player__track"><img class="mw-global-player__art" alt="" hidden><div><strong class="mw-global-player__title"></strong><span class="mw-global-player__artist"></span></div></div><div class="mw-global-player__controls"><button type="button" class="mw-global-player__previous" aria-label="' . esc_attr__( 'پیش‌نمایش قبلی', 'music-wave-core' ) . '">⏮</button><button type="button" class="mw-global-player__toggle" aria-label="' . esc_attr__( 'پخش پیش‌نمایش', 'music-wave-core' ) . '">▶</button><button type="button" class="mw-global-player__next" aria-label="' . esc_attr__( 'پیش‌نمایش بعدی', 'music-wave-core' ) . '">⏭</button><button type="button" class="mw-global-player__queue-toggle" aria-expanded="false" aria-label="' . esc_attr__( 'صف پیش‌نمایش', 'music-wave-core' ) . '" hidden>♫</button></div><label class="mw-global-player__progress"><span class="screen-reader-text">' . esc_html__( 'میزان پیشرفت پیش‌نمایش', 'music-wave-core' ) . '</span><input type="range" min="0" max="100" value="0" step="0.1"></label><span class="mw-global-player__time">0:00</span><input type="range" class="mw-global-player__volume" min="0" max="100" value="100" step="1" aria-label="' . esc_attr__( 'حجم', 'music-wave-core' ) . '"><button type="button" class="mw-global-player__close" aria-label="' . esc_attr__( 'بستن پخش‌کننده', 'music-wave-core' ) . '">×</button></aside>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- $queue and $notice are assembled from fully escaped fragments above.
 	}
 }

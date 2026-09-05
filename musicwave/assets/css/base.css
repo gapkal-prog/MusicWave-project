@@ -8,15 +8,26 @@ body {
 	text-rendering: optimizeLegibility;
 }
 
+/*
+ * SonicStream chrome: slim, quiet scrollbars across the whole app — the
+ * reference uses a thin #333 thumb on the near-black canvas; the token
+ * equivalent below adapts to the light theme automatically.
+ */
+* {
+	scrollbar-width: thin;
+	scrollbar-color: color-mix(in srgb, var(--mw-color-text) 20%, transparent) transparent;
+}
+
 a {
 	text-underline-offset: 0.18em;
 }
 
+/* Solid accent ring, exactly the reference focus treatment. */
 a:focus-visible,
 button:focus-visible,
 input:focus-visible,
 select:focus-visible,
 textarea:focus-visible {
-	outline: 3px solid var(--mw-color-accent-strong);
-	outline-offset: 3px;
+	outline: 2px solid var(--mw-color-accent, #1db954);
+	outline-offset: 2px;
 }

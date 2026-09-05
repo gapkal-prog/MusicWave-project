@@ -4,11 +4,19 @@ Tags: music, catalog, releases, woocommerce, downloads
 Requires at least: 6.6
 Tested up to: 6.8
 Requires PHP: 7.4
-Stable tag: 0.11.1
+Stable tag: 0.11.2
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
 MusicWave Core provides catalog data, release relationships, WooCommerce mapping, customer music library, access decisions, secure-download contracts, onboarding, and diagnostics for the MusicWave theme.
+
+== Changelog ==
+
+= 0.11.2 =
+* Maintenance: normalized the editor asset formatting so the JavaScript quality gate passes cleanly.
+
+= 0.11.1 =
+* Maintenance: indexed catalog, playlist, and listening integrations.
 
 == Installation ==
 

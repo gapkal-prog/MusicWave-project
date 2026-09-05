@@ -5,6 +5,29 @@
 
 declare(strict_types=1);
 
+if ( ! function_exists( 'mw_assert_same' ) ) {
+	/**
+	 * Assert one static integrity expectation.
+	 *
+	 * The complete test suite defines this helper in tests/run.php. Keeping a
+	 * guarded local fallback makes this focused integrity check safe to run on
+	 * its own as well, without redeclaring the suite helper when included.
+	 *
+	 * @param mixed  $expected Expected value.
+	 * @param mixed  $actual   Actual value.
+	 * @param string $message  Failure message.
+	 * @return void
+	 */
+	function mw_assert_same( $expected, $actual, string $message ): void {
+		if ( $expected !== $actual ) {
+			fwrite( STDERR, 'FAIL: ' . $message . PHP_EOL );
+			fwrite( STDERR, 'Expected: ' . var_export( $expected, true ) . PHP_EOL );
+			fwrite( STDERR, 'Actual: ' . var_export( $actual, true ) . PHP_EOL );
+			exit( 1 );
+		}
+	}
+}
+
 $theme_directory = dirname( __DIR__ ) . '/musicwave';
 $theme_json      = json_decode( (string) file_get_contents( $theme_directory . '/theme.json' ), true );
 mw_assert_same( true, is_array( $theme_json ), 'theme.json must contain valid JSON.' );
@@ -56,8 +79,55 @@ mw_assert_same(
 	in_array( 'page-account', $registered_custom_templates, true ),
 	'theme.json must register the unified "page-account" template for the account pages.'
 );
+mw_assert_same(
+	true,
+	in_array( 'page-playlists', $registered_custom_templates, true ),
+	'theme.json must register the public playlists template so it is assignable in the Site Editor.'
+);
+mw_assert_same(
+	true,
+	in_array( 'page-cart', $registered_custom_templates, true ) && in_array( 'page-checkout', $registered_custom_templates, true ),
+	'theme.json must register the commerce page templates for explicit Site Editor assignment.'
+);
 
 $layout_css = (string) file_get_contents( $theme_directory . '/assets/css/layout.css' );
+$navigation_css = (string) file_get_contents( $theme_directory . '/assets/css/components/navigation.css' );
+mw_assert_same(
+	true,
+	false !== strpos( $navigation_css, '.mw-site-header.is-position-sticky' ) && false !== strpos( $navigation_css, 'position: sticky' ),
+	'The header must become sticky through the Site Editor position support class.'
+);
+mw_assert_same(
+	false,
+	1 === preg_match( '/\.mw-site-header\s*\{[^{}]*position:\s*sticky/', $navigation_css ),
+	'The header must not be sticky when the Site Editor position toggle is disabled.'
+);
+mw_assert_same(
+	true,
+	false !== strpos( $navigation_css, 'block-size: 100dvh' ) && false !== strpos( $navigation_css, '.wp-block-navigation__responsive-container.is-menu-open' ),
+	'The mobile navigation must provide a full-screen open state.'
+);
+mw_assert_same(
+	true,
+	false !== strpos( $navigation_css, 'body.has-modal-open' ) && false !== strpos( $navigation_css, 'overflow: hidden' ),
+	'The mobile navigation must lock background scrolling while open.'
+);
+mw_assert_same(
+	true,
+	isset( $theme_json['settings']['position']['sticky'], $theme_json['settings']['blocks']['core/group']['position']['sticky'] ) && true === $theme_json['settings']['position']['sticky'] && true === $theme_json['settings']['blocks']['core/group']['position']['sticky'],
+	'theme.json must expose sticky positioning for the header Group in Site Editor.'
+);
+mw_assert_same(
+	true,
+	false !== strpos( $navigation_css, 'inset-inline-end' ),
+	'Header and mobile navigation positioning must use RTL-safe logical insets.'
+);
+mw_assert_same(
+	true,
+	false !== strpos( $navigation_css, 'prefers-reduced-motion' ),
+	'Header and mobile navigation must respect reduced-motion preferences.'
+);
+
 mw_assert_same(
 	true,
 	false !== strpos( $layout_css, '.mw-app-shell:has(> .mw-sidebar)' ),
@@ -80,6 +150,13 @@ mw_assert_same(
 	false !== strpos( $no_sidebar_template, 'music-sidebar' ),
 	'The no-sidebar page template must not reference the Music sidebar template part.'
 );
+
+$page_with_sidebar_template = (string) file_get_contents( $theme_directory . '/templates/page-with-sidebar.html' );
+mw_assert_same(
+	false,
+	false !== strpos( $page_with_sidebar_template, '"slug":"footer-widgets"' ),
+	'page-with-sidebar.html must not render footer-widgets beside footer because footer.html already composes it.'
+);
 mw_assert_same(
 	false,
 	false !== strpos( $no_sidebar_template, 'mw-app-shell' ),
@@ -92,6 +169,62 @@ mw_assert_same(
 	false !== strpos( $functions_source, "'page-no-sidebar'" ),
 	'functions.php must whitelist the no-sidebar template slug for template repair.'
 );
+mw_assert_same(
+	true,
+	false !== strpos( $functions_source, 'musicwave_register_block_category' ),
+	'The theme must register the shared MusicWave inserter category when Core is not active.'
+);
+mw_assert_same(
+	true,
+	false !== strpos( $functions_source, 'musicwave_register_legacy_presentation_block' )
+		&& false !== strpos( $functions_source, "'musicwave/' . \$dir" ),
+	'Theme registration must retain hidden musicwave/* compatibility aliases after the namespace migration.'
+);
+
+$theme_block_files = glob( $theme_directory . '/blocks/*/block.json' ) ?: array();
+$expected_theme_blocks = array(
+	'music-wave/release-shelf',
+	'music-wave/release-slider',
+	'music-wave/theme-text',
+	'music-wave/theme-toggle',
+);
+$theme_block_names = array();
+foreach ( $theme_block_files as $theme_block_file ) {
+	$metadata = json_decode( (string) file_get_contents( $theme_block_file ), true );
+	$name     = is_array( $metadata ) && isset( $metadata['name'] ) ? (string) $metadata['name'] : '';
+	$theme_block_names[] = $name;
+	$label = basename( dirname( $theme_block_file ) ) . '/block.json';
+	mw_assert_same( true, 0 === strpos( $name, 'music-wave/' ), $label . ' must use the canonical music-wave/* namespace.' );
+	mw_assert_same( 'https://schemas.wp.org/trunk/block.json', is_array( $metadata ) && isset( $metadata['$schema'] ) ? $metadata['$schema'] : '', $label . ' must declare the WordPress block.json schema.' );
+	mw_assert_same( true, is_array( $metadata ) && ! empty( $metadata['keywords'] ), $label . ' must provide localized keywords.' );
+	mw_assert_same( true, is_array( $metadata ) && isset( $metadata['attributes'] ) && is_array( $metadata['attributes'] ) && isset( $metadata['supports'] ) && is_array( $metadata['supports'] ) && isset( $metadata['example'] ) && is_array( $metadata['example'] ), $label . ' must provide attributes, supports, and example objects.' );
+}
+foreach ( $expected_theme_blocks as $expected_theme_block ) {
+	mw_assert_same( true, in_array( $expected_theme_block, $theme_block_names, true ), 'Theme metadata must include ' . $expected_theme_block . '.' );
+}
+
+$core_block_files = glob( dirname( $theme_directory ) . '/music-wave-core/blocks/*/block.json' ) ?: array();
+$core_names       = array();
+foreach ( $core_block_files as $core_block_file ) {
+	$metadata = json_decode( (string) file_get_contents( $core_block_file ), true );
+	$name     = is_array( $metadata ) && isset( $metadata['name'] ) ? (string) $metadata['name'] : '';
+	$core_names[] = $name;
+	$label = basename( dirname( $core_block_file ) ) . '/block.json';
+	mw_assert_same( true, 0 === strpos( $name, 'music-wave/' ), $label . ' must use the canonical music-wave/* namespace.' );
+	mw_assert_same( 'https://schemas.wp.org/trunk/block.json', is_array( $metadata ) && isset( $metadata['$schema'] ) ? $metadata['$schema'] : '', $label . ' must declare the WordPress block.json schema.' );
+	mw_assert_same( true, is_array( $metadata ) && ! empty( $metadata['keywords'] ) && isset( $metadata['attributes'] ) && is_array( $metadata['attributes'] ) && isset( $metadata['supports'] ) && is_array( $metadata['supports'] ) && isset( $metadata['example'] ) && is_array( $metadata['example'] ), $label . ' must provide complete metadata objects.' );
+}
+mw_assert_same( 26, count( $core_names ), 'Core metadata inventory must contain 26 blocks.' );
+mw_assert_same( count( $core_names ), count( array_unique( $core_names ) ), 'Core metadata names must be unique.' );
+
+$theme_json_blocks = isset( $theme_json['settings']['blocks'] ) && is_array( $theme_json['settings']['blocks'] ) ? $theme_json['settings']['blocks'] : array();
+foreach ( array( 'music-wave/release-shelf', 'music-wave/release-slider', 'music-wave/theme-text', 'music-wave/theme-toggle' ) as $theme_block_name ) {
+	mw_assert_same( true, isset( $theme_json_blocks[ $theme_block_name ] ), 'theme.json settings must expose the canonical ' . $theme_block_name . ' block.' );
+}
+foreach ( array( 'musicwave/release-shelf', 'musicwave/release-slider', 'musicwave/theme-text', 'musicwave/theme-toggle' ) as $legacy_block_name ) {
+	mw_assert_same( true, isset( $theme_json_blocks[ $legacy_block_name ] ), 'theme.json settings must retain the legacy compatibility block ' . $legacy_block_name . '.' );
+}
+mw_assert_same( true, isset( $theme_json['styles']['blocks']['music-wave/release-shelf'], $theme_json['styles']['blocks']['music-wave/release-slider'], $theme_json['styles']['blocks']['musicwave/release-shelf'], $theme_json['styles']['blocks']['musicwave/release-slider'] ), 'theme.json styles must include canonical and legacy shelf/slider keys.' );
 
 $sidebar_templates = array(
 	'archive-mw_release.html',
@@ -131,6 +264,12 @@ foreach ( $sidebar_templates as $template_file ) {
 foreach ( $block_files as $block_file ) {
 	$content = (string) file_get_contents( $block_file );
 	$label   = basename( $block_file );
+
+	mw_assert_same(
+		false,
+		1 === preg_match( '/wp:musicwave\/(?:release-shelf|release-slider|theme-text|theme-toggle)\b/', $content ),
+		$label . ' must use canonical music-wave/* block comments in bundled content.'
+	);
 
 	preg_match_all( '/<!--\s+wp:template-part\s+(\{.*?\})\s+\/-->/', $content, $template_part_matches );
 	foreach ( isset( $template_part_matches[1] ) ? $template_part_matches[1] : array() as $attributes_json ) {
@@ -499,6 +638,8 @@ $music_wave_expected_blocks    = array(
 	'term-hero',
 	'playback-queue',
 	'add-to-queue',
+	'share-button',
+	'shuffle-button',
 );
 foreach ( $music_wave_expected_blocks as $music_wave_block_slug ) {
 	$music_wave_metadata_file = $music_wave_block_metadata_dir . '/' . $music_wave_block_slug . '/block.json';
@@ -692,3 +833,48 @@ foreach ( array( 'playlistOrderBy', 'playlistSearch', "'playlists'" ) as $shelf_
 		'The release shelf editor must expose the public playlist source control (' . $shelf_playlist_control . ').'
 	);
 }
+
+// The release shelf hero slider ("اسلایدر هیرو") is the reference-style
+// crossfading layout: a dedicated stylesheet, a self-initializing fade
+// engine, and the render-time script enqueue wired in functions.php.
+$hero_slider_css = (string) file_get_contents( $theme_directory . '/assets/css/components/hero-slider.css' );
+foreach ( array( '.mw-hero-slide', '.mw-hero-slide.is-active', '.mw-hero-slide__scrim', '.mw-hero-slider__dot.is-active', 'prefers-reduced-motion' ) as $hero_slider_selector ) {
+	mw_assert_same(
+		true,
+		false !== strpos( $hero_slider_css, $hero_slider_selector ),
+		'The theme must style the hero slider variant ' . $hero_slider_selector . ' in coordination with the release shelf.'
+	);
+}
+
+$hero_slider_script = (string) file_get_contents( $theme_directory . '/assets/hero-slider.js' );
+foreach ( array( 'data-mw-hero-slider', 'data-mw-hero-previous', 'data-mw-hero-next', '[data-mw-hero-dot]', 'prefers-reduced-motion', 'mw-page-rendered' ) as $hero_slider_hook ) {
+	mw_assert_same(
+		true,
+		false !== strpos( $hero_slider_script, $hero_slider_hook ),
+		'The hero slider script must bind the ' . $hero_slider_hook . ' hook.'
+	);
+}
+
+mw_assert_same(
+	true,
+	false !== strpos( $functions_source, 'musicwave_render_hero_slider' )
+		&& false !== strpos( $functions_source, "'musicwave-hero-slider'" )
+		&& false !== strpos( $functions_source, "'slider'" ),
+	'functions.php must render the hero slider layout and register its style module and render-time script.'
+);
+
+$release_shelf_meta  = json_decode( (string) file_get_contents( $theme_directory . '/blocks/release-shelf/block.json' ), true );
+$release_shelf_attrs = is_array( $release_shelf_meta ) && isset( $release_shelf_meta['attributes'] ) ? (array) $release_shelf_meta['attributes'] : array();
+foreach ( array( 'layout', 'autoplay', 'showArrows', 'showDots', 'interval' ) as $hero_attribute ) {
+	mw_assert_same(
+		true,
+		isset( $release_shelf_attrs[ $hero_attribute ] ),
+		'The release shelf block.json must declare the ' . $hero_attribute . ' attribute for the hero slider layout.'
+	);
+}
+
+mw_assert_same(
+	true,
+	false !== strpos( $theme_editor_script, "'slider'" ),
+	'The release shelf editor must expose the hero slider layout option.'
+);

@@ -1,6 +1,6 @@
 <?php
 /**
- * Title: Content with sidebar
+ * Title: محتوا با نوار کناری
  * Slug: musicwave/sidebar-content
  * Categories: musicwave, musicwave-widgets
  * Keywords: sidebar, widgets, layout, two columns
@@ -15,13 +15,13 @@
 <div class="wp-block-columns alignwide"><!-- wp:column {"width":"68%"} -->
 <div class="wp-block-column" style="flex-basis:68%"><!-- wp:group {"tagName":"main","className":"mw-content-area","layout":{"type":"constrained"}} -->
 <main class="wp-block-group mw-content-area"><!-- wp:heading {"level":1} -->
-<h1 class="wp-block-heading"><?php echo esc_html__( 'Page title', 'musicwave' ); ?></h1>
+<h1 class="wp-block-heading"><?php echo esc_html__( 'عنوان صفحه', 'musicwave' ); ?></h1>
 <!-- /wp:heading --><!-- wp:paragraph {"className":"mw-muted"} -->
-<p class="mw-muted"><?php echo esc_html__( 'Start writing. In the Site Editor you can add, reorder, or remove any block here — and edit the sidebar separately under Template Parts → Sidebar.', 'musicwave' ); ?></p>
+<p class="mw-muted"><?php echo esc_html__( 'نوشتن را شروع کنید. در ویرایشگر سایت می‌توانید هر بلوکی را اینجا اضافه، جابه‌جا یا حذف کنید و نوار کناری را جداگانه از بخش‌های قالب → نوار کناری ویرایش کنید.', 'musicwave' ); ?></p>
 <!-- /wp:paragraph --><!-- wp:separator {"opacity":"css"} -->
 <hr class="wp-block-separator has-css-opacity"/>
 <!-- /wp:separator --><!-- wp:paragraph -->
-<p><?php echo esc_html__( 'This two-column layout uses the reusable Sidebar template part. Update it once and every page using this pattern reflects the change instantly — perfect for non-technical store owners.', 'musicwave' ); ?></p>
+<p><?php echo esc_html__( 'این چیدمان دو ستونه از بخش قالب قابل استفادهٔ مجدد «نوار کناری» استفاده می‌کند. آن را یک‌بار به‌روزرسانی کنید تا تغییرات فوراً در همه صفحات این الگو دیده شود؛ مناسب برای صاحبان فروشگاه بدون دانش فنی.', 'musicwave' ); ?></p>
 <!-- /wp:paragraph --></main>
 <!-- /wp:group --></div>
 <!-- /wp:column --><!-- wp:column {"width":"32%","className":"mw-sidebar-column"} -->

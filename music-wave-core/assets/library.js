@@ -299,7 +299,7 @@
 			} )
 			.then( function ( response ) {
 				if ( ! response.ok ) {
-					throw new Error( 'Library navigation failed' );
+					throw new Error( 'پیمایش کتابخانه ناموفق بود.' );
 				}
 
 				return response.text();

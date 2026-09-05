@@ -4,13 +4,18 @@ Tags: block-theme, music, woocommerce, rtl, accessibility
 Requires at least: 6.6
 Tested up to: 6.8
 Requires PHP: 7.4
-Stable tag: 0.7.2
+Stable tag: 0.7.4
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
 MusicWave is a block theme for music catalogs and stores. It uses MusicWave Core for catalog data and supports WooCommerce plus MusicWave VIP protected downloads.
 
 == Changelog ==
+
+= 0.7.4 =
+* Fix: registered the public playlists, cart, and checkout templates in the Site Editor.
+* Fix: removed duplicate footer widget composition from the sidebar page template.
+* Fix: unified presentation block metadata and shared release-card rendering helpers.
 
 = 0.7.2 =
 * Fix: removed hardcoded root-relative links in the Footer widgets and Sidebar template parts that pointed to non-existent URLs and escaped the site root on subdirectory installs; starter links now use safe placeholders for editing in the Site Editor.
@@ -25,7 +30,8 @@ MusicWave is a block theme for music catalogs and stores. It uses MusicWave Core
 == Features ==
 
 * Dark, light, and system display preference.
-* Three Site Editor style variations: Aurora, Cassette, and Studio.
+* Four Site Editor style variations: SonicStream, Aurora, Cassette, and Studio.
+* Four header template parts: default, centered, minimal, and stream (app-bar).
 * Release, artist, genre, shop, and product block templates.
 * Native catalog search, taxonomy filters, safe sorting, and active-filter removal.
 * Modular component CSS with RTL-friendly logical layout properties.
@@ -35,7 +41,7 @@ MusicWave is a block theme for music catalogs and stores. It uses MusicWave Core
 **For buyers who are not developers — every color, font, spacing, border, and layout can be changed visually:**
 
 1. Open **Appearance → Editor → Styles** (or **Appearance → Editor** then click Styles).
-2. Click **Browse styles** and try **Default, Aurora, Cassette, or Studio** — each instantly recolors the whole site.
+2. Click **Browse styles** and try **Default, SonicStream, Aurora, Cassette, or Studio** — each instantly recolors the whole site.
 3. Click the pencil icon on **Colors, Typography, Layout, or Shadows** and adjust:
    - **Palette**: edit Canvas / Surface / Text / Accent colors live — sliders, shelves, player, and all MusicWave blocks follow automatically via `theme.json` tokens.
    - **Typography**: switch between System Sans / Editorial Serif / Studio Mono and resize Small → Hero with live preview.
@@ -45,7 +51,7 @@ MusicWave is a block theme for music catalogs and stores. It uses MusicWave Core
 
 **Templates & Template Parts (header / footer / sidebars):**
 - Templates live at **Appearance → Editor → Templates** (Home, Release Archive, Single Release, Artist/Genre archives, Browse, Account, Cart/Checkout, Page with/without sidebar, etc.). Keep MusicWave dynamic blocks in place — their **Inspector (right sidebar)** offers spacing, color, border, and typography without code.
-- **Header:** Appearance → Editor → Template Parts → Header — logo, site title, navigation, and the light/dark toggle. Drag to reorder, replace the navigation block, or add social icons.
+- **Header:** Appearance → Editor → Template Parts → Header — logo, site title, navigation, and the light/dark toggle. Drag to reorder, replace the navigation block, or add social icons. Three alternate parts ship too: **Header (وسط‌چین)** centers the brand over the menu, **Header (ساده)** is a compact logo + menu bar, and **Header (استریم)** is the SonicStream app bar with centered navigation between the brand and the search/toggle cluster.
 - **Footer:** Appearance → Editor → Template Parts → Footer — automatically shows the Footer widgets columns + copyright bar. Edit the widget columns inside it, or replace navigation links.
 - **Sidebar & Footer widgets (the “Widgets” experience):** Block themes do not use the old **Appearance → Widgets** screen; instead, widget areas are editable template parts:
   - **Appearance → Editor → Template Parts → Sidebar** — add any block: Search, Navigation, Categories, Latest releases (MusicWave shelves), Calendar, Custom HTML, or a **Legacy Widget** block. Used by the **Page with sidebar** template.

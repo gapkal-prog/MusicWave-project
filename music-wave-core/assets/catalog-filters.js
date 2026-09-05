@@ -40,6 +40,7 @@
 			return;
 		}
 		var button = form.querySelector( 'button[type="submit"]' );
+		var status = form.querySelector( '[data-mw-filter-status]' );
 		if ( loading ) {
 			form.setAttribute( 'data-mw-busy', 'true' );
 			form.setAttribute( 'aria-busy', 'true' );
@@ -51,6 +52,9 @@
 				button.textContent = config.applying || button.textContent;
 				button.disabled = true;
 			}
+			if ( status ) {
+				status.textContent = config.applying || '';
+			}
 			return;
 		}
 		form.removeAttribute( 'data-mw-busy' );
@@ -61,6 +65,9 @@
 				button.textContent = original;
 			}
 			button.disabled = false;
+		}
+		if ( status ) {
+			status.textContent = '';
 		}
 	}
 
@@ -181,7 +188,7 @@
 		var link =
 			event.target && event.target.closest
 				? event.target.closest(
-						'.mw-catalog-results a, .wp-block-query-pagination a'
+						'.mw-catalog-results a, .mw-catalog-filters a, .wp-block-query-pagination a'
 				  )
 				: null;
 		if ( ! link ) {

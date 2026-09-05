@@ -49,7 +49,7 @@
 	function apiFetch( options ) {
 		if ( ! window.wp || ! window.wp.apiFetch ) {
 			return Promise.reject( {
-				message: labels.error || 'API unavailable',
+				message: labels.error || 'رابط API در دسترس نیست',
 			} );
 		}
 		options.headers = Object.assign(
@@ -194,7 +194,11 @@
 			setPickerStatus(
 				panel,
 				errorMessage(
-					{ message: labels.error || 'That release could not be added.' },
+					{
+						message:
+							labels.error ||
+							'این انتشار را نمی‌توان به فهرست پخش اضافه کرد.',
+					},
 					labels.error
 				),
 				true
@@ -216,7 +220,7 @@
 				markOptionSelected( option, true );
 				setPickerStatus(
 					panel,
-					labels.added || 'Added to the playlist.',
+					labels.added || 'به فهرست پخش اضافه شد.',
 					false
 				);
 				option.disabled = false;
@@ -233,8 +237,8 @@
 						if ( serverCount > 0 ) {
 							var plural =
 								serverCount === 1
-									? labels.trackSingular || 'track'
-									: labels.trackPlural || 'tracks';
+									? labels.trackSingular || 'قطعه'
+									: labels.trackPlural || 'قطعه‌ها';
 							meta.textContent = serverCount + ' ' + plural;
 						} else {
 							var current = parseInt( meta.textContent, 10 );
@@ -242,8 +246,8 @@
 								var next = current + 1;
 								var p2 =
 									next === 1
-										? labels.trackSingular || 'track'
-										: labels.trackPlural || 'tracks';
+										? labels.trackSingular || 'قطعه'
+										: labels.trackPlural || 'قطعه‌ها';
 								meta.textContent = next + ' ' + p2;
 							}
 						}
@@ -257,13 +261,21 @@
 							// view.count is numeric; render as "X releases" like PHP.
 							countEl.textContent =
 								serverCount === 1
-									? '1 release'
-									: serverCount + ' releases';
+									? '1 ' + ( labels.trackSingular || 'قطعه' )
+									: serverCount +
+									  ' ' +
+									  ( labels.trackPlural || 'قطعه‌ها' );
 						} else {
 							var c = parseInt( countEl.textContent, 10 );
 							if ( ! isNaN( c ) ) {
 								countEl.textContent =
-									c + 1 === 1 ? '1 release' : c + 1 + ' releases';
+									c + 1 === 1
+										? '1 ' +
+										  ( labels.trackSingular || 'قطعه' )
+										: c +
+										  1 +
+										  ' ' +
+										  ( labels.trackPlural || 'قطعه‌ها' );
 							}
 						}
 					}
@@ -279,7 +291,9 @@
 					if (
 						error.message &&
 						( /limit|maximu/i.test( error.message ) ||
-							/not a release|not available/i.test( error.message ) )
+							/not a release|not available/i.test(
+								error.message
+							) )
 					) {
 						setPickerStatus( panel, msg, true );
 						return;
@@ -351,8 +365,8 @@
 				setPickerStatus(
 					panel,
 					wasAdded
-						? labels.added || 'Added to the playlist.'
-						: labels.created || 'Playlist created.',
+						? labels.added || 'به فهرست پخش اضافه شد.'
+						: labels.created || 'فهرست پخش ایجاد شد.',
 					false
 				);
 				if ( input ) {
@@ -380,8 +394,8 @@
 					var m = document.createElement( 'span' );
 					m.className = 'mw-playlist-picker__option-meta';
 					m.textContent = wasAdded
-						? labels.oneTrack || '1 track'
-						: '0 ' + ( labels.trackPlural || 'tracks' );
+						? labels.oneTrack || '۱ قطعه'
+						: '0 ' + ( labels.trackPlural || 'قطعه‌ها' );
 					var c = document.createElement( 'span' );
 					c.className = 'mw-playlist-picker__option-check';
 					c.setAttribute( 'aria-hidden', 'true' );
@@ -503,7 +517,7 @@
 			var playDisabled =
 				count === 0 ? ' disabled aria-disabled="true"' : '';
 			var playAria = (
-				labels.playAllAria || 'Play all tracks in %s'
+				labels.playAllAria || 'پخش همهٔ قطعه‌ها در %s'
 			).replace( '%s', title );
 			var playBtn = cardOptions.showPlayButton
 				? '<button type="button" class="mw-public-playlists__play" data-mw-playlist-play data-playlist-id="' +
@@ -513,7 +527,7 @@
 				  '"' +
 				  playDisabled +
 				  '><span aria-hidden="true">▶</span><span>' +
-				  escapeHtml( labels.playAll || 'Play all' ) +
+				  escapeHtml( labels.playAll || 'پخش همه' ) +
 				  '</span><span class="mw-public-playlists__play-count" aria-hidden="true">' +
 				  count +
 				  '</span></button>'
@@ -524,7 +538,7 @@
 				  '" data-mw-public-toggle data-playlist-id="' +
 				  pid +
 				  '">' +
-				  escapeHtml( labels.showTracks || 'Show tracks' ) +
+				  escapeHtml( labels.showTracks || 'نمایش قطعه‌ها' ) +
 				  '</a>'
 				: '';
 			var meta = '<p class="mw-public-playlists__meta">';
@@ -540,8 +554,8 @@
 				' ' +
 				escapeHtml(
 					count === 1
-						? labels.trackSingular || 'track'
-						: labels.trackPlural || 'tracks'
+						? labels.trackSingular || 'قطعه'
+						: labels.trackPlural || 'قطعه‌ها'
 				) +
 				'</span>';
 			if ( cardOptions.showUpdated && updated ) {
@@ -600,7 +614,7 @@
 					emptyDiv.innerHTML =
 						'<p>' +
 						escapeHtml(
-							labels.noResults || 'No playlists found.'
+							labels.noResults || 'هیچ فهرست پخشی پیدا نشد.'
 						) +
 						'</p>';
 					publicRoot.appendChild( emptyDiv );
@@ -645,7 +659,7 @@
 					pagination.className = 'mw-public-playlists__pagination';
 					pagination.setAttribute(
 						'aria-label',
-						labels.paginationLabel || 'Public playlists pages'
+						labels.paginationLabel || 'صفحات فهرست پخش عمومی'
 					);
 					publicRoot.appendChild( pagination );
 				}
@@ -674,7 +688,7 @@
 				);
 			} catch ( e ) {}
 			setLive(
-				( labels.showingCount || 'Showing %1$d of %2$d playlists' )
+				( labels.showingCount || 'نمایش %1$d از %2$d فهرست پخش' )
 					.replace( '%1$d', String( items ? items.length : 0 ) )
 					.replace( '%2$d', String( total ) )
 			);
@@ -704,7 +718,7 @@
 				path += '&search=' + encodeURIComponent( search );
 			}
 			currentSearch = search;
-			setLive( 'Loading…' );
+			setLive( 'در حال بارگذاری…' );
 			// Show loading state on grid
 			if ( grid ) {
 				grid.style.opacity = '0.5';
@@ -823,13 +837,13 @@
 			var isExpanded = toggle.getAttribute( 'aria-expanded' ) === 'true';
 			if ( isExpanded ) {
 				toggle.setAttribute( 'aria-expanded', 'false' );
-				toggle.textContent = labels.showTracks || 'Show tracks';
+				toggle.textContent = labels.showTracks || 'نمایش قطعه‌ها';
 				panel.hidden = true;
 				return;
 			}
 			// Expand
 			toggle.setAttribute( 'aria-expanded', 'true' );
-			toggle.textContent = labels.hideTracks || 'Hide tracks';
+			toggle.textContent = labels.hideTracks || 'پنهان‌کردن قطعه‌ها';
 			if ( panel.getAttribute( 'data-loaded' ) === 'true' ) {
 				panel.hidden = false;
 				return;
@@ -837,7 +851,7 @@
 			panel.hidden = false;
 			panel.innerHTML =
 				'<p class="mw-public-playlists__loading">' +
-				escapeHtml( labels.loading || 'Loading…' ) +
+				escapeHtml( labels.loading || 'در حال بارگذاری…' ) +
 				'</p>';
 			apiFetch( {
 				path: '/music-wave/v1/playlists/' + pid + '/playback-queue',
@@ -851,7 +865,7 @@
 							'<p class="mw-public-playlists__empty">' +
 							escapeHtml(
 								labels.emptyOrNotPlayable ||
-									'This playlist is empty or not playable.'
+									'این فهرست پخش خالی است یا قابل پخش نیست.'
 							) +
 							'</p>';
 						panel.setAttribute( 'data-loaded', 'true' );
@@ -861,14 +875,14 @@
 					tracks.forEach( function ( track, idx ) {
 						var title =
 							track.title ||
-							( labels.releaseFallback || 'Release #%d' ).replace(
+							( labels.releaseFallback || 'انتشار #%d' ).replace(
 								'%d',
 								String( track.releaseId )
 							);
 						var artist = track.artist ? ' — ' + track.artist : '';
 						var fallback = ( title || '?' ).slice( 0, 1 );
 						var trackAria = (
-							labels.playTrackAria || 'Play %s'
+							labels.playTrackAria || 'پخش %s'
 						).replace( '%s', title );
 						html +=
 							'<div class="mw-public-playlists__track"><span class="mw-public-playlists__position">' +
@@ -1028,7 +1042,7 @@
 				.fetch( toggle.href, { credentials: 'same-origin' } )
 				.then( function ( response ) {
 					if ( ! response.ok ) {
-						throw new Error( 'Panel load failed' );
+						throw new Error( 'بارگذاری پنل ناموفق بود.' );
 					}
 					return response.text();
 				} )
@@ -1094,10 +1108,8 @@
 			if ( ! form || ! root.contains( form ) ) {
 				return;
 			}
-				var pidInput = form.querySelector( 'input[name="mw_playlist_id"]' );
-			var playlistId = pidInput
-				? parseInt( pidInput.value, 10 ) || 0
-				: 0;
+			var pidInput = form.querySelector( 'input[name="mw_playlist_id"]' );
+			var playlistId = pidInput ? parseInt( pidInput.value, 10 ) || 0 : 0;
 			if ( ! playlistId ) {
 				return;
 			}
@@ -1248,7 +1260,7 @@
 							deleteButton.textContent
 						);
 						deleteButton.textContent =
-							labels.confirmDelete || 'Confirm delete';
+							labels.confirmDelete || 'حذف تأیید شود';
 					}
 					window.setTimeout( function () {
 						form.removeAttribute( 'data-mw-confirmed' );
@@ -1278,12 +1290,11 @@
 						}
 						setStatus( labels.deleted, false );
 						// Update header total.
-						var totalEl = root.querySelector( '.mw-playlists__total' );
+						var totalEl = root.querySelector(
+							'.mw-playlists__total'
+						);
 						if ( totalEl ) {
-							var current = parseInt(
-								totalEl.textContent,
-								10
-							);
+							var current = parseInt( totalEl.textContent, 10 );
 							if ( ! isNaN( current ) && current > 0 ) {
 								totalEl.textContent = String( current - 1 );
 							}
@@ -1307,7 +1318,7 @@
 									'<div class="mw-playlists__empty-icon" aria-hidden="true">♫</div><p class="mw-playlists__empty">' +
 									escapeHtmlForNotice(
 										labels.emptyPlaylist ||
-											'You have no playlists yet.'
+											'هنوز هیچ فهرست پخشی ندارید.'
 									) +
 									'</p>';
 								var createFormEl = root.querySelector(
@@ -1351,9 +1362,7 @@
 				'select[name="mw_visibility"]'
 			);
 			var visibility = visSelect ? visSelect.value : 'private';
-			var submitBtn = createForm.querySelector(
-				'button[type="submit"]'
-			);
+			var submitBtn = createForm.querySelector( 'button[type="submit"]' );
 			if ( submitBtn ) {
 				submitBtn.disabled = true;
 				submitBtn.setAttribute( 'aria-busy', 'true' );
@@ -1361,7 +1370,7 @@
 			api( {
 				path: '/music-wave/v1/playlists',
 				method: 'POST',
-				data: { title: title, visibility: visibility || 'private' },
+				data: { title, visibility: visibility || 'private' },
 			} )
 				.then( function ( created ) {
 					var newId =
@@ -1396,7 +1405,9 @@
 						} )
 						.then( function ( resp ) {
 							if ( ! resp.ok ) {
-								throw new Error( 'List refresh failed' );
+								throw new Error(
+									'تازه‌سازی فهرست ناموفق بود.'
+								);
 							}
 							return resp.text();
 						} )
@@ -1440,12 +1451,35 @@
 								}
 							}
 							// Inject a simple placeholder card.
-							if ( listEl && ! listEl.querySelector('[data-mw-playlist-id="' + newId + '"]') ) {
-								var li = document.createElement('li');
+							if (
+								listEl &&
+								! listEl.querySelector(
+									'[data-mw-playlist-id="' + newId + '"]'
+								)
+							) {
+								var li = document.createElement( 'li' );
 								li.className = 'mw-playlists__item';
-								li.setAttribute('data-mw-playlist-id', String(newId));
-								li.innerHTML = '<div class="mw-playlists__card"><div class="mw-playlists__art" aria-hidden="true"><div class="mw-playlists__art-grid mw-playlists__art-grid--empty"><span class="mw-playlists__art-placeholder" aria-hidden="true">♫</span></div></div><div class="mw-playlists__main"><div class="mw-playlists__row"><h3 class="mw-playlists__name" data-mw-playlist-name="' + newId + '">' + escapeHtmlForNotice(title) + '</h3><p class="mw-playlists__meta"><span class="mw-playlists__badge mw-playlists__badge--private">Private</span> <span class="mw-playlists__count" data-mw-playlist-count="' + newId + '">0 releases</span></p></div></div></div>';
-								listEl.appendChild(li);
+								li.setAttribute(
+									'data-mw-playlist-id',
+									String( newId )
+								);
+								li.innerHTML =
+									'<div class="mw-playlists__card"><div class="mw-playlists__art" aria-hidden="true"><div class="mw-playlists__art-grid mw-playlists__art-grid--empty"><span class="mw-playlists__art-placeholder" aria-hidden="true">♫</span></div></div><div class="mw-playlists__main"><div class="mw-playlists__row"><h3 class="mw-playlists__name" data-mw-playlist-name="' +
+									newId +
+									'">' +
+									escapeHtmlForNotice( title ) +
+									'</h3><p class="mw-playlists__meta"><span class="mw-playlists__badge mw-playlists__badge--private">' +
+									escapeHtmlForNotice(
+										labels.private || 'خصوصی'
+									) +
+									'</span> <span class="mw-playlists__count" data-mw-playlist-count="' +
+									newId +
+									'">0 ' +
+									escapeHtmlForNotice(
+										labels.trackPlural || 'قطعه‌ها'
+									) +
+									'</span></p></div></div></div>';
+								listEl.appendChild( li );
 							}
 						} );
 				} )
@@ -1547,7 +1581,7 @@
 						// Show preview instead or notice.
 						if ( ! url ) {
 							announce(
-								labels.noPlayable || 'No preview available'
+								labels.noPlayable || 'پیش‌نمایشی در دسترس نیست'
 							);
 
 							return;

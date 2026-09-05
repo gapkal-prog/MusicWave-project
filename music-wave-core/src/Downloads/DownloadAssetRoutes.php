@@ -90,7 +90,7 @@ final class DownloadAssetRoutes {
 	public function update( WP_REST_Request $request ) {
 		$assets = $request->get_param( 'assets' );
 		if ( ! is_array( $assets ) ) {
-			return new WP_Error( 'mw_download_assets_invalid', __( 'Download qualities must be an array.', 'music-wave-core' ), array( 'status' => 400 ) );
+			return new WP_Error( 'mw_download_assets_invalid', __( 'کیفیت‌های دانلود باید یک آرایه باشد.', 'music-wave-core' ), array( 'status' => 400 ) );
 		}
 
 		// Normalize before anything else so authorization and persistence both
@@ -150,7 +150,7 @@ final class DownloadAssetRoutes {
 			if ( false === $authorized || ! current_user_can( 'manage_mw_protected_assets' ) ) {
 				return new WP_Error(
 					'mw_download_asset_forbidden',
-					__( 'You are not authorized to assign this protected asset.', 'music-wave-core' ),
+					__( 'شما مجاز به اختصاص این دارایی حفاظت‌شده نیستید.', 'music-wave-core' ),
 					array(
 						'status'   => 403,
 						'asset_id' => $asset_id,
@@ -197,7 +197,7 @@ final class DownloadAssetRoutes {
 			if ( is_string( $legacy ) && '' !== $legacy ) {
 				$assets[] = array(
 					'key'      => 'standard',
-					'label'    => __( 'Standard download', 'music-wave-core' ),
+					'label'    => __( 'دانلود استاندارد', 'music-wave-core' ),
 					'asset_id' => $legacy,
 				);
 			}

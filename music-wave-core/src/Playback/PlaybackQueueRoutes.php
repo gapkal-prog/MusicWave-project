@@ -83,7 +83,7 @@ final class PlaybackQueueRoutes {
 		if ( $release_id < 1 || ReleasePostType::KEY !== get_post_type( $release_id ) || 'publish' !== get_post_status( $release_id ) ) {
 			return new WP_Error(
 				'mw_playback_unavailable',
-				__( 'This release is not available for playback.', 'music-wave-core' ),
+				__( 'این انتشار برای پخش در دسترس نیست.', 'music-wave-core' ),
 				array( 'status' => 404 )
 			);
 		}
@@ -101,7 +101,7 @@ final class PlaybackQueueRoutes {
 		if ( empty( $tracks ) ) {
 			return new WP_Error(
 				'mw_playback_unavailable',
-				__( 'This release has no playable audio right now.', 'music-wave-core' ),
+				__( 'این انتشار در حال حاضر صدای قابل پخش ندارد.', 'music-wave-core' ),
 				array( 'status' => 404 )
 			);
 		}
@@ -264,9 +264,9 @@ final class PlaybackQueueRoutes {
 			switch ( $decision->reason() ) {
 				case 'purchase_required':
 					$message   = (string) Settings::get( 'purchase_message' );
-					$message   = '' !== $message ? $message : __( 'Purchase this release to unlock full playback.', 'music-wave-core' );
+					$message   = '' !== $message ? $message : __( 'این انتشار را بخرید تا قفل پخش کامل باز شود.', 'music-wave-core' );
 					$cta_label = (string) Settings::get( 'purchase_cta_label' );
-					$cta_label = '' !== $cta_label ? $cta_label : __( 'View purchase options', 'music-wave-core' );
+					$cta_label = '' !== $cta_label ? $cta_label : __( 'مشاهده گزینه‌های خرید', 'music-wave-core' );
 					foreach ( $this->repository->product_ids( $release_id ) as $product_id ) {
 						if ( 'product' !== get_post_type( $product_id ) ) {
 							continue;
@@ -281,14 +281,14 @@ final class PlaybackQueueRoutes {
 					break;
 				case 'membership_required':
 					$message   = (string) Settings::get( 'membership_message' );
-					$message   = '' !== $message ? $message : __( 'Subscribe to listen to full tracks without limits.', 'music-wave-core' );
+					$message   = '' !== $message ? $message : __( 'برای گوش‌دادن به قطعه‌های کامل بدون محدودیت مشترک شوید.', 'music-wave-core' );
 					$cta_label = (string) Settings::get( 'membership_cta_label' );
-					$cta_label = '' !== $cta_label ? $cta_label : __( 'View membership options', 'music-wave-core' );
+					$cta_label = '' !== $cta_label ? $cta_label : __( 'مشاهده گزینه‌های عضویت', 'music-wave-core' );
 					$cta_url   = (string) Settings::get( 'membership_cta_url' );
 					break;
 				default:
 					$message = (string) Settings::get( 'restricted_message' );
-					$message = '' !== $message ? $message : __( 'This release is not currently available.', 'music-wave-core' );
+					$message = '' !== $message ? $message : __( 'این انتشار در حال حاضر در دسترس نیست.', 'music-wave-core' );
 					break;
 			}
 		}
@@ -297,14 +297,14 @@ final class PlaybackQueueRoutes {
 			'message'     => $message,
 			'ctaLabel'    => $cta_label,
 			'ctaUrl'      => $cta_url,
-			'previewNote' => __( 'You are listening to a limited preview. Get access to enjoy full playback.', 'music-wave-core' ),
+			'previewNote' => __( 'شما در حال گوش‌دادن به یک پیش‌نمایش محدود هستید. دسترسی داشته باشید تا از پخش کامل لذت ببرید.', 'music-wave-core' ),
 			'loginUrl'    => '',
 			'loginLabel'  => '',
 		);
 
 		if ( get_current_user_id() < 1 && '' !== $link ) {
 			$payload['loginUrl']   = wp_login_url( $link );
-			$payload['loginLabel'] = __( 'Sign in', 'music-wave-core' );
+			$payload['loginLabel'] = __( 'وارد شوید', 'music-wave-core' );
 		}
 
 		return $payload;

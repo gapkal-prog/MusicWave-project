@@ -1,4 +1,6 @@
-.mw-release-gate,
+/* Access gate / granted panel rendered by the release blocks (dynamic
+ * layout + reason modifiers come from AccessDecision: granted, restricted,
+ * purchase_required, membership_required). */
 .mw-access-panel {
 	display: flex;
 	align-items: center;
@@ -10,15 +12,6 @@
 	border: 1px solid var(--mw-color-border);
 	border-radius: var(--mw-radius-lg);
 	box-shadow: var(--mw-shadow-card);
-}
-
-.mw-release-gate {
-	color: var(--mw-color-text-muted);
-}
-
-.mw-access-panel--restricted,
-.mw-release-gate--restricted {
-	border-color: color-mix(in srgb, #f59e0b 50%, var(--mw-color-border));
 }
 
 .mw-access-panel a {
@@ -39,10 +32,72 @@
 	border-color: color-mix(in srgb, #22c55e 45%, var(--mw-color-border));
 }
 
+.mw-access-panel--restricted,
+.mw-access-panel--purchase_required,
+.mw-access-panel--membership_required {
+	border-color: color-mix(in srgb, #f59e0b 50%, var(--mw-color-border));
+}
+
 @container (max-width: 40rem) {
-	.mw-release-gate,
 	.mw-access-panel {
 		align-items: flex-start;
 		flex-direction: column;
 	}
+}
+
+/* -------------------------------------------------------------------------
+ * SonicStream upsell card ("Go Premium" pattern)
+ * A soft accent gradient panel with a white pill CTA. The account-library
+ * block renders this as `mw-membership`.
+ * ---------------------------------------------------------------------- */
+.mw-membership {
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	gap: 0.75rem;
+	margin: var(--wp--preset--spacing--30) 0;
+	padding: var(--wp--preset--spacing--30);
+	background: var(--mw-gradient-upsell);
+	border: 1px solid color-mix(in srgb, var(--mw-color-accent) 25%, transparent);
+	border-radius: var(--mw-radius-lg);
+	overflow: hidden;
+}
+
+.mw-membership::before {
+	content: "";
+	position: absolute;
+	inset: -40% 30% auto -10%;
+	width: 16rem;
+	height: 16rem;
+	background: color-mix(in srgb, var(--mw-color-accent) 18%, transparent);
+	border-radius: 50%;
+	filter: blur(2.5rem);
+	pointer-events: none;
+}
+
+.mw-membership > * {
+	position: relative;
+	z-index: 1;
+}
+
+.mw-membership .button,
+.mw-membership a[class*="wp-block-button__link"] {
+	align-self: flex-start;
+	justify-content: center;
+	min-height: 2.25rem;
+	padding-inline: 1.25rem;
+	color: var(--mw-color-canvas);
+	background: var(--mw-color-text);
+	border: 0;
+	border-radius: var(--mw-radius-pill);
+	font-size: 0.75rem;
+	font-weight: 700;
+	letter-spacing: 0.02em;
+	cursor: pointer;
+	transition: scale var(--mw-speed-fast, 150ms) var(--mw-ease-snap, ease);
+}
+
+.mw-membership .button:hover,
+.mw-membership a[class*="wp-block-button__link"]:hover {
+	scale: 1.03;
 }

@@ -42,7 +42,7 @@ final class ReleaseMetadata {
 		if ( ! empty( $artists ) ) {
 			$parts['title'] = sprintf(
 				/* translators: 1: release title, 2: artist names. */
-				__( '%1$s by %2$s', 'music-wave-core' ),
+				__( '%1$s توسط %2$s', 'music-wave-core' ),
 				get_the_title( $post ),
 				implode( ', ', $artists )
 			);
@@ -109,7 +109,7 @@ final class ReleaseMetadata {
 			? $title
 			: sprintf(
 				/* translators: 1: release title, 2: artist names. */
-				__( '%1$s by %2$s', 'music-wave-core' ),
+				__( '%1$s توسط %2$s', 'music-wave-core' ),
 				$title,
 				implode( ', ', $artists )
 			);
@@ -178,7 +178,7 @@ final class ReleaseMetadata {
 		if ( ! empty( $artists ) ) {
 			return sprintf(
 				/* translators: 1: release title, 2: artist names, 3: site name. */
-				__( 'Listen to %1$s by %2$s on %3$s.', 'music-wave-core' ),
+				__( 'به %1$s توسط %2$s در %3$s گوش دهید.', 'music-wave-core' ),
 				$title,
 				implode( ', ', $artists ),
 				get_bloginfo( 'name' )
@@ -187,7 +187,7 @@ final class ReleaseMetadata {
 
 		return sprintf(
 			/* translators: 1: release title, 2: site name. */
-			__( 'Listen to %1$s on %2$s.', 'music-wave-core' ),
+			__( 'به %1$s در %2$s گوش دهید.', 'music-wave-core' ),
 			$title,
 			get_bloginfo( 'name' )
 		);

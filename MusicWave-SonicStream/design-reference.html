@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MusicWave × SonicStream — Design Language Reference</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Syne:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --color-bg: #0a0a0a;
+  --color-card: #181818;
+  --color-surface: #181818;
+  --color-surface-elevated: #282828;
+  --color-muted: #a0a0a0;
+  --color-border: #333;
+  --color-primary: #1db954;
+  --color-primary-hover: #1ed760;
+  --font-display: 'Syne', sans-serif;
+  --font-body: 'Plus Jakarta Sans', sans-serif;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background: var(--color-bg);
+  color: #fff;
+  font-family: var(--font-body);
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+.page { max-width: 1280px; margin: 0 auto; padding: 0 clamp(1rem, 4vw, 2rem) 5rem; }
+
+/* Section headers like the design */
+.section-head { display: flex; align-items: baseline; justify-content: space-between; margin: 3rem 0 1.25rem; }
+.section-head h2 { font-family: var(--font-display); font-size: 1.5rem; font-weight: 800; letter-spacing: -0.02em; }
+.section-head a { color: var(--color-muted); font-size: .875rem; font-weight: 600; text-decoration: none; }
+.section-head a:hover { color: #fff; }
+
+/* Swatches */
+.swatches { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 1rem; }
+.swatch { border-radius: 12px; overflow: hidden; border: 1px solid #333; }
+.swatch div:first-child { height: 72px; }
+.swatch p { padding: .6rem .75rem; font-size: .75rem; color: var(--color-muted); background: var(--color-card); }
+.swatch p strong { display: block; color: #fff; font-size: .8125rem; margin-bottom: .15rem; }
+
+/* Cards */
+.cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 1.25rem; }
+.card { background: var(--color-card); border-radius: 12px; padding: 1rem; cursor: pointer; transition: .3s; position: relative; }
+.card:hover { transform: translateY(-4px); background: var(--color-surface-elevated); }
+.card .art { position: relative; margin-bottom: 1rem; aspect-ratio: 1; border-radius: 8px; overflow: hidden;
+  background: linear-gradient(135deg, #2a2a2a, #444); box-shadow: 0 10px 30px rgb(0 0 0 / 50%); }
+.card .art::after { content: "♪"; position: absolute; inset: 0; display: grid; place-items: center; font-size: 3rem; color: #ffffff22; }
+.play-overlay { position: absolute; bottom: .5rem; right: .5rem; opacity: 0; transform: translateY(8px); transition: .3s; }
+.card:hover .play-overlay { opacity: 1; transform: translateY(0); }
+.play-overlay button { width: 44px; height: 44px; border-radius: 50%; border: 0; background: var(--color-primary); color: #000; cursor: pointer;
+  box-shadow: 0 8px 24px rgb(0 0 0 / 60%); font-size: 1rem; display: grid; place-items: center; transition: transform .2s; }
+.play-overlay button:hover { transform: scale(1.06); background: var(--color-primary-hover); }
+.card h3 { font-size: .875rem; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.card p { font-size: .75rem; color: var(--color-muted); margin-top: .15rem; }
+
+/* Filter chips */
+.chips { display: flex; flex-wrap: wrap; gap: .5rem; margin: 1.25rem 0; }
+.chip { padding: .4rem 1rem; border-radius: 999px; border: 0; background: var(--color-surface-elevated); color: rgb(255 255 255 / 70%); font-size: .875rem; font-weight: 500; font-family: var(--font-body); cursor: pointer; transition: .2s; }
+.chip:hover { color: #fff; }
+.chip.active { background: var(--color-primary); color: #000; font-weight: 700; }
+
+/* Track list */
+.tracks { margin-top: 1.5rem; }
+.track-head, .track-row { display: flex; align-items: center; gap: 1rem; padding: .625rem 1rem; }
+.track-head { color: var(--color-muted); font-size: .75rem; text-transform: uppercase; letter-spacing: .05em; border-bottom: 1px solid #33333366; }
+.track-row { border-radius: 8px; cursor: pointer; transition: background .15s; }
+.track-row:hover { background: var(--color-surface-elevated); }
+.track-row .num { width: 2rem; text-align: center; color: var(--color-muted); font-size: .875rem; }
+.track-row .title { flex: 1; min-width: 0; }
+.track-row .title strong { display: block; font-size: .875rem; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.track-row .title span { font-size: .75rem; color: var(--color-muted); }
+.track-row .dur { font-size: .75rem; color: var(--color-muted); }
+
+/* Buttons */
+.btn-row { display: flex; gap: 1.25rem; align-items: center; margin: 1.5rem 0; flex-wrap: wrap; }
+.btn-play { width: 56px; height: 56px; border-radius: 50%; border: 0; background: var(--color-primary); color: #000; font-size: 1.25rem; cursor: pointer; box-shadow: 0 12px 32px rgb(29 185 84 / 35%); transition: all .2s; display: grid; place-items: center; }
+.btn-play:hover { transform: scale(1.05); background: var(--color-primary-hover); }
+.btn-outline { padding: .5rem 1.5rem; border-radius: 999px; background: transparent; border: 1px solid rgb(255 255 255 / 30%); color: #fff; font-size: .875rem; font-weight: 600; cursor: pointer; transition: .2s; font-family: var(--font-body); }
+.btn-outline:hover { border-color: rgb(255 255 255 / 60%); background: rgb(255 255 255 / 10%); }
+.btn-white { padding: .5rem 1.25rem; border-radius: 999px; border: 0; background: #fff; color: #000; font-size: .75rem; font-weight: 700; cursor: pointer; transition: transform .2s; font-family: var(--font-body); }
+.btn-white:hover { transform: scale(1.05); }
+
+/* Hero (album-style gradient) */
+.hero { border-radius: 12px; padding: clamp(1.5rem, 4vw, 2.5rem); display: flex; align-items: flex-end; gap: 1.75rem;
+  background: linear-gradient(rgba(29,185,84,.35) 0%, rgba(10,10,10,.95) 40%, #0a0a0a 100%); margin-top: 2.5rem; flex-wrap: wrap; }
+.hero .cover { width: clamp(140px, 18vw, 224px); aspect-ratio: 1; border-radius: 12px; background: linear-gradient(135deg, #333, #111);
+  box-shadow: 0 24px 60px rgb(0 0 0 / 60%); display: grid; place-items: center; font-family: var(--font-display); font-size: 4rem; color: #ffffff33; }
+.hero .kicker { font-size: .75rem; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; color: rgb(255 255 255 / 60%); margin-bottom: .5rem; }
+.hero h1 { font-family: var(--font-display); font-size: clamp(2.5rem, 6vw, 3.75rem); font-weight: 800; line-height: 1; letter-spacing: -0.02em; margin-bottom: 1rem; }
+.hero .meta { display: flex; align-items: center; gap: .5rem; font-size: .875rem; color: rgb(255 255 255 / 60%); flex-wrap: wrap; }
+.hero .meta .dot { width: 4px; height: 4px; border-radius: 50%; background: rgb(255 255 255 / 40%); }
+.hero .meta strong { color: #fff; }
+
+/* Player bar */
+.player { position: sticky; bottom: 1rem; z-index: 50; display: grid; grid-template-columns: minmax(0,1fr) auto minmax(0,1fr); align-items: center; gap: 1rem;
+  margin-top: 3rem; padding: .75rem 1.25rem; background: #181818; border: 1px solid #33333366; border-radius: 12px;
+  box-shadow: 0 24px 70px rgb(0 0 0 / 60%); }
+.player .now { display: flex; align-items: center; gap: .75rem; min-width: 0; }
+.player .now .art { width: 48px; height: 48px; border-radius: 8px; background: linear-gradient(135deg, #2a2a2a, #555); flex: 0 0 auto; }
+.player .now strong { display: block; font-size: .875rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.player .now span { font-size: .75rem; color: var(--color-muted); }
+.player .ctr { display: flex; align-items: center; gap: 1rem; }
+.player .ctr button { background: none; border: 0; color: var(--color-muted); cursor: pointer; font-size: .9rem; }
+.player .ctr button:hover { color: #fff; }
+.player .ctr .pp { width: 32px; height: 32px; border-radius: 50%; background: #fff; color: #000; border: 0; cursor: pointer; font-size: .7rem; display: grid; place-items: center; }
+.player .prog { grid-column: 1 / -1; height: 4px; background: var(--color-surface-elevated); border-radius: 999px; overflow: hidden; }
+.player .prog i { display: block; height: 100%; width: 45%; background: linear-gradient(90deg, var(--color-primary), var(--color-primary-hover)); }
+
+.note { margin-top: 2.5rem; padding: 1rem 1.25rem; border-radius: 12px; background: color-mix(in srgb, var(--color-primary) 12%, transparent);
+  border: 1px solid color-mix(in srgb, var(--color-primary) 25%, transparent); color: #d9e7df; font-size: .85rem; line-height: 1.7; }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="hero">
+    <div class="cover">AM</div>
+    <div>
+      <p class="kicker">Album</p>
+      <h1>MusicWave × SonicStream</h1>
+      <div class="meta">
+        <strong>Design Language</strong><span class="dot"></span>
+        <span>Syne Display / Plus Jakarta Body</span><span class="dot"></span>
+        <span>#1DB954 accent</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="btn-row">
+    <button class="btn-play">▶</button>
+    <button class="btn-outline">Shuffle</button>
+    <button class="btn-white">Upgrade Now</button>
+  </div>
+
+  <div class="section-head"><h2>Palette</h2></div>
+  <div class="swatches">
+    <div class="swatch"><div style="background:#0a0a0a"></div><p><strong>bg</strong>#0a0a0a</p></div>
+    <div class="swatch"><div style="background:#181818"></div><p><strong>card / surface</strong>#181818</p></div>
+    <div class="swatch"><div style="background:#282828"></div><p><strong>surface-elevated</strong>#282828</p></div>
+    <div class="swatch"><div style="background:#333"></div><p><strong>border</strong>#333333</p></div>
+    <div class="swatch"><div style="background:#a0a0a0"></div><p><strong>muted</strong>#a0a0a0</p></div>
+    <div class="swatch"><div style="background:#1db954"></div><p><strong>primary</strong>#1db954</p></div>
+    <div class="swatch"><div style="background:#1ed760"></div><p><strong>primary-hover</strong>#1ed760</p></div>
+  </div>
+
+  <div class="section-head"><h2>Filter chips</h2><a href="#">Pattern from search page</a></div>
+  <div class="chips">
+    <button class="chip active">All</button>
+    <button class="chip">Songs</button>
+    <button class="chip">Albums</button>
+    <button class="chip">Artists</button>
+    <button class="chip">Playlists</button>
+  </div>
+
+  <div class="section-head"><h2>Cards with play overlay</h2><a href="#">card-hover pattern</a></div>
+  <div class="cards">
+    <div class="card"><div class="art"><div class="play-overlay"><button>▶</button></div></div><h3>Tranquility Base</h3><p>2018 · Album</p></div>
+    <div class="card"><div class="art"><div class="play-overlay"><button>▶</button></div></div><h3>The Car</h3><p>2022 · Album</p></div>
+    <div class="card"><div class="art"><div class="play-overlay"><button>▶</button></div></div><h3>Suck It and See</h3><p>2011 · Album</p></div>
+    <div class="card"><div class="art"><div class="play-overlay"><button>▶</button></div></div><h3>Humbug</h3><p>2009 · Album</p></div>
+  </div>
+
+  <div class="section-head"><h2>Track rows</h2><a href="#">hover reveals play</a></div>
+  <div class="tracks">
+    <div class="track-head"><span style="width:2rem;text-align:center">#</span><span style="flex:1">Title</span><span>Plays</span><span></span></div>
+    <div class="track-row"><span class="num">1</span><div class="title"><strong>Do I Wanna Know?</strong><span>Arctic Monkeys</span></div><span class="dur">4:32</span><span class="dur">♥</span></div>
+    <div class="track-row"><span class="num">2</span><div class="title"><strong>R U Mine?</strong><span>Arctic Monkeys</span></div><span class="dur">3:21</span><span class="dur">♥</span></div>
+    <div class="track-row"><span class="num">3</span><div class="title"><strong>Arabella</strong><span>Arctic Monkeys</span></div><span class="dur">3:27</span><span class="dur">♥</span></div>
+  </div>
+
+  <div class="player">
+    <div class="now">
+      <div class="art"></div>
+      <div><strong>Do I Wanna Know?</strong><span>Arctic Monkeys</span></div>
+    </div>
+    <div class="ctr">
+      <button>⏮</button>
+      <button class="pp">⏸</button>
+      <button>⏭</button>
+    </div>
+    <div style="text-align:right;color:var(--color-muted);font-size:.75rem">2:17 / 4:32</div>
+    <div class="prog"><i></i></div>
+  </div>
+
+  <p class="note">این صفحه مرجع زبان طراحی استخراج‌شده از پیش‌نمایش‌های SonicStream است و برای ارتقای CSS تم MusicWave استفاده می‌شود: پالت تاریک با لهجه سبز، تایپوگرافی Syne + Plus Jakarta Sans، کارت‌های با play-overlay، چیپ‌های فیلتر گرد و نوار پخش چسبان.</p>
+</div>
+</body>
+</html>

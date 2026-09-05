@@ -97,7 +97,6 @@ html[dir="rtl"] .mw-release-slider__slide {
 .mw-release-slider__slide:hover {
 	background: var(--mw-color-surface-raised);
 	border-color: var(--mw-color-border);
-	transform: translateY(-3px);
 }
 
 .mw-release-slider__artwrap {
@@ -122,14 +121,25 @@ html[dir="rtl"] .mw-release-slider__slide {
 	transition: transform 360ms var(--mw-ease-out);
 }
 
+.mw-release-slider__placeholder {
+	display: grid;
+	width: 100%;
+	height: 100%;
+	place-items: center;
+	color: var(--mw-color-text);
+	background: var(--mw-color-surface-raised);
+	font-size: clamp(2rem, 8vw, 4rem);
+	font-weight: 800;
+}
+
 .mw-release-slider__slide:hover .mw-release-slider__image {
 	transform: scale(1.045);
 }
 
 .mw-release-slider__play {
 	position: absolute;
-	right: 0.8rem;
-	bottom: 0.8rem;
+	inset-inline-end: 0.8rem;
+	inset-block-end: 0.8rem;
 	display: grid;
 	width: 3rem;
 	height: 3rem;

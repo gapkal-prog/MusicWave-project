@@ -38,9 +38,9 @@ final class DemoContentImporter {
 
 		$definitions = array(
 			'glass-current'         => array(
-				'title'   => __( 'Glass Current', 'music-wave-core' ),
-				'excerpt' => __( 'A focused electronic demo track for testing catalog cards, metadata, and previews.', 'music-wave-core' ),
-				'content' => __( 'Glass Current is a short public demo track included with MusicWave. Replace it with licensed catalog content before launch.', 'music-wave-core' ),
+				'title'   => __( 'جریان شیشه ای', 'music-wave-core' ),
+				'excerpt' => __( 'یک مسیر نمایشی الکترونیکی متمرکز برای آزمایش کارت‌های کاتالوگ، فراداده‌ها و پیش‌نمایش‌ها.', 'music-wave-core' ),
+				'content' => __( 'Glass Current یک قطعهٔ نمایشی عمومیِ کوتاه است که همراه MusicWave ارائه می‌شود. پیش از راه‌اندازی، آن را با محتوای کاتالوگ دارای مجوز جایگزین کنید.', 'music-wave-core' ),
 				'types'   => array( 'track' ),
 				'artists' => array( 'sora-vale' ),
 				'genres'  => array( 'electronic' ),
@@ -56,9 +56,9 @@ final class DemoContentImporter {
 				),
 			),
 			'horizon-parade'        => array(
-				'title'   => __( 'Horizon Parade', 'music-wave-core' ),
-				'excerpt' => __( 'A sample album that demonstrates ordered track relationships and album rendering.', 'music-wave-core' ),
-				'content' => __( 'Horizon Parade is a public sample album. It connects to a sample track through MusicWave collection relationships.', 'music-wave-core' ),
+				'title'   => __( 'رژه افق', 'music-wave-core' ),
+				'excerpt' => __( 'یک آلبوم نمونه که روابط قطعه‌های منظم و رندر آلبوم را نشان می‌دهد.', 'music-wave-core' ),
+				'content' => __( 'Horizon Parade یک آلبوم نمونه عمومی است. از طریق روابط مجموعه MusicWave به یک قطعه نمونه متصل می‌شود.', 'music-wave-core' ),
 				'types'   => array( 'album' ),
 				'artists' => array( 'sora-vale' ),
 				'genres'  => array( 'electronic' ),
@@ -71,9 +71,9 @@ final class DemoContentImporter {
 				),
 			),
 			'signal-after-midnight' => array(
-				'title'   => __( 'Signal After Midnight', 'music-wave-core' ),
-				'excerpt' => __( 'A sample podcast show for testing episode collections and podcast schema.', 'music-wave-core' ),
-				'content' => __( 'Signal After Midnight is a public sample podcast show. It demonstrates how MusicWave groups episodes into an ordered collection.', 'music-wave-core' ),
+				'title'   => __( 'سیگنال بعد از نیمه شب', 'music-wave-core' ),
+				'excerpt' => __( 'نمونهٔ نمایش پادکست برای آزمایش مجموعه قسمت‌ها و طرح‌وارهٔ پادکست.', 'music-wave-core' ),
+				'content' => __( 'Signal After Midnight یک نمایش پادکست نمونه عمومی است. این نشان می‌دهد که چگونه MusicWave قسمت‌ها را در یک مجموعه سفارشی گروه‌بندی می‌کند.', 'music-wave-core' ),
 				'types'   => array( 'podcast_show' ),
 				'artists' => array( 'midnight-signal' ),
 				'genres'  => array( 'spoken-word' ),
@@ -86,9 +86,9 @@ final class DemoContentImporter {
 				),
 			),
 			'first-transmission'    => array(
-				'title'   => __( 'First Transmission', 'music-wave-core' ),
-				'excerpt' => __( 'Episode one of the public sample podcast.', 'music-wave-core' ),
-				'content' => __( 'This public sample episode is included to demonstrate podcast episode metadata and collection ordering.', 'music-wave-core' ),
+				'title'   => __( 'انتقال اول', 'music-wave-core' ),
+				'excerpt' => __( 'قسمت اول پادکست نمونه عمومی.', 'music-wave-core' ),
+				'content' => __( 'این قسمت نمونه عمومی برای نمایش فرادادهٔ قسمت پادکست و سفارش مجموعه گنجانده شده است.', 'music-wave-core' ),
 				'types'   => array( 'podcast_episode' ),
 				'artists' => array( 'midnight-signal' ),
 				'genres'  => array( 'spoken-word' ),
@@ -147,7 +147,7 @@ final class DemoContentImporter {
 				++$result['removed'];
 			}
 		}
-		$result['messages'][] = __( 'Only MusicWave sample releases were removed. Existing taxonomy terms were intentionally preserved.', 'music-wave-core' );
+		$result['messages'][] = __( 'فقط انتشارهای نمونه MusicWave حذف شدند. اصطلاحات طبقه‌بندی موجود عمداً حفظ شدند.', 'music-wave-core' );
 
 		return $result;
 	}
@@ -175,15 +175,15 @@ final class DemoContentImporter {
 	private function ensure_terms( array &$result ): void {
 		$terms = array(
 			'mw_artist' => array(
-				'sora-vale'       => __( 'Sora Vale', 'music-wave-core' ),
-				'midnight-signal' => __( 'Midnight Signal', 'music-wave-core' ),
+				'sora-vale'       => __( 'سورا واله', 'music-wave-core' ),
+				'midnight-signal' => __( 'سیگنال نیمه شب', 'music-wave-core' ),
 			),
 			'mw_genre'  => array(
-				'electronic'  => __( 'Electronic', 'music-wave-core' ),
-				'spoken-word' => __( 'Spoken word', 'music-wave-core' ),
+				'electronic'  => __( 'الکترونیکی', 'music-wave-core' ),
+				'spoken-word' => __( 'گفتار', 'music-wave-core' ),
 			),
 			'mw_mood'   => array(
-				'focus' => __( 'Focus', 'music-wave-core' ),
+				'focus' => __( 'تمرکز', 'music-wave-core' ),
 			),
 		);
 
@@ -194,7 +194,7 @@ final class DemoContentImporter {
 					if ( is_wp_error( $created ) ) {
 						$result['messages'][] = sprintf(
 							/* translators: %s: demo taxonomy term name. */
-							__( 'Could not create the demo term %s.', 'music-wave-core' ),
+							__( 'عبارت آزمایشی %s ایجاد نشد.', 'music-wave-core' ),
 							$name
 						);
 					}
@@ -216,7 +216,7 @@ final class DemoContentImporter {
 			++$result['skipped'];
 			$result['messages'][] = sprintf(
 				/* translators: %s: demo release URL slug. */
-				__( 'Skipped demo release %s because a merchant release already uses its URL slug.', 'music-wave-core' ),
+				__( 'انتشار نمونهٔ %s رد شد، چون یک انتشار تجاری از نامک نشانیِ آن استفاده می‌کند.', 'music-wave-core' ),
 				$slug
 			);
 
@@ -239,7 +239,7 @@ final class DemoContentImporter {
 				++$result['skipped'];
 				$result['messages'][] = sprintf(
 					/* translators: %s: demo release URL slug. */
-					__( 'Could not create demo release %s.', 'music-wave-core' ),
+					__( 'انتشار آزمایشی %s ایجاد نشد.', 'music-wave-core' ),
 					$slug
 				);
 

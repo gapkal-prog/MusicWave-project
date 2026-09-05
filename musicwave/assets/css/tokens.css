@@ -1,11 +1,12 @@
 :root {
 	color-scheme: dark light;
-	--mw-color-canvas: var(--wp--preset--color--canvas, #0b0d12);
-	--mw-color-surface: var(--wp--preset--color--surface, #151922);
-	--mw-color-surface-raised: var(--wp--preset--color--surface-raised, #1d2330);
+	--mw-color-canvas: var(--wp--preset--color--canvas, #0a0a0a);
+	--mw-color-surface: var(--wp--preset--color--surface, #181818);
+	--mw-color-surface-raised: var(--wp--preset--color--surface-raised, #282828);
 	--mw-color-text: var(--wp--preset--color--text, #f7f8fb);
-	--mw-color-text-muted: var(--wp--preset--color--muted, #a9b0c0);
-	--mw-color-border: color-mix(in srgb, var(--mw-color-text) 12%, transparent);
+	--mw-color-text-muted: var(--wp--preset--color--muted, #a0a0a0);
+	--mw-color-border: color-mix(in srgb, var(--mw-color-text) 20%, transparent);
+	--mw-color-border-strong: color-mix(in srgb, var(--mw-color-text) 32%, transparent);
 	--mw-color-accent: var(--wp--preset--color--accent, #1db954);
 	--mw-color-accent-strong: var(--wp--preset--color--accent-strong, #1ed760);
 	/*
@@ -20,12 +21,22 @@
 	);
 	/* Saved-to-library "love" state, intentionally independent of the accent. */
 	--mw-color-heart: #ff2d55;
+	/* Semantic states referenced across components. */
+	--mw-color-danger: #f87171;
+	--mw-color-border-subtle: color-mix(in srgb, var(--mw-color-text) 6%, transparent);
+	--mw-color-surface-strong: color-mix(in srgb, var(--mw-color-surface-raised) 82%, black);
 	--mw-shadow-card: var(--wp--preset--shadow--card, 0 18px 50px rgb(0 0 0 / 24%));
 	--mw-shadow-floating: var(--wp--preset--shadow--floating, 0 24px 70px rgb(0 0 0 / 40%));
-	--mw-radius-sm: 0.625rem;
-	--mw-radius-md: 1rem;
-	--mw-radius-lg: 1.5rem;
+	--mw-radius-sm: 0.5rem;
+	--mw-radius-md: 0.75rem;
+	--mw-radius-lg: 1rem;
+	--mw-radius-xl: 1.5rem;
+	--mw-radius-pill: 999px;
 	--mw-ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+	/* SonicStream motion vocabulary: snappy for hovers, softer for surfaces. */
+	--mw-ease-snap: cubic-bezier(0.4, 0, 0.2, 1);
+	--mw-speed-fast: 150ms;
+	--mw-speed-normal: 300ms;
 	/* Fluid typography & spacing — harmonized across devices */
 	--mw-fluid-xs: clamp(0.75rem, 0.7rem + 0.2vw, 0.875rem);
 	--mw-fluid-sm: clamp(0.875rem, 0.82rem + 0.25vw, 1rem);
@@ -36,37 +47,69 @@
 	--mw-space-sm: clamp(0.75rem, 0.65rem + 0.4vw, 1rem);
 	--mw-space-md: clamp(1rem, 0.85rem + 0.6vw, 1.5rem);
 	--mw-space-lg: clamp(1.5rem, 1.2rem + 1vw, 2.5rem);
+	/*
+	 * Signature SonicStream gradients. The accent wash fades a page-level
+	 * hero from the accent color into the canvas; the progress bar keeps the
+	 * green-to-green glow of the reference player.
+	 */
+	--mw-gradient-hero: linear-gradient(
+		180deg,
+		color-mix(in srgb, var(--mw-color-accent) 35%, transparent) 0%,
+		color-mix(in srgb, var(--mw-color-canvas) 95%, transparent) 40%,
+		var(--mw-color-canvas) 100%
+	);
+	--mw-gradient-progress: linear-gradient(90deg, var(--mw-color-accent), var(--mw-color-accent-strong));
+	--mw-gradient-upsell: linear-gradient(
+		135deg,
+		color-mix(in srgb, var(--mw-color-accent) 20%, transparent),
+		color-mix(in srgb, var(--mw-color-accent) 5%, transparent)
+	);
 }
 
 html[data-mw-theme="light"] {
 	color-scheme: light;
-	--mw-color-canvas: color-mix(in srgb, var(--wp--preset--color--canvas, #0b0d12) 8%, white);
-	--mw-color-surface: color-mix(in srgb, var(--wp--preset--color--surface, #151922) 6%, white);
-	--mw-color-surface-raised: color-mix(in srgb, var(--wp--preset--color--surface-raised, #1d2330) 10%, white);
+	--mw-color-canvas: color-mix(in srgb, var(--wp--preset--color--canvas, #0a0a0a) 8%, white);
+	--mw-color-surface: color-mix(in srgb, var(--wp--preset--color--surface, #181818) 6%, white);
+	--mw-color-surface-raised: color-mix(in srgb, var(--wp--preset--color--surface-raised, #282828) 10%, white);
 	--mw-color-text: color-mix(in srgb, var(--wp--preset--color--text, #f7f8fb) 88%, black);
-	--mw-color-text-muted: color-mix(in srgb, var(--wp--preset--color--muted, #a9b0c0) 72%, black);
+	--mw-color-text-muted: color-mix(in srgb, var(--wp--preset--color--muted, #a0a0a0) 72%, black);
 	--mw-color-border: color-mix(in srgb, var(--mw-color-text) 12%, transparent);
+	--mw-color-border-strong: color-mix(in srgb, var(--mw-color-text) 20%, transparent);
 	--mw-shadow-card: 0 18px 50px rgb(20 24 35 / 10%);
+	--mw-gradient-hero: linear-gradient(
+		180deg,
+		color-mix(in srgb, var(--mw-color-accent) 14%, transparent) 0%,
+		color-mix(in srgb, var(--mw-color-canvas) 96%, transparent) 40%,
+		var(--mw-color-canvas) 100%
+	);
 }
 
 html[data-mw-theme="dark"] {
 	color-scheme: dark;
-	--mw-color-canvas: color-mix(in srgb, var(--wp--preset--color--canvas, #0b0d12) 64%, black);
-	--mw-color-surface: color-mix(in srgb, var(--wp--preset--color--surface, #151922) 72%, black);
-	--mw-color-surface-raised: color-mix(in srgb, var(--wp--preset--color--surface-raised, #1d2330) 82%, black);
+	--mw-color-canvas: color-mix(in srgb, var(--wp--preset--color--canvas, #0a0a0a) 64%, black);
+	--mw-color-surface: color-mix(in srgb, var(--wp--preset--color--surface, #181818) 72%, black);
+	--mw-color-surface-raised: color-mix(in srgb, var(--wp--preset--color--surface-raised, #282828) 82%, black);
 	--mw-color-text: color-mix(in srgb, var(--wp--preset--color--text, #f7f8fb) 88%, white);
-	--mw-color-text-muted: color-mix(in srgb, var(--wp--preset--color--muted, #a9b0c0) 88%, white);
+	--mw-color-text-muted: color-mix(in srgb, var(--wp--preset--color--muted, #a0a0a0) 88%, white);
 	--mw-color-border: color-mix(in srgb, var(--mw-color-text) 12%, transparent);
+	--mw-color-border-strong: color-mix(in srgb, var(--mw-color-text) 20%, transparent);
 }
 
 @media (prefers-color-scheme: light) {
 	html:not([data-mw-theme]) {
-		--mw-color-canvas: color-mix(in srgb, var(--wp--preset--color--canvas, #0b0d12) 8%, white);
-		--mw-color-surface: color-mix(in srgb, var(--wp--preset--color--surface, #151922) 6%, white);
-		--mw-color-surface-raised: color-mix(in srgb, var(--wp--preset--color--surface-raised, #1d2330) 10%, white);
+		--mw-color-canvas: color-mix(in srgb, var(--wp--preset--color--canvas, #0a0a0a) 8%, white);
+		--mw-color-surface: color-mix(in srgb, var(--wp--preset--color--surface, #181818) 6%, white);
+		--mw-color-surface-raised: color-mix(in srgb, var(--wp--preset--color--surface-raised, #282828) 10%, white);
 		--mw-color-text: color-mix(in srgb, var(--wp--preset--color--text, #f7f8fb) 88%, black);
-		--mw-color-text-muted: color-mix(in srgb, var(--wp--preset--color--muted, #a9b0c0) 72%, black);
+		--mw-color-text-muted: color-mix(in srgb, var(--wp--preset--color--muted, #a0a0a0) 72%, black);
 		--mw-color-border: color-mix(in srgb, var(--mw-color-text) 12%, transparent);
+		--mw-color-border-strong: color-mix(in srgb, var(--mw-color-text) 20%, transparent);
 		--mw-shadow-card: 0 18px 50px rgb(20 24 35 / 10%);
+		--mw-gradient-hero: linear-gradient(
+			180deg,
+			color-mix(in srgb, var(--mw-color-accent) 14%, transparent) 0%,
+			color-mix(in srgb, var(--mw-color-canvas) 96%, transparent) 40%,
+			var(--mw-color-canvas) 100%
+		);
 	}
 }

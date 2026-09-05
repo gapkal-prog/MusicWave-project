@@ -82,7 +82,7 @@ final class DownloadRoutes {
 
 		return new WP_Error(
 			'mw_authentication_required',
-			__( 'Your session has expired. Sign in again to download this release.', 'music-wave-core' ),
+			__( 'جلسه شما تمام شده است. برای دانلود این انتشار دوباره وارد شوید.', 'music-wave-core' ),
 			array( 'status' => 401 )
 		);
 	}
@@ -96,7 +96,7 @@ final class DownloadRoutes {
 		if ( ! $this->rate_limiter->allow( get_current_user_id() ) ) {
 			return new WP_Error(
 				'mw_download_rate_limited',
-				__( 'Too many download requests. Wait a moment and try again.', 'music-wave-core' ),
+				__( 'درخواست‌های دانلود خیلی زیاد است. یک لحظه صبر کنید و دوباره امتحان کنید.', 'music-wave-core' ),
 				array( 'status' => 429 )
 			);
 		}
@@ -114,20 +114,20 @@ final class DownloadRoutes {
 			if ( 'provider_unavailable' === $reason ) {
 				return new WP_Error(
 					'mw_download_denied',
-					__( 'VIP protected downloads are currently unavailable. The VIP module is disabled or its storage is not configured. Please contact the site administrator or use a purchase-based option if available.', 'music-wave-core' ),
+					__( 'دانلودهای حفاظت‌شده VIP در حال حاضر در دسترس نیستند. ماژول VIP غیرفعال است یا ذخیره‌سازی آن پیکربندی‌نشده است. لطفاً با مدیر سایت تماس بگیرید یا در صورت وجود از یک گزینهٔ مبتنی بر خرید استفاده کنید.', 'music-wave-core' ),
 					array( 'status' => 503 )
 				);
 			}
 			if ( 'stream_unsupported' === $reason ) {
 				return new WP_Error(
 					'mw_stream_denied',
-					__( 'Secure playback is not available for this file type. Try downloading instead.', 'music-wave-core' ),
+					__( 'پخش امن برای این نوع فایل در دسترس نیست. به جای آن دانلود کنید.', 'music-wave-core' ),
 					array( 'status' => 400 )
 				);
 			}
 			return new WP_Error(
 				'mw_download_denied',
-				__( 'This file is unavailable or your account does not have access to it.', 'music-wave-core' ),
+				__( 'این فایل در دسترس نیست یا حساب شما به آن دسترسی ندارد.', 'music-wave-core' ),
 				array( 'status' => 403 )
 			);
 		}
@@ -160,7 +160,7 @@ final class DownloadRoutes {
 
 		return $valid
 			? new WP_REST_Response( null, 204 )
-			: new WP_Error( 'mw_download_denied', __( 'The secure download link is invalid or has expired.', 'music-wave-core' ), array( 'status' => 403 ) );
+			: new WP_Error( 'mw_download_denied', __( 'پیوند دانلود امن نامعتبر است یا منقضی شده است.', 'music-wave-core' ), array( 'status' => 403 ) );
 	}
 
 	/** @return WP_REST_Response|WP_Error */
@@ -175,6 +175,6 @@ final class DownloadRoutes {
 
 		return $valid
 			? new WP_REST_Response( null, 204 )
-			: new WP_Error( 'mw_stream_denied', __( 'The secure playback link is invalid or has expired.', 'music-wave-core' ), array( 'status' => 403 ) );
+			: new WP_Error( 'mw_stream_denied', __( 'پیوند پخش امن نامعتبر است یا منقضی شده است.', 'music-wave-core' ), array( 'status' => 403 ) );
 	}
 }

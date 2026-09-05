@@ -234,6 +234,16 @@ function musicwave_enqueue_assets(): void {
 	if ( function_exists( 'wp_set_script_translations' ) ) {
 		wp_set_script_translations( 'musicwave-slider', 'musicwave', get_template_directory() . '/languages' );
 	}
+	wp_register_script(
+		'musicwave-release-hero',
+		get_template_directory_uri() . '/assets/release-hero.js',
+		array(),
+		$version,
+		true
+	);
+	if ( function_exists( 'wp_set_script_translations' ) ) {
+		wp_set_script_translations( 'musicwave-release-hero', 'musicwave', get_template_directory() . '/languages' );
+	}
 	wp_localize_script(
 		'musicwave-slider',
 		'musicwaveSlider',
@@ -279,6 +289,9 @@ function musicwave_enqueue_assets(): void {
 			),
 		)
 	);
+	if ( function_exists( 'is_singular' ) && is_singular( 'mw_release' ) ) {
+		wp_enqueue_script( 'musicwave-release-hero' );
+	}
 }
 add_action( 'wp_enqueue_scripts', 'musicwave_enqueue_assets' );
 

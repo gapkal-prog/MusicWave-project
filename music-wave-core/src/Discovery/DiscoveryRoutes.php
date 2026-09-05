@@ -84,7 +84,7 @@ final class DiscoveryRoutes {
 				'mw_search_term_too_short',
 				sprintf(
 					/* translators: %d: minimum number of characters. */
-					__( 'Enter at least %d characters to search the catalog.', 'music-wave-core' ),
+					__( 'برای جست‌وجو در کاتالوگ حداقل نویسه‌های %d را وارد کنید.', 'music-wave-core' ),
 					CatalogSearch::MIN_TERM_LENGTH
 				),
 				array( 'status' => 400 )
@@ -132,7 +132,7 @@ final class DiscoveryRoutes {
 	}
 
 	private function throttled(): WP_Error {
-		return new WP_Error( 'mw_discovery_throttled', __( 'Too many catalog searches. Try again in a moment.', 'music-wave-core' ), array( 'status' => 429 ) );
+		return new WP_Error( 'mw_discovery_throttled', __( 'جست‌وجوهای کاتالوگ بسیار زیاد است. یک لحظه دیگر دوباره امتحان کنید.', 'music-wave-core' ), array( 'status' => 429 ) );
 	}
 
 	/** @return WP_REST_Response */

@@ -2435,7 +2435,7 @@ mw_assert_same( true, false !== strpos( $shelf_markup, 'https://example.test/art
 mw_assert_same( true, false !== strpos( $shelf_markup, 'mw-artists-shelf__avatar--circle' ), 'The avatar shape attribute must reach the markup.' );
 mw_assert_same( true, false !== strpos( $shelf_markup, 'mw-artists-shelf__initial' ), 'Artists without images must fall back to an initial-letter avatar.' );
 mw_assert_same( true, false !== strpos( $shelf_markup, 'data-mw-library-type="artist"' ), 'Every artist card must expose the shared follow-artist button.' );
-mw_assert_same( true, false !== strpos( $shelf_markup, '12 releases' ), 'Release counts must render from core term counts.' );
+mw_assert_same( true, false !== strpos( $shelf_markup, 'انتشار 12' ), 'Release counts must render from core term counts.' );
 mw_assert_same( true, false !== strpos( $shelf_markup, 'Aria sings over waves of synth.' ), 'Biography excerpts must strip inline tags.' );
 
 $limited_shelf = $artists_shelf->render( array( 'source' => 'all', 'itemsToShow' => 2, 'showFollowButton' => false, 'showHeading' => false ) );
@@ -2448,7 +2448,7 @@ mw_assert_same( true, strpos( $manual_shelf, '>Caius</a>' ) < strpos( $manual_sh
 $GLOBALS['mw_test_filters']['music_wave_artists_shelf_terms'] = array( 'junk-not-a-term' );
 $junk_filtered = $artists_shelf->render( array() );
 mw_assert_same( true, false !== strpos( $junk_filtered, 'mw-artists-shelf__empty' ), 'Filtered-out junk must leave the shelf empty instead of fataling.' );
-mw_assert_same( true, false !== strpos( $junk_filtered, 'No artists to show yet.' ), 'The empty state must carry a translated default message.' );
+mw_assert_same( true, false !== strpos( $junk_filtered, 'هنوز هنرمندی برای نمایش وجود ندارد.' ), 'The empty state must carry a translated default message.' );
 $GLOBALS['mw_test_filters']['music_wave_artists_shelf_terms'] = array();
 $_GET['context']                                              = 'edit';
 $shelf_placeholder                                            = $artists_shelf->render( array() );
@@ -2471,9 +2471,9 @@ $terms_markup = $taxonomy_shelf->render(
 );
 mw_assert_same( true, false !== strpos( $terms_markup, 'mw-terms-shelf mw-release-shelf mw-release-shelf--grid mw-release-shelf--columns-4' ), 'The taxonomy shelf must reuse the shared release-shelf chrome.' );
 mw_assert_same( true, false !== strpos( $terms_markup, '>Pop</span>' ), 'The taxonomy shelf must render term names.' );
-mw_assert_same( true, false !== strpos( $terms_markup, '21 releases' ), 'The taxonomy shelf must render release counts from term counts.' );
+mw_assert_same( true, false !== strpos( $terms_markup, 'انتشار 21' ), 'The taxonomy shelf must render release counts from term counts.' );
 mw_assert_same( true, false !== strpos( $terms_markup, 'mw-terms-shelf__tile--hue-1' ) && false !== strpos( $terms_markup, 'mw-terms-shelf__tile--hue-2' ), 'Colorful tiles must cycle through curated hues deterministically.' );
-mw_assert_same( true, false !== strpos( $terms_markup, 'aria-label="Browse Pop"' ), 'Tiles must carry accessible browse labels.' );
+mw_assert_same( true, false !== strpos( $terms_markup, 'aria-label="مرور Pop"' ), 'Tiles must carry accessible browse labels.' );
 mw_assert_same( true, false !== strpos( $terms_markup, 'https://example.test/artist/' ) || false !== strpos( $terms_markup, 'href=' ), 'Tiles must link to their archives.' );
 
 $shelf_calm = wp_insert_term( 'Calm', 'mw_mood', array( 'slug' => 'calm' ) );
@@ -2505,8 +2505,8 @@ $hero_markup                       = $term_hero->render( array( 'layout' => 'ban
 $GLOBALS['mw_test_current_user']   = 0;
 mw_assert_same( true, false !== strpos( $hero_markup, 'mw-term-hero mw-term-hero--banner mw-term-hero--size-tall' ), 'The term hero must render its banner layout classes.' );
 mw_assert_same( true, false !== strpos( $hero_markup, '<h1 class="mw-term-hero__name">Aria</h1>' ), 'The hero must render the term name as the page heading.' );
-mw_assert_same( true, false !== strpos( $hero_markup, '>Artist</p>' ), 'The taxonomy eyebrow must be translated and rendered.' );
-mw_assert_same( true, false !== strpos( $hero_markup, '12 releases' ), 'The hero must carry the release count badge.' );
+mw_assert_same( true, false !== strpos( $hero_markup, '>هنرمند</p>' ), 'The taxonomy eyebrow must be translated and rendered.' );
+mw_assert_same( true, false !== strpos( $hero_markup, 'انتشار 12' ), 'The hero must carry the release count badge.' );
 mw_assert_same( true, false !== strpos( $hero_markup, 'Aria sings over deep synth waves every night on stage.' ), 'Artist biography must feed the description.' );
 mw_assert_same( true, false !== strpos( $hero_markup, 'data-mw-library-type="artist"' ), 'Artist heroes must expose the follow control.' );
 
@@ -2521,7 +2521,7 @@ mw_assert_same( true, false !== strpos( $hero_excerpt, 'Aria sings over deep syn
 // Genre heroes: no biography meta, no follow button, hue fallback media.
 $GLOBALS['mw_test_queried_object'] = $GLOBALS['mw_test_terms'][ $shelf_pop['term_id'] ];
 $hero_pop                          = $term_hero->render( array() );
-mw_assert_same( true, is_string( $hero_pop ) && false !== strpos( (string) $hero_pop, '>Genre</p>' ), 'Genre heroes must use the genre eyebrow.' );
+mw_assert_same( true, is_string( $hero_pop ) && false !== strpos( (string) $hero_pop, '>سبک</p>' ), 'Genre heroes must use the genre eyebrow.' );
 mw_assert_same( true, false === strpos( (string) $hero_pop, 'data-mw-library-type="artist"' ), 'Non-artist terms must not render a follow control.' );
 mw_assert_same( true, false !== strpos( (string) $hero_pop, 'mw-term-hero--hue-' ), 'Terms without cover art must fall back to curated hues.' );
 
@@ -2588,11 +2588,11 @@ mw_assert_same( true, false !== strpos( $queue_markup_user, '_wpnonce' ), 'Queue
 mw_assert_same( true, false !== strpos( $queue_markup_user, 'name="mw_operation" value="move-up"' ), 'Rows must expose reorder controls.' );
 mw_assert_same( true, false !== strpos( $queue_markup_user, 'aria-label="' ), 'Row buttons must carry per-title screen-reader labels.' );
 mw_assert_same( true, false !== strpos( $queue_markup_user, 'value="shuffle"' ) && false !== strpos( $queue_markup_user, 'value="repeat"' ), 'Preference controls must post shuffle and repeat.' );
-mw_assert_same( true, false !== strpos( $queue_markup_user, '>Clear queue</button>' ), 'The clear control must be rendered when enabled.' );
+mw_assert_same( true, false !== strpos( $queue_markup_user, '>پاک کردن صف</button>' ), 'The clear control must be rendered when enabled.' );
 
 $queue_minimal = $queue_block->render( array( 'showControls' => false, 'showClear' => false, 'showPosition' => false ) );
 mw_assert_same( false, false !== strpos( $queue_minimal, 'mw-playback-queue__controls' ), 'Disabling preferences must remove them.' );
-mw_assert_same( false, false !== strpos( $queue_minimal, 'Clear queue' ), 'Disabling clear must remove it.' );
+mw_assert_same( false, false !== strpos( $queue_minimal, 'پاک کردن صف' ), 'Disabling clear must remove it.' );
 mw_assert_same( false, false !== strpos( $queue_minimal, 'mw-playback-queue__position' ), 'Disabling positions must remove them.' );
 
 mw_assert_same( 'cleared', $queue_forms->run( 'clear', 7 ), 'Clearing must empty the whole queue.' );
@@ -2916,13 +2916,13 @@ mw_assert_same( array(), $panel_guest['active'], 'Guests must have no active mem
 mw_assert_same( 3, count( $panel_guest['plans'] ), 'Panel data must expose every mapped plan product.' );
 $first_plan = $panel_guest['plans'][0];
 mw_assert_same( true, isset( $first_plan['title'], $first_plan['duration'], $first_plan['url'], $first_plan['level'] ), 'Plan cards must carry title, duration, URL, and level.' );
-mw_assert_same( '1 month', $first_plan['duration'], 'Durations must render a human label.' );
+mw_assert_same( '1 ماه', $first_plan['duration'], 'Durations must render a human label.' );
 $panel_disabled = ManaCore\MusicWave\Vip\VipSettings::sanitize( array( 'module_enabled' => 'disabled' ) );
 $GLOBALS['mw_test_options'][ ManaCore\MusicWave\Vip\VipSettings::OPTION ] = $panel_disabled;
 mw_assert_same( false, ManaCore\MusicWave\Vip\PlanProducts::products_data( 12 )['module_enabled'], 'Panel data must reflect a disabled master switch.' );
-mw_assert_same( 'Lifetime', ManaCore\MusicWave\Vip\PlanProducts::duration_label( 0 ), 'Zero-duration plans must read as lifetime.' );
-mw_assert_same( '6 months', ManaCore\MusicWave\Vip\PlanProducts::duration_label( 180 ), 'Durations must read naturally.' );
-mw_assert_same( '1 year', ManaCore\MusicWave\Vip\PlanProducts::duration_label( 365 ), 'Annual durations must read as years.' );
+mw_assert_same( 'مادام‌العمر', ManaCore\MusicWave\Vip\PlanProducts::duration_label( 0 ), 'Zero-duration plans must read as lifetime.' );
+mw_assert_same( '6 ماه', ManaCore\MusicWave\Vip\PlanProducts::duration_label( 180 ), 'Durations must read naturally.' );
+mw_assert_same( '1 سال', ManaCore\MusicWave\Vip\PlanProducts::duration_label( 365 ), 'Annual durations must read as years.' );
 unset( $GLOBALS['mw_test_users'][12] );
 $GLOBALS['mw_test_options'][ ManaCore\MusicWave\Vip\VipSettings::OPTION ] = array();
 

@@ -1,46 +1,48 @@
 <!-- wp:template-part {"slug":"header","tagName":"header"} /-->
 <!-- wp:group {"align":"wide","className":"mw-app-shell","style":{"spacing":{"padding":{"top":"var:preset|spacing|30","bottom":"var:preset|spacing|50"}}},"layout":{"type":"default"}} -->
 <div class="wp-block-group alignwide mw-app-shell" style="padding-top:var(--wp--preset--spacing--30);padding-bottom:var(--wp--preset--spacing--50)"><!-- wp:group {"tagName":"main","className":"mw-search-page","layout":{"type":"constrained"}} -->
-<main class="wp-block-group mw-search-page"><!-- wp:group {"className":"mw-search-hero mw-surface","style":{"spacing":{"padding":{"top":"var:preset|spacing|40","right":"var:preset|spacing|40","bottom":"var:preset|spacing|40","left":"var:preset|spacing|40"}}},"layout":{"type":"constrained"}} -->
-<div class="wp-block-group mw-search-hero mw-surface" style="padding:var(--wp--preset--spacing--40)"><!-- wp:paragraph {"textColor":"accent-strong","fontSize":"small"} -->
-<p class="has-accent-strong-color has-text-color has-small-font-size">DISCOVER</p>
-<!-- /wp:paragraph -->
-<!-- wp:query-title {"type":"search","fontSize":"x-large"} /-->
-<!-- wp:search {"label":"Search","showLabel":false,"placeholder":"Search music, artists, albums…","buttonText":"Search","buttonUseIcon":true} /-->
-<!-- wp:paragraph {"textColor":"muted","fontSize":"small"} -->
-<p class="has-muted-color has-text-color has-small-font-size">Search across releases, artists, genres, podcasts, and pages.</p>
-<!-- /wp:paragraph --></div>
+<main class="wp-block-group mw-search-page"><!-- wp:group {"className":"mw-search-hero","layout":{"type":"constrained"}} -->
+<div class="wp-block-group mw-search-hero"><!-- wp:query-title {"type":"search","fontSize":"xx-large"} /-->
+<!-- wp:search {"label":"جست‌وجوی موسیقی، هنرمندان و انتشارها","showLabel":false,"placeholder":"جست‌وجوی موسیقی، هنرمندان و آلبوم‌ها…","buttonText":"جست‌وجو","buttonUseIcon":true} /--></div>
 <!-- /wp:group -->
+<!-- wp:music-wave/catalog-filters {"showSearch":false,"showArtistFilter":true,"showGenreFilter":true,"showMoodFilter":true,"showTypeFilter":true,"showSort":true,"showReset":true} /-->
+<!-- wp:music-wave/catalog-results {"showCount":true,"showChips":true} /-->
 <!-- wp:query {"queryId":4,"query":{"inherit":true}} -->
 <div class="wp-block-query"><!-- wp:post-template {"className":"mw-release-grid","layout":{"type":"grid","columnCount":3}} -->
-<!-- wp:group {"className":"mw-release-card mw-surface","layout":{"type":"constrained"}} -->
-<div class="wp-block-group mw-release-card mw-surface"><!-- wp:post-featured-image {"isLink":true,"aspectRatio":"1"} /-->
-<!-- wp:post-title {"isLink":true,"fontSize":"large"} /-->
+<!-- wp:group {"className":"mw-release-card","layout":{"type":"constrained"}} -->
+<div class="wp-block-group mw-release-card"><!-- wp:group {"className":"mw-release-card__media","layout":{"type":"constrained"}} -->
+<div class="wp-block-group mw-release-card__media"><!-- wp:post-featured-image {"isLink":true,"aspectRatio":"1"} /-->
+<!-- wp:group {"className":"mw-release-card__overlay","layout":{"type":"flex","justifyContent":"center","verticalAlignment":"center"}} -->
+<div class="wp-block-group mw-release-card__overlay"><!-- wp:music-wave/preview-button /--></div>
+<!-- /wp:group --></div>
+<!-- /wp:group -->
+<!-- wp:group {"className":"mw-release-card__body","layout":{"type":"constrained"}} -->
+<div class="wp-block-group mw-release-card__body"><!-- wp:post-title {"isLink":true,"fontSize":"large"} /-->
 <!-- wp:music-wave/release-meta {"compact":true,"showLibraryButton":false} /-->
-<!-- wp:music-wave/preview-button /-->
-<!-- wp:post-excerpt {"moreText":"Read more","excerptLength":22} /--></div>
+<!-- wp:post-excerpt {"moreText":"مشاهده انتشار","excerptLength":22} /--></div>
+<!-- /wp:group --></div>
 <!-- /wp:group -->
 <!-- /wp:post-template -->
 <!-- wp:query-no-results -->
-<!-- wp:group {"className":"mw-search-empty","layout":{"type":"constrained"}} -->
-<div class="wp-block-group mw-search-empty"><!-- wp:paragraph {"align":"center","fontSize":"x-large"} -->
-<p class="has-text-align-center has-x-large-font-size">🔍</p>
+<!-- wp:group {"className":"mw-search-empty mw-catalog-empty","layout":{"type":"constrained"}} -->
+<div class="wp-block-group mw-search-empty mw-catalog-empty"><!-- wp:paragraph {"align":"center","fontSize":"x-large"} -->
+<p class="has-text-align-center has-x-large-font-size" aria-hidden="true">🔍</p>
 <!-- /wp:paragraph -->
 <!-- wp:paragraph {"align":"center","fontSize":"large"} -->
-<p class="has-text-align-center has-large-font-size">No results found</p>
+<p class="has-text-align-center has-large-font-size">نتیجه‌ای پیدا نشد</p>
 <!-- /wp:paragraph -->
 <!-- wp:paragraph {"align":"center","textColor":"muted"} -->
-<p class="has-text-align-center has-muted-color has-text-color">Try a different spelling, a shorter phrase, or an artist name. You can also browse the full catalog below.</p>
+<p class="has-text-align-center has-muted-color has-text-color">املای دیگری، عبارت کوتاه‌تر یا نام یک هنرمند را امتحان کنید. همچنین می‌توانید کاتالوگ کامل را مرور کنید.</p>
 <!-- /wp:paragraph -->
-<!-- wp:search {"label":"Search again","showLabel":false,"placeholder":"Try another search…","buttonText":"Search","buttonUseIcon":true} /-->
+<!-- wp:search {"label":"جست‌وجوی دوباره","showLabel":false,"placeholder":"جست‌وجوی دیگری را امتحان کنید…","buttonText":"جست‌وجو","buttonUseIcon":true} /-->
 <!-- wp:buttons {"layout":{"type":"flex","justifyContent":"center"}} -->
 <div class="wp-block-buttons"><!-- wp:button {"className":"is-style-outline"} -->
-<div class="wp-block-button is-style-outline"><a class="wp-block-button__link wp-element-button" href="/?post_type=mw_release">Browse all releases</a></div>
+<div class="wp-block-button is-style-outline"><a class="wp-block-button__link wp-element-button" href="/?post_type=mw_release">مشاهدهٔ همهٔ انتشارها</a></div>
 <!-- /wp:button --></div>
 <!-- /wp:buttons --></div>
 <!-- /wp:group -->
 <!-- /wp:query-no-results -->
-<!-- wp:query-pagination {"layout":{"type":"flex","justifyContent":"space-between"}} -->
+<!-- wp:query-pagination {"className":"mw-catalog-pagination","layout":{"type":"flex","justifyContent":"space-between","flexWrap":"wrap"}} -->
 <!-- wp:query-pagination-previous /-->
 <!-- wp:query-pagination-numbers /-->
 <!-- wp:query-pagination-next /-->

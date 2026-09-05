@@ -73,9 +73,9 @@ final class ListeningBlocks {
 				'restUrl'   => esc_url_raw( rest_url() ),
 				'restNonce' => wp_create_nonce( 'wp_rest' ),
 				'labels'    => array(
-					'saving'  => __( 'Enabling listening history…', 'music-wave-core' ),
-					'enabled' => __( 'Listening history is on. Play something to fill this rail.', 'music-wave-core' ),
-					'error'   => __( 'Listening history could not be enabled. Try again.', 'music-wave-core' ),
+					'saving'  => __( 'فعال کردن سابقهٔ گوش‌دادن…', 'music-wave-core' ),
+					'enabled' => __( 'سابقهٔ گوش‌دادن روشن است. برای پرکردن این ریل، چیزی پخش کنید.', 'music-wave-core' ),
+					'error'   => __( 'سابقهٔ گوش‌دادن را نمی‌توان فعال کرد. دوباره امتحان کنید.', 'music-wave-core' ),
 				),
 			)
 		);
@@ -106,12 +106,12 @@ final class ListeningBlocks {
 	 * @param array<string, mixed> $attributes Block attributes.
 	 */
 	private function render_guest( array $attributes ): string {
-		$message = BlockSupport::text_attribute( $attributes, 'guestMessage', __( 'Sign in to keep track of what you play and pick up right where you left off.', 'music-wave-core' ) );
+		$message = BlockSupport::text_attribute( $attributes, 'guestMessage', __( 'برای پیگیری چیزهایی که پخش می‌کنید، وارد سیستم شوید و از همان‌جایی که متوقف کرده‌اید ادامه دهید.', 'music-wave-core' ) );
 
 		return '<section ' . BlockSupport::wrapper_attributes( 'mw-continue-listening mw-continue-listening--guest' ) . '>'
 			. '<div class="mw-continue-listening__panel"><span class="mw-continue-listening__panel-icon" aria-hidden="true">▶</span>'
 			. '<p class="mw-continue-listening__panel-text">' . esc_html( $message ) . '</p>'
-			. '<a class="wp-element-button mw-continue-listening__panel-cta" href="' . esc_url( wp_login_url( BlockSupport::current_url() ) ) . '">' . esc_html__( 'Sign in', 'music-wave-core' ) . '</a></div>'
+			. '<a class="wp-element-button mw-continue-listening__panel-cta" href="' . esc_url( wp_login_url( BlockSupport::current_url() ) ) . '">' . esc_html__( 'وارد شوید', 'music-wave-core' ) . '</a></div>'
 			. '</section>';
 	}
 
@@ -121,8 +121,8 @@ final class ListeningBlocks {
 	 * @param array<string, mixed> $attributes Block attributes.
 	 */
 	private function render_consent( array $attributes ): string {
-		$message = BlockSupport::text_attribute( $attributes, 'consentMessage', __( 'Turn on listening history to see your recently played releases here. You stay in control — history is private and can be erased anytime.', 'music-wave-core' ) );
-		$label   = BlockSupport::text_attribute( $attributes, 'consentButtonLabel', __( 'Turn on listening history', 'music-wave-core' ) );
+		$message = BlockSupport::text_attribute( $attributes, 'consentMessage', __( 'سابقهٔ گوش‌دادن را روشن کنید تا انتشارهای اخیراً پخش‌شده‌تان را اینجا ببینید. شما در کنترل باقی می‌مانید - سابقهٔ خصوصی است و در هر زمان می‌توان آن را پاک کرد.', 'music-wave-core' ) );
+		$label   = BlockSupport::text_attribute( $attributes, 'consentButtonLabel', __( 'تاریخچه گوش‌دادن را روشن کنید', 'music-wave-core' ) );
 
 		return '<section ' . BlockSupport::wrapper_attributes( 'mw-continue-listening mw-continue-listening--consent' ) . '>'
 			. '<div class="mw-continue-listening__panel"><span class="mw-continue-listening__panel-icon" aria-hidden="true">◎</span>'
@@ -182,7 +182,7 @@ final class ListeningBlocks {
 			$section_url = isset( $attributes['sectionUrl'] ) && is_scalar( $attributes['sectionUrl'] ) ? esc_url_raw( (string) $attributes['sectionUrl'] ) : '';
 			$more        = '';
 			if ( '' !== $section_url ) {
-				$label = BlockSupport::text_attribute( $attributes, 'sectionLinkLabel', __( 'See all', 'music-wave-core' ) );
+				$label = BlockSupport::text_attribute( $attributes, 'sectionLinkLabel', __( 'همه را ببینید', 'music-wave-core' ) );
 				$more  = '<a class="mw-continue-listening__more" href="' . esc_url( $section_url ) . '">' . esc_html( $label ) . '<span aria-hidden="true">&rarr;</span></a>';
 			}
 
@@ -218,7 +218,7 @@ final class ListeningBlocks {
 		if ( $release_id < 1 || ! is_string( $link ) || '' === $link ) {
 			return '';
 		}
-		$title = '' !== $title ? $title : __( 'Untitled release', 'music-wave-core' );
+		$title = '' !== $title ? $title : __( 'انتشار بدون عنوان', 'music-wave-core' );
 
 		$art = '';
 		if ( $options['show_artwork'] ) {
@@ -235,7 +235,7 @@ final class ListeningBlocks {
 			);
 			$initial = function_exists( 'mb_substr' ) ? mb_substr( $title, 0, 1 ) : substr( $title, 0, 1 );
 			/* translators: %s: music release title. */
-			$open_label = sprintf( __( 'Open %s', 'music-wave-core' ), $title );
+			$open_label = sprintf( __( 'باز کردن %s', 'music-wave-core' ), $title );
 			$overlay    = '';
 			if ( $options['show_preview'] ) {
 				$filtered = apply_filters( 'music_wave_card_play_button', '', $release_id, 'mw-release-shelf__play' );
@@ -269,8 +269,8 @@ final class ListeningBlocks {
 	 */
 	private function default_heading( array $attributes ): string {
 		return 'played' === BlockSupport::key_attribute( $attributes, 'source', array( 'continue', 'played' ), 'continue' )
-			? __( 'Recently played', 'music-wave-core' )
-			: __( 'Continue listening', 'music-wave-core' );
+			? __( 'اخیراً پخش‌شده', 'music-wave-core' )
+			: __( 'به گوش‌دادن ادامه دهید', 'music-wave-core' );
 	}
 
 	/**
@@ -280,8 +280,8 @@ final class ListeningBlocks {
 	 */
 	private function default_empty_message( array $attributes ): string {
 		return 'played' === BlockSupport::key_attribute( $attributes, 'source', array( 'continue', 'played' ), 'continue' )
-			? __( 'Nothing played yet. Press play on any release and it shows up here.', 'music-wave-core' )
-			: __( 'Nothing in progress. Start any release and resume it here later.', 'music-wave-core' );
+			? __( 'هنوز چیزی پخش نشده است. پخش را در هر انتشاری فشار دهید و اینجا نشان داده می‌شود.', 'music-wave-core' )
+			: __( 'هیچ چیزی در حال پیشرفت نیست هر انتشاری را شروع کنید و بعداً آن را در اینجا از سر بگیرید.', 'music-wave-core' );
 	}
 
 	/**
@@ -290,16 +290,16 @@ final class ListeningBlocks {
 	private function human_time_diff( int $timestamp ): string {
 		$diff = time() - $timestamp;
 		if ( $diff < 60 ) {
-			return __( 'Just now', 'music-wave-core' );
+			return __( 'همین الان', 'music-wave-core' );
 		}
 		if ( $diff < HOUR_IN_SECONDS ) {
-			return sprintf( /* translators: %d: minutes. */ _n( '%d minute ago', '%d minutes ago', (int) floor( $diff / 60 ), 'music-wave-core' ), (int) floor( $diff / 60 ) );
+			return sprintf( /* translators: %d: minutes. */ _n( '%d دقیقه پیش', '%d دقیقه پیش', (int) floor( $diff / 60 ), 'music-wave-core' ), (int) floor( $diff / 60 ) );
 		}
 		if ( $diff < DAY_IN_SECONDS ) {
-			return sprintf( /* translators: %d: hours. */ _n( '%d hour ago', '%d hours ago', (int) floor( $diff / 3600 ), 'music-wave-core' ), (int) floor( $diff / 3600 ) );
+			return sprintf( /* translators: %d: hours. */ _n( '%d ساعت قبل', '%d ساعت پیش', (int) floor( $diff / 3600 ), 'music-wave-core' ), (int) floor( $diff / 3600 ) );
 		}
 		if ( $diff < 30 * DAY_IN_SECONDS ) {
-			return sprintf( /* translators: %d: days. */ _n( '%d day ago', '%d days ago', (int) floor( $diff / 86400 ), 'music-wave-core' ), (int) floor( $diff / 86400 ) );
+			return sprintf( /* translators: %d: days. */ _n( '%d روز پیش', '%d روز پیش', (int) floor( $diff / 86400 ), 'music-wave-core' ), (int) floor( $diff / 86400 ) );
 		}
 
 		return gmdate( 'Y-m-d', $timestamp );

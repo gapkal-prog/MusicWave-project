@@ -25,9 +25,12 @@
 	var Fragment = element.Fragment;
 	var __ = i18n.__;
 	var inheritedToggleOptions = [
-		{ label: __( 'Use global setting', 'musicwave' ), value: 'inherit' },
-		{ label: __( 'Enabled', 'musicwave' ), value: 'enabled' },
-		{ label: __( 'Disabled', 'musicwave' ), value: 'disabled' },
+		{
+			label: __( 'استفاده از تنظیمات کلی', 'musicwave' ),
+			value: 'inherit',
+		},
+		{ label: __( 'فعال', 'musicwave' ), value: 'enabled' },
+		{ label: __( 'غیرفعال', 'musicwave' ), value: 'disabled' },
 	];
 
 	function queryFilteringPanel( props ) {
@@ -41,86 +44,89 @@
 		return createElement(
 			components.PanelBody,
 			{
-				title: __( 'Query and filtering', 'musicwave' ),
+				title: __( 'پرس‌وجو و فیلتر', 'musicwave' ),
 				initialOpen: false,
 			},
 			createElement( components.SelectControl, {
-				label: __( 'Order by', 'musicwave' ),
+				label: __( 'مرتب‌سازی بر اساس', 'musicwave' ),
 				help: __(
-					'How releases are sorted before they are displayed.',
+					'نحوه مرتب‌سازی انتشارها پیش از نمایش.',
 					'musicwave'
 				),
 				value: props.attributes.orderBy || 'date',
 				options: [
 					{
-						label: __( 'Published date', 'musicwave' ),
+						label: __( 'تاریخ انتشار', 'musicwave' ),
 						value: 'date',
 					},
 					{
-						label: __( 'Modified date', 'musicwave' ),
+						label: __( 'تاریخ ویرایش', 'musicwave' ),
 						value: 'modified',
 					},
-					{ label: __( 'Title', 'musicwave' ), value: 'title' },
-					{ label: __( 'Random', 'musicwave' ), value: 'rand' },
-					{ label: __( 'Most viewed', 'musicwave' ), value: 'views' },
+					{ label: __( 'عنوان', 'musicwave' ), value: 'title' },
+					{ label: __( 'تصادفی', 'musicwave' ), value: 'rand' },
+					{
+						label: __( 'پربازدیدترین', 'musicwave' ),
+						value: 'views',
+					},
 				],
 				onChange( value ) {
 					update( 'orderBy', value );
 				},
 			} ),
 			createElement( components.SelectControl, {
-				label: __( 'Direction', 'musicwave' ),
+				label: __( 'جهت', 'musicwave' ),
 				value: props.attributes.order || 'DESC',
 				options: [
-					{ label: __( 'Descending', 'musicwave' ), value: 'DESC' },
-					{ label: __( 'Ascending', 'musicwave' ), value: 'ASC' },
+					{ label: __( 'نزولی', 'musicwave' ), value: 'DESC' },
+					{ label: __( 'صعودی', 'musicwave' ), value: 'ASC' },
 				],
 				onChange( value ) {
 					update( 'order', value );
 				},
 			} ),
 			createElement( components.SelectControl, {
-				label: __( 'Filter taxonomy', 'musicwave' ),
+				label: __( 'فیلتر طبقه‌بندی', 'musicwave' ),
 				help: __(
-					'Limit the shelf/slider to one taxonomy, or leave on All releases.',
+					'ویترین یا اسلایدر را به یک طبقه‌بندی محدود کنید، یا روی «همهٔ انتشارها» بگذارید.',
 					'musicwave'
 				),
 				value: props.attributes.taxonomy || '',
 				options: [
-					{ label: __( 'All releases', 'musicwave' ), value: '' },
-					{ label: __( 'Artist', 'musicwave' ), value: 'mw_artist' },
-					{ label: __( 'Genre', 'musicwave' ), value: 'mw_genre' },
-					{ label: __( 'Mood', 'musicwave' ), value: 'mw_mood' },
+					{ label: __( 'همهٔ انتشارها', 'musicwave' ), value: '' },
+					{ label: __( 'هنرمند', 'musicwave' ), value: 'mw_artist' },
+					{ label: __( 'سبک', 'musicwave' ), value: 'mw_genre' },
+					{ label: __( 'حال‌وهوا', 'musicwave' ), value: 'mw_mood' },
 					{
-						label: __( 'Release type', 'musicwave' ),
+						label: __( 'نوع انتشار', 'musicwave' ),
 						value: 'mw_release_type',
 					},
-					{ label: __( 'Label', 'musicwave' ), value: 'mw_label' },
+					{ label: __( 'برچسب', 'musicwave' ), value: 'mw_label' },
 				],
 				onChange( value ) {
 					update( 'taxonomy', value );
 				},
 			} ),
 			createElement( components.TextControl, {
-				label: __( 'Term slug', 'musicwave' ),
+				label: __( 'نامک عبارت', 'musicwave' ),
 				help: __(
-					'Optional. Copy the slug from WordPress → MusicWave → Artists / Genres / Moods list (the slug column). Leave empty to include every term. Example: pop or lo-fi.',
+					'اختیاری. نامک را از فهرست هنرمندان / سبک‌ها / حال‌وهواها در وردپرس → MusicWave کپی کنید. اگر خالی بگذارید، همهٔ موارد نمایش داده می‌شوند. نمونه: pop یا lo-fi.',
 					'musicwave'
 				),
-				placeholder: __( 'e.g. pop, lo-fi, hip-hop', 'musicwave' ),
+				placeholder: __( 'مثلاً pop، lo-fi، hip-hop', 'musicwave' ),
 				value: props.attributes.termSlug || '',
 				onChange( value ) {
 					update( 'termSlug', value );
 				},
 			} ),
 			createElement( components.TextControl, {
-				label: __( 'Release type (slug)', 'musicwave' ),
+				label: __( 'نوع انتشار (نامک)', 'musicwave' ),
 				help: __(
-					'Optional. Filter by a release-type slug such as album, single, ep, podcast_show, podcast_episode. Leave empty to include all types. Found under MusicWave → Release Types.',
+					'اختیاری. با نامک نوع انتشار مانند album، single، ep، podcast_show یا podcast_episode فیلتر کنید. برای نمایش همه انواع، خالی بگذارید. این موارد در MusicWave → انواع انتشار قرار دارند.',
 					'musicwave'
 				),
 				placeholder: __(
-					'e.g. album, single, podcast_show',
+					'مثلاً album، single، podcast_show',
 					'musicwave'
 				),
 				value: props.attributes.contentType || '',
@@ -129,12 +135,12 @@
 				},
 			} ),
 			createElement( components.TextControl, {
-				label: __( 'Curated release IDs', 'musicwave' ),
+				label: __( 'شناسه انتشارهای منتخب', 'musicwave' ),
 				help: __(
-					'Optional. Paste comma-separated release IDs to fix an exact order (e.g. 12, 45, 78). Find the ID by hovering a release title in MusicWave → Releases — the ID shows in the link preview. Overrides all other filters.',
+					'اختیاری. برای تعیین ترتیب دقیق، شناسه انتشارها را با کاما جدا کرده و وارد کنید (مثلاً ۱۲، ۴۵، ۷۸). با بردن نشانگر روی عنوان انتشار در MusicWave → انتشارها، شناسه را در پیش‌نمایش پیوند ببینید. این گزینه همه فیلترهای دیگر را نادیده می‌گیرد.',
 					'musicwave'
 				),
-				placeholder: __( 'e.g. 12, 45, 78', 'musicwave' ),
+				placeholder: __( 'مثلاً ۱۲، ۴۵، ۷۸', 'musicwave' ),
 				value: props.attributes.releaseIds || '',
 				onChange( value ) {
 					update( 'releaseIds', value );
@@ -164,25 +170,25 @@
 			createElement(
 				components.PanelBody,
 				{
-					title: __( 'Slider content', 'musicwave' ),
+					title: __( 'محتوای اسلایدر', 'musicwave' ),
 					initialOpen: true,
 				},
 				createElement( components.TextControl, {
-					label: __( 'Eyebrow', 'musicwave' ),
+					label: __( 'برچسب بالایی', 'musicwave' ),
 					value: props.attributes.eyebrow || '',
 					onChange( value ) {
 						props.setAttributes( { eyebrow: value } );
 					},
 				} ),
 				createElement( components.TextControl, {
-					label: __( 'Heading', 'musicwave' ),
+					label: __( 'عنوان', 'musicwave' ),
 					value: props.attributes.title || '',
 					onChange( value ) {
 						props.setAttributes( { title: value } );
 					},
 				} ),
 				createElement( components.RangeControl, {
-					label: __( 'Releases loaded', 'musicwave' ),
+					label: __( 'تعداد انتشارهای بارگذاری‌شده', 'musicwave' ),
 					value: props.attributes.itemsToShow || 6,
 					min: 3,
 					max: 12,
@@ -191,28 +197,28 @@
 					},
 				} ),
 				createElement( components.ToggleControl, {
-					label: __( 'Show excerpts', 'musicwave' ),
+					label: __( 'نمایش چکیده‌ها', 'musicwave' ),
 					checked: !! props.attributes.showExcerpt,
 					onChange( value ) {
 						props.setAttributes( { showExcerpt: !! value } );
 					},
 				} ),
 				createElement( components.ToggleControl, {
-					label: __( 'Show artist', 'musicwave' ),
+					label: __( 'نمایش هنرمند', 'musicwave' ),
 					checked: false !== props.attributes.showArtist,
 					onChange( value ) {
 						props.setAttributes( { showArtist: !! value } );
 					},
 				} ),
 				createElement( components.ToggleControl, {
-					label: __( 'Show date', 'musicwave' ),
+					label: __( 'نمایش تاریخ', 'musicwave' ),
 					checked: !! props.attributes.showDate,
 					onChange( value ) {
 						props.setAttributes( { showDate: !! value } );
 					},
 				} ),
 				createElement( components.ToggleControl, {
-					label: __( 'Show view count', 'musicwave' ),
+					label: __( 'نمایش تعداد بازدید', 'musicwave' ),
 					checked: !! props.attributes.showViews,
 					onChange( value ) {
 						props.setAttributes( { showViews: !! value } );
@@ -223,23 +229,20 @@
 			createElement(
 				components.PanelBody,
 				{
-					title: __( 'Slider behavior', 'musicwave' ),
+					title: __( 'رفتار اسلایدر', 'musicwave' ),
 					initialOpen: true,
 				},
-				select( 'enabled', __( 'Slider visibility', 'musicwave' ) ),
-				select( 'autoplay', __( 'Autoplay', 'musicwave' ) ),
-				select( 'loop', __( 'Loop', 'musicwave' ) ),
+				select( 'enabled', __( 'نمایش اسلایدر', 'musicwave' ) ),
+				select( 'autoplay', __( 'پخش خودکار', 'musicwave' ) ),
+				select( 'loop', __( 'تکرار', 'musicwave' ) ),
 				select(
 					'pauseOnHover',
-					__( 'Pause on hover or focus', 'musicwave' )
+					__( 'توقف هنگام قرارگیری نشانگر یا تمرکز', 'musicwave' )
 				),
-				select( 'showArrows', __( 'Navigation arrows', 'musicwave' ) ),
-				select( 'showDots', __( 'Pagination dots', 'musicwave' ) ),
+				select( 'showArrows', __( 'فلش‌های پیمایش', 'musicwave' ) ),
+				select( 'showDots', __( 'نقاط صفحه‌بندی', 'musicwave' ) ),
 				createElement( components.RangeControl, {
-					label: __(
-						'Autoplay interval (milliseconds)',
-						'musicwave'
-					),
+					label: __( 'فاصلهٔ پخش خودکار (میلی‌ثانیه)', 'musicwave' ),
 					value: props.attributes.interval || 5000,
 					min: 2000,
 					max: 20000,
@@ -276,23 +279,23 @@
 			createElement(
 				components.PanelBody,
 				{
-					title: __( 'Shelf content', 'musicwave' ),
+					title: __( 'محتوای ویترین', 'musicwave' ),
 					initialOpen: true,
 				},
 				createElement( components.SelectControl, {
-					label: __( 'Content source', 'musicwave' ),
+					label: __( 'منبع محتوا', 'musicwave' ),
 					help: __(
-						'Switch the shelf between catalog releases and community public playlists.',
+						'ویترین را بین انتشارهای کاتالوگ و فهرست‌های پخش عمومی جامعه جابه‌جا کنید.',
 						'musicwave'
 					),
 					value: props.attributes.source || 'releases',
 					options: [
 						{
-							label: __( 'Releases', 'musicwave' ),
+							label: __( 'انتشارها', 'musicwave' ),
 							value: 'releases',
 						},
 						{
-							label: __( 'Public playlists', 'musicwave' ),
+							label: __( 'فهرست‌های پخش عمومی', 'musicwave' ),
 							value: 'playlists',
 						},
 					],
@@ -301,21 +304,21 @@
 					},
 				} ),
 				createElement( components.TextControl, {
-					label: __( 'Eyebrow', 'musicwave' ),
+					label: __( 'برچسب بالایی', 'musicwave' ),
 					value: props.attributes.eyebrow || '',
 					onChange( value ) {
 						update( 'eyebrow', value );
 					},
 				} ),
 				createElement( components.TextControl, {
-					label: __( 'Heading', 'musicwave' ),
+					label: __( 'عنوان', 'musicwave' ),
 					value: props.attributes.title || '',
 					onChange( value ) {
 						update( 'title', value );
 					},
 				} ),
 				createElement( components.TextareaControl, {
-					label: __( 'Description', 'musicwave' ),
+					label: __( 'توضیحات', 'musicwave' ),
 					value: props.attributes.description || '',
 					onChange( value ) {
 						update( 'description', value );
@@ -325,8 +328,8 @@
 					label:
 						'playlists' ===
 						( props.attributes.source || 'releases' )
-							? __( 'Playlists to show', 'musicwave' )
-							: __( 'Releases to show', 'musicwave' ),
+							? __( 'فهرست‌های پخش برای نمایش', 'musicwave' )
+							: __( 'انتشارها برای نمایش', 'musicwave' ),
 					value: props.attributes.itemsToShow || 8,
 					min: 1,
 					max: 24,
@@ -339,28 +342,34 @@
 				? createElement(
 						components.PanelBody,
 						{
-							title: __( 'Playlist query', 'musicwave' ),
+							title: __( 'پرس‌وجوی فهرست پخش', 'musicwave' ),
 							initialOpen: true,
 						},
 						createElement( components.SelectControl, {
-							label: __( 'Order playlists by', 'musicwave' ),
+							label: __(
+								'مرتب‌سازی فهرست‌های پخش بر اساس',
+								'musicwave'
+							),
 							value:
 								props.attributes.playlistOrderBy ||
 								'updated_at',
 							options: [
 								{
 									label: __(
-										'Recently updated',
+										'به‌تازگی به‌روزرسانی‌شده',
 										'musicwave'
 									),
 									value: 'updated_at',
 								},
 								{
-									label: __( 'Newest first', 'musicwave' ),
+									label: __(
+										'جدیدترین‌ها در ابتدا',
+										'musicwave'
+									),
 									value: 'created_at',
 								},
 								{
-									label: __( 'Title', 'musicwave' ),
+									label: __( 'عنوان', 'musicwave' ),
 									value: 'title',
 								},
 							],
@@ -369,9 +378,12 @@
 							},
 						} ),
 						createElement( components.TextControl, {
-							label: __( 'Playlist search filter', 'musicwave' ),
+							label: __(
+								'فیلتر جست‌وجوی فهرست پخش',
+								'musicwave'
+							),
 							help: __(
-								'Optional. Only show public playlists whose title matches this text.',
+								'اختیاری. فقط فهرست‌های پخش عمومی را نمایش بده که عنوانشان با این متن مطابقت دارد.',
 								'musicwave'
 							),
 							value: props.attributes.playlistSearch || '',
@@ -384,28 +396,32 @@
 			createElement(
 				components.PanelBody,
 				{
-					title: __( 'Layout and artwork', 'musicwave' ),
+					title: __( 'چیدمان و تصویر', 'musicwave' ),
 					initialOpen: true,
 				},
 				createElement( components.SelectControl, {
-					label: __( 'Layout', 'musicwave' ),
+					label: __( 'چیدمان', 'musicwave' ),
 					value: props.attributes.layout || 'grid',
 					options: [
 						{
-							label: __( 'Responsive grid', 'musicwave' ),
+							label: __( 'شبکه واکنش‌گرا', 'musicwave' ),
 							value: 'grid',
 						},
 						{
-							label: __( 'Horizontal shelf', 'musicwave' ),
+							label: __( 'ویترین افقی', 'musicwave' ),
 							value: 'scroll',
 						},
 						{
-							label: __( 'Compact list', 'musicwave' ),
+							label: __( 'فهرست جمع‌وجور', 'musicwave' ),
 							value: 'list',
 						},
 						{
-							label: __( 'Editorial feature', 'musicwave' ),
+							label: __( 'ویژهنامه سرمقاله', 'musicwave' ),
 							value: 'feature',
+						},
+						{
+							label: __( 'اسلایدر هیرو', 'musicwave' ),
+							value: 'slider',
 						},
 					],
 					onChange( value ) {
@@ -413,7 +429,7 @@
 					},
 				} ),
 				createElement( components.RangeControl, {
-					label: __( 'Desktop columns', 'musicwave' ),
+					label: __( 'ستون‌های دسکتاپ', 'musicwave' ),
 					value: props.attributes.columns || 4,
 					min: 2,
 					max: 6,
@@ -422,35 +438,35 @@
 					},
 				} ),
 				createElement( components.SelectControl, {
-					label: __( 'Artwork shape', 'musicwave' ),
+					label: __( 'شکل تصویر', 'musicwave' ),
 					value: props.attributes.imageShape || 'square',
 					options: [
-						{ label: __( 'Square', 'musicwave' ), value: 'square' },
+						{ label: __( 'مربع', 'musicwave' ), value: 'square' },
 						{
-							label: __( 'Landscape', 'musicwave' ),
+							label: __( 'افقی', 'musicwave' ),
 							value: 'landscape',
 						},
 						{
-							label: __( 'Portrait', 'musicwave' ),
+							label: __( 'عمودی', 'musicwave' ),
 							value: 'portrait',
 						},
-						{ label: __( 'Circle', 'musicwave' ), value: 'circle' },
+						{ label: __( 'دایره', 'musicwave' ), value: 'circle' },
 					],
 					onChange( value ) {
 						update( 'imageShape', value );
 					},
 				} ),
-				toggle( 'showArtwork', __( 'Show artwork', 'musicwave' ) ),
+				toggle( 'showArtwork', __( 'نمایش تصویر', 'musicwave' ) ),
 				toggle(
 					'showPlayButton',
-					__( 'Show play affordance', 'musicwave' )
+					__( 'نمایش کنترل پخش', 'musicwave' )
 				),
-				toggle( 'showArtist', __( 'Show artist', 'musicwave' ) ),
-				toggle( 'showDate', __( 'Show date', 'musicwave' ) ),
-				toggle( 'showExcerpt', __( 'Show excerpt', 'musicwave' ) ),
-				toggle( 'showAction', __( 'Show action link', 'musicwave' ) ),
+				toggle( 'showArtist', __( 'نمایش هنرمند', 'musicwave' ) ),
+				toggle( 'showDate', __( 'نمایش تاریخ', 'musicwave' ) ),
+				toggle( 'showExcerpt', __( 'نمایش چکیده', 'musicwave' ) ),
+				toggle( 'showAction', __( 'نمایش پیوند اقدام', 'musicwave' ) ),
 				createElement( components.TextControl, {
-					label: __( 'Action label', 'musicwave' ),
+					label: __( 'برچسب اقدام', 'musicwave' ),
 					value: props.attributes.actionLabel || '',
 					onChange( value ) {
 						update( 'actionLabel', value );
@@ -461,12 +477,12 @@
 				? createElement(
 						components.PanelBody,
 						{
-							title: __( 'Editorial feature', 'musicwave' ),
+							title: __( 'ویژه‌نامه سرمقاله', 'musicwave' ),
 							initialOpen: true,
 						},
 						createElement( components.RangeControl, {
 							label: __(
-								'Featured release ID (0 = first result)',
+								'شناسه انتشار منتخب (۰ = اولین نتیجه)',
 								'musicwave'
 							),
 							value: props.attributes.featuredReleaseId || 0,
@@ -477,22 +493,25 @@
 							},
 						} ),
 						createElement( components.SelectControl, {
-							label: __( 'Featured body', 'musicwave' ),
+							label: __( 'متن بخش منتخب', 'musicwave' ),
 							value: props.attributes.featuredSource || 'excerpt',
 							options: [
 								{
-									label: __( 'Use excerpt', 'musicwave' ),
+									label: __(
+										'استفاده از چکیده',
+										'musicwave'
+									),
 									value: 'excerpt',
 								},
 								{
 									label: __(
-										'Use description field',
+										'استفاده از فیلد توضیحات',
 										'musicwave'
 									),
 									value: 'custom',
 								},
 								{
-									label: __( 'No body text', 'musicwave' ),
+									label: __( 'بدون متن بدنه', 'musicwave' ),
 									value: 'none',
 								},
 							],
@@ -501,7 +520,7 @@
 							},
 						} ),
 						createElement( components.RangeControl, {
-							label: __( 'Overlay darkness', 'musicwave' ),
+							label: __( 'تیرگی لایه رویی', 'musicwave' ),
 							value:
 								props.attributes.overlay !== undefined
 									? props.attributes.overlay
@@ -516,21 +535,21 @@
 							},
 						} ),
 						createElement( components.ToggleControl, {
-							label: __( 'Show rank numbers', 'musicwave' ),
+							label: __( 'نمایش شماره رتبه', 'musicwave' ),
 							checked: !! props.attributes.showRank,
 							onChange( value ) {
 								update( 'showRank', !! value );
 							},
 						} ),
 						createElement( components.ToggleControl, {
-							label: __( 'Show view count', 'musicwave' ),
+							label: __( 'نمایش تعداد بازدید', 'musicwave' ),
 							checked: !! props.attributes.showViews,
 							onChange( value ) {
 								update( 'showViews', !! value );
 							},
 						} ),
 						createElement( components.RangeControl, {
-							label: __( 'Side column width (px)', 'musicwave' ),
+							label: __( 'عرض ستون کناری (پیکسل)', 'musicwave' ),
 							value: props.attributes.sideColumnWidth || 340,
 							min: 200,
 							max: 560,
@@ -544,12 +563,12 @@
 				? createElement(
 						components.PanelBody,
 						{
-							title: __( 'Hero title', 'musicwave' ),
+							title: __( 'عنوان بخش معرفی', 'musicwave' ),
 							initialOpen: false,
 						},
 						createElement( components.TextControl, {
-							label: __( 'Title color (hex)', 'musicwave' ),
-							help: __( 'e.g. #ffffff', 'musicwave' ),
+							label: __( 'رنگ عنوان (هگز)', 'musicwave' ),
+							help: __( 'مثلاً #ffffff', 'musicwave' ),
 							value: props.attributes.heroTitleColor || '',
 							onChange( value ) {
 								update( 'heroTitleColor', value );
@@ -557,7 +576,7 @@
 						} ),
 						createElement( components.RangeControl, {
 							label: __(
-								'Title font size (px, 0 = default)',
+								'اندازه فونت عنوان (پیکسل، ۰ = پیش‌فرض)',
 								'musicwave'
 							),
 							value: props.attributes.heroTitleSize || 0,
@@ -568,8 +587,8 @@
 							},
 						} ),
 						createElement( components.TextControl, {
-							label: __( 'Body text color (hex)', 'musicwave' ),
-							help: __( 'e.g. #cccccc', 'musicwave' ),
+							label: __( 'رنگ متن بدنه (هگز)', 'musicwave' ),
+							help: __( 'مثلاً #cccccc', 'musicwave' ),
 							value: props.attributes.heroTextColor || '',
 							onChange( value ) {
 								update( 'heroTextColor', value );
@@ -581,30 +600,30 @@
 				? createElement(
 						components.PanelBody,
 						{
-							title: __( 'Call-to-action button', 'musicwave' ),
+							title: __( 'دکمه فراخوان اقدام', 'musicwave' ),
 							initialOpen: false,
 						},
 						createElement( components.TextControl, {
-							label: __( 'Button label', 'musicwave' ),
+							label: __( 'برچسب دکمه', 'musicwave' ),
 							value: props.attributes.ctaLabel || '',
 							onChange( value ) {
 								update( 'ctaLabel', value );
 							},
 						} ),
 						createElement( components.SelectControl, {
-							label: __( 'Button style', 'musicwave' ),
+							label: __( 'سبک دکمه', 'musicwave' ),
 							value: props.attributes.ctaStyle || 'solid',
 							options: [
 								{
-									label: __( 'Solid fill', 'musicwave' ),
+									label: __( 'پرشدگی یکدست', 'musicwave' ),
 									value: 'solid',
 								},
 								{
-									label: __( 'Outline', 'musicwave' ),
+									label: __( 'خطی', 'musicwave' ),
 									value: 'outline',
 								},
 								{
-									label: __( 'Ghost', 'musicwave' ),
+									label: __( 'شفاف', 'musicwave' ),
 									value: 'ghost',
 								},
 							],
@@ -613,9 +632,9 @@
 							},
 						} ),
 						createElement( components.TextControl, {
-							label: __( 'Button background (hex)', 'musicwave' ),
+							label: __( 'پس‌زمینه دکمه (هگز)', 'musicwave' ),
 							help: __(
-								'Leave empty to use theme accent color.',
+								'برای استفاده از رنگ تأکیدی قالب، خالی بگذارید.',
 								'musicwave'
 							),
 							value: props.attributes.ctaBgColor || '',
@@ -624,9 +643,9 @@
 							},
 						} ),
 						createElement( components.TextControl, {
-							label: __( 'Button text color (hex)', 'musicwave' ),
+							label: __( 'رنگ متن دکمه (هگز)', 'musicwave' ),
 							help: __(
-								'Leave empty to use theme default.',
+								'برای استفاده از مقدار پیش‌فرض قالب، خالی بگذارید.',
 								'musicwave'
 							),
 							value: props.attributes.ctaTextColor || '',
@@ -635,10 +654,7 @@
 							},
 						} ),
 						createElement( components.RangeControl, {
-							label: __(
-								'Button corner radius (px)',
-								'musicwave'
-							),
+							label: __( 'شعاع گوشه دکمه (پیکسل)', 'musicwave' ),
 							value:
 								props.attributes.ctaRadius !== undefined
 									? props.attributes.ctaRadius
@@ -654,21 +670,78 @@
 						} )
 				  )
 				: null,
+			'slider' === ( props.attributes.layout || 'grid' )
+				? createElement(
+						components.PanelBody,
+						{
+							title: __( 'تنظیمات اسلایدر هیرو', 'musicwave' ),
+							initialOpen: true,
+						},
+						createElement( components.ToggleControl, {
+							label: __( 'پخش خودکار اسلایدها', 'musicwave' ),
+							checked:
+								props.attributes.autoplay === undefined
+									? true
+									: !! props.attributes.autoplay,
+							onChange( value ) {
+								update( 'autoplay', !! value );
+							},
+						} ),
+						createElement( components.RangeControl, {
+							label: __(
+								'فاصلهٔ تعویض اسلایدها (میلی‌ثانیه)',
+								'musicwave'
+							),
+							value:
+								props.attributes.interval !== undefined
+									? props.attributes.interval
+									: 5000,
+							min: 2000,
+							max: 20000,
+							onChange( value ) {
+								update(
+									'interval',
+									value !== undefined ? value : 5000
+								);
+							},
+						} ),
+						createElement( components.ToggleControl, {
+							label: __( 'نمایش فلش‌ها', 'musicwave' ),
+							checked:
+								props.attributes.showArrows === undefined
+									? true
+									: !! props.attributes.showArrows,
+							onChange( value ) {
+								update( 'showArrows', !! value );
+							},
+						} ),
+						createElement( components.ToggleControl, {
+							label: __( 'نمایش نقاط صفحهبندی', 'musicwave' ),
+							checked:
+								props.attributes.showDots === undefined
+									? true
+									: !! props.attributes.showDots,
+							onChange( value ) {
+								update( 'showDots', !! value );
+							},
+						} )
+				  )
+				: null,
 			createElement(
 				components.PanelBody,
 				{
-					title: __( 'Section link', 'musicwave' ),
+					title: __( 'پیوند بخش', 'musicwave' ),
 					initialOpen: false,
 				},
 				createElement( blockEditor.URLInput, {
-					label: __( 'View-all link', 'musicwave' ),
+					label: __( 'پیوند مشاهده همه', 'musicwave' ),
 					value: props.attributes.sectionUrl || '',
 					onChange( value ) {
 						update( 'sectionUrl', value );
 					},
 				} ),
 				createElement( components.TextControl, {
-					label: __( 'View-all label', 'musicwave' ),
+					label: __( 'برچسب مشاهده همه', 'musicwave' ),
 					value: props.attributes.sectionLinkLabel || '',
 					onChange( value ) {
 						update( 'sectionLinkLabel', value );
@@ -683,14 +756,28 @@
 			return;
 		}
 
+		var textdomain = block.textdomain || 'musicwave';
+		// Metadata originates in block.json and is intentionally translated at runtime.
+		// eslint-disable-next-line @wordpress/i18n-no-variables
+		var title = __( block.title, textdomain );
+		// eslint-disable-next-line @wordpress/i18n-no-variables
+		var description = __( block.description, textdomain );
+		var keywords = ( block.keywords || [] ).map( function ( keyword ) {
+			// eslint-disable-next-line @wordpress/i18n-no-variables
+			return __( keyword, textdomain );
+		} );
+
 		blocks.registerBlockType( block.name, {
-			apiVersion: 3,
-			title: block.title,
-			description: block.description,
-			category: 'widgets',
+			apiVersion: block.apiVersion || 3,
+			title,
+			description,
+			category: block.category || 'music-wave',
 			icon: block.icon,
+			keywords,
+			textdomain,
 			attributes: block.attributes || {},
 			supports: block.supports || {},
+			example: block.example || {},
 			edit( props ) {
 				var preview = createElement( serverSideRender, {
 					block: block.name,
@@ -698,16 +785,19 @@
 					EmptyResponsePlaceholder() {
 						return createElement( components.Placeholder, {
 							icon: block.icon,
-							label: block.title,
+							label: title,
 							instructions: __(
-								'Add published releases or enable this block to display its live preview.',
+								'برای نمایش پیش‌نمایش زنده، انتشار منتشرشده اضافه کنید یا این بلوک را فعال کنید.',
 								'musicwave'
 							),
 						} );
 					},
 				} );
 
-				if ( 'musicwave/release-slider' === block.name ) {
+				if (
+					'music-wave/release-slider' === block.name ||
+					'musicwave/release-slider' === block.name
+				) {
 					return createElement(
 						Fragment,
 						null,
@@ -716,7 +806,10 @@
 					);
 				}
 
-				if ( 'musicwave/release-shelf' === block.name ) {
+				if (
+					'music-wave/release-shelf' === block.name ||
+					'musicwave/release-shelf' === block.name
+				) {
 					return createElement(
 						Fragment,
 						null,

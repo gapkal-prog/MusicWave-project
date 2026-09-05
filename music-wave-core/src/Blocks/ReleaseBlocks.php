@@ -1017,7 +1017,7 @@ final class ReleaseBlocks {
 		$aria_label   = $show_heading ? '' : ' aria-label="' . esc_attr( $heading ) . '"';
 		// SonicStream track-list table header: quiet uppercase column labels
 		// above the rows on desktop widths.
-		$table_header = '<div class="mw-collection-list__table-header" aria-hidden="true"><span class="mw-collection-list__table-position">#</span><span class="mw-collection-list__table-title">' . esc_html__( 'عنوان', 'music-wave-core' ) . '</span><span class="mw-collection-list__table-duration">' . esc_html__( 'مدت', 'music-wave-core' ) . '</span></div>';
+		$table_header = '<div class="mw-collection-list__table-header" aria-hidden="true"><span class="mw-collection-list__table-position">#</span><span class="mw-collection-list__table-title">' . esc_html__( 'عنوان', 'music-wave-core' ) . '</span><span class="mw-collection-list__table-artist">' . esc_html__( 'هنرمند', 'music-wave-core' ) . '</span><span class="mw-collection-list__table-duration">' . esc_html__( 'زمان', 'music-wave-core' ) . '</span><span class="mw-collection-list__table-quality">' . esc_html__( 'کیفیت', 'music-wave-core' ) . '</span></div>';
 		$list_markup  = '' !== $grouped ? $grouped : $table_header . '<ol class="mw-collection-list__items">' . implode( '', $rows ) . '</ol>';
 		$total_html   = '';
 		if ( BlockSupport::bool_attribute( $attributes, 'showTotalDuration', false ) && $total_duration > 0 ) {
@@ -1025,7 +1025,7 @@ final class ReleaseBlocks {
 			$total_html = '<p class="mw-collection-list__total">' . esc_html( sprintf( __( 'طول کل: %s', 'music-wave-core' ), $this->format_duration( $total_duration ) ) ) . '</p>';
 		}
 
-		return '<section ' . BlockSupport::wrapper_attributes( 'mw-collection-list' ) . $aria_label . '>' . $heading_html . $list_markup . $total_html . '</section>';
+		return '<section ' . BlockSupport::wrapper_attributes( 'mw-collection-list' ) . ' data-mw-collection-list' . $aria_label . '>' . $heading_html . $list_markup . $total_html . '</section>';
 	}
 
 	/**
@@ -1063,42 +1063,62 @@ final class ReleaseBlocks {
 			}
 		}
 
-		// Title block: the track name plus its linked artist line, so each
-		// row reads like the reference track list (name over artist). The
-		// artist links render AFTER the row link closes — nested anchors are
-		// invalid HTML and would swallow the clicks.
-		$heading = '<span class="mw-collection-list__title">' . esc_html( $title ) . '</span>';
-		$label  .= '<span class="mw-collection-list__heading">' . $heading . '</span>';
+			$label .= '<span class="mw-collection-list__title-block"><span class="mw-collection-list__title">' . esc_html( $title ) . '</span></span>';
 
+		$explicit = sanitize_text_field( (string) $this->repository->get( $child_id, 'mw_explicit' ) );
+		$is_explicit = '1' === $explicit || 'yes' === strtolower( $explicit );
+		$explicit_html = $is_explicit ? '<span class="mw-collection-list__explicit" aria-label="' . esc_attr__( 'محتوای صریح', 'music-wave-core' ) . '">E</span>' : '';
+
+		$main_link = is_string( $link ) && '' !== $link
+			? '<a class="mw-collection-list__link" href="' . esc_url( $link ) . '">' . $label . $explicit_html . '</a>'
+			: '<span class="mw-collection-list__link">' . $label . $explicit_html . '</span>';
+
+		$artist_links = $this->collection_artist_links( $child_id );
+		$artist_html = '' !== $artist_links ? '<span class="mw-collection-list__artist">' . $artist_links . '</span>' : '<span class="mw-collection-list__artist" aria-hidden="true">—</span>';
+
+		$duration_html = '';
 		if ( $options['show_duration'] ) {
 			$duration = absint( $this->repository->get( $child_id, 'mw_duration' ) );
 			if ( $duration > 0 ) {
-				$label .= '<span class="mw-collection-list__duration">' . esc_html( $this->format_duration( $duration ) ) . '</span>';
+				$duration_html = '<span class="mw-collection-list__duration">' . esc_html( $this->format_duration( $duration ) ) . '</span>';
+			} else {
+				$duration_html = '<span class="mw-collection-list__duration" aria-hidden="true">—</span>';
 			}
 		}
 
-		$main = is_string( $link ) && '' !== $link ? '<a class="mw-collection-list__link" href="' . esc_url( $link ) . '">' . $label . '</a>' : '<span class="mw-collection-list__link">' . $label . '</span>';
-
-		$artist_links = $this->collection_artist_links( $child_id );
-		if ( '' !== $artist_links ) {
-			$main .= '<span class="mw-collection-list__artist">' . $artist_links . '</span>';
+		$quality_hint = '';
+		$assets = $this->repository->get( $child_id, 'mw_download_assets' );
+		if ( is_array( $assets ) ) {
+			foreach ( $assets as $a ) {
+				if ( is_array( $a ) && ! empty( $a['label'] ) ) {
+					$quality_hint = sanitize_text_field( (string) $a['label'] );
+					break;
+				}
+			}
 		}
-		$main    = '<div class="mw-collection-list__main">' . $main . '</div>';
+		$quality_html = '' !== $quality_hint
+			? '<span class="mw-collection-list__quality" aria-hidden="true">' . esc_html( $quality_hint ) . '</span>'
+			: '<span class="mw-collection-list__quality" aria-hidden="true">—</span>';
+
+		$main = '<div class="mw-collection-list__main">' . $main_link . $artist_html . $duration_html . $quality_html . '</div>';
 		$actions = '';
 		if ( $options['show_preview'] ) {
 			$actions .= $this->collection_preview_button( $child_id );
 		}
 		if ( $options['show_download'] ) {
+			// Compact structural variant: no screen-reader-only CSS, the
+			// selector carries its own accessible name.
 			$actions .= $this->render_download_button(
 				array(
-					'releaseId'              => $child_id,
-					'compact'                => true,
-					'_musicwave_embedded_ui' => true,
+					'releaseId' => $child_id,
+					'compact'   => true,
 				)
 			);
 		}
 
-		return '<li><div class="mw-collection-list__item">' . $main . ( '' === $actions ? '' : '<div class="mw-collection-list__actions">' . $actions . '</div>' ) . '</div></li>';
+		// Hook for row-level interactions (tap-to-play, love, more).
+		$row_attrs = ' data-mw-track-id="' . esc_attr( (string) $child_id ) . '"' . ( $is_explicit ? ' data-explicit="1"' : '' );
+		return '<li' . $row_attrs . '><div class="mw-collection-list__item">' . $main . ( '' === $actions ? '' : '<div class="mw-collection-list__actions">' . $actions . '</div>' ) . '</div></li>';
 	}
 
 	/**
@@ -1481,18 +1501,19 @@ final class ReleaseBlocks {
 	}
 
 	/**
-	 * Render the authorized secure-download panel for a release.
+	 * Render the authorized secure-download controls for a release.
 	 *
-	 * The block never exposes a direct private asset URL: rows carry public
-	 * quality labels only, and the actual file is resolved through the signed
-	 * token REST flow in download.js.
+	 * The panel variant is the standalone "download this release" card; the
+	 * compact variant renders the same signed-token controls as an inline
+	 * action group for embedding inside collection track rows. Neither
+	 * exposes a direct private asset URL: rows carry public quality labels
+	 * only, and the actual file is resolved through the signed token REST
+	 * flow in download.js.
 	 *
 	 * @param array<string, mixed> $attributes Block attributes.
 	 */
 	public function render_download_button( array $attributes ): string {
 		$release_id = $this->release_id( $attributes );
-		$compact    = ! empty( $attributes['compact'] );
-		$embedded   = ! empty( $attributes['_musicwave_embedded_ui'] );
 		// Policy-driven rendering: guests see the secure controls whenever the
 		// decision itself allows them (public releases or a policy-level open
 		// gate such as the VIP "everyone including guests" mode); the sign-in
@@ -1504,7 +1525,37 @@ final class ReleaseBlocks {
 		if ( empty( $assets ) ) {
 			return '';
 		}
+		$this->enqueue_download_runtime();
 
+		$files = $this->download_files( $assets );
+		if ( empty( $files ) ) {
+			return '';
+		}
+
+		$row_options = array(
+			'show_quality'   => BlockSupport::bool_attribute( $attributes, 'showQuality', true ),
+			'show_stream'    => BlockSupport::bool_attribute( $attributes, 'showStream', true ),
+			'download_label' => BlockSupport::text_attribute( $attributes, 'downloadLabel', __( 'دانلود ایمن', 'music-wave-core' ) ),
+			'play_label'     => isset( $attributes['playLabel'] ) && is_scalar( $attributes['playLabel'] ) ? sanitize_text_field( (string) $attributes['playLabel'] ) : '',
+		);
+
+		if ( ! empty( $attributes['compact'] ) ) {
+			return $this->download_inline_markup( $release_id, $files, $row_options );
+		}
+
+		return $this->download_panel_markup( $release_id, $files, $row_options, $attributes );
+	}
+
+	/**
+	 * Enqueue the signed-token download runtime once per response.
+	 *
+	 * Every rendered panel and inline group shares one script bundle and one
+	 * localized config; a collection page can embed dozens of copies.
+	 */
+	private function enqueue_download_runtime(): void {
+		if ( wp_script_is( 'music-wave-download', 'enqueued' ) ) {
+			return;
+		}
 		wp_enqueue_script( 'music-wave-download', MUSIC_WAVE_CORE_URL . 'assets/download.js', array( 'wp-api-fetch' ), MUSIC_WAVE_CORE_VERSION, true );
 		wp_localize_script(
 			'music-wave-download',
@@ -1519,45 +1570,90 @@ final class ReleaseBlocks {
 				'pauseLabel'   => __( 'مکث', 'music-wave-core' ),
 			)
 		);
+	}
 
-		$files = $this->download_files( $assets );
-		if ( empty( $files ) ) {
+	/**
+	 * Render the standalone "download this release" panel.
+	 *
+	 * @param int                                 $release_id Release post ID.
+	 * @param array<string, array<string, mixed>> $files      Downloadable files.
+	 * @param array<string, mixed>                $options    Resolved row options.
+	 * @param array<string, mixed>                $attributes Block attributes.
+	 */
+	private function download_panel_markup( int $release_id, array $files, array $options, array $attributes ): string {
+		$heading_html     = BlockSupport::bool_attribute( $attributes, 'showHeading', true )
+			? '<strong>' . esc_html( BlockSupport::text_attribute( $attributes, 'heading', __( 'دانلود این انتشار', 'music-wave-core' ) ) ) . '</strong>'
+			: '';
+		$description_html = BlockSupport::bool_attribute( $attributes, 'showDescription', true )
+			? '<span>' . esc_html( BlockSupport::text_attribute( $attributes, 'description', __( 'یک فایل صوتی موجود را پخش کنید یا کیفیت دلخواه خود را دانلود کنید.', 'music-wave-core' ) ) ) . '</span>'
+			: '';
+		$heading          = '' !== $heading_html || '' !== $description_html
+			? '<div class="mw-download-action__heading">' . $heading_html . $description_html . '</div>'
+			: '';
+
+		$protected = (bool) has_filter( 'music_wave_download_provider' );
+		$message   = $protected
+			? __( 'حفاظت‌شده توسط MusicWave VIP: فایل‌ها از پوشه‌ای حفاظت‌شده و از طریق پیوندهای امضاشده و زمان‌دار پخش می‌شوند. نشانی مستقیم فایل هرگز نمایش داده نمی‌شود.', 'music-wave-core' )
+			: __( 'از طریق پیوندهای امضاشده و منقضی‌شده تحویل داده می‌شود. نشانی مستقیم فایل هرگز در معرض دید قرار نمی‌گیرد.', 'music-wave-core' );
+		$badge     = $protected ? '<span class="mw-download-action__security-badge">' . esc_html__( 'VIP حفاظت‌شده', 'music-wave-core' ) . '</span>' : '';
+		$security  = '<p class="mw-download-action__security"><svg class="mw-download-action__security-icon" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg><span>' . esc_html( $message ) . '</span>' . $badge . '</p>';
+
+		$panel_extra = count( $files ) === 1 ? ' mw-download-action--single' : '';
+		$panel_extra .= ' mw-download-action--unified';
+		$unified_head = '<div class="mw-download-action__table-header" aria-hidden="true"><span>' . esc_html__( 'فایل', 'music-wave-core' ) . '</span><span>' . esc_html__( 'کیفیت', 'music-wave-core' ) . '</span><span>' . esc_html__( 'اقدام', 'music-wave-core' ) . '</span></div>';
+		return '<aside ' . BlockSupport::wrapper_attributes( 'mw-download-action mw-download-action--panel' . $panel_extra ) . '>' . $heading . $unified_head . $this->download_file_rows( $release_id, $files, $options ) . '<audio class="mw-secure-audio" preload="metadata" hidden></audio><span class="mw-download-status" role="status" aria-live="polite"></span>' . $security . '</aside>';
+	}
+
+	/**
+	 * Render the compact inline download group embedded in track rows.
+	 *
+	 * Compactness is structural, not CSS-hidden: the file name stays in the
+	 * quality option labels, the selector carries its accessible name on
+	 * aria-label, and the live status renders as a floating notice anchored
+	 * to the group so it never shifts the row layout.
+	 *
+	 * @param int                                 $release_id Release post ID.
+	 * @param array<string, array<string, mixed>> $files      Downloadable files.
+	 * @param array<string, mixed>                $options    Resolved row options.
+	 */
+	private function download_inline_markup( int $release_id, array $files, array $options ): string {
+		$show_quality   = ! empty( $options['show_quality'] );
+		$show_stream    = ! empty( $options['show_stream'] );
+		$download_label = isset( $options['download_label'] ) && '' !== (string) $options['download_label'] ? (string) $options['download_label'] : __( 'دانلود ایمن', 'music-wave-core' );
+		$play_label     = isset( $options['play_label'] ) ? (string) $options['play_label'] : '';
+
+		$groups = array();
+		foreach ( $files as $file ) {
+			if ( ! is_array( $file ) || empty( $file['qualities'] ) || ! is_array( $file['qualities'] ) ) {
+				continue;
+			}
+			$qualities = $this->download_quality_options( $file['qualities'] );
+			if ( '' === $qualities['html'] ) {
+				continue;
+			}
+
+			$select = '';
+			if ( $show_quality ) {
+				/* translators: %s: downloadable file label, such as "Main download". */
+				$select = '<select class="mw-download-quality" aria-label="' . esc_attr( sprintf( __( 'انتخاب کیفیت برای %s', 'music-wave-core' ), (string) $file['label'] ) ) . '">' . $qualities['html'] . '</select>';
+			}
+
+			$play = '';
+			if ( $show_stream && $qualities['has_streamable'] ) {
+				$play_labels = '' !== $play_label
+					? ' data-play-label="' . esc_attr( $play_label ) . '" data-pause-label="' . esc_attr( __( 'مکث', 'music-wave-core' ) ) . '"'
+					: '';
+				$play_title  = '' !== $play_label ? $play_label : __( 'پخش', 'music-wave-core' );
+				$play        = '<button class="mw-secure-play-button" type="button" aria-label="' . esc_attr( $play_title ) . '" data-release-id="' . esc_attr( (string) $release_id ) . '"' . ( $show_quality ? '' : ' data-download-quality="' . esc_attr( $qualities['first_key'] ) . '"' ) . $play_labels . ( $qualities['first_streamable'] ? '' : ' disabled' ) . '><span class="mw-secure-play-button__icon" aria-hidden="true">▶</span></button>';
+			}
+
+			$groups[] = '<div class="mw-download-inline">' . $select . $play . '<button class="wp-element-button mw-download-button" type="button" aria-label="' . esc_attr( $download_label ) . '" data-release-id="' . esc_attr( (string) $release_id ) . '"' . ( $show_quality ? '' : ' data-download-quality="' . esc_attr( $qualities['first_key'] ) . '"' ) . '><span class="mw-download-button__icon" aria-hidden="true">⤓</span></button></div>';
+		}
+		if ( empty( $groups ) ) {
 			return '';
 		}
-		$class   = 'mw-download-action' . ( $compact ? ' mw-download-action--compact' : '' );
-		$heading = '';
-		if ( ! $compact ) {
-			$heading_html     = BlockSupport::bool_attribute( $attributes, 'showHeading', true )
-				? '<strong>' . esc_html( BlockSupport::text_attribute( $attributes, 'heading', __( 'دانلود این انتشار', 'music-wave-core' ) ) ) . '</strong>'
-				: '';
-			$description_html = BlockSupport::bool_attribute( $attributes, 'showDescription', true )
-				? '<span>' . esc_html( BlockSupport::text_attribute( $attributes, 'description', __( 'یک فایل صوتی موجود را پخش کنید یا کیفیت دلخواه خود را دانلود کنید.', 'music-wave-core' ) ) ) . '</span>'
-				: '';
-			if ( '' !== $heading_html || '' !== $description_html ) {
-				$heading = '<div class="mw-download-action__heading">' . $heading_html . $description_html . '</div>';
-			}
-		}
 
-		$row_options = array(
-			'show_quality'   => BlockSupport::bool_attribute( $attributes, 'showQuality', true ),
-			'show_stream'    => BlockSupport::bool_attribute( $attributes, 'showStream', true ),
-			'download_label' => BlockSupport::text_attribute( $attributes, 'downloadLabel', __( 'دانلود ایمن', 'music-wave-core' ) ),
-			'play_label'     => isset( $attributes['playLabel'] ) && is_scalar( $attributes['playLabel'] ) ? sanitize_text_field( (string) $attributes['playLabel'] ) : '',
-		);
-
-		$wrapper = $embedded ? 'class="' . esc_attr( $class ) . '"' : BlockSupport::wrapper_attributes( $class );
-
-		$security = '';
-		if ( ! $compact ) {
-			$protected = (bool) has_filter( 'music_wave_download_provider' );
-			$message   = $protected
-				? __( 'حفاظت‌شده توسط MusicWave VIP: فایل‌ها از پوشه‌ای حفاظت‌شده و از طریق پیوندهای امضاشده و زمان‌دار پخش می‌شوند. نشانی مستقیم فایل هرگز نمایش داده نمی‌شود.', 'music-wave-core' )
-				: __( 'از طریق پیوندهای امضاشده و منقضی‌شده تحویل داده می‌شود. نشانی مستقیم فایل هرگز در معرض دید قرار نمی‌گیرد.', 'music-wave-core' );
-			$badge     = $protected ? '<span class="mw-download-action__security-badge">' . esc_html__( 'VIP حفاظت‌شده', 'music-wave-core' ) . '</span>' : '';
-			$security  = '<p class="mw-download-action__security"><svg class="mw-download-action__security-icon" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg><span>' . esc_html( $message ) . '</span>' . $badge . '</p>';
-		}
-
-		return '<aside ' . $wrapper . '>' . $heading . $this->download_file_rows( $release_id, $files, $row_options ) . '<audio class="mw-secure-audio" preload="metadata" hidden></audio><span class="mw-download-status" role="status" aria-live="polite"></span>' . $security . '</aside>';
+		return '<div class="mw-download-action mw-download-action--inline"><div class="mw-download-inline-list" role="group" aria-label="' . esc_attr__( 'اقدامات دانلود', 'music-wave-core' ) . '">' . implode( '', $groups ) . '</div><audio class="mw-secure-audio" preload="metadata" hidden></audio><span class="mw-download-status" role="status" aria-live="polite"></span></div>';
 	}
 
 	/**
@@ -1908,8 +2004,35 @@ final class ReleaseBlocks {
 	}
 
 	/**
+	 * Build one quality <option> per downloadable variant plus row flags.
+	 *
+	 * @param array<int, mixed> $qualities File variants.
+	 * @return array{html: string, has_streamable: bool, first_key: string, first_streamable: bool}
+	 */
+	private function download_quality_options( array $qualities ): array {
+		$options        = array();
+		$has_streamable = false;
+		foreach ( $qualities as $quality ) {
+			if ( ! is_array( $quality ) || empty( $quality['key'] ) ) {
+				continue;
+			}
+			$streamable     = ! empty( $quality['streamable'] );
+			$has_streamable = $has_streamable || $streamable;
+			$options[]      = '<option value="' . esc_attr( (string) $quality['key'] ) . '" data-streamable="' . esc_attr( $streamable ? '1' : '0' ) . '">' . esc_html( (string) ( $quality['label'] ?? $quality['key'] ) ) . '</option>';
+		}
+
+		return array(
+			'html'             => implode( '', $options ),
+			'has_streamable'   => $has_streamable,
+			'first_key'        => isset( $qualities[0]['key'] ) && is_array( $qualities[0] ) ? (string) $qualities[0]['key'] : '',
+			'first_streamable' => ! empty( $qualities[0]['streamable'] ),
+		);
+	}
+
+	/**
 	 * Render one row per downloadable file with its quality and action controls.
 	 *
+	 * @param int                                 $release_id Release post ID.
 	 * @param array<string, array<string, mixed>> $files   Downloadable files.
 	 * @param array<string, mixed>                $options Resolved row options.
 	 * @return string
@@ -1925,25 +2048,15 @@ final class ReleaseBlocks {
 			if ( ! is_array( $file ) || empty( $file['qualities'] ) || ! is_array( $file['qualities'] ) ) {
 				continue;
 			}
-			$qualities      = array();
-			$has_streamable = false;
-			foreach ( $file['qualities'] as $quality ) {
-				if ( ! is_array( $quality ) || empty( $quality['key'] ) ) {
-					continue;
-				}
-				$streamable     = ! empty( $quality['streamable'] );
-				$has_streamable = $has_streamable || $streamable;
-				$qualities[]    = '<option value="' . esc_attr( (string) $quality['key'] ) . '" data-streamable="' . esc_attr( $streamable ? '1' : '0' ) . '">' . esc_html( (string) $quality['label'] ) . '</option>';
-			}
-			if ( empty( $qualities ) ) {
+			$qualities      = $this->download_quality_options( $file['qualities'] );
+			$has_streamable = $qualities['has_streamable'];
+			if ( '' === $qualities['html'] ) {
 				continue;
 			}
 
-			$first_key        = isset( $file['qualities'][0]['key'] ) ? (string) $file['qualities'][0]['key'] : '';
-			$first_streamable = ! empty( $file['qualities'][0]['streamable'] );
-			$default_quality  = $show_quality ? '' : ' data-download-quality="' . esc_attr( $first_key ) . '"';
-			$quality_select   = $show_quality
-				? '<label class="mw-download-action__quality"><span>' . esc_html__( 'کیفیت', 'music-wave-core' ) . '</span><select class="mw-download-quality">' . implode( '', $qualities ) . '</select></label>'
+			$default_quality = $show_quality ? '' : ' data-download-quality="' . esc_attr( $qualities['first_key'] ) . '"';
+			$quality_select  = $show_quality
+				? '<label class="mw-download-action__quality"><span>' . esc_html__( 'کیفیت', 'music-wave-core' ) . '</span><select class="mw-download-quality">' . $qualities['html'] . '</select></label>'
 				: '';
 
 			$play = '';
@@ -1952,11 +2065,15 @@ final class ReleaseBlocks {
 					? ' data-play-label="' . esc_attr( $play_label ) . '" data-pause-label="' . esc_attr( __( 'مکث', 'music-wave-core' ) ) . '"'
 					: '';
 				$play_title  = '' !== $play_label ? $play_label : __( 'پخش', 'music-wave-core' );
-				$play        = '<button class="mw-secure-play-button" type="button" aria-label="' . esc_attr( $play_title ) . '" data-release-id="' . esc_attr( (string) $release_id ) . '"' . $default_quality . $play_labels . ( $first_streamable || ! $show_quality ? '' : ' disabled' ) . '><span class="mw-secure-play-button__icon" aria-hidden="true">▶</span></button>';
+				$play        = '<button class="mw-secure-play-button" type="button" aria-label="' . esc_attr( $play_title ) . '" data-release-id="' . esc_attr( (string) $release_id ) . '"' . $default_quality . $play_labels . ( $qualities['first_streamable'] || ! $show_quality ? '' : ' disabled' ) . '><span class="mw-secure-play-button__icon" aria-hidden="true">▶</span></button>';
 			}
 
 			$row_class = 'mw-download-file-row' . ( $show_quality ? '' : ' mw-download-file-row--no-quality' );
-			$rows[]    = '<div class="' . esc_attr( $row_class ) . '" role="listitem"><div class="mw-download-file-row__title"><span class="mw-download-file-row__icon" aria-hidden="true">♫</span><strong>' . esc_html( (string) $file['label'] ) . '</strong></div>' . $quality_select . '<div class="mw-download-file-row__actions">' . $play . '<button class="wp-element-button mw-download-button" type="button" aria-label="' . esc_attr( $download_label ) . '" data-release-id="' . esc_attr( (string) $release_id ) . '"' . $default_quality . '><span class="mw-download-button__icon" aria-hidden="true">⤓</span></button></div></div>';
+			$icon = '<span class="mw-download-file-row__icon" aria-hidden="true">♫</span>';
+				if ( 'mp3' === strtolower( (string) ($file['qualities'][0]['key'] ?? '') ) || ! empty( $file['qualities'][0]['streamable'] ) ) {
+					$icon = '<span class="mw-download-file-row__icon mw-download-file-row__icon--wave" aria-hidden="true"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M3 12h2.5l2-6 3 12 2.5-8H21"/></svg></span>';
+				}
+				$rows[]    = '<div class="' . esc_attr( $row_class ) . '" role="listitem"><div class="mw-download-file-row__title">' . $icon . '<strong>' . esc_html( (string) $file['label'] ) . '</strong></div>' . $quality_select . '<div class="mw-download-file-row__actions">' . $play . '<button class="wp-element-button mw-download-button" type="button" aria-label="' . esc_attr( $download_label ) . '" data-release-id="' . esc_attr( (string) $release_id ) . '"' . $default_quality . '><span class="mw-download-button__icon" aria-hidden="true">⤓</span></button></div></div>';
 		}
 
 		return empty( $rows ) ? '' : '<div class="mw-download-file-list" role="list">' . implode( '', $rows ) . '</div>';

@@ -5,15 +5,22 @@
  * the editors without changing the public front-end appearance.
  */
 
-.editor-styles-wrapper .mw-sidebar {
+.editor-styles-wrapper .mw-sidebar .wp-block-navigation__fallback .wp-block-navigation-link > .wp-block-navigation-item__content {
 	/* Keep the sidebar usable in the editor even before the user saves
 	 * their own navigation menu: the navigation fallback list mirrors
-	 * the spacing of regular menu items. */
-	.wp-block-navigation__fallback .wp-block-navigation-link > .wp-block-navigation-item__content {
-		display: block;
-		padding: 0.6rem 0.75rem;
-		border-radius: var(--mw-radius-sm);
-	}
+	 * the spacing of regular menu items. Use a flat selector so the editor
+	 * also works on WordPress versions without CSS nesting support. */
+	display: block;
+	padding: 0.6rem 0.75rem;
+	border-radius: var(--mw-radius-sm);
+}
+
+.editor-styles-wrapper .mw-app-shell--with-sidebar > .wp-block-columns {
+	align-items: flex-start;
+}
+
+.editor-styles-wrapper .mw-app-shell--with-sidebar > .wp-block-columns > .wp-block-column {
+	min-width: 0;
 }
 
 /* The app-shell grid only applies when the shell actually contains a

@@ -25,13 +25,13 @@ final class ProductReleasePanel {
 			return;
 		}
 
-		add_meta_box( 'music-wave-product-releases', __( 'MusicWave releases', 'music-wave-core' ), array( $this, 'render' ), 'product', 'side', 'default' );
+		add_meta_box( 'music-wave-product-releases', __( 'MusicWave منتشر شد', 'music-wave-core' ), array( $this, 'render' ), 'product', 'side', 'default' );
 	}
 
 	public function render( WP_Post $post ): void {
 		$release_ids = $this->mapper->release_ids( $post->ID );
 		if ( empty( $release_ids ) ) {
-			echo '<p>' . esc_html__( 'No releases are mapped to this product.', 'music-wave-core' ) . '</p>';
+			echo '<p>' . esc_html__( 'هیچ انتشاری برای این محصول نگاشت نشده است.', 'music-wave-core' ) . '</p>';
 			return;
 		}
 

@@ -62,7 +62,7 @@ final class ArtistShelfBlock {
 			$options = $this->resolve_options( $attributes );
 			$message = '' !== $options['empty_message']
 				? $options['empty_message']
-				: __( 'No artists to show yet.', 'music-wave-core' );
+				: __( 'هنوز هنرمندی برای نمایش وجود ندارد.', 'music-wave-core' );
 
 			return '<section '
 				. BlockSupport::wrapper_attributes( 'mw-artists-shelf mw-artists-shelf--empty' )
@@ -273,7 +273,7 @@ final class ArtistShelfBlock {
 			array(
 				'post_type'              => ReleasePostType::KEY,
 				'post_status'            => 'publish',
-				'posts_per_page'         => 200,
+				'posts_per_page'         => 200, // phpcs:ignore WordPress.WP.PostsPerPage.posts_per_page_posts_per_page -- bounded release sample used to resolve visible artist terms.
 				'fields'                 => 'ids',
 				'no_found_rows'          => true,
 				'update_post_meta_cache' => false,
@@ -318,9 +318,9 @@ final class ArtistShelfBlock {
 			return '';
 		}
 
-		$name = '' !== $term->name ? $term->name : __( 'Unnamed artist', 'music-wave-core' );
+		$name = '' !== $term->name ? $term->name : __( 'هنرمند بی نام', 'music-wave-core' );
 		/* translators: %s: artist name. */
-		$open_label = sprintf( __( 'Open %s', 'music-wave-core' ), $name );
+		$open_label = sprintf( __( 'باز کردن %s', 'music-wave-core' ), $name );
 
 		$avatar = '';
 		if ( $options['show_image'] ) {
@@ -354,7 +354,7 @@ final class ArtistShelfBlock {
 			$count_html = '<p class="mw-artists-shelf__count">' . esc_html(
 				sprintf(
 					/* translators: %s: number of published releases. */
-					_n( '%s release', '%s releases', (int) $term->count, 'music-wave-core' ),
+					_n( 'انتشار %s', 'انتشار %s', (int) $term->count, 'music-wave-core' ),
 					number_format_i18n( (int) $term->count )
 				)
 			) . '</p>';
@@ -399,13 +399,13 @@ final class ArtistShelfBlock {
 	private function header( array $attributes, array $options ): string {
 		$heading = '' !== $options['heading']
 			? $options['heading']
-			: __( 'Popular artists', 'music-wave-core' );
+			: __( 'هنرمندان محبوب', 'music-wave-core' );
 
 		$more = '';
 		if ( '' !== $options['section_url'] ) {
 			$label = '' !== $options['section_label']
 				? $options['section_label']
-				: __( 'See all artists', 'music-wave-core' );
+				: __( 'دیدن همه هنرمندان', 'music-wave-core' );
 			$more  = '<a class="mw-release-shelf__more" href="' . esc_url( $options['section_url'] ) . '">' . esc_html( $label ) . '<span aria-hidden="true">&rarr;</span></a>';
 		}
 
@@ -441,10 +441,10 @@ final class ArtistShelfBlock {
 	 * @return string
 	 */
 	private function render_editor_placeholder( array $attributes ): string {
-		$label = __( 'Artists shelf', 'music-wave-core' );
+		$label = __( 'ویترین هنرمندان', 'music-wave-core' );
 		$help  = isset( $attributes['source'] ) && 'manual' === $attributes['source']
-			? __( 'No matching artists were found. Check the selected artist IDs.', 'music-wave-core' )
-			: __( 'No artists with published releases were found yet. Assign artists to releases and they appear here automatically.', 'music-wave-core' );
+			? __( 'هیچ هنرمند منطبقی پیدا نشد. شناسه‌های هنرمند انتخاب‌شده را بررسی کنید.', 'music-wave-core' )
+			: __( 'هنوز هیچ هنرمندی با انتشارهای منتشرشده یافت نشد. هنرمندان را به انتشارات اختصاص دهید و آن‌ها به‌طور خودکار در اینجا ظاهر می‌شوند.', 'music-wave-core' );
 
 		return '<div class="mw-artists-shelf mw-artists-shelf--placeholder" style="border:1px dashed currentColor;border-radius:12px;padding:2.5rem 1.5rem;text-align:center;opacity:.8;">'
 			. '<span class="dashicons dashicons-admin-users" aria-hidden="true" style="font-size:2rem;width:2rem;height:2rem;"></span>'

@@ -24,6 +24,7 @@ jobs:
       - run: composer install --no-interaction --prefer-dist
       - run: composer validate --strict
       - run: composer check:syntax
+      - run: composer check:site-editor
       - run: composer test
       - run: composer check:phpcs
       - run: composer check:phpstan

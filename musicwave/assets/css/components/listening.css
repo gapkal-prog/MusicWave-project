@@ -8,7 +8,7 @@
 }
 
 .mw-continue-listening__empty {
-	color: var(--mw-color-muted, #9ca3af);
+	color: var(--mw-color-text-muted, #a0a0a0);
 	margin: 0;
 }
 
@@ -31,13 +31,13 @@
 }
 
 .mw-continue-listening__intro {
-	color: var(--mw-color-muted, #9ca3af);
+	color: var(--mw-color-text-muted, #a0a0a0);
 	margin: .6rem 0 0;
 }
 
 .mw-continue-listening__more {
 	align-items: center;
-	color: var(--wp--preset--color--accent, #fa2d48);
+	color: var(--mw-color-accent, #1db954);
 	display: inline-flex;
 	flex: 0 0 auto;
 	font-size: .875rem;
@@ -58,7 +58,7 @@
 /* History cards reuse the shelf card; only the relative-time meta
    line needs block-specific styling. */
 .mw-continue-listening__item time {
-	color: var(--mw-color-muted, #9ca3af);
+	color: var(--mw-color-text-muted, #a0a0a0);
 	font-size: .8125rem;
 }
 
@@ -76,10 +76,10 @@
 
 .mw-continue-listening__panel-icon {
 	align-items: center;
-	background: color-mix(in srgb, var(--wp--preset--color--accent, #fa2d48) 14%, transparent);
+	background: color-mix(in srgb, var(--mw-color-accent, #1db954) 14%, transparent);
 	block-size: 3rem;
 	border-radius: 50%;
-	color: var(--wp--preset--color--accent, #fa2d48);
+	color: var(--mw-color-accent, #1db954);
 	display: inline-flex;
 	flex: 0 0 auto;
 	font-size: 1.25rem;
@@ -94,7 +94,7 @@
 }
 
 .mw-continue-listening__status {
-	color: var(--mw-color-muted, #9ca3af);
+	color: var(--mw-color-text-muted, #a0a0a0);
 	font-size: .875rem;
 	margin: .5rem 0 0;
 	width: 100%;

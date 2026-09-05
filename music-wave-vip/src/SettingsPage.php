@@ -25,7 +25,7 @@ final class SettingsPage {
 	public function add_page(): void {
 		add_submenu_page(
 			'edit.php?post_type=mw_release',
-			__( 'MusicWave VIP settings', 'music-wave-vip' ),
+			__( 'تنظیمات MusicWave VIP', 'music-wave-vip' ),
 			__( 'MusicWave VIP', 'music-wave-vip' ),
 			'manage_options',
 			self::PAGE_SLUG,
@@ -51,24 +51,24 @@ final class SettingsPage {
 				'default'           => VipSettings::defaults(),
 			)
 		);
-		add_settings_section( 'music_wave_vip_delivery', __( 'Protected delivery', 'music-wave-vip' ), array( $this, 'delivery_section' ), 'music-wave-vip' );
-		$this->field( 'delivery_provider', __( 'Delivery provider', 'music-wave-vip' ), 'delivery_provider_field' );
-		$this->field( 'protected_root', __( 'Protected files directory', 'music-wave-vip' ), 'root_field' );
-		$this->field( 'remote_base_url', __( 'Remote host base URL', 'music-wave-vip' ), 'remote_base_url_field' );
-		$this->field( 'remote_path_prefix', __( 'Remote path prefix', 'music-wave-vip' ), 'remote_path_prefix_field' );
-		$this->field( 'remote_signing_secret', __( 'Remote signing secret', 'music-wave-vip' ), 'remote_signing_secret_field' );
-		$this->field( 'remote_signature_param', __( 'Signature query parameter', 'music-wave-vip' ), 'remote_signature_param_field' );
-		$this->field( 'remote_expires_param', __( 'Expiry query parameter', 'music-wave-vip' ), 'remote_expires_param_field' );
-		$this->field( 'remote_ttl', __( 'Remote URL lifetime', 'music-wave-vip' ), 'remote_ttl_field' );
-		$this->field( 'remote_allowed_hosts', __( 'Additional allowed redirect hosts', 'music-wave-vip' ), 'remote_allowed_hosts_field' );
-		$this->field( 'remote_key_id', __( 'Signing key ID', 'music-wave-vip' ), 'remote_key_id_field' );
-		$this->field( 'sendfile_mode', __( 'Server acceleration', 'music-wave-vip' ), 'sendfile_mode_field' );
-		$this->field( 'xaccel_prefix', __( 'X-Accel internal prefix', 'music-wave-vip' ), 'xaccel_prefix_field' );
+		add_settings_section( 'music_wave_vip_delivery', __( 'تحویل حفاظت‌شده', 'music-wave-vip' ), array( $this, 'delivery_section' ), 'music-wave-vip' );
+		$this->field( 'delivery_provider', __( 'ارائه‌دهندهٔ تحویل', 'music-wave-vip' ), 'delivery_provider_field' );
+		$this->field( 'protected_root', __( 'پوشهٔ فایل‌های حفاظت‌شده', 'music-wave-vip' ), 'root_field' );
+		$this->field( 'remote_base_url', __( 'نشانی پایهٔ میزبان راه‌دور', 'music-wave-vip' ), 'remote_base_url_field' );
+		$this->field( 'remote_path_prefix', __( 'پیشوند مسیر راه‌دور', 'music-wave-vip' ), 'remote_path_prefix_field' );
+		$this->field( 'remote_signing_secret', __( 'راز امضای راه‌دور', 'music-wave-vip' ), 'remote_signing_secret_field' );
+		$this->field( 'remote_signature_param', __( 'پارامتر query امضا', 'music-wave-vip' ), 'remote_signature_param_field' );
+		$this->field( 'remote_expires_param', __( 'پارامتر query انقضا', 'music-wave-vip' ), 'remote_expires_param_field' );
+		$this->field( 'remote_ttl', __( 'طول عمر نشانی راه‌دور', 'music-wave-vip' ), 'remote_ttl_field' );
+		$this->field( 'remote_allowed_hosts', __( 'میزبان‌های مجاز اضافی برای تغییرمسیر', 'music-wave-vip' ), 'remote_allowed_hosts_field' );
+		$this->field( 'remote_key_id', __( 'شناسهٔ کلید امضا', 'music-wave-vip' ), 'remote_key_id_field' );
+		$this->field( 'sendfile_mode', __( 'شتاب‌دهی سرور', 'music-wave-vip' ), 'sendfile_mode_field' );
+		$this->field( 'xaccel_prefix', __( 'پیشوند داخلی X-Accel', 'music-wave-vip' ), 'xaccel_prefix_field' );
 
-		add_settings_section( 'music_wave_vip_membership', __( 'Membership and entitlement adapters', 'music-wave-vip' ), array( $this, 'membership_section' ), 'music-wave-vip' );
-		$this->field( 'membership_sources', __( 'Membership sources', 'music-wave-vip' ), 'membership_sources_field', 'music_wave_vip_membership' );
-		$this->field( 'plan_rows', __( 'VIP plan products', 'music-wave-vip' ), 'plan_rows_field', 'music_wave_vip_membership' );
-		$this->field( 'promote_vip_role', __( 'VIP role promotion', 'music-wave-vip' ), 'promote_vip_role_field', 'music_wave_vip_membership' );
+		add_settings_section( 'music_wave_vip_membership', __( 'آداپترهای عضویت و مجوز دسترسی', 'music-wave-vip' ), array( $this, 'membership_section' ), 'music-wave-vip' );
+		$this->field( 'membership_sources', __( 'منابع عضویت', 'music-wave-vip' ), 'membership_sources_field', 'music_wave_vip_membership' );
+		$this->field( 'plan_rows', __( 'محصولات طرح VIP', 'music-wave-vip' ), 'plan_rows_field', 'music_wave_vip_membership' );
+		$this->field( 'promote_vip_role', __( 'ارتقای نقش VIP', 'music-wave-vip' ), 'promote_vip_role_field', 'music_wave_vip_membership' );
 	}
 
 	private function field( string $id, string $label, string $callback, string $section = 'music_wave_vip_delivery' ): void {
@@ -108,17 +108,17 @@ final class SettingsPage {
 			$public_root   = defined( 'ABSPATH' ) ? realpath( ABSPATH ) : false;
 			$inside_public = false !== $public_root && 0 === stripos( $resolved ? $resolved . DIRECTORY_SEPARATOR : '', rtrim( $public_root, DIRECTORY_SEPARATOR ) . DIRECTORY_SEPARATOR );
 			if ( false === $resolved || ! is_dir( $resolved ) || ! is_readable( $resolved ) || $inside_public ) {
-				add_settings_error( VipSettings::OPTION, 'invalid_root', __( 'The protected directory must exist, be readable, and remain outside the public WordPress directory. The previous value was kept.', 'music-wave-vip' ) );
+				add_settings_error( VipSettings::OPTION, 'invalid_root', __( 'پوشهٔ حفاظت‌شده باید وجود داشته باشد، خواندنی باشد و خارج از پوشهٔ عمومی وردپرس بماند. مقدار قبلی حفظ شد.', 'music-wave-vip' ) );
 				$settings['protected_root'] = VipSettings::all()['protected_root'];
 			} else {
 				$settings['protected_root'] = $resolved;
 			}
 		}
 		if ( 'remote_redirect' === $settings['delivery_provider'] && ( '' === $settings['remote_base_url'] || '' === $settings['remote_signing_secret'] ) ) {
-			add_settings_error( VipSettings::OPTION, 'remote_incomplete', __( 'Remote redirect mode needs both an HTTPS base URL and a signing secret. Delivery remains fail-closed until both are configured.', 'music-wave-vip' ), 'warning' );
+			add_settings_error( VipSettings::OPTION, 'remote_incomplete', __( 'حالت تغییرمسیر راه‌دور هم به نشانی پایهٔ HTTPS و هم به راز امضا نیاز دارد. تا پیکربندی هر دو، تحویل با رد امن پیش‌فرض باقی می‌ماند.', 'music-wave-vip' ), 'warning' );
 		}
 		if ( '' !== (string) $settings['remote_signing_secret'] && strlen( (string) $settings['remote_signing_secret'] ) < 32 ) {
-			add_settings_error( VipSettings::OPTION, 'weak_secret', __( 'The remote signing secret is shorter than 32 characters. Signed URLs will not be issued until a stronger secret is saved.', 'music-wave-vip' ), 'warning' );
+			add_settings_error( VipSettings::OPTION, 'weak_secret', __( 'راز امضای راه‌دور کوتاه‌تر از ۳۲ نویسه است. تا ذخیرهٔ راز قوی‌تر، نشانی امضاشده صادر نمی‌شود.', 'music-wave-vip' ), 'warning' );
 		}
 
 		return $settings;
@@ -151,9 +151,9 @@ final class SettingsPage {
 
 	private function render_product_reference(): string {
 		$html  = '<div class="mwvip-product-ref">';
-		$html .= '<p><a href="' . esc_url( $this->wc_products_url() ) . '" class="button" target="_blank" rel="noopener">' . esc_html__( 'Open WooCommerce → Products', 'music-wave-vip' ) . ' <span class="dashicons dashicons-external" style="font-size:16px;vertical-align:middle;"></span></a> ';
-		$html .= '<a href="' . esc_url( $this->wc_add_product_url() ) . '" class="button button-primary" target="_blank" rel="noopener" style="margin-left:6px;">' . esc_html__( '+ Create new plan product', 'music-wave-vip' ) . '</a></p>';
-		$html .= '<p class="description">' . esc_html__( 'Tip: Create a normal WooCommerce product (Simple product, price, etc.). Note its ID from the Products list (hover → ID). Then reference that ID below.', 'music-wave-vip' ) . '</p>';
+		$html .= '<p><a href="' . esc_url( $this->wc_products_url() ) . '" class="button" target="_blank" rel="noopener">' . esc_html__( 'باز کردن ووکامرس → محصولات', 'music-wave-vip' ) . ' <span class="dashicons dashicons-external" style="font-size:16px;vertical-align:middle;"></span></a> ';
+		$html .= '<a href="' . esc_url( $this->wc_add_product_url() ) . '" class="button button-primary" target="_blank" rel="noopener" style="margin-left:6px;">' . esc_html__( '+ ایجاد محصول طرح جدید', 'music-wave-vip' ) . '</a></p>';
+		$html .= '<p class="description">' . esc_html__( 'نکته: یک محصول عادی ووکامرس بسازید (محصول ساده، قیمت و غیره). شناسهٔ آن را از فهرست محصولات یادداشت کنید (روی آن بروید → ID). سپس شناسه را پایین وارد کنید.', 'music-wave-vip' ) . '</p>';
 
 		// Lightweight product table if WooCommerce is active.
 		if ( function_exists( 'wc_get_products' ) || post_type_exists( 'product' ) ) {
@@ -167,18 +167,18 @@ final class SettingsPage {
 				)
 			);
 			if ( ! empty( $products ) ) {
-				$html .= '<table class="widefat striped" style="margin-top:10px;max-width:780px;"><thead><tr><th>' . esc_html__( 'ID', 'music-wave-vip' ) . '</th><th>' . esc_html__( 'Product', 'music-wave-vip' ) . '</th><th>' . esc_html__( 'Status', 'music-wave-vip' ) . '</th><th>' . esc_html__( 'Actions', 'music-wave-vip' ) . '</th></tr></thead><tbody>';
+				$html .= '<table class="widefat striped" style="margin-top:10px;max-width:780px;"><thead><tr><th>' . esc_html__( 'شناسه', 'music-wave-vip' ) . '</th><th>' . esc_html__( 'محصول', 'music-wave-vip' ) . '</th><th>' . esc_html__( 'وضعیت', 'music-wave-vip' ) . '</th><th>' . esc_html__( 'عملیات', 'music-wave-vip' ) . '</th></tr></thead><tbody>';
 				foreach ( $products as $p ) {
 					$edit  = get_edit_post_link( $p->ID );
-					$html .= '<tr><td><code>' . esc_html( (string) $p->ID ) . '</code></td><td>' . esc_html( get_the_title( $p->ID ) ) . '</td><td>' . esc_html( get_post_status( $p->ID ) ) . '</td><td><a href="' . esc_url( $edit ) . '">' . esc_html__( 'Edit', 'music-wave-vip' ) . '</a></td></tr>';
+					$html .= '<tr><td><code>' . esc_html( (string) $p->ID ) . '</code></td><td>' . esc_html( get_the_title( $p->ID ) ) . '</td><td>' . esc_html( get_post_status( $p->ID ) ) . '</td><td><a href="' . esc_url( $edit ) . '">' . esc_html__( 'ویرایش', 'music-wave-vip' ) . '</a></td></tr>';
 				}
 				$html .= '</tbody></table>';
-				$html .= '<p class="description">' . esc_html__( 'Copy an ID into the plan field below. Use comma-separated IDs if one level accepts multiple products.', 'music-wave-vip' ) . '</p>';
+				$html .= '<p class="description">' . esc_html__( 'شناسه را در فیلد طرح پایین وارد کنید. اگر یک سطح چند محصول می‌پذیرد، شناسه‌ها را با کاما جدا کنید.', 'music-wave-vip' ) . '</p>';
 			} else {
-				$html .= '<p class="description">' . esc_html__( 'No products found. Create your first VIP plan product to get started.', 'music-wave-vip' ) . '</p>';
+				$html .= '<p class="description">' . esc_html__( 'محصولی پیدا نشد. برای شروع، نخستین محصول طرح VIP خود را ایجاد کنید.', 'music-wave-vip' ) . '</p>';
 			}
 		} else {
-			$html .= '<div class="notice notice-warning inline" style="margin:10px 0;"><p>' . esc_html__( 'WooCommerce is not active. Activate it to manage VIP plan products. Product IDs will be available once WooCommerce is enabled.', 'music-wave-vip' ) . '</p></div>';
+			$html .= '<div class="notice notice-warning inline" style="margin:10px 0;"><p>' . esc_html__( 'ووکامرس فعال نیست. برای مدیریت محصولات طرح VIP آن را فعال کنید. پس از فعال‌شدن ووکامرس، شناسه‌های محصول در دسترس خواهند بود.', 'music-wave-vip' ) . '</p></div>';
 		}
 		$html .= '</div>';
 		return $html;
@@ -186,9 +186,9 @@ final class SettingsPage {
 
 	public function delivery_section(): void {
 		echo '<div class="mwvip-section-intro" style="background:#fff;border:1px solid #ccd0d4;border-left:4px solid #2271b1;padding:12px 16px;margin-bottom:16px;">';
-		echo '<p style="margin:0 0 8px;"><strong>' . esc_html__( 'Where protected files live and how they are delivered.', 'music-wave-vip' ) . '</strong></p>';
-		echo '<p style="margin:0;color:#50575e;">' . esc_html__( 'Local mode keeps files outside the public web root and streams them via PHP or server acceleration (X-Sendfile / X-Accel). Remote redirect mode creates short-lived HTTPS HMAC URLs for S3, R2, CDN or your own signed host.', 'music-wave-vip' ) . '</p>';
-		echo '<p style="margin:8px 0 0;"><span class="dashicons dashicons-lightbulb" style="color:#d63638;"></span> <strong>' . esc_html__( 'Beginner guide:', 'music-wave-vip' ) . '</strong> ' . esc_html__( 'Start with Local protected storage. Use Remote redirect only when your host accepts the expires, signature, and mode query parameters described below, or when a developer connects the music_wave_vip_remote_download_url filter.', 'music-wave-vip' ) . '</p>';
+		echo '<p style="margin:0 0 8px;"><strong>' . esc_html__( 'فایل‌های حفاظت‌شده کجا قرار می‌گیرند و چگونه تحویل داده می‌شوند.', 'music-wave-vip' ) . '</strong></p>';
+		echo '<p style="margin:0;color:#50575e;">' . esc_html__( 'حالت محلی فایل‌ها را خارج از ریشهٔ عمومی وب نگه می‌دارد و با PHP یا شتاب‌دهی سرور (X-Sendfile / X-Accel) پخش می‌کند. حالت تغییرمسیر راه‌دور، نشانی‌های کوتاه‌عمر HTTPS با HMAC برای S3، R2، CDN یا میزبان امضاشدهٔ خودتان می‌سازد.', 'music-wave-vip' ) . '</p>';
+		echo '<p style="margin:8px 0 0;"><span class="dashicons dashicons-lightbulb" style="color:#d63638;"></span> <strong>' . esc_html__( 'راهنمای شروع:', 'music-wave-vip' ) . '</strong> ' . esc_html__( 'با ذخیره‌سازی محلی حفاظت‌شده شروع کنید. فقط وقتی از تغییرمسیر راه‌دور استفاده کنید که میزبان شما پارامترهای expires، signature و mode زیر را بپذیرد یا توسعه‌دهنده فیلتر music_wave_vip_remote_download_url را متصل کرده باشد.', 'music-wave-vip' ) . '</p>';
 		echo '</div>';
 	}
 
@@ -196,16 +196,16 @@ final class SettingsPage {
 		$enabled = 'enabled' === (string) VipSettings::all()['module_enabled'];
 		if ( $enabled ) {
 			echo '<div class="mwvip-section-intro" style="background:#fff;border:1px solid #ccd0d4;border-left:4px solid #00a32a;padding:12px 16px;margin-bottom:16px;">';
-			echo '<p style="margin:0;"><strong>' . esc_html__( 'VIP membership enforcement is ON.', 'music-wave-vip' ) . '</strong> ' . esc_html__( 'Membership-gated releases require a valid membership level, plan grants are processed automatically, and protected downloads follow the access rules below.', 'music-wave-vip' ) . '</p>';
+			echo '<p style="margin:0;"><strong>' . esc_html__( 'اعمال عضویت VIP روشن است.', 'music-wave-vip' ) . '</strong> ' . esc_html__( 'انتشارهای مشروط به عضویت به سطح عضویت معتبر نیاز دارند، اعطای طرح‌ها خودکار انجام می‌شود و دانلودهای حفاظت‌شده از قوانین دسترسی زیر پیروی می‌کنند.', 'music-wave-vip' ) . '</p>';
 			echo '</div>';
 			return;
 		}
-		echo '<div class="notice notice-warning inline" style="margin:0 0 16px;"><p><span class="dashicons dashicons-unlock" style="color:#d63638;"></span> <strong>' . esc_html__( 'VIP membership enforcement is OFF — every membership-gated release is currently free for everyone (guests included).', 'music-wave-vip' ) . '</strong></p><p style="margin:6px 0 0;">' . esc_html__( 'Plan purchases stop granting or revoking access while the switch is off, but stored grants are preserved and everything resumes when you switch it back on. Secure file delivery keeps running; WooCommerce per-release purchases are never affected by this switch.', 'music-wave-vip' ) . '</p></div>';
+		echo '<div class="notice notice-warning inline" style="margin:0 0 16px;"><p><span class="dashicons dashicons-unlock" style="color:#d63638;"></span> <strong>' . esc_html__( 'اعمال عضویت VIP خاموش است — همهٔ انتشارهای مشروط به عضویت فعلاً برای همه رایگان‌اند (حتی مهمان‌ها).', 'music-wave-vip' ) . '</strong></p><p style="margin:6px 0 0;">' . esc_html__( 'وقتی کلید خاموش است، خرید طرح اعطا یا لغو دسترسی را متوقف می‌کند؛ اما مجوزهای ذخیره‌شده حفظ می‌شوند و با روشن‌کردن دوبارهٔ کلید همه‌چیز از سر گرفته می‌شود. تحویل امن فایل ادامه دارد؛ خریدهای ووکامرس برای هر انتشار هرگز تحت تأثیر این کلید نیستند.', 'music-wave-vip' ) . '</p></div>';
 	}
 
 	public function module_enabled_field(): void {
 		$value = (string) VipSettings::all()['module_enabled'];
-		echo '<label style="display:inline-flex;align-items:flex-start;gap:10px;padding:14px;border:2px solid ' . ( 'enabled' === $value ? '#00a32a' : '#d63638' ) . ';border-radius:6px;background:' . ( 'enabled' === $value ? '#f0f9f1' : '#fcf0f1' ) . ';max-width:760px;box-sizing:border-box;"><input type="checkbox" id="mwvip-module-enabled" name="' . esc_attr( VipSettings::OPTION ) . '[module_enabled]" value="enabled" ' . checked( $value, 'enabled', false ) . ' style="margin-top:4px;"> <span><strong style="font-size:14px;">' . esc_html__( 'Enable VIP membership enforcement (master switch)', 'music-wave-vip' ) . '</strong><br><span class="description">' . esc_html__( 'On: membership levels, plan purchases, and expiry rules are enforced. Off: all membership-gated content becomes free for everyone while secure delivery keeps working — exactly as if the paywall was lifted for a promotion. WooCommerce per-release purchases are never touched by this switch.', 'music-wave-vip' ) . '</span></span></label>';
+		echo '<label style="display:inline-flex;align-items:flex-start;gap:10px;padding:14px;border:2px solid ' . ( 'enabled' === $value ? '#00a32a' : '#d63638' ) . ';border-radius:6px;background:' . ( 'enabled' === $value ? '#f0f9f1' : '#fcf0f1' ) . ';max-width:760px;box-sizing:border-box;"><input type="checkbox" id="mwvip-module-enabled" name="' . esc_attr( VipSettings::OPTION ) . '[module_enabled]" value="enabled" ' . checked( $value, 'enabled', false ) . ' style="margin-top:4px;"> <span><strong style="font-size:14px;">' . esc_html__( 'فعال‌سازی اعمال عضویت VIP (کلید اصلی)', 'music-wave-vip' ) . '</strong><br><span class="description">' . esc_html__( 'روشن: سطح‌های عضویت، خرید طرح و قوانین انقضا اعمال می‌شوند. خاموش: همهٔ محتوای مشروط به عضویت برای همه رایگان می‌شود و تحویل امن ادامه پیدا می‌کند — درست مانند برداشتن paywall برای یک تبلیغ. خریدهای ووکامرس برای هر انتشار هرگز تحت تأثیر این کلید نیستند.', 'music-wave-vip' ) . '</span></span></label>';
 	}
 
 	/**
@@ -226,12 +226,12 @@ final class SettingsPage {
 		$disabled = $this->membership_controls_disabled();
 		foreach ( array(
 			'logged_in' => array(
-				__( 'Registered users only', 'music-wave-vip' ),
-				__( 'Visitors must register and sign in to stream or download protected audio (recommended).', 'music-wave-vip' ),
+				__( 'فقط کاربران ثبت‌نام‌شده', 'music-wave-vip' ),
+				__( 'بازدیدکنندگان برای پخش یا دانلود صدای حفاظت‌شده باید ثبت‌نام و وارد شوند (پیشنهادشده).', 'music-wave-vip' ),
 			),
 			'everyone'  => array(
-				__( 'Everyone, including guests', 'music-wave-vip' ),
-				__( 'Secure-delivery mode: registration is optional. Every visitor may stream and download, but links stay signed, short-lived, and rate-limited. Combine with a remote signed host to run a “download host only” setup without selling memberships on this site.', 'music-wave-vip' ),
+				__( 'همه، حتی مهمان‌ها', 'music-wave-vip' ),
+				__( 'حالت تحویل امن: ثبت‌نام اختیاری است. هر بازدیدکننده می‌تواند پخش و دانلود کند، اما پیوندها امضاشده، کوتاه‌عمر و دارای محدودیت نرخ باقی می‌مانند. آن را با یک میزبان راه‌دور امضاشده ترکیب کنید تا بدون فروش عضویت در این سایت، ساختار «فقط میزبان دانلود» داشته باشید.', 'music-wave-vip' ),
 			),
 		) as $key => $info ) {
 			echo '<label style="display:flex;align-items:flex-start;gap:8px;margin:0.6em 0;padding:10px;border:1px solid ' . ( $key === $value ? '#2271b1' : '#ccd0d4' ) . ';border-radius:4px;background:' . ( $key === $value ? '#f0f6fc' : '#fff' ) . ';max-width:760px;"><input type="radio" class="mwvip-module-control" name="' . esc_attr( VipSettings::OPTION ) . '[delivery_access]" value="' . esc_attr( $key ) . '" ' . checked( $value, $key, false ) . disabled( $disabled, true, false ) . ' style="margin-top:3px;"> <span><strong>' . esc_html( $info[0] ) . '</strong><br><span class="description" style="font-size:12px;">' . esc_html( $info[1] ) . '</span></span></label>';
@@ -247,18 +247,18 @@ final class SettingsPage {
 		$woo    = post_type_exists( 'product' );
 
 		echo '<div style="background:#fff;border:1px solid #ccd0d4;border-radius:4px;padding:16px;max-width:860px;margin-bottom:16px;">';
-		echo '<h3 style="margin-top:0;">' . esc_html__( 'Plan management', 'music-wave-vip' ) . '</h3>';
+		echo '<h3 style="margin-top:0;">' . esc_html__( 'مدیریت طرح', 'music-wave-vip' ) . '</h3>';
 		if ( $woo ) {
 			$url = wp_nonce_url( admin_url( 'admin-post.php?action=' . PlanProducts::ACTION_CREATE_DEFAULTS ), PlanProducts::ACTION_CREATE_DEFAULTS );
-			echo '<p><a href="' . esc_url( $url ) . '" class="button button-primary"><span class="dashicons dashicons-superhero" style="vertical-align:middle;font-size:16px;"></span> ' . esc_html__( 'Create default plans (1 / 6 / 12 months)', 'music-wave-vip' ) . '</a> <span class="description" style="margin-left:8px;">' . esc_html__( 'Creates three virtual WooCommerce products and maps them as VIP plans. Safe to press repeatedly — existing mappings are kept. Set each product price afterwards in WooCommerce.', 'music-wave-vip' ) . '</span></p>';
+			echo '<p><a href="' . esc_url( $url ) . '" class="button button-primary"><span class="dashicons dashicons-superhero" style="vertical-align:middle;font-size:16px;"></span> ' . esc_html__( 'ایجاد طرح‌های پیش‌فرض (۱، ۶ و ۱۲ ماهه)', 'music-wave-vip' ) . '</a> <span class="description" style="margin-left:8px;">' . esc_html__( 'سه محصول مجازی ووکامرس را ایجاد و به‌عنوان طرح VIP نگاشت می‌کند. فشردن چندبارهٔ آن بی‌خطر است؛ نگاشت‌های موجود حفظ می‌شوند. بعداً قیمت هر محصول را در ووکامرس تعیین کنید.', 'music-wave-vip' ) . '</span></p>';
 		} else {
-			echo '<div class="notice notice-warning inline"><p>' . esc_html__( 'Activate WooCommerce to create and sell plan products.', 'music-wave-vip' ) . '</p></div>';
+			echo '<div class="notice notice-warning inline"><p>' . esc_html__( 'برای ایجاد و فروش محصولات طرح، ووکامرس را فعال کنید.', 'music-wave-vip' ) . '</p></div>';
 		}
 
 		if ( empty( $plans ) ) {
-			echo '<p class="description" style="color:#d63638;">' . esc_html__( 'No plan mappings yet. Use the button above or add lines in the mapping box below.', 'music-wave-vip' ) . '</p>';
+			echo '<p class="description" style="color:#d63638;">' . esc_html__( 'هنوز نگاشتی برای طرح وجود ندارد. از دکمهٔ بالا استفاده کنید یا در کادر نگاشت پایین خط اضافه کنید.', 'music-wave-vip' ) . '</p>';
 		} else {
-			echo '<table class="widefat striped" style="max-width:860px;"><thead><tr><th>' . esc_html__( 'Level', 'music-wave-vip' ) . '</th><th>' . esc_html__( 'Product', 'music-wave-vip' ) . '</th><th>' . esc_html__( 'Duration', 'music-wave-vip' ) . '</th><th>' . esc_html__( 'Actions', 'music-wave-vip' ) . '</th></tr></thead><tbody>';
+			echo '<table class="widefat striped" style="max-width:860px;"><thead><tr><th>' . esc_html__( 'سطح', 'music-wave-vip' ) . '</th><th>' . esc_html__( 'محصول', 'music-wave-vip' ) . '</th><th>' . esc_html__( 'مدت', 'music-wave-vip' ) . '</th><th>' . esc_html__( 'عملیات', 'music-wave-vip' ) . '</th></tr></thead><tbody>';
 			foreach ( $plans as $plan ) {
 				if ( ! is_array( $plan ) || empty( $plan['level'] ) ) {
 					continue;
@@ -279,12 +279,12 @@ final class SettingsPage {
 				if ( $woo ) {
 					// A link, not a nested form: this table renders inside the main
 					// settings form and a nested <form> would break its nonce.
-					echo '<a class="button button-small" href="' . esc_url( $remove ) . '" onclick="return confirm(\'' . esc_js( __( 'Remove this plan mapping? The WooCommerce product itself is not deleted.', 'music-wave-vip' ) ) . '\');">' . esc_html__( 'Remove mapping', 'music-wave-vip' ) . '</a>';
+					echo '<a class="button button-small" href="' . esc_url( $remove ) . '" onclick="return confirm(\'' . esc_js( __( 'این نگاشت طرح حذف شود؟ خود محصول ووکامرس حذف نمی‌شود.', 'music-wave-vip' ) ) . '\');">' . esc_html__( 'حذف نگاشت', 'music-wave-vip' ) . '</a>';
 				}
 				echo '</td></tr>';
 			}
 			echo '</tbody></table>';
-			echo '<p class="description">' . esc_html__( 'Removing a mapping stops future grants for that level; already-granted users keep their access until it expires or is revoked. Edit a product directly in WooCommerce to change its price.', 'music-wave-vip' ) . '</p>';
+			echo '<p class="description">' . esc_html__( 'حذف نگاشت، اعطای بعدی آن سطح را متوقف می‌کند؛ کاربرانی که قبلاً مجوز گرفته‌اند تا انقضا یا لغو آن دسترسی را حفظ می‌کنند. برای تغییر قیمت، محصول را مستقیماً در ووکامرس ویرایش کنید.', 'music-wave-vip' ) . '</p>';
 		}
 		echo '</div>';
 	}
@@ -299,10 +299,10 @@ final class SettingsPage {
 		}
 		delete_transient( 'mwvip_plan_action_notice' );
 		$messages = array(
-			'mwvip_defaults_created' => __( 'Default plan products created. Set their prices in WooCommerce → Products.', 'music-wave-vip' ),
-			'mwvip_defaults_skipped' => __( 'Default plans were already configured — nothing new to create.', 'music-wave-vip' ),
-			'mwvip_defaults_failed'  => __( 'Creating the default plan products failed. Is WooCommerce active?', 'music-wave-vip' ),
-			'mwvip_plan_removed'     => __( 'Plan mapping removed. The product itself was not deleted.', 'music-wave-vip' ),
+			'mwvip_defaults_created' => __( 'محصولات طرح پیش‌فرض ایجاد شدند. قیمت آن‌ها را در ووکامرس → محصولات تعیین کنید.', 'music-wave-vip' ),
+			'mwvip_defaults_skipped' => __( 'طرح‌های پیش‌فرض از قبل پیکربندی‌شده‌اند؛ مورد جدیدی برای ایجاد نیست.', 'music-wave-vip' ),
+			'mwvip_defaults_failed'  => __( 'ایجاد محصولات طرح پیش‌فرض ناموفق بود. آیا ووکامرس فعال است؟', 'music-wave-vip' ),
+			'mwvip_plan_removed'     => __( 'نگاشت طرح حذف شد. خود محصول حذف نشده است.', 'music-wave-vip' ),
 		);
 		$class    = 'mwvip_defaults_failed' === $notice ? 'notice-error' : 'notice-success';
 		if ( isset( $messages[ $notice ] ) ) {
@@ -312,8 +312,8 @@ final class SettingsPage {
 
 	public function membership_section(): void {
 		echo '<div class="mwvip-section-intro" style="background:#fff;border:1px solid #ccd0d4;border-left:4px solid #00a32a;padding:12px 16px;margin-bottom:16px;">';
-		echo '<p style="margin:0 0 8px;">' . esc_html__( 'Access Policy remains the single source of truth. Select one or more membership sources; a user needs at least one matching level to access restricted releases. Levels are plain slugs you define per release (e.g. gold, vipgold).', 'music-wave-vip' ) . ' ' . esc_html__( 'Never put emails, passwords, direct file URLs, or private API tokens into release membership levels.', 'music-wave-vip' ) . '</p>';
-		echo '<p style="margin:8px 0 0;background:#f6f7f7;padding:8px;border-radius:4px;"><strong>' . esc_html__( 'WooCommerce plans:', 'music-wave-vip' ) . '</strong> ' . esc_html__( 'Create a normal WooCommerce product as your VIP plan, list it below, and set protected releases to Membership mode with the matching level key. When a customer purchases the plan, their account instantly gains that level and the VIP role; refunds or cancelled orders remove it immediately. Timed plans (with :days) auto-expire and demote the user to Standard.', 'music-wave-vip' ) . '</p>';
+		echo '<p style="margin:0 0 8px;">' . esc_html__( '«سیاست دسترسی» تنها مرجع معتبر باقی می‌ماند. یک یا چند منبع عضویت را انتخاب کنید؛ کاربر برای دسترسی به انتشارهای محدودشده باید دست‌کم یک سطح منطبق داشته باشد. سطح‌ها نامک‌های ساده‌ای هستند که برای هر انتشار تعریف می‌کنید (مثلاً gold یا vipgold).', 'music-wave-vip' ) . ' ' . esc_html__( 'هرگز ایمیل، گذرواژه، نشانی مستقیم فایل یا token خصوصی API را در سطح‌های عضویت انتشار وارد نکنید.', 'music-wave-vip' ) . '</p>';
+		echo '<p style="margin:8px 0 0;background:#f6f7f7;padding:8px;border-radius:4px;"><strong>' . esc_html__( 'طرح‌های ووکامرس:', 'music-wave-vip' ) . '</strong> ' . esc_html__( 'یک محصول عادی ووکامرس را به‌عنوان طرح VIP بسازید، آن را پایین فهرست کنید و انتشارهای حفاظت‌شده را روی حالت «عضویت» با همان کلید سطح تنظیم کنید. با خرید طرح، آن سطح و نقش VIP فوراً به حساب مشتری افزوده می‌شود؛ بازپرداخت یا لغو سفارش آن را بلافاصله حذف می‌کند. طرح‌های زمان‌دار (با :days) خودکار منقضی می‌شوند و کاربر را به سطح استاندارد برمی‌گردانند.', 'music-wave-vip' ) . '</p>';
 		echo '</div>';
 	}
 
@@ -326,41 +326,41 @@ final class SettingsPage {
 		$count    = count( $parsed );
 		echo $this->render_product_reference();
 		echo '<div style="margin-top:16px;background:#fff;border:1px solid #ccd0d4;border-radius:4px;padding:16px;max-width:780px;">';
-		echo '<label for="mwvip-plan-rows" style="font-weight:600;">' . esc_html__( 'VIP plan mapping', 'music-wave-vip' ) . $this->tooltip( __( 'One plan per line. Format is strict to prevent misconfiguration.', 'music-wave-vip' ) ) . '</label>';
+		echo '<label for="mwvip-plan-rows" style="font-weight:600;">' . esc_html__( 'نگاشت طرح VIP', 'music-wave-vip' ) . $this->tooltip( __( 'در هر خط یک طرح. قالب برای جلوگیری از پیکربندی نادرست سخت‌گیرانه است.', 'music-wave-vip' ) ) . '</label>';
 		echo '<textarea id="mwvip-plan-rows" class="large-text code mwvip-module-control" rows="5" placeholder="vipgold:123&#10;silver:45,46:365&#10;bronze:78:30" name="' . esc_attr( VipSettings::OPTION ) . '[plan_rows]" spellcheck="false" ' . disabled( $disabled, true, false ) . ' style="font-family:Consolas,Monaco,monospace;margin-top:8px;">' . esc_textarea( $value ) . '</textarea>';
 		echo '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px;">';
-		echo '<div><strong>' . esc_html__( 'Syntax', 'music-wave-vip' ) . '</strong><br><code>level:product_id[:days]</code><br><span class="description">' . esc_html__( 'level — membership level slug (a-z, 0-9, _, -) matching the release “Membership levels” field.', 'music-wave-vip' ) . '</span></div>';
-		echo '<div><strong>' . esc_html__( 'Examples', 'music-wave-vip' ) . '</strong><br><code>vipgold:123</code> — ' . esc_html__( 'lifetime via product 123', 'music-wave-vip' ) . '<br><code>silver:45,46:365</code> — ' . esc_html__( '1-year via product 45 or 46', 'music-wave-vip' ) . '</div>';
+		echo '<div><strong>' . esc_html__( 'نحو', 'music-wave-vip' ) . '</strong><br><code>level:product_id[:days]</code><br><span class="description">' . esc_html__( 'level — نامک سطح عضویت (a-z، 0-9، _ و -) که با فیلد «سطح‌های عضویت» انتشار مطابقت دارد.', 'music-wave-vip' ) . '</span></div>';
+		echo '<div><strong>' . esc_html__( 'نمونه‌ها', 'music-wave-vip' ) . '</strong><br><code>vipgold:123</code> — ' . esc_html__( 'مادام‌العمر با محصول ۱۲۳', 'music-wave-vip' ) . '<br><code>silver:45,46:365</code> — ' . esc_html__( 'یک‌ساله با محصول ۴۵ یا ۴۶', 'music-wave-vip' ) . '</div>';
 		echo '</div>';
-		echo $this->example_box( __( 'Example complete mapping', 'music-wave-vip' ), "vipgold:101\nsilver:102,103:365\nbronze:104:30  # 30-day trial\n# lines starting with # are comments", __( 'Product IDs are WooCommerce product IDs. Duration is in days (1–3650); omit for lifetime.', 'music-wave-vip' ) );
+		echo $this->example_box( __( 'نمونهٔ نگاشت کامل', 'music-wave-vip' ), "vipgold:101\nsilver:102,103:365\nbronze:104:30  # 30-day trial\n# lines starting with # are comments", __( 'شناسه‌های محصول، شناسهٔ محصولات ووکامرس هستند. مدت به‌روز است (۱ تا ۳۶۵۰)؛ برای مادام‌العمر خالی بگذارید.', 'music-wave-vip' ) );
 		if ( $count > 0 ) {
 			/* translators: %d: number of configured VIP plans. */
-			echo '<p class="description" style="margin-top:8px;"><span class="dashicons dashicons-yes-alt" style="color:#00a32a;"></span> ' . sprintf( esc_html__( '%d plan(s) currently configured and active.', 'music-wave-vip' ), $count ) . '</p>';
+			echo '<p class="description" style="margin-top:8px;"><span class="dashicons dashicons-yes-alt" style="color:#00a32a;"></span> ' . sprintf( esc_html__( 'در حال حاضر %d طرح فعال پیکربندی‌شده است.', 'music-wave-vip' ), $count ) . '</p>';
 		} else {
-			echo '<p class="description" style="margin-top:8px;color:#d63638;"><span class="dashicons dashicons-warning"></span> ' . esc_html__( 'No plans configured yet. Add at least one line and save.', 'music-wave-vip' ) . '</p>';
+			echo '<p class="description" style="margin-top:8px;color:#d63638;"><span class="dashicons dashicons-warning"></span> ' . esc_html__( 'هنوز طرحی پیکربندی‌نشده است. دست‌کم یک خط اضافه و ذخیره کنید.', 'music-wave-vip' ) . '</p>';
 		}
-		echo '<p class="description"><a href="' . esc_url( $this->wc_products_url() ) . '" target="_blank" rel="noopener">' . esc_html__( 'Manage products in WooCommerce →', 'music-wave-vip' ) . '</a> ' . esc_html__( '→ copy the numeric ID and paste it here.', 'music-wave-vip' ) . '</p>';
+		echo '<p class="description"><a href="' . esc_url( $this->wc_products_url() ) . '" target="_blank" rel="noopener">' . esc_html__( 'مدیریت محصولات در ووکامرس →', 'music-wave-vip' ) . '</a> ' . esc_html__( '→ شناسهٔ عددی را کپی و اینجا وارد کنید.', 'music-wave-vip' ) . '</p>';
 		echo '</div>';
 	}
 
 	public function promote_vip_role_field(): void {
 		$value    = (string) VipSettings::all()['promote_vip_role'];
 		$disabled = $this->membership_controls_disabled();
-		echo '<label style="display:inline-flex;align-items:center;gap:8px;padding:10px;border:1px solid #ccd0d4;border-radius:4px;background:#fff;"><input type="checkbox" class="mwvip-module-control" name="' . esc_attr( VipSettings::OPTION ) . '[promote_vip_role]" value="enabled" ' . checked( $value, 'enabled', false ) . disabled( $disabled, true, false ) . '> <span><strong>' . esc_html__( 'Grant the MusicWave VIP role (mw_vip)', 'music-wave-vip' ) . '</strong><br><span class="description">' . esc_html__( 'The role has only the read capability so VIP accounts are identifiable in Users → All Users. Access decisions never depend on the role alone; they re-check grants and expiry live. Leave enabled.', 'music-wave-vip' ) . '</span></span></label>';
+		echo '<label style="display:inline-flex;align-items:center;gap:8px;padding:10px;border:1px solid #ccd0d4;border-radius:4px;background:#fff;"><input type="checkbox" class="mwvip-module-control" name="' . esc_attr( VipSettings::OPTION ) . '[promote_vip_role]" value="enabled" ' . checked( $value, 'enabled', false ) . disabled( $disabled, true, false ) . '> <span><strong>' . esc_html__( 'اعطای نقش VIP MusicWave (mw_vip)', 'music-wave-vip' ) . '</strong><br><span class="description">' . esc_html__( 'این نقش فقط قابلیت خواندن دارد تا حساب‌های VIP در کاربران → همهٔ کاربران قابل شناسایی باشند. تصمیم‌های دسترسی هرگز فقط به نقش وابسته نیستند؛ اعطا و انقضا به‌صورت زنده بررسی می‌شوند. فعال بگذارید.', 'music-wave-vip' ) . '</span></span></label>';
 	}
 
 	public function delivery_provider_field(): void {
 		$value = VipSettings::all()['delivery_provider'];
 		echo '<select name="' . esc_attr( VipSettings::OPTION ) . '[delivery_provider]" id="mwvip-delivery-provider" style="min-width:280px;">';
 		foreach ( array(
-			'local'           => __( 'Local protected directory (recommended)', 'music-wave-vip' ),
-			'remote_redirect' => __( 'Remote HTTPS host with HMAC redirect', 'music-wave-vip' ),
+			'local'           => __( 'پوشهٔ حفاظت‌شدهٔ محلی (پیشنهادشده)', 'music-wave-vip' ),
+			'remote_redirect' => __( 'میزبان HTTPS راه‌دور با تغییرمسیر HMAC', 'music-wave-vip' ),
 		) as $key => $label ) {
 			echo '<option value="' . esc_attr( $key ) . '" ' . selected( $value, $key, false ) . '>' . esc_html( $label ) . '</option>';
 		}
-		echo '</select>' . $this->tooltip( __( 'Local never exposes secrets to the browser. Remote signs a short-lived URL (HMAC-SHA256) and redirects.', 'music-wave-vip' ) );
-		echo '<p class="description">' . esc_html__( 'Local = PHP or X-Sendfile/X-Accel streaming from outside public_html. Remote = S3/R2/CDN signed URL.', 'music-wave-vip' ) . '</p>';
-		echo $this->example_box( __( 'When to use which', 'music-wave-vip' ), "Local: small catalogs, low traffic, or when you control the server.\nRemote: high traffic / large FLAC/ZIP, or object storage + CDN.", __( 'Both enforce entitlement, expiry, and signed URLs.', 'music-wave-vip' ) );
+		echo '</select>' . $this->tooltip( __( 'حالت محلی هرگز رازها را در معرض مرورگر نمی‌گذارد. حالت راه‌دور یک نشانی کوتاه‌عمر را امضا می‌کند (HMAC-SHA256) و تغییرمسیر می‌دهد.', 'music-wave-vip' ) );
+		echo '<p class="description">' . esc_html__( 'محلی = پخش جریانی با PHP یا X-Sendfile/X-Accel از خارج public_html. راه‌دور = نشانی امضاشدهٔ S3/R2/CDN.', 'music-wave-vip' ) . '</p>';
+		echo $this->example_box( __( 'هرکدام را چه زمانی استفاده کنیم', 'music-wave-vip' ), "Local: small catalogs, low traffic, or when you control the server.\nRemote: high traffic / large FLAC/ZIP, or object storage + CDN.", __( 'هر دو مورد، مجوز دسترسی، انقضا و نشانی‌های امضاشده را اعمال می‌کنند.', 'music-wave-vip' ) );
 	}
 
 	public function root_field(): void {
@@ -368,70 +368,70 @@ final class SettingsPage {
 		$value    = defined( 'MUSIC_WAVE_VIP_PROTECTED_ROOT' ) ? (string) constant( 'MUSIC_WAVE_VIP_PROTECTED_ROOT' ) : (string) $settings['protected_root'];
 		$default  = dirname( rtrim( ABSPATH, '/\\' ) ) . DIRECTORY_SEPARATOR . 'musicwave-private';
 		$locked   = defined( 'MUSIC_WAVE_VIP_PROTECTED_ROOT' );
-		echo '<input class="regular-text code" type="text" name="' . esc_attr( VipSettings::OPTION ) . '[protected_root]" value="' . esc_attr( $value ) . '" placeholder="' . esc_attr( $default ) . '" ' . disabled( $locked, true, false ) . ' style="min-width:420px;">' . $this->tooltip( __( 'Absolute path outside public_html/public. Must exist, be readable/writable, and have .htaccess deny fallback.', 'music-wave-vip' ) );
+		echo '<input class="regular-text code" type="text" name="' . esc_attr( VipSettings::OPTION ) . '[protected_root]" value="' . esc_attr( $value ) . '" placeholder="' . esc_attr( $default ) . '" ' . disabled( $locked, true, false ) . ' style="min-width:420px;">' . $this->tooltip( __( 'مسیر مطلق خارج از public_html/public؛ باید وجود داشته باشد، خواندنی و نوشتنی باشد و فایل بازدارندهٔ .htaccess را به‌عنوان پشتیبان داشته باشد.', 'music-wave-vip' ) );
 		if ( $locked ) {
-			echo '<p class="description" style="color:#d63638;"><span class="dashicons dashicons-lock"></span> ' . esc_html__( 'Overridden by wp-config.php constant MUSIC_WAVE_VIP_PROTECTED_ROOT. Edit wp-config.php to change.', 'music-wave-vip' ) . '</p>';
+			echo '<p class="description" style="color:#d63638;"><span class="dashicons dashicons-lock"></span> ' . esc_html__( 'با ثابت MUSIC_WAVE_VIP_PROTECTED_ROOT در wp-config.php جایگزین می‌شود. برای تغییر، wp-config.php را ویرایش کنید.', 'music-wave-vip' ) . '</p>';
 		} else {
-			echo '<p class="description">' . esc_html__( 'Leave blank to use the auto-provisioned folder beside WordPress (when provably outside the web root).', 'music-wave-vip' ) . '<br>' . esc_html__( 'Strongly recommended for production:', 'music-wave-vip' ) . ' <code>/var/private/musicwave</code> ' . esc_html__( 'or', 'music-wave-vip' ) . ' <code>/home/user/musicwave-private</code> ' . esc_html__( '(not inside public_html).', 'music-wave-vip' ) . '</p>';
+			echo '<p class="description">' . esc_html__( 'برای استفاده از پوشهٔ خودکار کنار وردپرس (وقتی قطعی است که خارج از ریشهٔ وب است) خالی بگذارید.', 'music-wave-vip' ) . '<br>' . esc_html__( 'برای محیط عملیاتی اکیداً پیشنهاد می‌شود:', 'music-wave-vip' ) . ' <code>/var/private/musicwave</code> ' . esc_html__( 'یا', 'music-wave-vip' ) . ' <code>/home/user/musicwave-private</code> ' . esc_html__( '(داخل public_html نباشد).', 'music-wave-vip' ) . '</p>';
 		}
-		echo $this->example_box( __( 'Nginx / Apache hardening (info)', 'music-wave-vip' ), "# nginx: location /musicwave-protected/ { internal; alias /var/private/musicwave/; }\n# apache .htaccess in protected dir: Require all denied", __( 'Primary security is keeping the folder outside the web root; .htaccess/web.config are defense-in-depth only.', 'music-wave-vip' ) );
+		echo $this->example_box( __( 'سخت‌سازی Nginx / Apache (اطلاعات)', 'music-wave-vip' ), "# nginx: location /musicwave-protected/ { internal; alias /var/private/musicwave/; }\n# apache .htaccess in protected dir: Require all denied", __( 'امنیت اصلی با نگه‌داشتن پوشه خارج از ریشهٔ وب تأمین می‌شود؛ .htaccess/web.config فقط لایهٔ دفاعی مضاعف‌اند.', 'music-wave-vip' ) );
 	}
 
 	public function remote_base_url_field(): void {
 		$value = (string) VipSettings::all()['remote_base_url'];
-		echo '<input class="regular-text code" type="url" inputmode="url" placeholder="https://downloads.example.com/files" name="' . esc_attr( VipSettings::OPTION ) . '[remote_base_url]" value="' . esc_attr( $value ) . '" style="min-width:420px;">' . $this->tooltip( __( 'Must be HTTPS. Final URL = base / prefix / asset-id. Host is allowlisted.', 'music-wave-vip' ) );
-		echo '<p class="description">' . esc_html__( 'HTTPS only. Example:', 'music-wave-vip' ) . ' <code>https://cdn.example.com/musicwave</code> — ' . esc_html__( 'the generated URL becomes base + “/” + encoded asset path.', 'music-wave-vip' ) . '</p>';
+		echo '<input class="regular-text code" type="url" inputmode="url" placeholder="https://downloads.example.com/files" name="' . esc_attr( VipSettings::OPTION ) . '[remote_base_url]" value="' . esc_attr( $value ) . '" style="min-width:420px;">' . $this->tooltip( __( 'باید HTTPS باشد. نشانی نهایی = base / prefix / asset-id. میزبان در فهرست مجاز است.', 'music-wave-vip' ) );
+		echo '<p class="description">' . esc_html__( 'فقط HTTPS. نمونه:', 'music-wave-vip' ) . ' <code>https://cdn.example.com/musicwave</code> — ' . esc_html__( 'نشانی ایجادشده به‌صورت base + «/» + مسیر رمزگذاری‌شدهٔ asset خواهد بود.', 'music-wave-vip' ) . '</p>';
 	}
 
 	public function remote_path_prefix_field(): void {
 		$value = (string) VipSettings::all()['remote_path_prefix'];
-		echo '<input class="regular-text code" type="text" placeholder="musicwave" name="' . esc_attr( VipSettings::OPTION ) . '[remote_path_prefix]" value="' . esc_attr( $value ) . '">' . $this->tooltip( __( 'Optional bucket prefix / folder. Only A-Z, 0-9, ., _, -, / are kept; traversal stripped.', 'music-wave-vip' ) );
-		echo '<p class="description">' . esc_html__( 'Example:', 'music-wave-vip' ) . ' <code>vip-assets</code> → <code>https://cdn.example.com/vip-assets/album/track.flac</code></p>';
+		echo '<input class="regular-text code" type="text" placeholder="musicwave" name="' . esc_attr( VipSettings::OPTION ) . '[remote_path_prefix]" value="' . esc_attr( $value ) . '">' . $this->tooltip( __( 'پیشوند/پوشهٔ اختیاری bucket. فقط A-Z، 0-9، .، _، - و / نگه داشته می‌شوند و traversal حذف می‌شود.', 'music-wave-vip' ) );
+		echo '<p class="description">' . esc_html__( 'نمونه:', 'music-wave-vip' ) . ' <code>vip-assets</code> → <code>https://cdn.example.com/vip-assets/album/track.flac</code></p>';
 	}
 
 	public function remote_signing_secret_field(): void {
 		$value = (string) VipSettings::all()['remote_signing_secret'];
 		$has   = '' !== $value;
 		echo '<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">';
-		echo '<input class="regular-text code" type="password" autocomplete="new-password" id="mwvip-remote-secret" name="' . esc_attr( VipSettings::OPTION ) . '[remote_signing_secret]" value="" placeholder="' . esc_attr( $has ? __( 'Stored secret — leave blank to keep', 'music-wave-vip' ) : __( 'Generate: openssl rand -hex 32', 'music-wave-vip' ) ) . '" style="min-width:360px;">';
-		echo '<button type="button" class="button" id="mwvip-toggle-secret" aria-label="' . esc_attr__( 'Show/hide secret', 'music-wave-vip' ) . '"><span class="dashicons dashicons-visibility"></span></button>';
-		echo '<button type="button" class="button" id="mwvip-gen-secret">' . esc_html__( 'Generate', 'music-wave-vip' ) . '</button>';
+		echo '<input class="regular-text code" type="password" autocomplete="new-password" id="mwvip-remote-secret" name="' . esc_attr( VipSettings::OPTION ) . '[remote_signing_secret]" value="" placeholder="' . esc_attr( $has ? __( 'راز ذخیره‌شده — برای حفظ آن خالی بگذارید', 'music-wave-vip' ) : __( 'ایجاد با: openssl rand -hex 32', 'music-wave-vip' ) ) . '" style="min-width:360px;">';
+		echo '<button type="button" class="button" id="mwvip-toggle-secret" aria-label="' . esc_attr__( 'نمایش/پنهان‌کردن راز', 'music-wave-vip' ) . '"><span class="dashicons dashicons-visibility"></span></button>';
+		echo '<button type="button" class="button" id="mwvip-gen-secret">' . esc_html__( 'ایجاد', 'music-wave-vip' ) . '</button>';
 		echo '</div>';
-		echo '<p class="description">' . esc_html__( 'At least 32 random characters. Stored server-side, never sent to the browser. Generate with:', 'music-wave-vip' ) . ' <code>openssl rand -hex 32</code> ' . esc_html__( 'or the Generate button.', 'music-wave-vip' ) . '</p>';
+		echo '<p class="description">' . esc_html__( 'دست‌کم ۳۲ نویسهٔ تصادفی؛ در سمت سرور ذخیره می‌شود و هرگز به مرورگر فرستاده نمی‌شود. با این دستور بسازید:', 'music-wave-vip' ) . ' <code>openssl rand -hex 32</code> ' . esc_html__( 'یا دکمهٔ «ایجاد».', 'music-wave-vip' ) . '</p>';
 		if ( $has && strlen( $value ) < 32 ) {
-			echo '<p style="color:#d63638;"><span class="dashicons dashicons-warning"></span> ' . esc_html__( 'Current secret is too short (<32 chars). Signed URLs will not be issued until you save a stronger secret.', 'music-wave-vip' ) . '</p>';
+			echo '<p style="color:#d63638;"><span class="dashicons dashicons-warning"></span> ' . esc_html__( 'رمز فعلی کوتاه است (کمتر از ۳۲ نویسه). تا ذخیرهٔ رمز قوی‌تر، نشانی امضاشده صادر نمی‌شود.', 'music-wave-vip' ) . '</p>';
 		}
 	}
 
 	public function remote_signature_param_field(): void {
-		$this->text_field( 'remote_signature_param', 'signature', __( 'Query key receiving the base64url HMAC-SHA256 signature.', 'music-wave-vip' ) );
-		echo $this->example_box( __( 'Example remote URL', 'music-wave-vip' ), 'https://cdn.example.com/files/album/track.flac?expires=...&signature=...&mode=download&kid=k2026', __( 'Every param (path, expiry, mode, kid) is covered by the HMAC so none can be tampered with.', 'music-wave-vip' ) );
+		$this->text_field( 'remote_signature_param', 'signature', __( 'کلید query که امضای base64url با HMAC-SHA256 را دریافت می‌کند.', 'music-wave-vip' ) );
+		echo $this->example_box( __( 'نمونه نشانی راه‌دور', 'music-wave-vip' ), 'https://cdn.example.com/files/album/track.flac?expires=...&signature=...&mode=download&kid=k2026', __( 'HMAC همهٔ پارامترها (path، expiry، mode و kid) را پوشش می‌دهد تا امکان دستکاری هیچ‌کدام نباشد.', 'music-wave-vip' ) );
 	}
 
 	public function remote_expires_param_field(): void {
-		$this->text_field( 'remote_expires_param', 'expires', __( 'Query key receiving the Unix expiry timestamp.', 'music-wave-vip' ) );
+		$this->text_field( 'remote_expires_param', 'expires', __( 'کلید query که timestamp انقضای Unix را دریافت می‌کند.', 'music-wave-vip' ) );
 	}
 
 	public function remote_ttl_field(): void {
 		$value = absint( VipSettings::all()['remote_ttl'] );
-		echo '<input class="small-text" type="number" min="30" max="900" step="1" name="' . esc_attr( VipSettings::OPTION ) . '[remote_ttl]" value="' . esc_attr( (string) $value ) . '"> <span>' . esc_html__( 'seconds (30–900)', 'music-wave-vip' ) . '</span>' . $this->tooltip( __( 'Short TTL limits replay. Core token (5–15 min) + remote URL TTL both apply; entitlement is re-checked on every delivery.', 'music-wave-vip' ) );
-		echo '<p class="description">' . esc_html__( 'Recommended: 120–300 seconds. Shorter = safer but requires good clock sync.', 'music-wave-vip' ) . '</p>';
+		echo '<input class="small-text" type="number" min="30" max="900" step="1" name="' . esc_attr( VipSettings::OPTION ) . '[remote_ttl]" value="' . esc_attr( (string) $value ) . '"> <span>' . esc_html__( 'ثانیه (۳۰ تا ۹۰۰)', 'music-wave-vip' ) . '</span>' . $this->tooltip( __( 'TTL کوتاه بازپخش را محدود می‌کند. token هسته (۵ تا ۱۵ دقیقه) و TTL نشانی راه‌دور هر دو اعمال می‌شوند؛ مجوز دسترسی در هر تحویل دوباره بررسی می‌شود.', 'music-wave-vip' ) );
+		echo '<p class="description">' . esc_html__( 'پیشنهادشده: ۱۲۰ تا ۳۰۰ ثانیه. کوتاه‌تر امن‌تر است، اما به همگام‌سازی دقیق ساعت نیاز دارد.', 'music-wave-vip' ) . '</p>';
 	}
 
 	public function remote_allowed_hosts_field(): void {
 		$hosts = (array) VipSettings::all()['remote_allowed_hosts'];
-		echo '<textarea class="regular-text code" rows="3" name="' . esc_attr( VipSettings::OPTION ) . '[remote_allowed_hosts]" placeholder="mirror.example.net&#10;cdn2.example.com" style="max-width:420px;">' . esc_textarea( implode( "\n", array_map( 'strval', $hosts ) ) ) . '</textarea>' . $this->tooltip( __( 'One host per line. The remote base URL host is always allowed; redirects to any other host are refused.', 'music-wave-vip' ) );
+		echo '<textarea class="regular-text code" rows="3" name="' . esc_attr( VipSettings::OPTION ) . '[remote_allowed_hosts]" placeholder="mirror.example.net&#10;cdn2.example.com" style="max-width:420px;">' . esc_textarea( implode( "\n", array_map( 'strval', $hosts ) ) ) . '</textarea>' . $this->tooltip( __( 'در هر خط یک میزبان. میزبان نشانی پایهٔ راه‌دور همیشه مجاز است؛ تغییرمسیر به هر میزبان دیگری رد می‌شود.', 'music-wave-vip' ) );
 	}
 
 	public function remote_key_id_field(): void {
 		$value = (string) VipSettings::all()['remote_key_id'];
-		echo '<input class="regular-text code" type="text" name="' . esc_attr( VipSettings::OPTION ) . '[remote_key_id]" value="' . esc_attr( $value ) . '" placeholder="k2026">' . $this->tooltip( __( 'Optional rotation identifier appended as kid= — lets the remote host try the new secret then the old without downtime.', 'music-wave-vip' ) );
+		echo '<input class="regular-text code" type="text" name="' . esc_attr( VipSettings::OPTION ) . '[remote_key_id]" value="' . esc_attr( $value ) . '" placeholder="k2026">' . $this->tooltip( __( 'شناسهٔ چرخش اختیاری که با kid= افزوده می‌شود — به میزبان راه‌دور اجازه می‌دهد بدون قطعی ابتدا راز جدید و سپس راز قدیمی را امتحان کند.', 'music-wave-vip' ) );
 	}
 
 	public function sendfile_mode_field(): void {
 		$value = (string) VipSettings::all()['sendfile_mode'];
 		$modes = array(
-			'none'      => __( 'PHP streaming (default)', 'music-wave-vip' ),
+			'none'      => __( 'پخش جریانی با PHP (پیش‌فرض)', 'music-wave-vip' ),
 			'xsendfile' => __( 'Apache/LiteSpeed X-Sendfile', 'music-wave-vip' ),
 			'xaccel'    => __( 'nginx X-Accel-Redirect', 'music-wave-vip' ),
 		);
@@ -439,32 +439,32 @@ final class SettingsPage {
 		foreach ( $modes as $mode => $label ) {
 			echo '<option value="' . esc_attr( $mode ) . '" ' . selected( $value, $mode, false ) . '>' . esc_html( $label ) . '</option>';
 		}
-		echo '</select>' . $this->tooltip( __( 'Offloads large files to the web server so PHP workers stay free. Requires server setup.', 'music-wave-vip' ) );
-		echo '<p class="description">' . esc_html__( 'None = PHP reads and streams (simple, slower for large FLAC/ZIP). Choose X-Sendfile/X-Accel only if your host has it enabled.', 'music-wave-vip' ) . '</p>';
+		echo '</select>' . $this->tooltip( __( 'فایل‌های بزرگ را به وب‌سرور می‌سپارد تا workerهای PHP آزاد بمانند. به تنظیمات سرور نیاز دارد.', 'music-wave-vip' ) );
+		echo '<p class="description">' . esc_html__( 'هیچ‌کدام = PHP فایل را می‌خواند و پخش می‌کند (ساده‌تر، اما برای FLAC/ZIP بزرگ کندتر). X-Sendfile/X-Accel را فقط وقتی انتخاب کنید که میزبان شما آن را فعال کرده باشد.', 'music-wave-vip' ) . '</p>';
 	}
 
 	public function xaccel_prefix_field(): void {
 		$value = (string) VipSettings::all()['xaccel_prefix'];
-		echo '<input class="regular-text code" type="text" placeholder="/musicwave-protected" name="' . esc_attr( VipSettings::OPTION ) . '[xaccel_prefix]" value="' . esc_attr( $value ) . '">' . $this->tooltip( __( 'Nginx internal location that aliases to the protected directory. Must start with /.', 'music-wave-vip' ) );
-		echo '<p class="description">' . esc_html__( 'Example nginx rule:', 'music-wave-vip' ) . ' <code>location /musicwave-protected/ { internal; alias /var/private/musicwave/; }</code></p>';
+		echo '<input class="regular-text code" type="text" placeholder="/musicwave-protected" name="' . esc_attr( VipSettings::OPTION ) . '[xaccel_prefix]" value="' . esc_attr( $value ) . '">' . $this->tooltip( __( 'مکان داخلی Nginx که به پوشهٔ حفاظت‌شده alias می‌شود. باید با / شروع شود.', 'music-wave-vip' ) );
+		echo '<p class="description">' . esc_html__( 'نمونه قانون nginx:', 'music-wave-vip' ) . ' <code>location /musicwave-protected/ { internal; alias /var/private/musicwave/; }</code></p>';
 	}
 
 	public function membership_sources_field(): void {
 		$selected = (array) VipSettings::all()['membership_sources'];
 		$disabled = $this->membership_controls_disabled();
 		$options  = array(
-			'role'                      => array( __( 'WordPress roles (level equals role slug)', 'music-wave-vip' ), __( 'Simple: assign a WP role as level. Example: subscriber.', 'music-wave-vip' ) ),
-			'filter'                    => array( __( 'External membership filter (developer adapter)', 'music-wave-vip' ), __( 'For custom integrations via music_wave_vip_membership_access filter.', 'music-wave-vip' ) ),
-			'woocommerce_plans'         => array( __( 'WooCommerce plan products — Recommended', 'music-wave-vip' ), __( 'Sell a Woo product as a VIP plan; purchase grants level instantly, refund revokes.', 'music-wave-vip' ) ),
-			'woocommerce_memberships'   => array( __( 'WooCommerce Memberships (plan- prefix when needed)', 'music-wave-vip' ), __( 'Requires WooCommerce Memberships extension.', 'music-wave-vip' ) ),
-			'woocommerce_subscriptions' => array( __( 'WooCommerce Subscriptions (subscription-123 or product ID)', 'music-wave-vip' ), __( 'Requires WooCommerce Subscriptions extension.', 'music-wave-vip' ) ),
+			'role'                      => array( __( 'نقش‌های وردپرس (سطح برابر با نامک نقش)', 'music-wave-vip' ), __( 'ساده: یک نقش WP را به‌عنوان سطح اختصاص دهید. نمونه: subscriber.', 'music-wave-vip' ) ),
+			'filter'                    => array( __( 'فیلتر عضویت خارجی (آداپتر توسعه‌دهنده)', 'music-wave-vip' ), __( 'برای یکپارچه‌سازی سفارشی از طریق فیلتر music_wave_vip_membership_access.', 'music-wave-vip' ) ),
+			'woocommerce_plans'         => array( __( 'محصولات طرح ووکامرس — پیشنهادشده', 'music-wave-vip' ), __( 'یک محصول ووکامرس را به‌عنوان طرح VIP بفروشید؛ خرید سطح را فوراً اعطا می‌کند و بازپرداخت آن را پس می‌گیرد.', 'music-wave-vip' ) ),
+			'woocommerce_memberships'   => array( __( 'WooCommerce Memberships (در صورت نیاز با پیشوند plan-)', 'music-wave-vip' ), __( 'به افزونهٔ WooCommerce Memberships نیاز دارد.', 'music-wave-vip' ) ),
+			'woocommerce_subscriptions' => array( __( 'WooCommerce Subscriptions (subscription-123 یا شناسهٔ محصول)', 'music-wave-vip' ), __( 'به افزونهٔ WooCommerce Subscriptions نیاز دارد.', 'music-wave-vip' ) ),
 		);
 		foreach ( $options as $key => $info ) {
 			list( $label, $help ) = $info;
 			$checked              = in_array( $key, $selected, true );
 			echo '<label style="display:flex;align-items:center;gap:8px;margin:0.6em 0;padding:8px;border:1px solid ' . ( $checked ? '#00a32a' : '#ccd0d4' ) . ';border-radius:4px;background:' . ( $checked ? '#f0f6fc' : '#fff' ) . '"><input type="checkbox" class="mwvip-module-control" name="' . esc_attr( VipSettings::OPTION ) . '[membership_sources][]" value="' . esc_attr( $key ) . '" ' . checked( $checked, true, false ) . disabled( $disabled, true, false ) . '> <span><strong>' . esc_html( $label ) . '</strong><br><span class="description" style="font-size:12px;">' . esc_html( $help ) . '</span></span></label>';
 		}
-		echo '<p class="description">' . esc_html__( 'Tip: Use neutral release levels like gold, vipgold, or plan-pro. The same level string must be entered in the Release → Access → Membership levels field.', 'music-wave-vip' ) . '</p>';
+		echo '<p class="description">' . esc_html__( 'نکته: از سطح‌های خنثی انتشار مانند gold، vipgold یا plan-pro استفاده کنید. همین رشتهٔ سطح باید در انتشار → دسترسی → فیلد «سطح‌های عضویت» وارد شود.', 'music-wave-vip' ) . '</p>';
 	}
 
 	private function text_field( string $key, string $placeholder, string $description ): void {
@@ -502,13 +502,13 @@ final class SettingsPage {
 		<div class="wrap" id="mwvip-settings">
 			<div class="mwvip-header">
 				<div>
-					<h1><span class="dashicons dashicons-shield-alt" style="font-size:26px;color:#2271b1;"></span> <?php esc_html_e( 'MusicWave VIP', 'music-wave-vip' ); ?> <span class="mwvip-badge"><?php echo esc_html( defined( 'MUSIC_WAVE_VIP_VERSION' ) ? MUSIC_WAVE_VIP_VERSION : 'VIP' ); ?></span> <span class="mwvip-badge" style="background:<?php echo $module_on ? '#00a32a' : '#d63638'; ?>;"><?php echo esc_html( $module_on ? __( 'Enforcement on', 'music-wave-vip' ) : __( 'All content free', 'music-wave-vip' ) ); ?></span></h1>
-					<p><?php esc_html_e( 'Protected file delivery, signed remote URLs, and WooCommerce plan memberships — all fail-closed and entitlement-aware.', 'music-wave-vip' ); ?></p>
+					<h1><span class="dashicons dashicons-shield-alt" style="font-size:26px;color:#2271b1;"></span> <?php esc_html_e( 'MusicWave VIP', 'music-wave-vip' ); ?> <span class="mwvip-badge"><?php echo esc_html( defined( 'MUSIC_WAVE_VIP_VERSION' ) ? MUSIC_WAVE_VIP_VERSION : 'VIP' ); ?></span> <span class="mwvip-badge" style="background:<?php echo $module_on ? '#00a32a' : '#d63638'; ?>;"><?php echo esc_html( $module_on ? __( 'اعمال قوانین روشن است', 'music-wave-vip' ) : __( 'همهٔ محتوا رایگان است', 'music-wave-vip' ) ); ?></span></h1>
+					<p><?php esc_html_e( 'تحویل فایل حفاظت‌شده، نشانی‌های راه‌دور امضاشده و عضویت طرح‌های ووکامرس — همه با رد امن پیش‌فرض و بررسی مجوز دسترسی.', 'music-wave-vip' ); ?></p>
 				</div>
 				<div class="mwvip-quicklinks">
-					<a href="<?php echo esc_url( $this->wc_products_url() ); ?>" class="button" target="_blank" rel="noopener"><span class="dashicons dashicons-cart"></span> <?php esc_html_e( 'WooCommerce Products', 'music-wave-vip' ); ?></a>
-					<a href="<?php echo esc_url( admin_url( 'edit.php?post_type=mw_release' ) ); ?>" class="button"><span class="dashicons dashicons-album"></span> <?php esc_html_e( 'Releases', 'music-wave-vip' ); ?></a>
-					<a href="https://manacore.dev/musicwave/docs/vip" target="_blank" rel="noopener" class="button button-primary"><?php esc_html_e( 'Docs', 'music-wave-vip' ); ?> <span class="dashicons dashicons-external"></span></a>
+					<a href="<?php echo esc_url( $this->wc_products_url() ); ?>" class="button" target="_blank" rel="noopener"><span class="dashicons dashicons-cart"></span> <?php esc_html_e( 'محصولات ووکامرس', 'music-wave-vip' ); ?></a>
+					<a href="<?php echo esc_url( admin_url( 'edit.php?post_type=mw_release' ) ); ?>" class="button"><span class="dashicons dashicons-album"></span> <?php esc_html_e( 'انتشارها', 'music-wave-vip' ); ?></a>
+					<a href="https://manacore.dev/musicwave/docs/vip" target="_blank" rel="noopener" class="button button-primary"><?php esc_html_e( 'مستندات', 'music-wave-vip' ); ?> <span class="dashicons dashicons-external"></span></a>
 				</div>
 			</div>
 			<?php
@@ -517,10 +517,10 @@ final class SettingsPage {
 			$this->render_plan_action_notice();
 			?>
 			<div class="mwvip-tabs" role="tablist">
-				<button type="button" role="tab" aria-selected="true" data-tab="general" class="active"><span class="dashicons dashicons-admin-settings" style="vertical-align:middle;"></span> <?php esc_html_e( 'General', 'music-wave-vip' ); ?></button>
-				<button type="button" role="tab" aria-selected="false" data-tab="delivery"><span class="dashicons dashicons-cloud" style="vertical-align:middle;"></span> <?php esc_html_e( 'Delivery', 'music-wave-vip' ); ?></button>
-				<button type="button" role="tab" aria-selected="false" data-tab="membership"><span class="dashicons dashicons-groups" style="vertical-align:middle;"></span> <?php esc_html_e( 'Membership & Plans', 'music-wave-vip' ); ?></button>
-				<button type="button" role="tab" aria-selected="false" data-tab="advanced"><span class="dashicons dashicons-admin-generic" style="vertical-align:middle;"></span> <?php esc_html_e( 'Advanced', 'music-wave-vip' ); ?></button>
+				<button type="button" role="tab" aria-selected="true" data-tab="general" class="active"><span class="dashicons dashicons-admin-settings" style="vertical-align:middle;"></span> <?php esc_html_e( 'عمومی', 'music-wave-vip' ); ?></button>
+				<button type="button" role="tab" aria-selected="false" data-tab="delivery"><span class="dashicons dashicons-cloud" style="vertical-align:middle;"></span> <?php esc_html_e( 'تحویل فایل', 'music-wave-vip' ); ?></button>
+				<button type="button" role="tab" aria-selected="false" data-tab="membership"><span class="dashicons dashicons-groups" style="vertical-align:middle;"></span> <?php esc_html_e( 'عضویت و طرح‌ها', 'music-wave-vip' ); ?></button>
+				<button type="button" role="tab" aria-selected="false" data-tab="advanced"><span class="dashicons dashicons-admin-generic" style="vertical-align:middle;"></span> <?php esc_html_e( 'پیشرفته', 'music-wave-vip' ); ?></button>
 			</div>
 			<form action="options.php" method="post" id="mwvip-form">
 				<?php
@@ -530,87 +530,87 @@ final class SettingsPage {
 				echo '<input type="hidden" name="' . esc_attr( VipSettings::OPTION ) . '[mwvip_full_form]" value="1">';
 				?>
 				<div class="mwvip-panel active" data-panel="general">
-					<h2 style="margin-top:0;"><?php esc_html_e( 'General — master switch and access', 'music-wave-vip' ); ?></h2>
+					<h2 style="margin-top:0;"><?php esc_html_e( 'عمومی — کلید اصلی و دسترسی', 'music-wave-vip' ); ?></h2>
 					<?php $this->general_section(); ?>
 					<table class="form-table" role="presentation">
-						<tr><th><?php esc_html_e( 'VIP enforcement', 'music-wave-vip' ); ?></th><td><?php $this->module_enabled_field(); ?></td></tr>
-						<tr><th><?php esc_html_e( 'Who may stream & download protected audio', 'music-wave-vip' ); ?></th><td><?php $this->delivery_access_field(); ?></td></tr>
+						<tr><th><?php esc_html_e( 'اعمال قوانین VIP', 'music-wave-vip' ); ?></th><td><?php $this->module_enabled_field(); ?></td></tr>
+						<tr><th><?php esc_html_e( 'چه کسی می‌تواند صدای حفاظت‌شده را پخش و دانلود کند', 'music-wave-vip' ); ?></th><td><?php $this->delivery_access_field(); ?></td></tr>
 					</table>
 				</div>
 				<div class="mwvip-panel" data-panel="delivery">
-					<h2 style="margin-top:0;"><?php esc_html_e( 'Protected delivery', 'music-wave-vip' ); ?></h2>
+					<h2 style="margin-top:0;"><?php esc_html_e( 'تحویل حفاظت‌شده', 'music-wave-vip' ); ?></h2>
 					<?php $this->delivery_section(); ?>
 					<table class="form-table" role="presentation">
-						<tr><th><?php esc_html_e( 'Delivery provider', 'music-wave-vip' ); ?></th><td><?php $this->delivery_provider_field(); ?></td></tr>
-						<tr class="mwvip-local-row"><th><?php esc_html_e( 'Protected files directory', 'music-wave-vip' ); ?></th><td><?php $this->root_field(); ?></td></tr>
-						<tr class="mwvip-remote-row" <?php echo $remote_active ? '' : 'style="display:none;"'; ?>><th><?php esc_html_e( 'Remote host base URL', 'music-wave-vip' ); ?></th><td><?php $this->remote_base_url_field(); ?></td></tr>
-						<tr class="mwvip-remote-row" <?php echo $remote_active ? '' : 'style="display:none;"'; ?>><th><?php esc_html_e( 'Remote path prefix', 'music-wave-vip' ); ?></th><td><?php $this->remote_path_prefix_field(); ?></td></tr>
-						<tr class="mwvip-remote-row" <?php echo $remote_active ? '' : 'style="display:none;"'; ?>><th><?php esc_html_e( 'Remote signing secret', 'music-wave-vip' ); ?></th><td><?php $this->remote_signing_secret_field(); ?></td></tr>
-						<tr class="mwvip-remote-row" <?php echo $remote_active ? '' : 'style="display:none;"'; ?>><th><?php esc_html_e( 'Signature query parameter', 'music-wave-vip' ); ?></th><td><?php $this->remote_signature_param_field(); ?></td></tr>
-						<tr class="mwvip-remote-row" <?php echo $remote_active ? '' : 'style="display:none;"'; ?>><th><?php esc_html_e( 'Expiry query parameter', 'music-wave-vip' ); ?></th><td><?php $this->remote_expires_param_field(); ?></td></tr>
-						<tr class="mwvip-remote-row" <?php echo $remote_active ? '' : 'style="display:none;"'; ?>><th><?php esc_html_e( 'Remote URL lifetime', 'music-wave-vip' ); ?></th><td><?php $this->remote_ttl_field(); ?></td></tr>
-						<tr class="mwvip-remote-row" <?php echo $remote_active ? '' : 'style="display:none;"'; ?>><th><?php esc_html_e( 'Additional allowed redirect hosts', 'music-wave-vip' ); ?></th><td><?php $this->remote_allowed_hosts_field(); ?></td></tr>
-						<tr class="mwvip-remote-row" <?php echo $remote_active ? '' : 'style="display:none;"'; ?>><th><?php esc_html_e( 'Signing key ID', 'music-wave-vip' ); ?></th><td><?php $this->remote_key_id_field(); ?></td></tr>
+						<tr><th><?php esc_html_e( 'ارائه‌دهندهٔ تحویل', 'music-wave-vip' ); ?></th><td><?php $this->delivery_provider_field(); ?></td></tr>
+						<tr class="mwvip-local-row"><th><?php esc_html_e( 'پوشهٔ فایل‌های حفاظت‌شده', 'music-wave-vip' ); ?></th><td><?php $this->root_field(); ?></td></tr>
+						<tr class="mwvip-remote-row" <?php echo $remote_active ? '' : 'style="display:none;"'; ?>><th><?php esc_html_e( 'نشانی پایهٔ میزبان راه‌دور', 'music-wave-vip' ); ?></th><td><?php $this->remote_base_url_field(); ?></td></tr>
+						<tr class="mwvip-remote-row" <?php echo $remote_active ? '' : 'style="display:none;"'; ?>><th><?php esc_html_e( 'پیشوند مسیر راه‌دور', 'music-wave-vip' ); ?></th><td><?php $this->remote_path_prefix_field(); ?></td></tr>
+						<tr class="mwvip-remote-row" <?php echo $remote_active ? '' : 'style="display:none;"'; ?>><th><?php esc_html_e( 'راز امضای راه‌دور', 'music-wave-vip' ); ?></th><td><?php $this->remote_signing_secret_field(); ?></td></tr>
+						<tr class="mwvip-remote-row" <?php echo $remote_active ? '' : 'style="display:none;"'; ?>><th><?php esc_html_e( 'پارامتر query امضا', 'music-wave-vip' ); ?></th><td><?php $this->remote_signature_param_field(); ?></td></tr>
+						<tr class="mwvip-remote-row" <?php echo $remote_active ? '' : 'style="display:none;"'; ?>><th><?php esc_html_e( 'پارامتر query انقضا', 'music-wave-vip' ); ?></th><td><?php $this->remote_expires_param_field(); ?></td></tr>
+						<tr class="mwvip-remote-row" <?php echo $remote_active ? '' : 'style="display:none;"'; ?>><th><?php esc_html_e( 'طول عمر نشانی راه‌دور', 'music-wave-vip' ); ?></th><td><?php $this->remote_ttl_field(); ?></td></tr>
+						<tr class="mwvip-remote-row" <?php echo $remote_active ? '' : 'style="display:none;"'; ?>><th><?php esc_html_e( 'میزبان‌های مجاز اضافی برای تغییرمسیر', 'music-wave-vip' ); ?></th><td><?php $this->remote_allowed_hosts_field(); ?></td></tr>
+						<tr class="mwvip-remote-row" <?php echo $remote_active ? '' : 'style="display:none;"'; ?>><th><?php esc_html_e( 'شناسهٔ کلید امضا', 'music-wave-vip' ); ?></th><td><?php $this->remote_key_id_field(); ?></td></tr>
 					</table>
-					<h3><?php esc_html_e( 'Server acceleration', 'music-wave-vip' ); ?></h3>
+					<h3><?php esc_html_e( 'شتاب‌دهی سرور', 'music-wave-vip' ); ?></h3>
 					<table class="form-table" role="presentation">
-						<tr><th><?php esc_html_e( 'Server acceleration', 'music-wave-vip' ); ?></th><td><?php $this->sendfile_mode_field(); ?></td></tr>
-						<tr class="mwvip-xaccel-row" <?php echo 'xaccel' === (string) $settings['sendfile_mode'] ? '' : 'style="display:none;"'; ?>><th><?php esc_html_e( 'X-Accel internal prefix', 'music-wave-vip' ); ?></th><td><?php $this->xaccel_prefix_field(); ?></td></tr>
+						<tr><th><?php esc_html_e( 'شتاب‌دهی سرور', 'music-wave-vip' ); ?></th><td><?php $this->sendfile_mode_field(); ?></td></tr>
+						<tr class="mwvip-xaccel-row" <?php echo 'xaccel' === (string) $settings['sendfile_mode'] ? '' : 'style="display:none;"'; ?>><th><?php esc_html_e( 'پیشوند داخلی X-Accel', 'music-wave-vip' ); ?></th><td><?php $this->xaccel_prefix_field(); ?></td></tr>
 					</table>
 				</div>
 				<div class="mwvip-panel" data-panel="membership">
-					<h2 style="margin-top:0;"><?php esc_html_e( 'Membership & entitlement', 'music-wave-vip' ); ?></h2>
+					<h2 style="margin-top:0;"><?php esc_html_e( 'عضویت و مجوز دسترسی', 'music-wave-vip' ); ?></h2>
 					<?php if ( ! $module_on ) : ?>
-						<div class="notice notice-info inline" id="mwvip-membership-note" style="margin:0 0 16px;"><p><span class="dashicons dashicons-hidden" style="color:#2271b1;vertical-align:middle;"></span> <?php esc_html_e( 'Enforcement is switched off, so these options are read-only and not applied. Your configuration is preserved and resumes the moment the master switch is turned back on.', 'music-wave-vip' ); ?></p></div>
+						<div class="notice notice-info inline" id="mwvip-membership-note" style="margin:0 0 16px;"><p><span class="dashicons dashicons-hidden" style="color:#2271b1;vertical-align:middle;"></span> <?php esc_html_e( 'اعمال قوانین خاموش است؛ بنابراین این گزینه‌ها فقط خواندنی‌اند و اعمال نمی‌شوند. پیکربندی شما حفظ می‌شود و به‌محض روشن‌کردن دوبارهٔ کلید اصلی ادامه پیدا می‌کند.', 'music-wave-vip' ); ?></p></div>
 					<?php endif; ?>
 					<?php $this->render_plans_manager(); ?>
 					<?php $this->membership_section(); ?>
 					<table class="form-table" role="presentation">
-						<tr><th><?php esc_html_e( 'Membership sources', 'music-wave-vip' ); ?></th><td><?php $this->membership_sources_field(); ?></td></tr>
-						<tr><th><?php esc_html_e( 'VIP plan products', 'music-wave-vip' ); ?></th><td><?php $this->plan_rows_field(); ?></td></tr>
-						<tr><th><?php esc_html_e( 'VIP role promotion', 'music-wave-vip' ); ?></th><td><?php $this->promote_vip_role_field(); ?></td></tr>
+						<tr><th><?php esc_html_e( 'منابع عضویت', 'music-wave-vip' ); ?></th><td><?php $this->membership_sources_field(); ?></td></tr>
+						<tr><th><?php esc_html_e( 'محصولات طرح VIP', 'music-wave-vip' ); ?></th><td><?php $this->plan_rows_field(); ?></td></tr>
+						<tr><th><?php esc_html_e( 'ارتقای نقش VIP', 'music-wave-vip' ); ?></th><td><?php $this->promote_vip_role_field(); ?></td></tr>
 					</table>
 					<div style="background:#f0f6fc;border:1px solid #72aee6;border-radius:4px;padding:12px;margin-top:16px;">
-						<h4 style="margin:0 0 8px;"><span class="dashicons dashicons-info" style="color:#2271b1;"></span> <?php esc_html_e( 'How to assign a VIP level to a release', 'music-wave-vip' ); ?></h4>
+						<h4 style="margin:0 0 8px;"><span class="dashicons dashicons-info" style="color:#2271b1;"></span> <?php esc_html_e( 'چگونه یک سطح VIP به انتشار اختصاص دهیم', 'music-wave-vip' ); ?></h4>
 						<ol style="margin:0 0 0 18px;">
-							<li><?php esc_html_e( 'Create/edit a Product in WooCommerce → Products (e.g., “VIP Gold — Yearly”).', 'music-wave-vip' ); ?></li>
-							<li><?php /* translators: %s: example plan mapping. */ printf( esc_html__( 'Add a line below, e.g. %s, where level is your membership level slug.', 'music-wave-vip' ), '<code>vipgold:123:365</code>' ); ?></li>
-							<li><?php esc_html_e( 'Edit the Release → Access → pick “Membership” and enter the same level (vipgold) in Membership levels.', 'music-wave-vip' ); ?></li>
-							<li><?php esc_html_e( 'Publish. Customers who purchase that product instantly gain the level; expiry or refunds revoke it automatically.', 'music-wave-vip' ); ?></li>
+							<li><?php esc_html_e( 'در ووکامرس → محصولات، یک محصول ایجاد یا ویرایش کنید (مثلاً «VIP Gold — سالانه»).', 'music-wave-vip' ); ?></li>
+							<li><?php /* translators: %s: example plan mapping. */ printf( esc_html__( 'یک خط اضافه کنید؛ مثلاً %s که در آن level نامک سطح عضویت شماست.', 'music-wave-vip' ), '<code>vipgold:123:365</code>' ); ?></li>
+							<li><?php esc_html_e( 'به انتشار → دسترسی بروید، «عضویت» را انتخاب کنید و همان سطح (vipgold) را در «سطح‌های عضویت» وارد کنید.', 'music-wave-vip' ); ?></li>
+							<li><?php esc_html_e( 'منتشر کنید. مشتریانی که آن محصول را می‌خرند فوراً سطح را می‌گیرند؛ انقضا یا بازپرداخت آن را خودکار پس می‌گیرد.', 'music-wave-vip' ); ?></li>
 						</ol>
 					</div>
 				</div>
 				<div class="mwvip-panel" data-panel="advanced">
-					<h2 style="margin-top:0;"><?php esc_html_e( 'Advanced & diagnostics', 'music-wave-vip' ); ?></h2>
-					<p class="description"><?php esc_html_e( 'Operational security notes, and where the rest of MusicWave is managed. Every VIP option lives on this page — the links below point to the screens that own non-VIP settings.', 'music-wave-vip' ); ?></p>
+					<h2 style="margin-top:0;"><?php esc_html_e( 'پیشرفته و عیب‌یابی', 'music-wave-vip' ); ?></h2>
+					<p class="description"><?php esc_html_e( 'یادداشت‌های امنیت عملیاتی و محل مدیریت بخش‌های دیگر MusicWave. همهٔ گزینه‌های VIP در این صفحه هستند — پیوندهای زیر به صفحه‌های صاحب تنظیمات غیر VIP می‌روند.', 'music-wave-vip' ); ?></p>
 					<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:16px;max-width:1000px;margin-top:12px;">
 						<div style="background:#fff;border:1px solid #dcdcde;padding:14px 16px;border-radius:4px;">
-							<h4 style="margin:0 0 8px;"><?php esc_html_e( 'Security notes', 'music-wave-vip' ); ?></h4>
+							<h4 style="margin:0 0 8px;"><?php esc_html_e( 'یادداشت‌های امنیتی', 'music-wave-vip' ); ?></h4>
 							<ul style="margin:0 0 0 18px;list-style:disc;">
-								<li><?php esc_html_e( 'Remote secrets are never exposed to the browser; only short-lived signed URLs are redirected (with Referrer-Policy: no-referrer).', 'music-wave-vip' ); ?></li>
-								<li><?php esc_html_e( 'Every access decision is re-checked live; no entitlement is cached. Remote URLs include path, expiry, mode, and kid in the HMAC.', 'music-wave-vip' ); ?></li>
-								<li><?php esc_html_e( 'Keep the protected directory outside every web-served tree. .htaccess/web.config are defense-in-depth only.', 'music-wave-vip' ); ?></li>
-								<li><?php esc_html_e( 'Timed plans auto-expire via hourly cron and on login; no manual cleanup needed.', 'music-wave-vip' ); ?></li>
+								<li><?php esc_html_e( 'رازهای راه‌دور هرگز در معرض مرورگر قرار نمی‌گیرند؛ فقط نشانی‌های کوتاه‌عمر امضاشده تغییرمسیر داده می‌شوند (با Referrer-Policy: no-referrer).', 'music-wave-vip' ); ?></li>
+								<li><?php esc_html_e( 'هر تصمیم دسترسی به‌صورت زنده دوباره بررسی می‌شود و هیچ مجوزی در حافظهٔ نهان ذخیره نمی‌شود. نشانی‌های راه‌دور شامل path، expiry، mode و kid در HMAC هستند.', 'music-wave-vip' ); ?></li>
+								<li><?php esc_html_e( 'پوشهٔ حفاظت‌شده را خارج از همهٔ مسیرهای ارائه‌شده توسط وب نگه دارید. .htaccess/web.config فقط لایهٔ دفاعی مضاعف‌اند.', 'music-wave-vip' ); ?></li>
+								<li><?php esc_html_e( 'طرح‌های زمان‌دار با cron ساعتی و هنگام ورود خودکار منقضی می‌شوند؛ پاک‌سازی دستی لازم نیست.', 'music-wave-vip' ); ?></li>
 							</ul>
 						</div>
 						<div style="background:#fff;border:1px solid #dcdcde;padding:14px 16px;border-radius:4px;">
-							<h4 style="margin:0 0 8px;"><?php esc_html_e( 'Related settings', 'music-wave-vip' ); ?></h4>
+							<h4 style="margin:0 0 8px;"><?php esc_html_e( 'تنظیمات مرتبط', 'music-wave-vip' ); ?></h4>
 							<div class="mwvip-related">
-								<a class="button" href="<?php echo esc_url( admin_url( 'edit.php?post_type=mw_release&page=music-wave-settings&tab=access' ) ); ?>"><span class="dashicons dashicons-lock"></span> <?php esc_html_e( 'Access messages & membership fallback (Core)', 'music-wave-vip' ); ?></a>
-								<a class="button" href="<?php echo esc_url( admin_url( 'edit.php?post_type=mw_release&page=music-wave-settings&tab=delivery' ) ); ?>"><span class="dashicons dashicons-shield"></span> <?php esc_html_e( 'Download limits, quotas & retention (Core)', 'music-wave-vip' ); ?></a>
-								<a class="button" href="<?php echo esc_url( admin_url( 'edit.php?post_type=mw_release' ) ); ?>"><span class="dashicons dashicons-album"></span> <?php esc_html_e( 'Per-release access mode & membership levels', 'music-wave-vip' ); ?></a>
+								<a class="button" href="<?php echo esc_url( admin_url( 'edit.php?post_type=mw_release&page=music-wave-settings&tab=access' ) ); ?>"><span class="dashicons dashicons-lock"></span> <?php esc_html_e( 'پیام‌های دسترسی و مسیر جایگزین عضویت (هسته)', 'music-wave-vip' ); ?></a>
+								<a class="button" href="<?php echo esc_url( admin_url( 'edit.php?post_type=mw_release&page=music-wave-settings&tab=delivery' ) ); ?>"><span class="dashicons dashicons-shield"></span> <?php esc_html_e( 'محدودیت دانلود، سهمیه و نگه‌داری (هسته)', 'music-wave-vip' ); ?></a>
+								<a class="button" href="<?php echo esc_url( admin_url( 'edit.php?post_type=mw_release' ) ); ?>"><span class="dashicons dashicons-album"></span> <?php esc_html_e( 'حالت دسترسی هر انتشار و سطح‌های عضویت', 'music-wave-vip' ); ?></a>
 								<?php if ( class_exists( 'WooCommerce' ) ) : ?>
-									<a class="button" href="<?php echo esc_url( admin_url( 'admin.php?page=wc-settings' ) ); ?>"><span class="dashicons dashicons-cart"></span> <?php esc_html_e( 'WooCommerce settings', 'music-wave-vip' ); ?></a>
+									<a class="button" href="<?php echo esc_url( admin_url( 'admin.php?page=wc-settings' ) ); ?>"><span class="dashicons dashicons-cart"></span> <?php esc_html_e( 'تنظیمات ووکامرس', 'music-wave-vip' ); ?></a>
 								<?php endif; ?>
-								<a class="button" href="<?php echo esc_url( admin_url( 'edit.php?post_type=mw_release&page=music-wave-setup' ) ); ?>"><span class="dashicons dashicons-dashboard"></span> <?php esc_html_e( 'Setup & diagnostics', 'music-wave-vip' ); ?></a>
-								<a class="button" href="<?php echo esc_url( admin_url( 'site-health.php' ) ); ?>"><span class="dashicons dashicons-heart"></span> <?php esc_html_e( 'Site Health', 'music-wave-vip' ); ?></a>
+								<a class="button" href="<?php echo esc_url( admin_url( 'edit.php?post_type=mw_release&page=music-wave-setup' ) ); ?>"><span class="dashicons dashicons-dashboard"></span> <?php esc_html_e( 'راه‌اندازی و عیب‌یابی', 'music-wave-vip' ); ?></a>
+								<a class="button" href="<?php echo esc_url( admin_url( 'site-health.php' ) ); ?>"><span class="dashicons dashicons-heart"></span> <?php esc_html_e( 'سلامت سایت', 'music-wave-vip' ); ?></a>
 							</div>
 						</div>
 					</div>
 				</div>
 				<p style="background:#fff;border:1px solid #ccd0d4;padding:12px;border-radius:4px;display:flex;align-items:center;gap:12px;">
-					<?php submit_button( __( 'Save VIP settings', 'music-wave-vip' ), 'primary', 'submit', false ); ?>
-					<span class="description"><?php esc_html_e( 'Settings are sanitized and validated; weak secrets or bad paths will show a warning and keep the previous value.', 'music-wave-vip' ); ?></span>
+					<?php submit_button( __( 'ذخیرهٔ تنظیمات VIP', 'music-wave-vip' ), 'primary', 'submit', false ); ?>
+					<span class="description"><?php esc_html_e( 'تنظیمات پاک‌سازی و اعتبارسنجی می‌شوند؛ رازهای ضعیف یا مسیرهای نادرست هشدار نشان می‌دهند و مقدار قبلی را حفظ می‌کنند.', 'music-wave-vip' ); ?></span>
 				</p>
 			</form>
 		</div>
@@ -687,25 +687,25 @@ final class SettingsPage {
 		$screen->add_help_tab(
 			array(
 				'id'      => 'music-wave-vip-guide',
-				'title'   => __( 'VIP settings', 'music-wave-vip' ),
+				'title'   => __( 'تنظیمات VIP', 'music-wave-vip' ),
 				'content' =>
-					'<p>' . esc_html__( 'This page is the single place where every MusicWave VIP option is configured:', 'music-wave-vip' ) . '</p>' .
+					'<p>' . esc_html__( 'این صفحه تنها محل پیکربندی همهٔ گزینه‌های MusicWave VIP است:', 'music-wave-vip' ) . '</p>' .
 					'<ul>' .
-					'<li>' . esc_html__( 'General — the enforcement master switch and who may stream or download protected audio.', 'music-wave-vip' ) . '</li>' .
-					'<li>' . esc_html__( 'Delivery — local protected storage or a remote signed HTTPS host, plus server acceleration.', 'music-wave-vip' ) . '</li>' .
-					'<li>' . esc_html__( 'Membership & Plans — entitlement sources and WooCommerce plan products.', 'music-wave-vip' ) . '</li>' .
-					'<li>' . esc_html__( 'Advanced — security notes and links to the screens that own related non-VIP settings.', 'music-wave-vip' ) . '</li>' .
+					'<li>' . esc_html__( 'عمومی — کلید اصلی اعمال قوانین و اینکه چه کسی می‌تواند صدای حفاظت‌شده را پخش یا دانلود کند.', 'music-wave-vip' ) . '</li>' .
+					'<li>' . esc_html__( 'تحویل — ذخیره‌سازی محلی حفاظت‌شده یا میزبان HTTPS امضاشدهٔ راه‌دور، به‌همراه شتاب‌دهی سرور.', 'music-wave-vip' ) . '</li>' .
+					'<li>' . esc_html__( 'عضویت و طرح‌ها — منابع مجوز دسترسی و محصولات طرح ووکامرس.', 'music-wave-vip' ) . '</li>' .
+					'<li>' . esc_html__( 'پیشرفته — یادداشت‌های امنیتی و پیوند به صفحه‌هایی که تنظیمات مرتبطِ غیر VIP را مدیریت می‌کنند.', 'music-wave-vip' ) . '</li>' .
 					'</ul>' .
-					'<p>' . esc_html__( 'While the master switch is off, membership options are read-only and your configuration is preserved.', 'music-wave-vip' ) . '</p>',
+					'<p>' . esc_html__( 'تا وقتی کلید اصلی خاموش است، گزینه‌های عضویت فقط خواندنی‌اند و پیکربندی شما حفظ می‌شود.', 'music-wave-vip' ) . '</p>',
 			)
 		);
 		$screen->add_help_tab(
 			array(
 				'id'      => 'music-wave-vip-diagnostics',
-				'title'   => __( 'Help & diagnostics', 'music-wave-vip' ),
+				'title'   => __( 'راهنما و عیب‌یابی', 'music-wave-vip' ),
 				'content' =>
-					'<p>' . esc_html__( 'If protected downloads or memberships misbehave, start with the MusicWave environment checks and the WordPress Site Health screen.', 'music-wave-vip' ) . '</p>' .
-					'<p><a class="button" href="' . esc_url( admin_url( 'edit.php?post_type=mw_release&page=music-wave-setup' ) ) . '">' . esc_html__( 'Open Setup & diagnostics', 'music-wave-vip' ) . '</a> <a class="button" href="' . esc_url( admin_url( 'site-health.php' ) ) . '">' . esc_html__( 'Open Site Health', 'music-wave-vip' ) . '</a></p>',
+					'<p>' . esc_html__( 'اگر دانلودهای حفاظت‌شده یا عضویت درست کار نمی‌کنند، از بررسی‌های محیط MusicWave و صفحهٔ سلامت سایت وردپرس شروع کنید.', 'music-wave-vip' ) . '</p>' .
+					'<p><a class="button" href="' . esc_url( admin_url( 'edit.php?post_type=mw_release&page=music-wave-setup' ) ) . '">' . esc_html__( 'باز کردن راه‌اندازی و عیب‌یابی', 'music-wave-vip' ) . '</a> <a class="button" href="' . esc_url( admin_url( 'site-health.php' ) ) . '">' . esc_html__( 'باز کردن سلامت سایت', 'music-wave-vip' ) . '</a></p>',
 			)
 		);
 	}
@@ -722,12 +722,12 @@ final class SettingsPage {
 
 		$checks = ( new ProtectedAssetStorage() )->preflight();
 		$labels = array(
-			'root_resolved'    => __( 'A protected directory path is configured or derivable.', 'music-wave-vip' ),
-			'directory_exists' => __( 'The protected directory exists.', 'music-wave-vip' ),
-			'readable'         => __( 'The web server can read the protected directory.', 'music-wave-vip' ),
-			'writable'         => __( 'The web server can write uploads into the protected directory.', 'music-wave-vip' ),
-			'outside_web_root' => __( 'The directory is outside every publicly served web root.', 'music-wave-vip' ),
-			'deny_files'       => __( 'Defense-in-depth deny files (.htaccess) are present.', 'music-wave-vip' ),
+			'root_resolved'    => __( 'مسیر پوشهٔ حفاظت‌شده تنظیم شده یا قابل تشخیص است.', 'music-wave-vip' ),
+			'directory_exists' => __( 'پوشهٔ حفاظت‌شده وجود دارد.', 'music-wave-vip' ),
+			'readable'         => __( 'وب‌سرور می‌تواند پوشهٔ حفاظت‌شده را بخواند.', 'music-wave-vip' ),
+			'writable'         => __( 'وب‌سرور می‌تواند بارگذاری‌ها را در پوشهٔ حفاظت‌شده بنویسد.', 'music-wave-vip' ),
+			'outside_web_root' => __( 'پوشه خارج از همهٔ ریشه‌های وب عمومی است.', 'music-wave-vip' ),
+			'deny_files'       => __( 'فایل‌های بازدارندهٔ لایهٔ دفاعی (.htaccess) وجود دارند.', 'music-wave-vip' ),
 		);
 
 		$failed = array_keys(
@@ -742,13 +742,13 @@ final class SettingsPage {
 			return;
 		}
 
-		echo '<div class="notice notice-warning"><p><strong>' . esc_html__( 'Protected delivery preflight failed. Local downloads stay disabled until every check passes:', 'music-wave-vip' ) . '</strong></p><ul style="list-style:disc;padding-left:20px">';
+		echo '<div class="notice notice-warning"><p><strong>' . esc_html__( 'پیش‌آزمایش تحویل حفاظت‌شده ناموفق بود. دانلودهای محلی تا موفق‌شدن همهٔ بررسی‌ها غیرفعال می‌مانند:', 'music-wave-vip' ) . '</strong></p><ul style="list-style:disc;padding-left:20px">';
 		foreach ( $failed as $check ) {
 			if ( isset( $labels[ $check ] ) ) {
 				echo '<li>' . esc_html( $labels[ $check ] ) . '</li>';
 			}
 		}
-		echo '</ul><p>' . esc_html__( 'On subdirectory installations the automatic default beside WordPress is refused because it is still web-reachable. Configure an absolute path outside the server document root (for example /var/private/musicwave) and move existing files there.', 'music-wave-vip' ) . '</p></div>';
+		echo '</ul><p>' . esc_html__( 'در نصب‌های زیرپوشه‌ای، مقدار خودکار کنار وردپرس رد می‌شود چون همچنان از وب قابل دسترسی است. یک مسیر مطلق خارج از ریشهٔ اسناد سرور تنظیم کنید (مثلاً /var/private/musicwave) و فایل‌های موجود را به آنجا منتقل کنید.', 'music-wave-vip' ) . '</p></div>';
 	}
 
 	/** @param array<int, array<string, mixed>> $cards @return array<int, array<string, mixed>> */
@@ -760,20 +760,20 @@ final class SettingsPage {
 		$free_mode    = 'disabled' === (string) $configured['module_enabled'];
 		$card         = array(
 			'id'          => 'music-wave-vip',
-			'name'        => __( 'VIP protected delivery and memberships', 'music-wave-vip' ),
+			'name'        => __( 'تحویل حفاظت‌شده و عضویت‌های VIP', 'music-wave-vip' ),
 			'active'      => $active,
 			'description' => $free_mode
-				? __( 'Master switch is OFF: every membership-gated release is currently free for everyone. Protected delivery keeps running.', 'music-wave-vip' )
+				? __( 'کلید اصلی خاموش است: همهٔ انتشارهای مشروط به عضویت فعلاً برای همه رایگان‌اند. تحویل حفاظت‌شده همچنان فعال است.', 'music-wave-vip' )
 				: ( $active
 					? sprintf(
 						/* translators: 1: delivery type, 2: number of VIP plans. */
-						__( 'Connected: %1$s delivery active. %2$d VIP plan(s) configured.', 'music-wave-vip' ),
-						'local' === $configured['delivery_provider'] ? __( 'Local', 'music-wave-vip' ) : __( 'Remote signed', 'music-wave-vip' ),
+						__( 'متصل شد: تحویل %1$s فعال است. %2$d طرح VIP پیکربندی‌شده است.', 'music-wave-vip' ),
+						'local' === $configured['delivery_provider'] ? __( 'محلی', 'music-wave-vip' ) : __( 'راه‌دورِ امضاشده', 'music-wave-vip' ),
 						$plans
 					)
-					: __( 'Connect local protected storage, an HTTPS signed download host, WordPress roles, membership extensions, and WooCommerce subscriptions.', 'music-wave-vip' ) ),
+					: __( 'ذخیره‌سازی محلی حفاظت‌شده، میزبان دانلود HTTPS امضاشده، نقش‌های وردپرس، افزونه‌های عضویت و اشتراک‌های ووکامرس را به هم متصل می‌کند.', 'music-wave-vip' ) ),
 			'url'         => self::page_url(),
-			'action'      => __( 'Open VIP settings', 'music-wave-vip' ),
+			'action'      => __( 'باز کردن تنظیمات VIP', 'music-wave-vip' ),
 		);
 		foreach ( $cards as $index => $existing ) {
 			if ( is_array( $existing ) && isset( $existing['id'] ) && 'music-wave-vip' === $existing['id'] ) {

@@ -42,7 +42,7 @@ final class Metadata implements Module {
 	public function add_meta_box(): void {
 		add_meta_box(
 			'mw_metadata_lookup',
-			__( 'Auto-fill metadata & cover art', 'music-wave-core' ),
+			__( 'تکمیل خودکار فراداده و هنر جلد', 'music-wave-core' ),
 			array( $this, 'render_meta_box' ),
 			ReleasePostType::KEY,
 			'side',
@@ -61,8 +61,8 @@ final class Metadata implements Module {
 		$release_types = wp_get_post_terms( $post->ID, 'mw_release_type', array( 'fields' => 'slugs' ) );
 		$release_types = is_wp_error( $release_types ) ? array() : array_values( array_map( 'sanitize_key', $release_types ) );
 		echo '<div id="mw-metadata-lookup" class="mw-metadata-lookup" data-post-id="' . esc_attr( (string) $post->ID ) . '" data-release-types="' . esc_attr( wp_json_encode( $release_types ) ) . '">';
-		echo '<p class="description">' . esc_html__( 'Search by title, artist, album, or podcast. Applying a result can fill the description and connect Artists, Genres, Moods, and Labels using stable provider IDs and multilingual aliases.', 'music-wave-core' ) . '</p>';
-		echo '<p class="mw-metadata-lookup__loading">' . esc_html__( 'Loading lookup tools…', 'music-wave-core' ) . ' <span class="mw-metadata-lookup__spinner" aria-hidden="true"></span></p>';
+		echo '<p class="description">' . esc_html__( 'جست‌وجو بر اساس عنوان، هنرمند، آلبوم، یا پادکست. اعمال یک نتیجه می‌تواند توضیحات را پر کند و هنرمندان، ژانرها، حال‌وهواها و برچسب‌ها را با استفاده از شناسهٔ پایدار ارائه‌دهنده و نام‌های مستعار چند زبانه به یکدیگر متصل کند.', 'music-wave-core' ) . '</p>';
+		echo '<p class="mw-metadata-lookup__loading">' . esc_html__( 'در حال بارگذاری ابزارهای جست‌وجو…', 'music-wave-core' ) . ' <span class="mw-metadata-lookup__spinner" aria-hidden="true"></span></p>';
 		echo '</div>';
 		unset( $screen );
 	}
@@ -90,6 +90,9 @@ final class Metadata implements Module {
 			MUSIC_WAVE_CORE_VERSION,
 			true
 		);
+		if ( function_exists( 'wp_set_script_translations' ) ) {
+			wp_set_script_translations( 'music-wave-metadata-lookup', 'music-wave-core', MUSIC_WAVE_CORE_PATH . 'languages' );
+		}
 
 		wp_localize_script(
 			'music-wave-metadata-lookup',
@@ -98,20 +101,20 @@ final class Metadata implements Module {
 				'nonce'   => wp_create_nonce( 'wp_rest' ),
 				'root'    => esc_url_raw( rest_url( MetadataLookupRoutes::NAMESPACE . MetadataLookupRoutes::ROUTE ) ),
 				'strings' => array(
-					'queryPlaceholder' => __( 'Track, artist, or album…', 'music-wave-core' ),
-					'search'           => __( 'Search', 'music-wave-core' ),
-					'searching'        => __( 'Searching…', 'music-wave-core' ),
-					'apply'            => __( 'Apply', 'music-wave-core' ),
-					'applying'         => __( 'Applying…', 'music-wave-core' ),
-					'noResults'        => __( 'No matches found.', 'music-wave-core' ),
-					'error'            => __( 'Lookup failed. Try again.', 'music-wave-core' ),
-					'applied'          => __( 'Metadata applied.', 'music-wave-core' ),
-					'providedBy'       => __( 'Source', 'music-wave-core' ),
-					'coverAlt'         => __( 'Album cover preview', 'music-wave-core' ),
-					'refineSearch'     => __( 'Refine search', 'music-wave-core' ),
-					'artist'           => __( 'Artist', 'music-wave-core' ),
-					'album'            => __( 'Album', 'music-wave-core' ),
-					'year'             => __( 'Year', 'music-wave-core' ),
+					'queryPlaceholder' => __( 'قطعه، هنرمند یا آلبوم…', 'music-wave-core' ),
+					'search'           => __( 'جست‌وجو', 'music-wave-core' ),
+					'searching'        => __( 'جست‌وجو…', 'music-wave-core' ),
+					'apply'            => __( 'اعمال', 'music-wave-core' ),
+					'applying'         => __( 'در حال اعمال…', 'music-wave-core' ),
+					'noResults'        => __( 'هیچ منطبقی یافت نشد.', 'music-wave-core' ),
+					'error'            => __( 'جست‌وجو انجام نشد. دوباره امتحان کنید.', 'music-wave-core' ),
+					'applied'          => __( 'فراداده اعمال شد.', 'music-wave-core' ),
+					'providedBy'       => __( 'منبع', 'music-wave-core' ),
+					'coverAlt'         => __( 'پیش‌نمایش جلد آلبوم', 'music-wave-core' ),
+					'refineSearch'     => __( 'اصلاح جست‌وجو', 'music-wave-core' ),
+					'artist'           => __( 'هنرمند', 'music-wave-core' ),
+					'album'            => __( 'آلبوم', 'music-wave-core' ),
+					'year'             => __( 'سال', 'music-wave-core' ),
 				),
 			)
 		);

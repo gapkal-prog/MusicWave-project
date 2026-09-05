@@ -1,38 +1,95 @@
 {
-	"apiVersion": 3,
-	"name": "music-wave/collection-list",
-	"title": "Collection track list",
-	"category": "music-wave",
-	"description": "Displays child releases in a collection.",
-	"keywords": [ "tracks", "episodes", "discs" ],
-	"textdomain": "music-wave-core",
-	"icon": "playlist-audio",
-	"attributes": {
-		"releaseId": { "type": "integer", "default": 0 },
-		"heading": { "type": "string", "default": "" },
-		"showHeading": { "type": "boolean", "default": true },
-		"showPosition": { "type": "boolean", "default": true },
-		"showArtwork": { "type": "boolean", "default": false },
-		"showDuration": { "type": "boolean", "default": true },
-		"showTotalDuration": { "type": "boolean", "default": false },
-		"showPreview": { "type": "boolean", "default": true },
-		"showDownload": { "type": "boolean", "default": true },
-		"groupByDisc": { "type": "boolean", "default": false }
-	},
-	"usesContext": [ "postId", "postType" ],
-	"supports": {
-		"anchor": true,
-		"align": [ "wide", "full" ],
-		"border": { "color": true, "radius": true, "style": true, "width": true },
-		"color": { "background": true, "link": true, "text": true },
-		"spacing": { "blockGap": true, "margin": true, "padding": true },
-		"typography": { "fontSize": true, "lineHeight": true }
-	},
-	"example": {
-		"attributes": {
-			"showPosition": true,
-			"showDuration": true,
-			"showPreview": true
-		}
-	}
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "music-wave/collection-list",
+  "title": "لیست قطعه مجموعه",
+  "category": "music-wave",
+  "description": "انتشارهای کودک را در یک مجموعه نمایش می‌دهد.",
+  "keywords": [
+    "قطعه‌ها",
+    "قسمت‌ها",
+    "دیسک"
+  ],
+  "textdomain": "music-wave-core",
+  "icon": "playlist-audio",
+  "attributes": {
+    "releaseId": {
+      "type": "integer",
+      "default": 0
+    },
+    "heading": {
+      "type": "string",
+      "default": ""
+    },
+    "showHeading": {
+      "type": "boolean",
+      "default": true
+    },
+    "showPosition": {
+      "type": "boolean",
+      "default": true
+    },
+    "showArtwork": {
+      "type": "boolean",
+      "default": false
+    },
+    "showDuration": {
+      "type": "boolean",
+      "default": true
+    },
+    "showTotalDuration": {
+      "type": "boolean",
+      "default": false
+    },
+    "showPreview": {
+      "type": "boolean",
+      "default": true
+    },
+    "showDownload": {
+      "type": "boolean",
+      "default": true
+    },
+    "groupByDisc": {
+      "type": "boolean",
+      "default": false
+    }
+  },
+  "usesContext": [
+    "postId",
+    "postType"
+  ],
+  "supports": {
+    "anchor": true,
+    "align": [
+      "wide",
+      "full"
+    ],
+    "border": {
+      "color": true,
+      "radius": true,
+      "style": true,
+      "width": true
+    },
+    "color": {
+      "background": true,
+      "link": true,
+      "text": true
+    },
+    "spacing": {
+      "blockGap": true,
+      "margin": true,
+      "padding": true
+    },
+    "typography": {
+      "fontSize": true,
+      "lineHeight": true
+    }
+  },
+  "example": {
+    "attributes": {
+      "showPosition": true,
+      "showDuration": true,
+      "showPreview": true
+    }
+  }
 }

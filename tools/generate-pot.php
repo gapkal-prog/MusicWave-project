@@ -80,6 +80,48 @@ function musicwave_pot_entries( string $source, string $domain ): array {
 		}
 	}
 
+	// Normalize singular calls that share an msgid with an _n() pair. PO
+	// catalogs cannot contain both forms without a gettext context; keeping
+	// the plural entry preserves the complete runtime contract.
+	foreach ( $entries as $plural_key => $plural_entry ) {
+		if ( '' === $plural_entry['plural'] ) {
+			continue;
+		}
+		foreach ( $entries as $singular_key => $singular_entry ) {
+			if ( $plural_key === $singular_key || '' !== $singular_entry['plural'] ) {
+				continue;
+			}
+			if ( $plural_entry['context'] === $singular_entry['context'] && $plural_entry['singular'] === $singular_entry['singular'] ) {
+				$entries[ $plural_key ]['refs'] = array_merge( $entries[ $plural_key ]['refs'], $singular_entry['refs'] );
+				unset( $entries[ $singular_key ] );
+			}
+		}
+	}
+
+	foreach ( musicwave_pot_metadata_entries( $source, $domain ) as $metadata ) {
+		$key = $metadata['context'] . "\004" . $metadata['singular'] . "\004" . $metadata['plural'];
+		if ( isset( $entries[ $key ] ) ) {
+			$entries[ $key ]['refs'] = array_merge( $entries[ $key ]['refs'], $metadata['refs'] );
+			continue;
+		}
+
+		// A metadata keyword can be the singular side of an _n() pair. A
+		// gettext catalog cannot define both a singular-only entry and the
+		// same msgid as a plural entry, so attach the metadata reference to
+		// the existing plural entry instead of emitting a duplicate msgid.
+		$merged = false;
+		foreach ( $entries as $existing_key => $existing ) {
+			if ( $existing['context'] === $metadata['context'] && $existing['singular'] === $metadata['singular'] ) {
+				$entries[ $existing_key ]['refs'] = array_merge( $entries[ $existing_key ]['refs'], $metadata['refs'] );
+				$merged = true;
+				break;
+			}
+		}
+		if ( ! $merged ) {
+			$entries[ $key ] = $metadata;
+		}
+	}
+
 	ksort( $entries, SORT_STRING );
 	foreach ( $entries as &$entry ) {
 		$entry['refs'] = array_values( array_unique( $entry['refs'] ) );
@@ -87,6 +129,115 @@ function musicwave_pot_entries( string $source, string $domain ): array {
 	unset( $entry );
 
 	return $entries;
+}
+
+/**
+ * Extract display metadata from block.json, theme.json, and pattern headers.
+ *
+ * These values are user-facing in the inserter and Site Editor but are not
+ * wrapped in PHP or JavaScript translation calls. Keeping them in the same
+ * catalog prevents source-language drift between the editor and runtime.
+ *
+ * @return array<int, array<string, mixed>>
+ */
+function musicwave_pot_metadata_entries( string $source, string $domain ): array {
+	$entries = array();
+
+	$add = static function ( string $value, string $reference ) use ( &$entries ): void {
+		if ( '' === trim( $value ) ) {
+			return;
+		}
+		$key = "\004" . $value . "\004";
+		if ( ! isset( $entries[ $key ] ) ) {
+			$entries[ $key ] = array(
+				'context'  => '',
+				'singular' => $value,
+				'plural'   => '',
+				'refs'     => array(),
+			);
+		}
+		$entries[ $key ]['refs'][] = $reference;
+	};
+
+	foreach ( glob( $source . '/blocks/*/block.json' ) ?: array() as $path ) {
+		$contents = file_get_contents( $path );
+		$metadata = false === $contents ? null : json_decode( $contents, true );
+		if ( ! is_array( $metadata ) || (string) ( $metadata['textdomain'] ?? '' ) !== $domain ) {
+			continue;
+		}
+		$relative = str_replace( DIRECTORY_SEPARATOR, '/', ltrim( substr( $path, strlen( rtrim( $source, DIRECTORY_SEPARATOR ) ) ), DIRECTORY_SEPARATOR ) );
+		foreach ( array( 'title', 'description' ) as $field ) {
+			if ( isset( $metadata[ $field ] ) && is_string( $metadata[ $field ] ) ) {
+				$add( $metadata[ $field ], $relative );
+			}
+		}
+		if ( isset( $metadata['keywords'] ) && is_array( $metadata['keywords'] ) ) {
+			foreach ( $metadata['keywords'] as $keyword ) {
+				if ( is_string( $keyword ) ) {
+					$add( $keyword, $relative );
+				}
+			}
+		}
+	}
+
+	$theme_json_path = $source . '/theme.json';
+	if ( is_file( $theme_json_path ) ) {
+		$contents = file_get_contents( $theme_json_path );
+		$metadata = false === $contents ? null : json_decode( $contents, true );
+		if ( is_array( $metadata ) ) {
+			foreach ( array( 'customTemplates', 'templateParts' ) as $collection ) {
+				if ( ! isset( $metadata[ $collection ] ) || ! is_array( $metadata[ $collection ] ) ) {
+					continue;
+				}
+				foreach ( $metadata[ $collection ] as $template ) {
+					if ( is_array( $template ) && isset( $template['title'] ) && is_string( $template['title'] ) ) {
+						$add( $template['title'], 'theme.json' );
+					}
+				}
+			}
+
+			// WordPress translates these preset names through the theme.json
+			// i18n schema, so keep their Persian source strings in the POT too.
+			$preset_collections = array(
+				array( 'settings', 'color', 'gradients' ),
+				array( 'settings', 'color', 'palette' ),
+				array( 'settings', 'color', 'duotone' ),
+				array( 'settings', 'spacing', 'spacingSizes' ),
+				array( 'settings', 'typography', 'fontFamilies' ),
+				array( 'settings', 'typography', 'fontSizes' ),
+				array( 'settings', 'shadow', 'presets' ),
+			);
+			foreach ( $preset_collections as $path_parts ) {
+				$cursor = $metadata;
+				foreach ( $path_parts as $part ) {
+					$cursor = is_array( $cursor ) && isset( $cursor[ $part ] ) ? $cursor[ $part ] : null;
+				}
+				if ( ! is_array( $cursor ) ) {
+					continue;
+				}
+				foreach ( $cursor as $preset ) {
+					if ( is_array( $preset ) && isset( $preset['name'] ) && is_string( $preset['name'] ) ) {
+						$add( $preset['name'], 'theme.json' );
+					}
+				}
+			}
+		}
+	}
+
+	if ( is_dir( $source . '/patterns' ) ) {
+		foreach ( glob( $source . '/patterns/*.php' ) ?: array() as $path ) {
+			$contents = file_get_contents( $path );
+			if ( false === $contents ) {
+				continue;
+			}
+			if ( preg_match( '/^\s*\*\s+Title:\s+(.+)$/m', $contents, $match ) ) {
+				$relative = str_replace( DIRECTORY_SEPARATOR, '/', ltrim( substr( $path, strlen( rtrim( $source, DIRECTORY_SEPARATOR ) ) ), DIRECTORY_SEPARATOR ) );
+				$add( trim( $match[1] ), $relative );
+			}
+		}
+	}
+
+	return array_values( $entries );
 }
 
 /**

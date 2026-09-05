@@ -44,7 +44,7 @@ final class BulkAccessManager {
 		$release_type = $this->request_key( 'release_type' );
 
 		if ( ! in_array( $target, Settings::access_modes(), true ) ) {
-			$this->fail( __( 'Choose a valid target access mode.', 'music-wave-core' ) );
+			$this->fail( __( 'یک حالت دسترسی هدف معتبر را انتخاب کنید.', 'music-wave-core' ) );
 		}
 		if ( 'any' !== $current && ! in_array( $current, Settings::access_modes(), true ) ) {
 			$current = 'any';
@@ -70,7 +70,7 @@ final class BulkAccessManager {
 		$this->authorize( 'music_wave_bulk_access_continue' );
 		$job = get_transient( $this->job_key() );
 		if ( ! is_array( $job ) ) {
-			$this->fail( __( 'The bulk access job expired. Start it again.', 'music-wave-core' ) );
+			$this->fail( __( 'عملیات دسترسی گروهی منقضی شده است. آن را دوباره اجرا کنید.', 'music-wave-core' ) );
 		}
 
 		$this->process( $job );
@@ -79,7 +79,7 @@ final class BulkAccessManager {
 	public function cancel(): void {
 		$this->authorize( 'music_wave_bulk_access_cancel' );
 		delete_transient( $this->job_key() );
-		$this->set_notice( __( 'The bulk access job was cancelled.', 'music-wave-core' ), 'warning', false );
+		$this->set_notice( __( 'عملیات دسترسی گروهی لغو شد.', 'music-wave-core' ), 'warning', false );
 		$this->redirect();
 	}
 
@@ -135,7 +135,7 @@ final class BulkAccessManager {
 			set_transient( $this->job_key(), $job, HOUR_IN_SECONDS );
 			$message = sprintf(
 				/* translators: 1: number of releases updated so far, 2: number of releases skipped so far. */
-				__( 'Bulk access is still running: %1$d releases updated and %2$d skipped so far.', 'music-wave-core' ),
+				__( 'دسترسی انبوه همچنان در حال اجرا است: %1$d به‌روزرسانی شد و %2$d تاکنون نادیده گرفته شده است.', 'music-wave-core' ),
 				(int) $job['updated'],
 				(int) $job['skipped']
 			);
@@ -144,7 +144,7 @@ final class BulkAccessManager {
 			delete_transient( $this->job_key() );
 			$message = sprintf(
 				/* translators: 1: number of releases updated, 2: number of releases skipped. */
-				__( 'Bulk access completed: %1$d releases updated and %2$d skipped because their purchase or membership requirements were incomplete.', 'music-wave-core' ),
+				__( 'دسترسی انبوه تکمیل شد: انتشارهای %1$d به‌روزرسانی شدند و %2$d به دلیل ناقص بودن شرایط خرید یا عضویت آن‌ها نادیده گرفته شد.', 'music-wave-core' ),
 				(int) $job['updated'],
 				(int) $job['skipped']
 			);
@@ -257,7 +257,7 @@ final class BulkAccessManager {
 
 	private function authorize( string $action ): void {
 		if ( ! current_user_can( 'manage_options' ) || ! check_admin_referer( $action ) ) {
-			wp_die( esc_html__( 'You are not allowed to change MusicWave access settings.', 'music-wave-core' ) );
+			wp_die( esc_html__( 'شما مجاز به تغییر تنظیمات دسترسی MusicWave نیستید.', 'music-wave-core' ) );
 		}
 	}
 

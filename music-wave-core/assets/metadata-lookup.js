@@ -58,16 +58,16 @@
 		var input = document.createElement( 'input' );
 		input.type = 'search';
 		input.className = 'mw-metadata-lookup__input';
-		input.placeholder = t( 'queryPlaceholder', 'Track, artist, or album…' );
+		input.placeholder = t( 'queryPlaceholder', 'قطعه، هنرمند یا آلبوم…' );
 		input.setAttribute(
 			'aria-label',
-			t( 'queryPlaceholder', 'Track, artist, or album' )
+			t( 'queryPlaceholder', 'قطعه، هنرمند یا آلبوم' )
 		);
 
 		var button = el(
 			'button',
 			'button button-secondary mw-metadata-lookup__search',
-			t( 'search', 'Search' )
+			t( 'search', 'جست‌وجو' )
 		);
 		button.type = 'button';
 
@@ -77,13 +77,13 @@
 		var advanced = document.createElement( 'details' );
 		advanced.className = 'mw-metadata-lookup__advanced';
 		var advancedFields = el( 'div', 'mw-metadata-lookup__advanced-fields' );
-		var artistInput = searchField( 'artist', t( 'artist', 'Artist' ) );
-		var albumInput = searchField( 'album', t( 'album', 'Album' ) );
-		var yearInput = searchField( 'year', t( 'year', 'Year' ) );
+		var artistInput = searchField( 'artist', t( 'artist', 'هنرمند' ) );
+		var albumInput = searchField( 'album', t( 'album', 'آلبوم' ) );
+		var yearInput = searchField( 'year', t( 'year', 'سال' ) );
 		yearInput.inputMode = 'numeric';
 		yearInput.maxLength = 4;
 		advanced.appendChild(
-			el( 'summary', '', t( 'refineSearch', 'Refine search' ) )
+			el( 'summary', '', t( 'refineSearch', 'اصلاح جست‌وجو' ) )
 		);
 		advancedFields.appendChild( artistInput.parentNode );
 		advancedFields.appendChild( albumInput.parentNode );
@@ -137,7 +137,10 @@
 					if ( ! response.ok ) {
 						throw new Error(
 							payload.message ||
-								t( 'error', 'Lookup failed. Try again.' )
+								t(
+									'error',
+									'جست‌وجو انجام نشد. دوباره امتحان کنید.'
+								)
 						);
 					}
 					return payload;
@@ -150,14 +153,17 @@
 			var album = albumInput.value.trim();
 			if ( ! q && ! artist && ! album ) {
 				setStatus(
-					t( 'queryPlaceholder', 'Enter a track, artist, or album.' ),
+					t(
+						'queryPlaceholder',
+						'یک قطعه، هنرمند یا آلبوم وارد کنید.'
+					),
 					true
 				);
 				return;
 			}
 			var year = yearInput.value.trim();
 			button.disabled = true;
-			setStatus( t( 'searching', 'Searching…' ) );
+			setStatus( t( 'searching', 'در حال جست‌وجو…' ) );
 			results.innerHTML = '';
 
 			var params = [ 'limit=8' ];
@@ -198,7 +204,7 @@
 					) {
 						setStatus(
 							( payload && payload.message ) ||
-								t( 'noResults', 'No matches found.' ),
+								t( 'noResults', 'هیچ نتیجه‌ای پیدا نشد.' ),
 							true
 						);
 						return;
@@ -206,7 +212,7 @@
 					renderResults( payload.results, payload );
 					setStatus(
 						payload.label
-							? t( 'providedBy', 'Source' ) + ': ' + payload.label
+							? t( 'providedBy', 'منبع' ) + ': ' + payload.label
 							: ''
 					);
 				} )
@@ -214,7 +220,10 @@
 					button.disabled = false;
 					setStatus(
 						error.message ||
-							t( 'error', 'Lookup failed. Try again.' ),
+							t(
+								'error',
+								'جست‌وجو انجام نشد. دوباره امتحان کنید.'
+							),
 						true
 					);
 				} );
@@ -228,7 +237,7 @@
 				if ( item.cover_url ) {
 					var img = document.createElement( 'img' );
 					img.src = item.cover_url;
-					img.alt = t( 'coverAlt', 'Album cover preview' );
+					img.alt = t( 'coverAlt', 'پیش‌نمایش جلد آلبوم' );
 					img.className = 'mw-metadata-lookup__cover';
 					card.appendChild( img );
 				}
@@ -265,7 +274,7 @@
 				var applyBtn = el(
 					'button',
 					'button button-primary mw-metadata-lookup__apply',
-					t( 'apply', 'Apply' )
+					t( 'apply', 'اعمال' )
 				);
 				applyBtn.type = 'button';
 				applyBtn.addEventListener( 'click', function () {
@@ -304,7 +313,7 @@
 
 		function applyResult( item, payload, btn ) {
 			btn.disabled = true;
-			btn.textContent = t( 'applying', 'Applying…' );
+			btn.textContent = t( 'applying', 'در حال اعمال…' );
 
 			var body = {
 				post_id: postId,
@@ -342,10 +351,13 @@
 				.then( function ( responsePayload ) {
 					if ( ! responsePayload || ! responsePayload.success ) {
 						btn.disabled = false;
-						btn.textContent = t( 'apply', 'Apply' );
+						btn.textContent = t( 'apply', 'اعمال' );
 						setStatus(
 							( responsePayload && responsePayload.message ) ||
-								t( 'error', 'Lookup failed. Try again.' ),
+								t(
+									'error',
+									'جست‌وجو انجام نشد. دوباره امتحان کنید.'
+								),
 							true
 						);
 						return;
@@ -357,12 +369,12 @@
 							: '';
 					setStatus(
 						( responsePayload.message ||
-							t( 'applied', 'Metadata applied.' ) ) + warningText,
+							t( 'applied', 'فراداده اعمال شد.' ) ) + warningText,
 						false
 					);
 					reflectSavedFields( responsePayload );
 					btn.disabled = true;
-					btn.textContent = t( 'applied', 'Metadata applied.' );
+					btn.textContent = t( 'applied', 'فراداده اعمال شد.' );
 					if (
 						responsePayload.attachment &&
 						responsePayload.attachment.url
@@ -372,10 +384,13 @@
 				} )
 				.catch( function ( error ) {
 					btn.disabled = false;
-					btn.textContent = t( 'apply', 'Apply' );
+					btn.textContent = t( 'apply', 'اعمال' );
 					setStatus(
 						error.message ||
-							t( 'error', 'Lookup failed. Try again.' ),
+							t(
+								'error',
+								'جست‌وجو انجام نشد. دوباره امتحان کنید.'
+							),
 						true
 					);
 				} );

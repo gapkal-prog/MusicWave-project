@@ -186,6 +186,7 @@ final class ProtectedFileProvider implements DownloadProvider, StreamableDownloa
 	}
 
 	private function stream_file( string $file, int $start, int $length ): void {
+		// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fopen -- Raw binary range streaming requires a native resource handle.
 		$handle = fopen( $file, 'rb' );
 		if ( false === $handle ) {
 			return;
@@ -193,6 +194,7 @@ final class ProtectedFileProvider implements DownloadProvider, StreamableDownloa
 
 		fseek( $handle, $start );
 		while ( $length > 0 && ! feof( $handle ) ) {
+			// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fread -- Read exact byte ranges without loading protected audio into memory.
 			$chunk = fread( $handle, min( 1024 * 1024, $length ) );
 			if ( false === $chunk || '' === $chunk ) {
 				break;
@@ -201,6 +203,7 @@ final class ProtectedFileProvider implements DownloadProvider, StreamableDownloa
 			$length -= strlen( $chunk );
 			flush();
 		}
+		// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fclose -- Close the native range-stream handle opened above.
 		fclose( $handle );
 	}
 }

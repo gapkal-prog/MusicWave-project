@@ -60,7 +60,7 @@ final class PersonalData {
 		$exporters = is_array( $exporters ) ? $exporters : array();
 
 		$exporters['music-wave-library'] = array(
-			'exporter_friendly_name' => __( 'MusicWave personal library', 'music-wave-core' ),
+			'exporter_friendly_name' => __( 'کتابخانه شخصی MusicWave', 'music-wave-core' ),
 			'callback'               => array( $this, 'export' ),
 		);
 
@@ -75,7 +75,7 @@ final class PersonalData {
 		$erasers = is_array( $erasers ) ? $erasers : array();
 
 		$erasers['music-wave-library'] = array(
-			'eraser_friendly_name' => __( 'MusicWave personal library', 'music-wave-core' ),
+			'eraser_friendly_name' => __( 'کتابخانه شخصی MusicWave', 'music-wave-core' ),
 			'callback'             => array( $this, 'erase' ),
 		);
 
@@ -103,19 +103,19 @@ final class PersonalData {
 		foreach ( $this->library->all( (int) $user->ID ) as $item ) {
 			$items[] = array(
 				'group_id'    => 'music-wave-library',
-				'group_label' => __( 'Personal music library', 'music-wave-core' ),
+				'group_label' => __( 'کتابخانه شخصی موسیقی', 'music-wave-core' ),
 				'item_id'     => 'music-wave-library-' . (string) $item['type'] . '-' . (string) $item['id'],
 				'data'        => array(
 					array(
-						'name'  => __( 'Item type', 'music-wave-core' ),
+						'name'  => __( 'نوع مورد', 'music-wave-core' ),
 						'value' => (string) $item['type'],
 					),
 					array(
-						'name'  => __( 'Catalog ID', 'music-wave-core' ),
+						'name'  => __( 'کاتالوگ ID', 'music-wave-core' ),
 						'value' => (string) $item['id'],
 					),
 					array(
-						'name'  => __( 'Saved on', 'music-wave-core' ),
+						'name'  => __( 'ذخیره‌شده در', 'music-wave-core' ),
 						'value' => (int) $item['added'] > 0 ? gmdate( 'Y-m-d H:i:s', (int) $item['added'] ) : '',
 					),
 				),
@@ -126,23 +126,23 @@ final class PersonalData {
 			foreach ( $this->listening->export( (int) $user->ID ) as $row ) {
 				$items[] = array(
 					'group_id'    => 'music-wave-listening',
-					'group_label' => __( 'Listening history', 'music-wave-core' ),
+					'group_label' => __( 'تاریخچه گوش‌دادن', 'music-wave-core' ),
 					'item_id'     => 'music-wave-listening-' . (string) $row['event'] . '-' . (string) $row['release_id'],
 					'data'        => array(
 						array(
-							'name'  => __( 'Event', 'music-wave-core' ),
+							'name'  => __( 'رویداد', 'music-wave-core' ),
 							'value' => (string) $row['event'],
 						),
 						array(
-							'name'  => __( 'Catalog ID', 'music-wave-core' ),
+							'name'  => __( 'کاتالوگ ID', 'music-wave-core' ),
 							'value' => (string) $row['release_id'],
 						),
 						array(
-							'name'  => __( 'Position (seconds)', 'music-wave-core' ),
+							'name'  => __( 'موقعیت (ثانیه)', 'music-wave-core' ),
 							'value' => (string) $row['position'],
 						),
 						array(
-							'name'  => __( 'Updated', 'music-wave-core' ),
+							'name'  => __( 'به‌روز شد', 'music-wave-core' ),
 							'value' => (int) $row['updated_at'] > 0 ? gmdate( 'Y-m-d H:i:s', (int) $row['updated_at'] ) : '',
 						),
 					),
@@ -154,23 +154,23 @@ final class PersonalData {
 			foreach ( $this->playlists->export( (int) $user->ID ) as $playlist ) {
 				$items[] = array(
 					'group_id'    => 'music-wave-playlists',
-					'group_label' => __( 'Playlists', 'music-wave-core' ),
+					'group_label' => __( 'فهرست‌های پخش', 'music-wave-core' ),
 					'item_id'     => 'music-wave-playlist-' . (string) $playlist['id'],
 					'data'        => array(
 						array(
-							'name'  => __( 'Playlist', 'music-wave-core' ),
+							'name'  => __( 'فهرست پخش', 'music-wave-core' ),
 							'value' => (string) $playlist['title'],
 						),
 						array(
-							'name'  => __( 'Visibility', 'music-wave-core' ),
+							'name'  => __( 'دید', 'music-wave-core' ),
 							'value' => (string) $playlist['visibility'],
 						),
 						array(
-							'name'  => __( 'Catalog IDs', 'music-wave-core' ),
+							'name'  => __( 'کاتالوگ شناسه‌ها', 'music-wave-core' ),
 							'value' => implode( ', ', array_map( 'strval', $playlist['release_ids'] ) ),
 						),
 						array(
-							'name'  => __( 'Created', 'music-wave-core' ),
+							'name'  => __( 'ایجاد شد', 'music-wave-core' ),
 							'value' => (int) $playlist['created_at'] > 0 ? gmdate( 'Y-m-d H:i:s', (int) $playlist['created_at'] ) : '',
 						),
 					),
@@ -183,13 +183,13 @@ final class PersonalData {
 			foreach ( $this->notifications->export( (int) $user->ID ) as $channel => $enabled ) {
 				$channels[] = array(
 					'name'  => $this->notifications->label( (string) $channel ),
-					'value' => $enabled ? __( 'Enabled', 'music-wave-core' ) : __( 'Disabled', 'music-wave-core' ),
+					'value' => $enabled ? __( 'فعال شد', 'music-wave-core' ) : __( 'غیرفعال', 'music-wave-core' ),
 				);
 			}
 			if ( ! empty( $channels ) ) {
 				$items[] = array(
 					'group_id'    => 'music-wave-notifications',
-					'group_label' => __( 'Notification preferences', 'music-wave-core' ),
+					'group_label' => __( 'تنظیمات برگزیده اعلان', 'music-wave-core' ),
 					'item_id'     => 'music-wave-notifications',
 					'data'        => $channels,
 				);

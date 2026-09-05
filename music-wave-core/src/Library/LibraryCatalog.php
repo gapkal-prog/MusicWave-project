@@ -156,10 +156,10 @@ final class LibraryCatalog {
 	 */
 	public function filter_labels( array $counts ): array {
 		$labels = array(
-			self::FILTER_ALL      => __( 'All', 'music-wave-core' ),
-			self::FILTER_ARTISTS  => __( 'Artists', 'music-wave-core' ),
-			self::FILTER_WISHLIST => __( 'Wishlist', 'music-wave-core' ),
-			self::FILTER_PRESAVES => __( 'Coming soon', 'music-wave-core' ),
+			self::FILTER_ALL      => __( 'همه', 'music-wave-core' ),
+			self::FILTER_ARTISTS  => __( 'هنرمندان', 'music-wave-core' ),
+			self::FILTER_WISHLIST => __( 'لیست دلخواه', 'music-wave-core' ),
+			self::FILTER_PRESAVES => __( 'به زودی', 'music-wave-core' ),
 		);
 
 		foreach ( array_keys( $counts ) as $key ) {
@@ -189,23 +189,23 @@ final class LibraryCatalog {
 		$artists = $this->term_index->names( $release_id, 'mw_artist' );
 		$artist  = array() !== $artists ? implode( ', ', $artists ) : '';
 		$types   = $this->term_index->names( $release_id, 'mw_release_type' );
-		$type    = array() !== $types ? (string) $types[0] : __( 'Release', 'music-wave-core' );
+		$type    = array() !== $types ? (string) $types[0] : __( 'انتشار', 'music-wave-core' );
 		$title   = get_the_title( $release_id );
 		$link    = get_permalink( $release_id );
 		$year    = get_post_meta( $release_id, 'mw_release_year', true );
 
 		$grouped = $this->group_filter( $item_type );
 		if ( LibraryRepository::TYPE_WISHLIST === $item_type ) {
-			$type = __( 'Wishlist', 'music-wave-core' );
+			$type = __( 'لیست دلخواه', 'music-wave-core' );
 		}
 		if ( LibraryRepository::TYPE_PRESAVE === $item_type ) {
-			$type = __( 'Coming soon', 'music-wave-core' );
+			$type = __( 'به زودی', 'music-wave-core' );
 		}
 
 		return array(
 			'type'       => $item_type,
 			'id'         => $release_id,
-			'title'      => '' !== $title ? $title : __( 'Untitled release', 'music-wave-core' ),
+			'title'      => '' !== $title ? $title : __( 'انتشار بدون عنوان', 'music-wave-core' ),
 			'url'        => is_string( $link ) ? $link : '',
 			'image'      => get_the_post_thumbnail(
 				$release_id,
@@ -255,7 +255,7 @@ final class LibraryCatalog {
 			'url'        => ! is_wp_error( $link ) && is_string( $link ) ? $link : '',
 			'image'      => $image,
 			'subtitle'   => '',
-			'type_label' => __( 'Artist', 'music-wave-core' ),
+			'type_label' => __( 'هنرمند', 'music-wave-core' ),
 			'year'       => '',
 			'added'      => $added,
 			'type_slugs' => array( self::FILTER_ARTISTS ),

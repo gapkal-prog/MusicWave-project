@@ -261,7 +261,7 @@ final class AccountLibrary {
 	public function render_membership_endpoint(): void {
 		$user_id = get_current_user_id();
 		if ( $user_id < 1 ) {
-			echo '<p>' . esc_html__( 'Sign in to view your membership.', 'music-wave-core' ) . '</p>';
+			echo '<p>' . esc_html__( 'برای مشاهده عضویت خود وارد شوید.', 'music-wave-core' ) . '</p>';
 			return;
 		}
 
@@ -343,17 +343,17 @@ final class AccountLibrary {
 	private function render_dashboard( array $attributes ): void {
 		$user_id = get_current_user_id();
 		if ( $user_id < 1 ) {
-			echo '<section class="mw-user-dashboard mw-user-dashboard--guest"><div class="mw-user-dashboard__welcome"><span class="mw-user-dashboard__eyebrow">' . esc_html__( 'Your MusicWave', 'music-wave-core' ) . '</span><h2>' . esc_html__( 'Sign in to open your music dashboard', 'music-wave-core' ) . '</h2><p>' . esc_html__( 'Access purchases, protected downloads, account details, and your personal music library.', 'music-wave-core' ) . '</p><a class="wp-element-button" href="' . esc_url( wp_login_url( get_permalink() ) ) . '">' . esc_html__( 'Sign in', 'music-wave-core' ) . '</a></div></section>';
+			echo '<section class="mw-user-dashboard mw-user-dashboard--guest"><div class="mw-user-dashboard__welcome"><span class="mw-user-dashboard__eyebrow">' . esc_html__( 'MusicWave شما', 'music-wave-core' ) . '</span><h2>' . esc_html__( 'برای باز کردن داشبورد موسیقی خود وارد شوید', 'music-wave-core' ) . '</h2><p>' . esc_html__( 'به خریدها، دانلودهای حفاظت‌شده، جزئیات حساب و کتابخانه موسیقی شخصی خود دسترسی داشته باشید.', 'music-wave-core' ) . '</p><a class="wp-element-button" href="' . esc_url( wp_login_url( get_permalink() ) ) . '">' . esc_html__( 'وارد شوید', 'music-wave-core' ) . '</a></div></section>';
 			return;
 		}
 
 		$user  = wp_get_current_user();
 		$name  = '' !== $user->display_name ? $user->display_name : $user->user_login;
-		$intro = isset( $attributes['introText'] ) && is_string( $attributes['introText'] ) && '' !== trim( (string) $attributes['introText'] ) ? sanitize_text_field( (string) $attributes['introText'] ) : __( 'Your account, music access, downloads, and listening shortcuts in one place.', 'music-wave-core' );
+		$intro = isset( $attributes['introText'] ) && is_string( $attributes['introText'] ) && '' !== trim( (string) $attributes['introText'] ) ? sanitize_text_field( (string) $attributes['introText'] ) : __( 'میانبرهای حساب، دسترسی به موسیقی، دانلودها و گوش‌دادن شما در یک مکان.', 'music-wave-core' );
 		$style = \ManaCore\MusicWave\Core\Blocks\BlockSupport::style_variation( $attributes, array( 'tabs', 'stacked' ) );
 		$class = 'mw-user-dashboard' . ( '' !== $style ? ' ' . $style : '' );
 
-		echo '<section class="' . esc_attr( $class ) . '" data-mw-dashboard><header class="mw-user-dashboard__welcome">' . get_avatar( $user_id, 88, '', '', array( 'class' => 'mw-user-dashboard__avatar' ) ) . '<div><span class="mw-user-dashboard__eyebrow">' . esc_html__( 'Welcome back', 'music-wave-core' ) . '</span><h2>' . esc_html( $name ) . '</h2><p>' . esc_html( $intro ) . '</p></div></header>';
+		echo '<section class="' . esc_attr( $class ) . '" data-mw-dashboard><header class="mw-user-dashboard__welcome">' . get_avatar( $user_id, 88, '', '', array( 'class' => 'mw-user-dashboard__avatar' ) ) . '<div><span class="mw-user-dashboard__eyebrow">' . esc_html__( 'خوش آمدید', 'music-wave-core' ) . '</span><h2>' . esc_html( $name ) . '</h2><p>' . esc_html( $intro ) . '</p></div></header>';
 
 		if ( ! isset( $attributes['showStats'] ) || false !== $attributes['showStats'] ) {
 			$this->render_stats( $user_id );
@@ -373,7 +373,7 @@ final class AccountLibrary {
 		$panels     = $this->dashboard_panels( $user_id, $show_entitled, $attributes );
 		$logout_url = function_exists( 'wc_logout_url' ) ? wc_logout_url() : wp_logout_url( home_url( '/' ) );
 
-		echo '<nav class="mw-user-dashboard__tabs" aria-label="' . esc_attr__( 'Account sections', 'music-wave-core' ) . '">';
+		echo '<nav class="mw-user-dashboard__tabs" aria-label="' . esc_attr__( 'بخش‌های حساب', 'music-wave-core' ) . '">';
 		foreach ( $panels as $key => $panel ) {
 			// Server markup keeps every panel expanded so the dashboard remains
 			// readable when JavaScript fails; the tab controller collapses panels
@@ -382,7 +382,7 @@ final class AccountLibrary {
 		}
 		$show_sign_out = ! isset( $attributes['showSignOut'] ) || false !== $attributes['showSignOut'];
 		if ( $show_sign_out ) {
-			echo '<a class="mw-user-dashboard__tab mw-user-dashboard__tab--logout" href="' . esc_url( $logout_url ) . '"><span aria-hidden="true">&rarr;</span><strong>' . esc_html__( 'Sign out', 'music-wave-core' ) . '</strong><small>' . esc_html__( 'Securely close this account session.', 'music-wave-core' ) . '</small></a>';
+			echo '<a class="mw-user-dashboard__tab mw-user-dashboard__tab--logout" href="' . esc_url( $logout_url ) . '"><span aria-hidden="true">&rarr;</span><strong>' . esc_html__( 'خروج از سیستم', 'music-wave-core' ) . '</strong><small>' . esc_html__( 'این جلسه حساب را ایمن ببندید.', 'music-wave-core' ) . '</small></a>';
 		}
 		echo '</nav>';
 
@@ -413,18 +413,18 @@ final class AccountLibrary {
 		$on      = static function ( string $key ) use ( $attributes ): bool {
 			return ! isset( $attributes[ $key ] ) || false !== $attributes[ $key ];
 		};
-		$heading = static function ( string $key, string $default ) use ( $attributes ): string {
+		$heading = static function ( string $key, string $fallback ) use ( $attributes ): string {
 			$custom = isset( $attributes[ $key ] ) && is_string( $attributes[ $key ] ) ? sanitize_text_field( trim( (string) $attributes[ $key ] ) ) : '';
 
-			return '' !== $custom ? $custom : $default;
+			return '' !== $custom ? $custom : $fallback;
 		};
 
 		$panels = array();
 		if ( $on( 'showLibrary' ) || $show_entitled ) {
 			$panels['library'] = array(
 				'icon'        => '♫',
-				'label'       => $heading( 'libraryHeading', __( 'Music library', 'music-wave-core' ) ),
-				'description' => __( 'Saved songs, albums, podcasts, and artists.', 'music-wave-core' ),
+				'label'       => $heading( 'libraryHeading', __( 'کتابخانه موسیقی', 'music-wave-core' ) ),
+				'description' => __( 'آهنگ‌ها، آلبوم‌ها، پادکست‌ها و هنرمندان ذخیره‌شده.', 'music-wave-core' ),
 				'content'     => $this->library_panel_content( $show_entitled ),
 			);
 		}
@@ -433,40 +433,40 @@ final class AccountLibrary {
 			if ( $on( 'showOrders' ) ) {
 				$panels['orders'] = array(
 					'icon'        => '◎',
-					'label'       => $heading( 'ordersHeading', __( 'Orders', 'music-wave-core' ) ),
-					'description' => __( 'Review purchases and order status.', 'music-wave-core' ),
+					'label'       => $heading( 'ordersHeading', __( 'سفارشات', 'music-wave-core' ) ),
+					'description' => __( 'وضعیت خرید و سفارش را بررسی کنید.', 'music-wave-core' ),
 					'content'     => $this->orders_panel_content(),
 				);
 			}
 			if ( $on( 'showDownloads' ) && function_exists( 'woocommerce_account_downloads' ) ) {
 				$panels['downloads'] = array(
 					'icon'        => '↓',
-					'label'       => $heading( 'downloadsHeading', __( 'Downloads', 'music-wave-core' ) ),
-					'description' => __( 'Files from your WooCommerce purchases.', 'music-wave-core' ),
+					'label'       => $heading( 'downloadsHeading', __( 'دانلودها', 'music-wave-core' ) ),
+					'description' => __( 'فایل‌هایی از خریدهای WooCommerce شما.', 'music-wave-core' ),
 					'content'     => $this->downloads_panel_content(),
 				);
 			}
 			if ( $on( 'showAddresses' ) && function_exists( 'woocommerce_account_edit_address' ) ) {
 				$panels['addresses'] = array(
 					'icon'        => '⌂',
-					'label'       => $heading( 'addressesHeading', __( 'Addresses', 'music-wave-core' ) ),
-					'description' => __( 'Billing and shipping details.', 'music-wave-core' ),
+					'label'       => $heading( 'addressesHeading', __( 'آدرس‌ها', 'music-wave-core' ) ),
+					'description' => __( 'جزئیات صورتحساب و حمل‌ونقل.', 'music-wave-core' ),
 					'content'     => $this->addresses_panel_content(),
 				);
 			}
 			if ( $on( 'showPaymentMethods' ) && function_exists( 'woocommerce_account_payment_methods' ) ) {
 				$panels['payment'] = array(
 					'icon'        => '₪',
-					'label'       => $heading( 'paymentHeading', __( 'Payment methods', 'music-wave-core' ) ),
-					'description' => __( 'Saved cards and gateways.', 'music-wave-core' ),
+					'label'       => $heading( 'paymentHeading', __( 'روش‌های پرداخت', 'music-wave-core' ) ),
+					'description' => __( 'کارت‌ها و روش‌های پرداخت ذخیره‌شده', 'music-wave-core' ),
 					'content'     => $this->payment_panel_content(),
 				);
 			}
 			if ( $on( 'showAccountDetails' ) && function_exists( 'woocommerce_account_edit_account' ) ) {
 				$panels['account'] = array(
 					'icon'        => '●',
-					'label'       => $heading( 'accountHeading', __( 'Account details', 'music-wave-core' ) ),
-					'description' => __( 'Edit your name, email, and password.', 'music-wave-core' ),
+					'label'       => $heading( 'accountHeading', __( 'مشخصات حساب', 'music-wave-core' ) ),
+					'description' => __( 'نام، ایمیل و رمز عبور خود را ویرایش کنید.', 'music-wave-core' ),
 					'content'     => $this->account_panel_content(),
 				);
 			}
@@ -475,8 +475,8 @@ final class AccountLibrary {
 		if ( defined( 'MUSIC_WAVE_VIP_FILE' ) && $on( 'showMembershipPanel' ) ) {
 			$panels['membership'] = array(
 				'icon'        => '★',
-				'label'       => $heading( 'membershipHeading', __( 'Membership', 'music-wave-core' ) ),
-				'description' => __( 'Your VIP access levels and purchasable plans.', 'music-wave-core' ),
+				'label'       => $heading( 'membershipHeading', __( 'عضویت', 'music-wave-core' ) ),
+				'description' => __( 'سطوح دسترسی VIP و برنامه‌های قابل خرید شما.', 'music-wave-core' ),
 				'content'     => $this->membership_panel_content( $user_id ),
 			);
 		}
@@ -569,7 +569,7 @@ final class AccountLibrary {
 	 * the frontend (editor previews, REST renders).
 	 */
 	private function woo_preview_placeholder( string $section ): string {
-		return '<p class="mw-user-dashboard__empty-panel">' . esc_html( sprintf( /* translators: %s: section name. */ __( 'Your live %s appear here on the site.', 'music-wave-core' ), $section ) ) . '</p>';
+		return '<p class="mw-user-dashboard__empty-panel">' . esc_html( sprintf( /* translators: %s: section name. */ __( '%s زنده شما در اینجا در سایت ظاهر می‌شود.', 'music-wave-core' ), $section ) ) . '</p>';
 	}
 
 	/**
@@ -577,7 +577,7 @@ final class AccountLibrary {
 	 */
 	private function downloads_panel_content(): string {
 		if ( ! $this->woo_customer_ready() ) {
-			return $this->woo_preview_placeholder( __( 'downloads', 'music-wave-core' ) );
+			return $this->woo_preview_placeholder( __( 'دانلودها', 'music-wave-core' ) );
 		}
 		$endpoint = $this->capture_woo_endpoint( 'downloads' );
 		if ( null !== $endpoint ) {
@@ -594,7 +594,7 @@ final class AccountLibrary {
 	 */
 	private function addresses_panel_content(): string {
 		if ( ! $this->woo_customer_ready() ) {
-			return $this->woo_preview_placeholder( __( 'billing and shipping addresses', 'music-wave-core' ) );
+			return $this->woo_preview_placeholder( __( 'آدرس صورتحساب و حمل‌ونقل', 'music-wave-core' ) );
 		}
 		$endpoint = $this->capture_woo_endpoint( 'addresses' );
 		if ( null !== $endpoint ) {
@@ -603,13 +603,13 @@ final class AccountLibrary {
 
 		$markup = '<div class="mw-user-dashboard__addresses">';
 		ob_start();
-		echo '<section class="mw-user-dashboard__address"><h4>' . esc_html__( 'Billing address', 'music-wave-core' ) . '</h4>';
+		echo '<section class="mw-user-dashboard__address"><h4>' . esc_html__( 'آدرس صورتحساب', 'music-wave-core' ) . '</h4>';
 		woocommerce_account_edit_address( 'billing' );
 		echo '</section>';
 		$markup .= (string) ob_get_clean();
 
 		ob_start();
-		echo '<section class="mw-user-dashboard__address"><h4>' . esc_html__( 'Shipping address', 'music-wave-core' ) . '</h4>';
+		echo '<section class="mw-user-dashboard__address"><h4>' . esc_html__( 'آدرس حمل‌ونقل', 'music-wave-core' ) . '</h4>';
 		woocommerce_account_edit_address( 'shipping' );
 		echo '</section>';
 		$markup .= (string) ob_get_clean();
@@ -622,7 +622,7 @@ final class AccountLibrary {
 	 */
 	private function payment_panel_content(): string {
 		if ( ! $this->woo_customer_ready() ) {
-			return $this->woo_preview_placeholder( __( 'saved payment methods', 'music-wave-core' ) );
+			return $this->woo_preview_placeholder( __( 'روش‌های پرداخت ذخیره‌شده', 'music-wave-core' ) );
 		}
 		$endpoint = $this->capture_woo_endpoint( 'payment' );
 		if ( null !== $endpoint ) {
@@ -707,7 +707,7 @@ final class AccountLibrary {
 
 		$content = $personal . $entitled;
 		if ( '' === trim( $content ) ) {
-			return '<p class="mw-user-dashboard__empty-panel">' . esc_html__( 'Nothing is available in your library yet. Save releases with the “Add to library” button or unlock protected music.', 'music-wave-core' ) . '</p>';
+			return '<p class="mw-user-dashboard__empty-panel">' . esc_html__( 'هنوز چیزی در کتابخانه شما موجود نیست. انتشارات را با دکمه «افزودن به کتابخانه» ذخیره کنید یا قفل موسیقی حفاظت‌شده را باز کنید.', 'music-wave-core' ) . '</p>';
 		}
 
 		return $content;
@@ -723,7 +723,7 @@ final class AccountLibrary {
 			return $endpoint;
 		}
 		if ( ! function_exists( 'woocommerce_account_orders' ) ) {
-			return '<p class="mw-user-dashboard__empty-panel">' . esc_html__( 'Your order history is not available right now.', 'music-wave-core' ) . '</p>';
+			return '<p class="mw-user-dashboard__empty-panel">' . esc_html__( 'سابقه سفارش شما در حال حاضر در دسترس نیست.', 'music-wave-core' ) . '</p>';
 		}
 
 		ob_start();
@@ -782,20 +782,20 @@ final class AccountLibrary {
 		}
 
 		if ( empty( $data ) ) {
-			$empty   = '' !== (string) $args['emptyText'] ? (string) $args['emptyText'] : __( 'No membership module is active on this site. All membership content stays available.', 'music-wave-core' );
+			$empty   = '' !== (string) $args['emptyText'] ? (string) $args['emptyText'] : __( 'هیچ ماژول عضویتی در این سایت فعال نیست. تمام محتوای عضویت در دسترس باقی می‌ماند.', 'music-wave-core' );
 			$markup .= '<p class="mw-membership__notice">' . esc_html( $empty ) . '</p></div>';
 			return $markup;
 		}
 
 		$module_enabled = ! isset( $data['module_enabled'] ) || (bool) $data['module_enabled'];
 		if ( ! $module_enabled ) {
-			$markup .= '<p class="mw-membership__notice mw-membership__notice--free">' . esc_html__( 'All membership content is currently free for everyone — enjoy!', 'music-wave-core' ) . '</p>';
+			$markup .= '<p class="mw-membership__notice mw-membership__notice--free">' . esc_html__( 'تمام محتوای عضویت در حال حاضر برای همه رایگان است - لذت ببرید!', 'music-wave-core' ) . '</p>';
 		}
 
 		if ( $args['showActive'] ) {
 			$active = isset( $data['active'] ) && is_array( $data['active'] ) ? $data['active'] : array();
 			if ( empty( $active ) ) {
-				$empty   = '' !== (string) $args['emptyText'] ? (string) $args['emptyText'] : __( 'You do not have an active membership yet. Pick a plan below to unlock protected releases.', 'music-wave-core' );
+				$empty   = '' !== (string) $args['emptyText'] ? (string) $args['emptyText'] : __( 'هنوز عضویت فعالی ندارید. برای باز کردن قفل انتشارهای حفاظت‌شده، طرحی را در زیر انتخاب کنید.', 'music-wave-core' );
 				$markup .= '<p class="mw-membership__empty">' . esc_html( $empty ) . '</p>';
 			} else {
 				$markup .= '<ul class="mw-membership__levels">';
@@ -824,7 +824,7 @@ final class AccountLibrary {
 					if ( $args['showBuyButtons'] ) {
 						$cart = isset( $plan['cart_url'] ) && is_string( $plan['cart_url'] ) && '' !== $plan['cart_url'] ? $plan['cart_url'] : ( isset( $plan['url'] ) ? (string) $plan['url'] : '' );
 						if ( '' !== $cart ) {
-							$markup .= '<a class="wp-element-button mw-membership__buy" href="' . esc_url( $cart ) . '">' . esc_html__( 'Get this plan', 'music-wave-core' ) . '</a>';
+							$markup .= '<a class="wp-element-button mw-membership__buy" href="' . esc_url( $cart ) . '">' . esc_html__( 'دریافت این طرح', 'music-wave-core' ) . '</a>';
 						}
 					}
 					$markup .= '</li>';
@@ -841,7 +841,7 @@ final class AccountLibrary {
 		 */
 		$cta_url = apply_filters( 'music_wave_dashboard_membership_cta_url', '', $user_id );
 		if ( is_string( $cta_url ) && '' !== $cta_url ) {
-			$markup .= '<a class="wp-element-button" href="' . esc_url( $cta_url ) . '">' . esc_html__( 'Manage membership', 'music-wave-core' ) . '</a>';
+			$markup .= '<a class="wp-element-button" href="' . esc_url( $cta_url ) . '">' . esc_html__( 'مدیریت عضویت', 'music-wave-core' ) . '</a>';
 		}
 
 		return $markup . '</div>';
@@ -887,8 +887,8 @@ final class AccountLibrary {
 
 		$logout = isset( $items['customer-logout'] ) ? $items['customer-logout'] : '';
 		unset( $items['customer-logout'] );
-		$items[ self::ENDPOINT ]            = __( 'My music library', 'music-wave-core' );
-		$items[ self::MEMBERSHIP_ENDPOINT ] = __( 'Membership', 'music-wave-core' );
+		$items[ self::ENDPOINT ]            = __( 'کتابخانه موسیقی من', 'music-wave-core' );
+		$items[ self::MEMBERSHIP_ENDPOINT ] = __( 'عضویت', 'music-wave-core' );
 		if ( '' !== $logout ) {
 			$items['customer-logout'] = $logout;
 		}
@@ -916,9 +916,9 @@ final class AccountLibrary {
 			$items[] = $this->item_markup( $release_id );
 		}
 
-		echo '<section class="mw-account-library"><h2>' . esc_html__( 'My music library', 'music-wave-core' ) . '</h2><p class="mw-account-library__intro">' . esc_html__( 'Your currently available protected releases appear here. Access is checked again when each download starts.', 'music-wave-core' ) . '</p>';
+		echo '<section class="mw-account-library"><h2>' . esc_html__( 'کتابخانه موسیقی من', 'music-wave-core' ) . '</h2><p class="mw-account-library__intro">' . esc_html__( 'انتشارهای حفاظت‌شده فعلی شما در اینجا ظاهر می‌شوند. با شروع هر بارگیری، دسترسی دوباره بررسی می‌شود.', 'music-wave-core' ) . '</p>';
 		if ( empty( $items ) ) {
-			echo '<p>' . esc_html__( 'No protected releases are currently available in your library.', 'music-wave-core' ) . '</p></section>';
+			echo '<p>' . esc_html__( 'در حال حاضر هیچ انتشار حفاظت‌شده‌ای در کتابخانه شما موجود نیست.', 'music-wave-core' ) . '</p></section>';
 			return;
 		}
 
@@ -962,9 +962,9 @@ final class AccountLibrary {
 		$artists  = null !== $this->library ? count( $this->library->ids( $user_id, LibraryRepository::TYPE_ARTIST ) ) : 0;
 
 		echo '<ul class="mw-user-dashboard__stats">'
-			. '<li><strong>' . esc_html( (string) $entitled ) . '</strong><span>' . esc_html__( 'Available downloads', 'music-wave-core' ) . '</span></li>'
-			. '<li><strong>' . esc_html( (string) $saved ) . '</strong><span>' . esc_html__( 'Saved releases', 'music-wave-core' ) . '</span></li>'
-			. '<li><strong>' . esc_html( (string) $artists ) . '</strong><span>' . esc_html__( 'Followed artists', 'music-wave-core' ) . '</span></li>'
+			. '<li><strong>' . esc_html( (string) $entitled ) . '</strong><span>' . esc_html__( 'دانلودهای موجود', 'music-wave-core' ) . '</span></li>'
+			. '<li><strong>' . esc_html( (string) $saved ) . '</strong><span>' . esc_html__( 'انتشارهای ذخیره‌شده', 'music-wave-core' ) . '</span></li>'
+			. '<li><strong>' . esc_html( (string) $artists ) . '</strong><span>' . esc_html__( 'هنرمندان دنبال شده', 'music-wave-core' ) . '</span></li>'
 			. '</ul>';
 	}
 
@@ -1005,8 +1005,8 @@ final class AccountLibrary {
 			)
 		);
 		$type  = wp_get_post_terms( $release_id, 'mw_release_type', array( 'fields' => 'names' ) );
-		$label = is_array( $type ) && ! empty( $type ) ? implode( ', ', $type ) : __( 'Release', 'music-wave-core' );
-		$title = '' !== $title ? $title : __( 'Untitled release', 'music-wave-core' );
+		$label = is_array( $type ) && ! empty( $type ) ? implode( ', ', $type ) : __( 'انتشار', 'music-wave-core' );
+		$title = '' !== $title ? $title : __( 'انتشار بدون عنوان', 'music-wave-core' );
 
 		$assets = $this->download_assets( $release_id );
 		$files  = $this->download_files( $assets );
@@ -1016,7 +1016,7 @@ final class AccountLibrary {
 		}
 		$quality = $first['qualities'][0];
 
-		return '<li class="mw-account-library__item">' . $image . '<div class="mw-account-library__details"><span>' . esc_html( $label ) . '</span><strong>' . ( is_string( $link ) ? '<a href="' . esc_url( $link ) . '">' . esc_html( $title ) . '</a>' : esc_html( $title ) ) . '</strong></div><div class="mw-account-library__actions mw-download-action" data-download-files="' . esc_attr( wp_json_encode( array_values( $files ) ) ) . '">' . $this->download_controls( $files ) . '<button class="button mw-download-button" type="button" data-release-id="' . esc_attr( (string) $release_id ) . '" data-download-quality="' . esc_attr( $quality['key'] ) . '">' . esc_html__( 'Secure download', 'music-wave-core' ) . '</button><span class="mw-download-status" role="status" aria-live="polite"></span></div></li>';
+		return '<li class="mw-account-library__item">' . $image . '<div class="mw-account-library__details"><span>' . esc_html( $label ) . '</span><strong>' . ( is_string( $link ) ? '<a href="' . esc_url( $link ) . '">' . esc_html( $title ) . '</a>' : esc_html( $title ) ) . '</strong></div><div class="mw-account-library__actions mw-download-action" data-download-files="' . esc_attr( wp_json_encode( array_values( $files ) ) ) . '">' . $this->download_controls( $files ) . '<button class="button mw-download-button" type="button" data-release-id="' . esc_attr( (string) $release_id ) . '" data-download-quality="' . esc_attr( $quality['key'] ) . '">' . esc_html__( 'دانلود ایمن', 'music-wave-core' ) . '</button><span class="mw-download-status" role="status" aria-live="polite"></span></div></li>';
 	}
 
 	/**
@@ -1032,8 +1032,8 @@ final class AccountLibrary {
 			array(
 				'restUrl'      => esc_url_raw( rest_url() ),
 				'restNonce'    => wp_create_nonce( 'wp_rest' ),
-				'errorMessage' => __( 'The download could not be started.', 'music-wave-core' ),
-				'sessionError' => __( 'Your session has expired. Refresh the page or sign in again.', 'music-wave-core' ),
+				'errorMessage' => __( 'دانلود شروع نشد.', 'music-wave-core' ),
+				'sessionError' => __( 'جلسه شما تمام شده است. صفحه را تازه کنید یا دوباره وارد شوید.', 'music-wave-core' ),
 			)
 		);
 	}
@@ -1050,7 +1050,7 @@ final class AccountLibrary {
 		if ( empty( $assets ) && is_string( $legacy ) && '' !== $legacy ) {
 			$assets[] = array(
 				'key'      => 'standard',
-				'label'    => __( 'Standard download', 'music-wave-core' ),
+				'label'    => __( 'دانلود استاندارد', 'music-wave-core' ),
 				'asset_id' => $legacy,
 			);
 		}
@@ -1086,7 +1086,7 @@ final class AccountLibrary {
 		$files = array();
 		foreach ( $assets as $asset ) {
 			$file_key   = '' !== $asset['file_key'] ? $asset['file_key'] : 'main-download';
-			$file_label = '' !== $asset['file_label'] ? $asset['file_label'] : __( 'Main download', 'music-wave-core' );
+			$file_label = '' !== $asset['file_label'] ? $asset['file_label'] : __( 'دانلود اصلی', 'music-wave-core' );
 			if ( ! isset( $files[ $file_key ] ) ) {
 				$files[ $file_key ] = array(
 					'key'       => $file_key,
@@ -1119,7 +1119,7 @@ final class AccountLibrary {
 			foreach ( $files as $file ) {
 				$options[] = '<option value="' . esc_attr( (string) $file['key'] ) . '">' . esc_html( (string) $file['label'] ) . '</option>';
 			}
-			$markup .= '<label class="mw-download-action__file"><span>' . esc_html__( 'Download file', 'music-wave-core' ) . '</span><select class="mw-download-file">' . implode( '', $options ) . '</select></label>';
+			$markup .= '<label class="mw-download-action__file"><span>' . esc_html__( 'دانلود فایل', 'music-wave-core' ) . '</span><select class="mw-download-file">' . implode( '', $options ) . '</select></label>';
 		}
 
 		$options = array();
@@ -1127,6 +1127,6 @@ final class AccountLibrary {
 			$options[] = '<option value="' . esc_attr( (string) $quality['key'] ) . '">' . esc_html( (string) $quality['label'] ) . '</option>';
 		}
 
-		return $markup . '<label class="mw-download-action__quality"><span>' . esc_html__( 'Download quality', 'music-wave-core' ) . '</span><select class="mw-download-quality">' . implode( '', $options ) . '</select></label></div>';
+		return $markup . '<label class="mw-download-action__quality"><span>' . esc_html__( 'کیفیت دانلود', 'music-wave-core' ) . '</span><select class="mw-download-quality">' . implode( '', $options ) . '</select></label></div>';
 	}
 }

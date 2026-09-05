@@ -1,29 +1,156 @@
 /**
- * MusicWave — Premium responsive navigation (Spotify / Apple Music inspired)
+ * MusicWave navigation and header chrome.
  *
- * Clean, token-driven and fully editable via Site Editor. No hard-coded
- * colors survive a palette swap — every value derives from --mw-* / 
- * --wp--preset--*. The hamburger and overlay are pure CSS.
+ * The header is sticky only when the Group block has the WordPress
+ * `is-position-sticky` support class (or an equivalent inline position style).
+ * This keeps the Site Editor toggle authoritative instead of making every
+ * header sticky through theme CSS.
  */
 
-/* ------------------------------------------------------------------ */
-/*  Header chrome                                                     */
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------
+ * Header
+ * ---------------------------------------------------------------------- */
 
 .mw-site-header {
-	/* Sticky glass — behaves like Apple Music header on scroll */
+	position: relative;
+	z-index: 20;
+	background: var(--mw-color-canvas);
+	border-block-end: 1px solid var(--mw-color-border);
+	transition: background-color 180ms ease, border-color 180ms ease, box-shadow 180ms ease;
+}
+
+.mw-site-header.is-position-sticky,
+.mw-site-header[style*="position: sticky"],
+.mw-site-header[style*="position:sticky"] {
 	position: sticky;
 	top: 0;
-	z-index: 30;
+	z-index: 60;
 	background: color-mix(in srgb, var(--mw-color-canvas) 86%, transparent);
-	border-block-end: 1px solid var(--mw-color-border);
+	box-shadow: 0 0.5rem 2rem color-mix(in srgb, var(--mw-color-canvas) 24%, transparent);
 	backdrop-filter: blur(18px) saturate(1.15);
 	-webkit-backdrop-filter: blur(18px) saturate(1.15);
 }
 
-/* ------------------------------------------------------------------ */
-/*  Hamburger (open) button — always visible on mobile                */
-/* ------------------------------------------------------------------ */
+.mw-site-header__inner {
+	min-block-size: 4.25rem;
+}
+
+.mw-brand {
+	min-inline-size: 0;
+	gap: 0.65rem;
+}
+
+.mw-brand .wp-block-site-logo {
+	flex: 0 0 auto;
+}
+
+.mw-site-header--centered .mw-site-header__inner {
+	min-block-size: auto;
+}
+
+/*
+ * SonicStream "stream" header: a three-column app bar — brand on the start
+ * edge, centered navigation, search + toggle on the end edge — mirroring the
+ * reference player's top bar proportions. The search pill keeps the quiet
+ * raised surface of the reference controls.
+ */
+.mw-site-header--stream {
+	background: color-mix(in srgb, var(--mw-color-canvas) 94%, transparent);
+}
+
+.mw-site-header--stream .mw-site-header__inner {
+	gap: var(--wp--preset--spacing--30, 1.5rem);
+}
+
+.mw-site-header--stream .mw-site-header__nav {
+	flex: 1 1 auto;
+	min-inline-size: 0;
+	justify-content: center;
+}
+
+.mw-site-header--stream .mw-brand,
+.mw-site-header--stream .mw-header-actions {
+	flex: 0 0 auto;
+}
+
+.mw-site-header--stream .mw-header-actions {
+	justify-content: flex-end;
+}
+
+@media (max-width: 64rem) {
+	.mw-site-header--stream .mw-site-header__nav {
+		display: none;
+	}
+
+	.mw-site-header--stream .mw-site-header__inner {
+		justify-content: space-between;
+	}
+}
+
+.mw-header-actions {
+	align-items: center;
+	gap: var(--wp--preset--spacing--20, 0.75rem);
+	min-inline-size: 0;
+}
+
+.mw-site-header .wp-block-navigation,
+.mw-site-header .wp-block-search {
+	min-inline-size: 0;
+}
+
+.mw-brand .wp-block-site-title {
+	margin-block: 0;
+}
+
+.mw-brand .wp-block-site-title a {
+	display: block;
+	max-inline-size: 18ch;
+	overflow: hidden;
+	color: var(--mw-color-text);
+	font-size: clamp(1.05rem, 2vw, 1.35rem);
+	font-weight: 800;
+	letter-spacing: -0.03em;
+	line-height: 1.1;
+	text-decoration: none;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.mw-site-header .wp-block-site-tagline {
+	margin-block: 0;
+	color: var(--mw-color-text-muted);
+	font-size: 0.78rem;
+}
+
+@media (min-width: 48rem) {
+	.mw-site-header .wp-block-navigation-item__content {
+		padding-block: 0.55rem;
+		padding-inline: 0.75rem;
+		border-radius: var(--mw-radius-sm);
+		color: var(--mw-color-text-muted);
+		font-size: 0.9rem;
+		font-weight: 600;
+		text-decoration: none;
+		transition: background-color var(--mw-speed-fast, 150ms) ease, color var(--mw-speed-fast, 150ms) ease;
+	}
+
+	/* SonicStream nav-item: quiet muted labels that light up over a surface tile. */
+	.mw-site-header .wp-block-navigation-item__content:hover,
+	.mw-site-header .wp-block-navigation-item__content:focus-visible {
+		color: var(--mw-color-text);
+		background: color-mix(in srgb, var(--mw-color-text) 7%, transparent);
+	}
+
+	.mw-site-header .current-menu-item > .wp-block-navigation-item__content {
+		color: var(--mw-color-text);
+		background: color-mix(in srgb, var(--mw-color-accent) 14%, transparent);
+		font-weight: 700;
+	}
+}
+
+/* -------------------------------------------------------------------------
+ * Mobile navigation trigger
+ * ---------------------------------------------------------------------- */
 
 .wp-block-navigation__responsive-container-open {
 	display: grid;
@@ -32,98 +159,222 @@
 	block-size: 2.75rem;
 	padding: 0;
 	color: var(--mw-color-text);
-	background: var(--mw-color-surface-raised);
-	border: 1px solid var(--mw-color-border);
 	border-radius: 50%;
+	cursor: pointer;
 	transition: background-color 160ms ease, border-color 160ms ease, transform 160ms ease;
 }
 
 .wp-block-navigation__responsive-container-open:hover {
-	background: var(--mw-color-surface);
-	border-color: color-mix(in srgb, var(--mw-color-accent) 35%, var(--mw-color-border));
 	transform: scale(1.04);
 }
 
-.wp-block-navigation__responsive-container-open:focus-visible {
+.wp-block-navigation__responsive-container-open:focus-visible,
+.wp-block-navigation__responsive-container-close:focus-visible {
 	outline: 3px solid var(--mw-color-accent-strong);
 	outline-offset: 3px;
 }
 
-/* Fallback SVG size */
-.wp-block-navigation__responsive-container-open svg {
-	inline-size: 1.25rem;
-	block-size: 1.25rem;
+.wp-block-navigation__responsive-container-open svg,
+.wp-block-navigation__responsive-container-close svg {
+	inline-size: 1.2rem;
+	block-size: 1.2rem;
 }
 
-/* Desktop: hide hamburger */
-@media (min-width: 48.01rem) {
+@media (min-width: 48rem) {
 	.wp-block-navigation__responsive-container-open:not(.always-shown) {
 		display: none;
 	}
 }
 
-/* ------------------------------------------------------------------ */
-/*  Overlay — hidden state                                            */
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------
+ * Full-screen mobile overlay
+ * ---------------------------------------------------------------------- */
 
-.wp-block-navigation__responsive-container {
-	position: fixed;
-	inset: 0;
-	z-index: 40;
-	visibility: hidden;
-	opacity: 0;
-	pointer-events: none;
-	overflow: hidden;
-	background: color-mix(in srgb, var(--mw-color-canvas) 96%, transparent);
-	backdrop-filter: blur(24px) saturate(1.2);
-	-webkit-backdrop-filter: blur(24px) saturate(1.2);
-	transition: opacity 320ms var(--mw-ease-out), visibility 320ms var(--mw-ease-out);
-}
+@media (max-width: 47.99rem) {
+	body.has-modal-open {
+		overflow: hidden;
+	}
 
-/* WordPress adds .is-menu-open / .has-modal-open */
-.wp-block-navigation__responsive-container.is-menu-open,
-.wp-block-navigation__responsive-container.has-modal-open {
-	visibility: visible;
-	opacity: 1;
-	pointer-events: auto;
-}
+	.wp-block-navigation__responsive-container {
+		display: none;
+		position: fixed;
+		inset: 0;
+		z-index: 1000;
+		inline-size: 100vw;
+		block-size: 100vh;
+		block-size: 100dvh;
+		max-block-size: 100vh;
+		max-block-size: 100dvh;
+		visibility: hidden;
+		opacity: 0;
+		pointer-events: none;
+		overflow: hidden;
+		background: color-mix(in srgb, var(--mw-color-canvas) 96%, transparent);
+		backdrop-filter: blur(24px) saturate(1.2);
+		-webkit-backdrop-filter: blur(24px) saturate(1.2);
+		transition: opacity 240ms var(--mw-ease-out), visibility 240ms var(--mw-ease-out);
+	}
 
-/* Dialog fills the overlay */
-.wp-block-navigation__responsive-dialog {
-	inline-size: 100%;
-	block-size: 100%;
-	margin: 0;
-	padding: 0;
-}
+	.wp-block-navigation__responsive-container.is-menu-open,
+	.wp-block-navigation__responsive-container.has-modal-open {
+		display: block;
+		visibility: visible;
+		opacity: 1;
+		pointer-events: auto;
+	}
 
-/* ------------------------------------------------------------------ */
-/*  Overlay content — Spotify-style full-screen sheet                 */
-/* ------------------------------------------------------------------ */
+	.wp-block-navigation__responsive-dialog {
+		inline-size: 100%;
+		block-size: 100%;
+		min-block-size: 100vh;
+		min-block-size: 100dvh;
+		margin: 0;
+		padding: 0;
+	}
 
-.wp-block-navigation__responsive-container.is-menu-open
-	.wp-block-navigation__responsive-container-content,
-.wp-block-navigation__responsive-container.has-modal-open
 	.wp-block-navigation__responsive-container-content {
-	display: grid;
-	grid-template-rows: auto 1fr auto;
-	gap: var(--wp--preset--spacing--30, 1.5rem);
-	inline-size: min(100%, 42rem);
-	block-size: 100%;
-	margin-inline: auto;
-	padding-block-start: max(1.25rem, env(safe-area-inset-top));
-	padding-block-end: max(1.25rem, env(safe-area-inset-bottom));
-	padding-inline: max(1.25rem, env(safe-area-inset-left)) max(1.25rem, env(safe-area-inset-right));
-	padding-top: 5rem; /* room for close button */
-	overflow-y: auto;
-	overscroll-behavior: contain;
-	animation: mw-nav-in 420ms var(--mw-ease-out);
+		display: flex;
+		flex-direction: column;
+		inline-size: 100%;
+		block-size: 100%;
+		min-block-size: 100vh;
+		min-block-size: 100dvh;
+		box-sizing: border-box;
+		gap: var(--wp--preset--spacing--30, 1.5rem);
+		margin: 0;
+		padding-block: max(5.25rem, calc(1.25rem + env(safe-area-inset-top))) max(1.25rem, env(safe-area-inset-bottom));
+		padding-inline: max(1.25rem, env(safe-area-inset-left)) max(1.25rem, env(safe-area-inset-right));
+		overflow-y: auto;
+		overflow-x: hidden;
+		overscroll-behavior: contain;
+		-webkit-overflow-scrolling: touch;
+		animation: mw-navigation-in 280ms var(--mw-ease-out);
+	}
+
+	.wp-block-navigation__responsive-container-close {
+		position: absolute;
+		inset-block-start: max(1rem, env(safe-area-inset-top));
+		inset-inline-end: max(1rem, env(safe-area-inset-right));
+		z-index: 2;
+		display: grid;
+		place-items: center;
+		inline-size: 2.85rem;
+		block-size: 2.85rem;
+		padding: 0;
+		color: var(--mw-color-text);
+		background: var(--mw-color-surface-raised);
+		border: 1px solid var(--mw-color-border);
+		border-radius: 50%;
+		box-shadow: var(--mw-shadow-card);
+		cursor: pointer;
+		transition: background-color 160ms ease, border-color 160ms ease, transform 160ms ease;
+	}
+
+	.wp-block-navigation__responsive-container-close:hover {
+		background: var(--mw-color-surface);
+		border-color: color-mix(in srgb, var(--mw-color-accent) 38%, var(--mw-color-border));
+		transform: rotate(90deg) scale(1.05);
+	}
+
+	.wp-block-navigation__responsive-container.is-menu-open .wp-block-navigation__container,
+	.wp-block-navigation__responsive-container.has-modal-open .wp-block-navigation__container {
+		display: grid !important;
+		align-content: start;
+		inline-size: 100%;
+		gap: 0.5rem !important;
+		margin: 0;
+		padding: 0;
+		list-style: none;
+	}
+
+	.wp-block-navigation__responsive-container.is-menu-open .wp-block-navigation-item,
+	.wp-block-navigation__responsive-container.has-modal-open .wp-block-navigation-item {
+		inline-size: 100%;
+	}
+
+	.wp-block-navigation__responsive-container.is-menu-open .wp-block-navigation-item__content,
+	.wp-block-navigation__responsive-container.has-modal-open .wp-block-navigation-item__content {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 0.75rem;
+		inline-size: 100%;
+		min-block-size: 3.75rem;
+		box-sizing: border-box;
+		padding: 0.9rem 1.15rem;
+		color: var(--mw-color-text);
+		background: color-mix(in srgb, var(--mw-color-surface) 86%, transparent);
+		border: 1px solid var(--mw-color-border);
+		border-radius: var(--mw-radius-md);
+		font-size: clamp(1.05rem, 2.8vw, 1.35rem);
+		font-weight: 750;
+		line-height: 1.25;
+		text-decoration: none;
+		transition: background-color 180ms ease, border-color 180ms ease, color 180ms ease, transform 180ms var(--mw-ease-out);
+	}
+
+	.wp-block-navigation__responsive-container.is-menu-open .wp-block-navigation-item__content:hover,
+	.wp-block-navigation__responsive-container.has-modal-open .wp-block-navigation-item__content:hover {
+		background: var(--mw-color-surface-raised);
+		border-color: color-mix(in srgb, var(--mw-color-accent) 42%, var(--mw-color-border));
+		transform: translateX(0.22rem);
+	}
+
+	.wp-block-navigation__responsive-container.is-menu-open .wp-block-navigation-item__content:focus-visible,
+	.wp-block-navigation__responsive-container.has-modal-open .wp-block-navigation-item__content:focus-visible {
+		outline: 3px solid var(--mw-color-accent-strong);
+		outline-offset: 2px;
+	}
+
+	.wp-block-navigation__responsive-container.is-menu-open .current-menu-item > .wp-block-navigation-item__content,
+	.wp-block-navigation__responsive-container.has-modal-open .current-menu-item > .wp-block-navigation-item__content,
+	.wp-block-navigation__responsive-container.is-menu-open .current-menu-ancestor > .wp-block-navigation-item__content {
+		color: var(--mw-color-text);
+		background: color-mix(in srgb, var(--mw-color-accent) 16%, var(--mw-color-surface-raised));
+		border-color: color-mix(in srgb, var(--mw-color-accent) 58%, transparent);
+		box-shadow: 0 8px 24px color-mix(in srgb, var(--mw-color-accent) 14%, transparent);
+	}
+
+	/* Let WordPress keep submenu visibility and click state authoritative. */
+	.wp-block-navigation__responsive-container.is-menu-open .wp-block-navigation__submenu-container,
+	.wp-block-navigation__responsive-container.has-modal-open .wp-block-navigation__submenu-container {
+		inline-size: 100%;
+		box-sizing: border-box;
+		padding-block: 0.45rem 0.25rem;
+		padding-inline-start: 1rem;
+		margin-block-start: 0.5rem;
+		background: transparent;
+		border: 0;
+		border-inline-start: 2px solid color-mix(in srgb, var(--mw-color-accent) 22%, var(--mw-color-border));
+	}
+
+	.wp-block-navigation__responsive-container.is-menu-open .wp-block-navigation__submenu-container .wp-block-navigation-item__content,
+	.wp-block-navigation__responsive-container.has-modal-open .wp-block-navigation__submenu-container .wp-block-navigation-item__content {
+		min-block-size: 3rem;
+		font-size: 1rem;
+		font-weight: 600;
+		background: color-mix(in srgb, var(--mw-color-surface) 72%, transparent);
+	}
+
+	html[dir="rtl"] .wp-block-navigation__responsive-container.is-menu-open .wp-block-navigation-item__content:hover,
+	html[dir="rtl"] .wp-block-navigation__responsive-container.has-modal-open .wp-block-navigation-item__content:hover {
+		transform: translateX(-0.22rem);
+	}
+
+	html[dir="rtl"] .wp-block-navigation__responsive-container-close {
+		inset-inline-end: auto;
+		inset-inline-start: max(1rem, env(safe-area-inset-left));
+	}
+
+	.admin-bar .wp-block-navigation__responsive-container-close {
+		inset-block-start: calc(46px + max(0.75rem, env(safe-area-inset-top)));
+	}
 }
 
-/* Stagger in for menu items — subtle Spotify motion */
-@keyframes mw-nav-in {
+@keyframes mw-navigation-in {
 	from {
 		opacity: 0;
-		transform: translateY(14px) scale(0.98);
+		transform: translateY(0.75rem) scale(0.985);
 	}
 	to {
 		opacity: 1;
@@ -131,198 +382,66 @@
 	}
 }
 
-/* ------------------------------------------------------------------ */
-/*  Navigation list                                                   */
-/* ------------------------------------------------------------------ */
-
-.wp-block-navigation__responsive-container.is-menu-open .wp-block-navigation__container,
-.wp-block-navigation__responsive-container.has-modal-open .wp-block-navigation__container {
-	display: grid !important;
-	gap: 0.5rem !important;
-	align-content: start;
-	inline-size: 100%;
-	padding: 0;
-	margin: 0;
-	list-style: none;
-}
-
-/* Each item full-width */
-.wp-block-navigation__responsive-container.is-menu-open .wp-block-navigation-item,
-.wp-block-navigation__responsive-container.has-modal-open .wp-block-navigation-item {
-	inline-size: 100%;
-}
-
-/* Link — large, pill-like, Apple Music / Spotify weight */
-.wp-block-navigation__responsive-container.is-menu-open .wp-block-navigation-item__content,
-.wp-block-navigation__responsive-container.has-modal-open .wp-block-navigation-item__content {
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-	gap: 0.75rem;
-	inline-size: 100%;
-	min-block-size: 3.75rem;
-	padding: 0.9rem 1.15rem;
-	color: var(--mw-color-text);
-	background: color-mix(in srgb, var(--mw-color-surface) 86%, transparent);
-	border: 1px solid var(--mw-color-border);
-	border-radius: var(--mw-radius-md);
-	font-size: clamp(1.05rem, 2.8vw, 1.35rem);
-	font-weight: 750;
-	letter-spacing: -0.02em;
-	line-height: 1.15;
-	text-decoration: none;
-	transition: background-color 180ms ease, border-color 180ms ease, color 180ms ease, transform 180ms var(--mw-ease-out);
-}
-
-.wp-block-navigation__responsive-container.is-menu-open .wp-block-navigation-item__content:hover,
-.wp-block-navigation__responsive-container.has-modal-open .wp-block-navigation-item__content:hover {
-	background: var(--mw-color-surface-raised);
-	border-color: color-mix(in srgb, var(--mw-color-accent) 42%, var(--mw-color-border));
-	transform: translateX(0.22rem);
-}
-
-.wp-block-navigation__responsive-container.is-menu-open .wp-block-navigation-item__content:focus-visible,
-.wp-block-navigation__responsive-container.has-modal-open .wp-block-navigation-item__content:focus-visible {
-	outline: 3px solid var(--mw-color-accent-strong);
-	outline-offset: 2px;
-}
-
-/* Current / active — Spotify green accent */
-.wp-block-navigation__responsive-container.is-menu-open .current-menu-item > .wp-block-navigation-item__content,
-.wp-block-navigation__responsive-container.has-modal-open .current-menu-item > .wp-block-navigation-item__content,
-.wp-block-navigation__responsive-container.is-menu-open .current-menu-ancestor > .wp-block-navigation-item__content {
-	color: var(--mw-color-text);
-	background: color-mix(in srgb, var(--mw-color-accent) 16%, var(--mw-color-surface-raised));
-	border-color: color-mix(in srgb, var(--mw-color-accent) 58%, transparent);
-	box-shadow: 0 8px 24px color-mix(in srgb, var(--mw-color-accent) 14%, transparent);
-}
-
-/* Arrow for items with children (when submenu indicator exists) */
-.wp-block-navigation__responsive-container.is-menu-open
-	.wp-block-navigation-item.has-child > .wp-block-navigation-item__content::after {
-	content: "›";
-	font-size: 1.4em;
-	font-weight: 400;
-	line-height: 1;
-	color: var(--mw-color-text-muted);
-	opacity: 0.9;
-	transform: translateX(0);
-	transition: transform 180ms ease, color 180ms ease;
-}
-
-.wp-block-navigation__responsive-container.is-menu-open
-	.wp-block-navigation-item.has-child > .wp-block-navigation-item__content:hover::after {
-	color: var(--mw-color-accent-strong);
-	transform: translateX(0.2rem);
-}
-
-/* ------------------------------------------------------------------ */
-/*  Submenu — indented, subtle left border like Apple Music folders  */
-/* ------------------------------------------------------------------ */
-
-.wp-block-navigation__responsive-container.is-menu-open .wp-block-navigation__submenu-container,
-.wp-block-navigation__responsive-container.has-modal-open .wp-block-navigation__submenu-container {
-	display: grid;
-	gap: 0.35rem;
-	inline-size: 100%;
-	padding-inline-start: 1rem;
-	padding-block: 0.45rem 0.25rem;
-	margin-block-start: 0.5rem;
-	background: transparent;
-	border: 0;
-	border-inline-start: 2px solid color-mix(in srgb, var(--mw-color-accent) 22%, var(--mw-color-border));
-}
-
-.wp-block-navigation__responsive-container.is-menu-open
-	.wp-block-navigation__submenu-container .wp-block-navigation-item__content {
-	min-block-size: 3rem;
-	font-size: 1rem;
-	font-weight: 600;
-	background: color-mix(in srgb, var(--mw-color-surface) 72%, transparent);
-}
-
-/* ------------------------------------------------------------------ */
-/*  Close button — circular, top-right with safe-area                */
-/* ------------------------------------------------------------------ */
-
-.wp-block-navigation__responsive-container-close {
-	position: fixed;
-	inset-block-start: max(1rem, env(safe-area-inset-top));
-	inset-inline-end: max(1rem, env(safe-area-inset-right));
-	display: grid;
-	place-items: center;
-	inline-size: 2.85rem;
-	block-size: 2.85rem;
-	padding: 0;
-	color: var(--mw-color-text);
-	background: var(--mw-color-surface-raised);
-	border: 1px solid var(--mw-color-border);
-	border-radius: 50%;
-	box-shadow: var(--mw-shadow-card);
-	cursor: pointer;
-	transition: background-color 160ms ease, border-color 160ms ease, transform 160ms ease;
-}
-
-.wp-block-navigation__responsive-container-close:hover {
-	background: var(--mw-color-surface);
-	border-color: color-mix(in srgb, var(--mw-color-accent) 38%, var(--mw-color-border));
-	transform: rotate(90deg) scale(1.05);
-}
-
-.wp-block-navigation__responsive-container-close:focus-visible {
-	outline: 3px solid var(--mw-color-accent-strong);
-	outline-offset: 3px;
-}
-
-.wp-block-navigation__responsive-container-close svg {
-	inline-size: 1.15rem;
-	block-size: 1.15rem;
-}
-
-/* Admin bar offset */
-.admin-bar .wp-block-navigation__responsive-container-close {
-	inset-block-start: calc(46px + max(0.75rem, env(safe-area-inset-top)));
-}
-
-@media (min-width: 48rem) {
-	.admin-bar .wp-block-navigation__responsive-container-close {
-		inset-block-start: calc(32px + max(0.75rem, env(safe-area-inset-top)));
-	}
-}
-
-/* ------------------------------------------------------------------ */
-/*  RTL — mirror transforms & inset                                  */
-/* ------------------------------------------------------------------ */
-
-html[dir="rtl"] .wp-block-navigation__responsive-container.is-menu-open .wp-block-navigation-item__content:hover {
-	transform: translateX(-0.22rem);
-}
-
-html[dir="rtl"] .wp-block-navigation__responsive-container-close {
-	inset-inline-end: auto;
-	inset-inline-start: max(1rem, env(safe-area-inset-left));
-}
-
-/* ------------------------------------------------------------------ */
-/*  Light theme tweak — Apple Music lighter overlay                   */
-/* ------------------------------------------------------------------ */
-
+/* Match the light theme without duplicating the entire overlay palette. */
 html[data-mw-theme="light"] .wp-block-navigation__responsive-container.is-menu-open,
 html[data-mw-theme="light"] .wp-block-navigation__responsive-container.has-modal-open {
 	background: color-mix(in srgb, var(--mw-color-canvas) 92%, white);
 }
 
-/* ------------------------------------------------------------------ */
-/*  Reduced motion                                                    */
-/* ------------------------------------------------------------------ */
-
 @media (prefers-reduced-motion: reduce) {
+	.mw-site-header,
 	.wp-block-navigation__responsive-container,
-	.wp-block-navigation__responsive-container.is-menu-open
-		.wp-block-navigation__responsive-container-content,
+	.wp-block-navigation__responsive-container-content,
+	.wp-block-navigation__responsive-container-open,
 	.wp-block-navigation__responsive-container-close,
 	.wp-block-navigation__responsive-container.is-menu-open .wp-block-navigation-item__content {
 		animation: none;
 		transition: none;
+	}
+}
+
+@media (forced-colors: active) {
+	.wp-block-navigation__responsive-container-open,
+	.wp-block-navigation__responsive-container-close,
+	.wp-block-navigation__responsive-container.is-menu-open .wp-block-navigation-item__content {
+		border: 1px solid ButtonText;
+	}
+}
+
+@media (max-width: 36rem) {
+	.mw-site-header__inner {
+		min-block-size: 3.75rem;
+	}
+
+	.mw-brand .wp-block-site-logo {
+		display: none;
+	}
+
+	.mw-site-header:not(.mw-site-header--centered) .mw-header-actions {
+		gap: 0.45rem;
+	}
+
+	.mw-site-header:not(.mw-site-header--centered) .mw-header-actions .wp-block-search {
+		inline-size: min(11rem, 30vw);
+	}
+
+	.mw-site-header--stream .mw-brand .wp-block-site-logo {
+		display: flex;
+	}
+}
+
+@media (min-width: 782px) {
+	.admin-bar .mw-site-header.is-position-sticky,
+	.admin-bar .mw-site-header[style*="position: sticky"],
+	.admin-bar .mw-site-header[style*="position:sticky"] {
+		top: 32px;
+	}
+}
+
+@media (max-width: 781px) {
+	.admin-bar .mw-site-header.is-position-sticky,
+	.admin-bar .mw-site-header[style*="position: sticky"],
+	.admin-bar .mw-site-header[style*="position:sticky"] {
+		top: 46px;
 	}
 }

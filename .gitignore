@@ -9,7 +9,16 @@
 /.zcode/
 /build/
 /dist/
+/outputs/
 *.log
 .DS_Store
 Thumbs.db
-/outputs/
+
+# Local debug captures and saved-page exports — never ship in the repo.
+/acc*.html
+/cart*.html
+/guest.html
+/co.html
+/Screenshot*.html
+/Screenshot *.png
+/*.mhtml

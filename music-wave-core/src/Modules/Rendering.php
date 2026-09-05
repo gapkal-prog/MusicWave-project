@@ -17,6 +17,8 @@ use ManaCore\MusicWave\Core\Blocks\BlockSupport;
 use ManaCore\MusicWave\Core\Blocks\PreviewPlayer;
 use ManaCore\MusicWave\Core\Blocks\TaxonomyShelfBlock;
 use ManaCore\MusicWave\Core\Blocks\TermHeroBlock;
+use ManaCore\MusicWave\Core\Blocks\ShareButtonBlock;
+use ManaCore\MusicWave\Core\Blocks\ShuffleButtonBlock;
 use ManaCore\MusicWave\Core\Contracts\Module;
 use ManaCore\MusicWave\Core\Infrastructure\ReleaseRestVisibilityPolicy;
 use ManaCore\MusicWave\Core\Playback\PlaybackQueueRoutes;
@@ -40,18 +42,26 @@ final class Rendering implements Module {
 	/** @var PreviewPlayer|null */
 	private $preview_player;
 
+	/** @var ShareButtonBlock|null */
+	private $share_button;
+
+	/** @var ShuffleButtonBlock|null */
+	private $shuffle_button;
+
 	/** @var PlaybackQueueRoutes|null */
 	private $playback_queue;
 
 	/** @var ReleaseRestVisibilityPolicy|null */
 	private $rest_visibility;
 
-	public function __construct( ReleaseBlocks $blocks, ?ArtistProfileBlock $artist_profile = null, ?PreviewPlayer $preview_player = null, ?PlaybackQueueRoutes $playback_queue = null, ?ReleaseRestVisibilityPolicy $rest_visibility = null, ?ArtistShelfBlock $artist_shelf = null, ?TaxonomyShelfBlock $taxonomy_shelf = null, ?TermHeroBlock $term_hero = null ) {
+	public function __construct( ReleaseBlocks $blocks, ?ArtistProfileBlock $artist_profile = null, ?PreviewPlayer $preview_player = null, ?PlaybackQueueRoutes $playback_queue = null, ?ReleaseRestVisibilityPolicy $rest_visibility = null, ?ArtistShelfBlock $artist_shelf = null, ?TaxonomyShelfBlock $taxonomy_shelf = null, ?TermHeroBlock $term_hero = null, ?ShareButtonBlock $share_button = null, ?ShuffleButtonBlock $shuffle_button = null ) {
 		$this->blocks          = $blocks;
 		$this->artist_profile  = $artist_profile;
 		$this->artist_shelf    = $artist_shelf;
 		$this->taxonomy_shelf  = $taxonomy_shelf;
 		$this->term_hero       = $term_hero;
+		$this->share_button    = $share_button;
+		$this->shuffle_button  = $shuffle_button;
 		$this->preview_player  = $preview_player;
 		$this->playback_queue  = $playback_queue;
 		$this->rest_visibility = $rest_visibility;
@@ -70,6 +80,12 @@ final class Rendering implements Module {
 		}
 		if ( null !== $this->term_hero ) {
 			add_action( 'init', array( $this->term_hero, 'register' ), 21 );
+		}
+		if ( null !== $this->share_button ) {
+			add_action( 'init', array( $this->share_button, 'register' ), 22 );
+		}
+		if ( null !== $this->shuffle_button ) {
+			add_action( 'init', array( $this->shuffle_button, 'register' ), 22 );
 		}
 		if ( null !== $this->preview_player ) {
 			add_action( 'init', array( $this->preview_player, 'register' ), 22 );
@@ -130,59 +146,59 @@ final class Rendering implements Module {
 			'music-wave/preview-player'    => array(
 				array(
 					'name'  => 'outline',
-					'label' => __( 'Outline', 'music-wave-core' ),
+					'label' => __( 'طرح کلی', 'music-wave-core' ),
 				),
 				array(
 					'name'  => 'ghost',
-					'label' => __( 'Ghost', 'music-wave-core' ),
+					'label' => __( 'بی‌زمینه', 'music-wave-core' ),
 				),
 			),
 			'music-wave/account-dashboard' => array(
 				array(
 					'name'       => 'tabs',
-					'label'      => __( 'Tabs (one section at a time)', 'music-wave-core' ),
+					'label'      => __( 'برگه‌ها (یک بخش در یک زمان)', 'music-wave-core' ),
 					'is_default' => true,
 				),
 				array(
 					'name'  => 'stacked',
-					'label' => __( 'Stacked (all sections visible)', 'music-wave-core' ),
+					'label' => __( 'روی‌هم‌چیده (همهٔ بخش‌ها نمایش داده می‌شوند)', 'music-wave-core' ),
 				),
 			),
 			'music-wave/preview-button'    => array(
 				array(
 					'name'  => 'outline',
-					'label' => __( 'Outline', 'music-wave-core' ),
+					'label' => __( 'طرح کلی', 'music-wave-core' ),
 				),
 				array(
 					'name'  => 'ghost',
-					'label' => __( 'Ghost', 'music-wave-core' ),
+					'label' => __( 'بی‌زمینه', 'music-wave-core' ),
 				),
 			),
 			'music-wave/release-meta'      => array(
 				array(
 					'name'  => 'inline',
-					'label' => __( 'Inline', 'music-wave-core' ),
+					'label' => __( 'درون‌خطی', 'music-wave-core' ),
 				),
 				array(
 					'name'  => 'stack',
-					'label' => __( 'Stacked rows', 'music-wave-core' ),
+					'label' => __( 'ردیف‌های انباشته', 'music-wave-core' ),
 				),
 			),
 			'music-wave/catalog-filters'   => array(
 				array(
 					'name'  => 'stacked',
-					'label' => __( 'Stacked', 'music-wave-core' ),
+					'label' => __( 'انباشته شده', 'music-wave-core' ),
 				),
 			),
 			'music-wave/public-playlists'  => array(
 				array(
 					'name'       => 'cards',
-					'label'      => __( 'Cards (surface)', 'music-wave-core' ),
+					'label'      => __( 'کارت (سطحی)', 'music-wave-core' ),
 					'is_default' => true,
 				),
 				array(
 					'name'  => 'minimal',
-					'label' => __( 'Minimal (no surface)', 'music-wave-core' ),
+					'label' => __( 'حداقل (بدون سطح)', 'music-wave-core' ),
 				),
 			),
 		);
@@ -213,7 +229,7 @@ final class Rendering implements Module {
 			true
 		);
 		if ( function_exists( 'wp_set_script_translations' ) ) {
-			wp_set_script_translations( 'music-wave-dynamic-blocks', 'music-wave-core' );
+			wp_set_script_translations( 'music-wave-dynamic-blocks', 'music-wave-core', MUSIC_WAVE_CORE_PATH . 'languages' );
 		}
 		wp_localize_script(
 			'music-wave-dynamic-blocks',
@@ -300,6 +316,10 @@ final class Rendering implements Module {
 					'default' => false,
 				),
 				'showMood'          => array(
+					'type'    => 'boolean',
+					'default' => false,
+				),
+				'showLabel'         => array(
 					'type'    => 'boolean',
 					'default' => false,
 				),
@@ -646,7 +666,18 @@ final class Rendering implements Module {
 				),
 			)
 		);
-		$artist_profile_attributes  = array(
+		// Share and shuffle share the same two-attribute schema in block.json.
+		$share_button_attributes   = array(
+			'releaseId' => array(
+				'type'    => 'integer',
+				'default' => 0,
+			),
+			'label'     => array(
+				'type'    => 'string',
+				'default' => '',
+			),
+		);
+		$artist_profile_attributes = array(
 			'termId'            => array(
 				'type'    => 'integer',
 				'default' => 0,
@@ -700,8 +731,8 @@ final class Rendering implements Module {
 				'default' => '',
 			),
 		);
-		$supports                   = BlockSupport::appearance_tools();
-		$artist_shelf_attributes    = array(
+		$supports                  = BlockSupport::appearance_tools();
+		$artist_shelf_attributes   = array(
 			'eyebrow'          => array(
 				'type'    => 'string',
 				'default' => '',
@@ -795,7 +826,7 @@ final class Rendering implements Module {
 				'default' => '',
 			),
 		);
-		$taxonomy_shelf_attributes  = array(
+		$taxonomy_shelf_attributes = array(
 			'taxonomy'         => array(
 				'type'    => 'string',
 				'default' => 'mw_genre',
@@ -861,7 +892,7 @@ final class Rendering implements Module {
 				'default' => '',
 			),
 		);
-		$term_hero_attributes       = array(
+		$term_hero_attributes      = array(
 			'taxonomy'          => array(
 				'type'    => 'string',
 				'default' => '',
@@ -915,7 +946,7 @@ final class Rendering implements Module {
 				'default' => '',
 			),
 		);
-		$queue_block_attributes     = array(
+		$queue_block_attributes    = array(
 			'heading'      => array(
 				'type'    => 'string',
 				'default' => '',
@@ -945,7 +976,7 @@ final class Rendering implements Module {
 				'default' => '',
 			),
 		);
-		$queue_add_attributes       = array(
+		$queue_add_attributes      = array(
 			'releaseId' => array(
 				'type'    => 'integer',
 				'default' => 0,
@@ -959,7 +990,7 @@ final class Rendering implements Module {
 				'default' => '',
 			),
 		);
-		$music_library_attributes   = array(
+		$music_library_attributes  = array(
 			'heading'      => array(
 				'type'    => 'string',
 				'default' => '',
@@ -1013,7 +1044,7 @@ final class Rendering implements Module {
 				'default' => '',
 			),
 		);
-		$library_button_attributes  = array(
+		$library_button_attributes = array(
 			'releaseId'  => array(
 				'type'    => 'integer',
 				'default' => 0,
@@ -1047,153 +1078,153 @@ final class Rendering implements Module {
 		$editor_blocks = array(
 			array(
 				'name'        => 'music-wave/release-meta',
-				'title'       => __( 'Release metadata', 'music-wave-core' ),
-				'description' => __( 'Displays release metadata from MusicWave Core.', 'music-wave-core' ),
+				'title'       => __( 'فرادادهٔ انتشار', 'music-wave-core' ),
+				'description' => __( 'فرادادهٔ انتشار را از هسته MusicWave نمایش می‌دهد.', 'music-wave-core' ),
 				'icon'        => 'list-view',
-				'keywords'    => array( __( 'catalog number', 'music-wave-core' ), __( 'bpm', 'music-wave-core' ), __( 'details', 'music-wave-core' ) ),
+				'keywords'    => array( __( 'شماره کاتالوگ', 'music-wave-core' ), __( 'bpm', 'music-wave-core' ), __( 'جزئیات', 'music-wave-core' ) ),
 				'attributes'  => $metadata_attributes,
 				'usesContext' => array( 'postId', 'postType' ),
 				'supports'    => $supports,
 			),
 			array(
 				'name'        => 'music-wave/access-panel',
-				'title'       => __( 'Release access panel', 'music-wave-core' ),
-				'description' => __( 'Displays the current release access state and actions.', 'music-wave-core' ),
+				'title'       => __( 'پنل دسترسی آزاد', 'music-wave-core' ),
+				'description' => __( 'وضعیت دسترسی انتشار فعلی و اقدامات را نشان می‌دهد.', 'music-wave-core' ),
 				'icon'        => 'lock',
-				'keywords'    => array( __( 'purchase', 'music-wave-core' ), __( 'membership', 'music-wave-core' ), __( 'restricted', 'music-wave-core' ) ),
+				'keywords'    => array( __( 'خرید', 'music-wave-core' ), __( 'عضویت', 'music-wave-core' ), __( 'محدود', 'music-wave-core' ) ),
 				'attributes'  => $access_panel_attributes,
 				'usesContext' => array( 'postId', 'postType' ),
 				'supports'    => $supports,
 			),
 			array(
 				'name'        => 'music-wave/release-credits',
-				'title'       => __( 'Release credits', 'music-wave-core' ),
-				'description' => __( 'Displays release credits.', 'music-wave-core' ),
+				'title'       => __( 'عوامل انتشار', 'music-wave-core' ),
+				'description' => __( 'عوامل و نقش‌های انتشار را نشان می‌دهد.', 'music-wave-core' ),
 				'icon'        => 'id',
-				'keywords'    => array( __( 'roles', 'music-wave-core' ), __( 'producers', 'music-wave-core' ) ),
+				'keywords'    => array( __( 'نقش‌ها', 'music-wave-core' ), __( 'تهیه‌کنندگان', 'music-wave-core' ) ),
 				'attributes'  => $credits_attributes,
 				'usesContext' => array( 'postId', 'postType' ),
 				'supports'    => $supports,
 			),
 			array(
 				'name'        => 'music-wave/collection-list',
-				'title'       => __( 'Collection track list', 'music-wave-core' ),
-				'description' => __( 'Displays child releases in a collection.', 'music-wave-core' ),
+				'title'       => __( 'لیست قطعه مجموعه', 'music-wave-core' ),
+				'description' => __( 'انتشارهای کودک را در یک مجموعه نمایش می‌دهد.', 'music-wave-core' ),
 				'icon'        => 'playlist-audio',
-				'keywords'    => array( __( 'tracks', 'music-wave-core' ), __( 'episodes', 'music-wave-core' ), __( 'discs', 'music-wave-core' ) ),
+				'keywords'    => array( __( 'قطعه‌ها', 'music-wave-core' ), __( 'قسمت‌ها', 'music-wave-core' ), __( 'دیسک', 'music-wave-core' ) ),
 				'attributes'  => $collection_attributes,
 				'usesContext' => array( 'postId', 'postType' ),
 				'supports'    => $supports,
 			),
 			array(
 				'name'        => 'music-wave/catalog-filters',
-				'title'       => __( 'Catalog filters', 'music-wave-core' ),
-				'description' => __( 'Displays release catalog filters.', 'music-wave-core' ),
+				'title'       => __( 'فیلترهای کاتالوگ', 'music-wave-core' ),
+				'description' => __( 'فیلترهای کاتالوگ انتشار را نمایش می‌دهد.', 'music-wave-core' ),
 				'icon'        => 'filter',
-				'keywords'    => array( __( 'search', 'music-wave-core' ), __( 'archive', 'music-wave-core' ) ),
+				'keywords'    => array( __( 'جست‌وجو', 'music-wave-core' ), __( 'آرشیو', 'music-wave-core' ) ),
 				'attributes'  => $catalog_filter_attributes,
 				'supports'    => $supports,
 			),
 			array(
 				'name'        => 'music-wave/catalog-results',
-				'title'       => __( 'Catalog results', 'music-wave-core' ),
-				'description' => __( 'Displays the current catalog result summary.', 'music-wave-core' ),
+				'title'       => __( 'نتایج کاتالوگ', 'music-wave-core' ),
+				'description' => __( 'خلاصهٔ نتایج کاتالوگ فعلی را نمایش می‌دهد.', 'music-wave-core' ),
 				'icon'        => 'chart-bar',
-				'keywords'    => array( __( 'count', 'music-wave-core' ), __( 'active filters', 'music-wave-core' ) ),
+				'keywords'    => array( __( 'شمارش', 'music-wave-core' ), __( 'فیلترهای فعال', 'music-wave-core' ) ),
 				'attributes'  => $catalog_results_attributes,
 				'supports'    => $supports,
 			),
 			array(
 				'name'        => 'music-wave/preview-player',
-				'title'       => __( 'Release preview player', 'music-wave-core' ),
-				'description' => __( 'Displays an audio preview player for a release.', 'music-wave-core' ),
+				'title'       => __( 'پخش‌کننده پیش‌نمایش', 'music-wave-core' ),
+				'description' => __( 'پخش‌کننده پیش‌نمایش صوتی را برای انتشار نمایش می‌دهد.', 'music-wave-core' ),
 				'icon'        => 'controls-play',
-				'keywords'    => array( __( 'audio', 'music-wave-core' ), __( 'listen', 'music-wave-core' ) ),
+				'keywords'    => array( __( 'صوتی', 'music-wave-core' ), __( 'گوش کن', 'music-wave-core' ) ),
 				'attributes'  => $preview_attributes,
 				'usesContext' => array( 'postId', 'postType' ),
 				'supports'    => $supports,
 			),
 			array(
 				'name'        => 'music-wave/download-button',
-				'title'       => __( 'Secure download', 'music-wave-core' ),
-				'description' => __( 'Displays authorized download actions for a release.', 'music-wave-core' ),
+				'title'       => __( 'دانلود ایمن', 'music-wave-core' ),
+				'description' => __( 'اقدامات دانلود مجاز را برای یک انتشار نمایش می‌دهد.', 'music-wave-core' ),
 				'icon'        => 'download',
-				'keywords'    => array( __( 'quality', 'music-wave-core' ), __( 'stream', 'music-wave-core' ), __( 'files', 'music-wave-core' ) ),
+				'keywords'    => array( __( 'کیفیت', 'music-wave-core' ), __( 'جریان', 'music-wave-core' ), __( 'فایل‌ها', 'music-wave-core' ) ),
 				'attributes'  => $download_attributes,
 				'usesContext' => array( 'postId', 'postType' ),
 				'supports'    => $supports,
 			),
 			array(
 				'name'        => 'music-wave/related-releases',
-				'title'       => __( 'Related releases', 'music-wave-core' ),
-				'description' => __( 'Displays related MusicWave releases.', 'music-wave-core' ),
+				'title'       => __( 'انتشارهای مرتبط', 'music-wave-core' ),
+				'description' => __( 'انتشارهای مرتبط MusicWave را نمایش می‌دهد.', 'music-wave-core' ),
 				'icon'        => 'share',
-				'keywords'    => array( __( 'similar', 'music-wave-core' ), __( 'same artist', 'music-wave-core' ), __( 'shelf', 'music-wave-core' ) ),
+				'keywords'    => array( __( 'مشابه', 'music-wave-core' ), __( 'همان هنرمند', 'music-wave-core' ), __( 'ویترین', 'music-wave-core' ) ),
 				'attributes'  => $related_attributes,
 				'usesContext' => array( 'postId', 'postType' ),
 				'supports'    => $supports,
 			),
 			array(
 				'name'        => 'music-wave/artist-profile',
-				'title'       => __( 'Artist profile', 'music-wave-core' ),
-				'description' => __( 'Displays the artist taxonomy profile on archive pages or any other template.', 'music-wave-core' ),
+				'title'       => __( 'مشخصات هنرمند', 'music-wave-core' ),
+				'description' => __( 'نمایهٔ طبقه‌بندی هنرمند را در صفحات بایگانی یا هر الگوی دیگری نمایش می‌دهد.', 'music-wave-core' ),
 				'icon'        => 'admin-users',
-				'keywords'    => array( __( 'biography', 'music-wave-core' ), __( 'artist', 'music-wave-core' ) ),
+				'keywords'    => array( __( 'بیوگرافی', 'music-wave-core' ), __( 'هنرمند', 'music-wave-core' ) ),
 				'attributes'  => $artist_profile_attributes,
 				'supports'    => $supports,
 			),
 			array(
 				'name'        => 'music-wave/artists-shelf',
-				'title'       => __( 'Artists shelf', 'music-wave-core' ),
-				'description' => __( 'Displays catalog artists as a responsive grid, horizontal scroll shelf, or compact list with follow buttons and release counts.', 'music-wave-core' ),
+				'title'       => __( 'ویترین هنرمندان', 'music-wave-core' ),
+				'description' => __( 'هنرمندان کاتالوگ را به‌صورت شبکهٔ واکنش‌گرا، نوار افقی یا فهرست جمع‌وجور با دکمه‌های دنبال‌کردن و تعداد انتشار نمایش می‌دهد.', 'music-wave-core' ),
 				'icon'        => 'admin-users',
-				'keywords'    => array( __( 'artists', 'music-wave-core' ), __( 'singers', 'music-wave-core' ), __( 'shelf', 'music-wave-core' ), __( 'grid', 'music-wave-core' ), __( 'follow', 'music-wave-core' ) ),
+				'keywords'    => array( __( 'هنرمندان', 'music-wave-core' ), __( 'خواننده‌ها', 'music-wave-core' ), __( 'ویترین', 'music-wave-core' ), __( 'شبکه', 'music-wave-core' ), __( 'دنبال‌کردن', 'music-wave-core' ) ),
 				'attributes'  => $artist_shelf_attributes,
 				'supports'    => $supports,
 			),
 			array(
 				'name'        => 'music-wave/taxonomy-shelf',
-				'title'       => __( 'Taxonomy shelf', 'music-wave-core' ),
-				'description' => __( 'Displays genres, moods, or labels as tappable browse tiles with release counts, in a grid, rail, or list.', 'music-wave-core' ),
+				'title'       => __( 'ویترین طبقه‌بندی', 'music-wave-core' ),
+				'description' => __( 'ژانرها، حال‌وهواها یا برچسب‌ها را به‌صورت کاشی‌های مرور قابل کلیک، همراه با تعداد انتشار، در شبکه، نوار یا فهرست نمایش می‌دهد.', 'music-wave-core' ),
 				'icon'        => 'tag',
-				'keywords'    => array( __( 'genres', 'music-wave-core' ), __( 'moods', 'music-wave-core' ), __( 'labels', 'music-wave-core' ), __( 'browse', 'music-wave-core' ), __( 'categories', 'music-wave-core' ), __( 'shelf', 'music-wave-core' ) ),
+				'keywords'    => array( __( 'ژانرها', 'music-wave-core' ), __( 'حال‌وهواها', 'music-wave-core' ), __( 'برچسب‌ها', 'music-wave-core' ), __( 'مرور', 'music-wave-core' ), __( 'دسته‌ها', 'music-wave-core' ), __( 'ویترین', 'music-wave-core' ) ),
 				'attributes'  => $taxonomy_shelf_attributes,
 				'supports'    => $supports,
 			),
 			array(
 				'name'        => 'music-wave/term-hero',
-				'title'       => __( 'Term hero', 'music-wave-core' ),
-				'description' => __( 'Archive header for artist, genre, mood, and label pages: cover banner or compact row with name, description, release count, and follow.', 'music-wave-core' ),
+				'title'       => __( 'معرفی اصطلاح', 'music-wave-core' ),
+				'description' => __( 'سربرگ بایگانی برای صفحات هنرمند، ژانر، حال‌وهوا و برچسب؛ با بنر جلد یا ردیف فشرده شامل نام، توضیحات، تعداد انتشار و گزینهٔ دنبال‌کردن.', 'music-wave-core' ),
 				'icon'        => 'format-image',
-				'keywords'    => array( __( 'hero', 'music-wave-core' ), __( 'header', 'music-wave-core' ), __( 'artist', 'music-wave-core' ), __( 'genre', 'music-wave-core' ), __( 'archive', 'music-wave-core' ), __( 'banner', 'music-wave-core' ) ),
+				'keywords'    => array( __( 'معرفی', 'music-wave-core' ), __( 'سربرگ', 'music-wave-core' ), __( 'هنرمند', 'music-wave-core' ), __( 'ژانر', 'music-wave-core' ), __( 'آرشیو', 'music-wave-core' ), __( 'بنر', 'music-wave-core' ) ),
 				'attributes'  => $term_hero_attributes,
 				'supports'    => $supports,
 			),
 			array(
 				'name'        => 'music-wave/playback-queue',
-				'title'       => __( 'Playback queue', 'music-wave-core' ),
-				'description' => __( "The signed-in listener's durable play queue with reorder, remove, clear, shuffle, and repeat controls that work without JavaScript.", 'music-wave-core' ),
+				'title'       => __( 'صف پخش', 'music-wave-core' ),
+				'description' => __( 'صف پخش پایدار شنوندهٔ واردشده با کنترل‌های مرتب‌سازی مجدد، حذف، پاک‌کردن، پخش تصادفی و تکرار؛ بدون نیاز به JavaScript.', 'music-wave-core' ),
 				'icon'        => 'playlist-audio',
-				'keywords'    => array( __( 'queue', 'music-wave-core' ), __( 'up next', 'music-wave-core' ), __( 'player', 'music-wave-core' ), __( 'shuffle', 'music-wave-core' ), __( 'repeat', 'music-wave-core' ) ),
+				'keywords'    => array( __( 'صف', 'music-wave-core' ), __( 'بعدی', 'music-wave-core' ), __( 'پخش‌کننده', 'music-wave-core' ), __( 'کلیک', 'music-wave-core' ), __( 'تکرار', 'music-wave-core' ) ),
 				'attributes'  => $queue_block_attributes,
 				'supports'    => $supports,
 			),
 			array(
 				'name'        => 'music-wave/add-to-queue',
-				'title'       => __( 'Add to queue', 'music-wave-core' ),
-				'description' => __( "Adds the current or pinned release to the listener's play queue — next in line or at the end — without JavaScript.", 'music-wave-core' ),
+				'title'       => __( 'افزودن به صف', 'music-wave-core' ),
+				'description' => __( 'انتشار فعلی یا سنجاق‌شده را به صف پخش شنونده اضافه می‌کند — بعد از قطعهٔ فعلی یا در پایان صف — بدون نیاز به JavaScript.', 'music-wave-core' ),
 				'icon'        => 'controls-play',
-				'keywords'    => array( __( 'queue', 'music-wave-core' ), __( 'play next', 'music-wave-core' ), __( 'add', 'music-wave-core' ), __( 'player', 'music-wave-core' ) ),
+				'keywords'    => array( __( 'صف', 'music-wave-core' ), __( 'پخش بعدی', 'music-wave-core' ), __( 'اضافه کردن', 'music-wave-core' ), __( 'پخش‌کننده', 'music-wave-core' ) ),
 				'attributes'  => $queue_add_attributes,
 				'usesContext' => array( 'postId', 'postType' ),
 				'supports'    => $supports,
 			),
 			array(
 				'name'        => 'music-wave/account-dashboard',
-				'title'       => __( 'User music dashboard', 'music-wave-core' ),
-				'description' => __( 'The unified account area: music library, orders, downloads, addresses, payment methods, membership, and playlists in one navigation.', 'music-wave-core' ),
+				'title'       => __( 'داشبورد موسیقی کاربر', 'music-wave-core' ),
+				'description' => __( 'منطقه حساب یکپارچه: کتابخانه موسیقی، سفارش‌ها، بارگیری‌ها، آدرس‌ها، روش‌های پرداخت، عضویت و فهرست‌های پخش در یک پیمایش.', 'music-wave-core' ),
 				'icon'        => 'dashboard',
-				'keywords'    => array( __( 'library', 'music-wave-core' ), __( 'account', 'music-wave-core' ) ),
+				'keywords'    => array( __( 'کتابخانه', 'music-wave-core' ), __( 'حساب کاربری', 'music-wave-core' ) ),
 				'attributes'  => array(
 					'showLibrary'          => array(
 						'type'    => 'boolean',
@@ -1284,10 +1315,10 @@ final class Rendering implements Module {
 			),
 			array(
 				'name'        => 'music-wave/membership-panel',
-				'title'       => __( 'Membership & plans', 'music-wave-core' ),
-				'description' => __( "Shows the customer's active membership levels with expiry and the purchasable VIP plan products.", 'music-wave-core' ),
+				'title'       => __( 'عضویت و طرح‌ها', 'music-wave-core' ),
+				'description' => __( 'سطوح عضویت فعال مشتری را با انقضا و محصولات طرح VIP قابل خرید نشان می‌دهد.', 'music-wave-core' ),
 				'icon'        => 'awards',
-				'keywords'    => array( __( 'membership', 'music-wave-core' ), __( 'vip', 'music-wave-core' ), __( 'plans', 'music-wave-core' ), __( 'subscription', 'music-wave-core' ) ),
+				'keywords'    => array( __( 'عضویت', 'music-wave-core' ), __( 'vip', 'music-wave-core' ), __( 'طرح‌ها', 'music-wave-core' ), __( 'اشتراک', 'music-wave-core' ) ),
 				'attributes'  => array(
 					'heading'        => array(
 						'type'    => 'string',
@@ -1314,29 +1345,29 @@ final class Rendering implements Module {
 			),
 			array(
 				'name'        => 'music-wave/music-library',
-				'title'       => __( 'Personal music library', 'music-wave-core' ),
-				'description' => __( 'Displays the visitor\'s saved songs, albums, podcasts, and followed artists.', 'music-wave-core' ),
+				'title'       => __( 'کتابخانه شخصی موسیقی', 'music-wave-core' ),
+				'description' => __( 'آهنگ‌ها، آلبوم‌ها، پادکست‌ها و هنرمندانی را که بازدیدکننده ذخیره کرده‌اند را نمایش می‌دهد.', 'music-wave-core' ),
 				'icon'        => 'albums',
-				'keywords'    => array( __( 'favorites', 'music-wave-core' ), __( 'saved', 'music-wave-core' ), __( 'collection', 'music-wave-core' ) ),
+				'keywords'    => array( __( 'مورد علاقه', 'music-wave-core' ), __( 'ذخیره‌شده', 'music-wave-core' ), __( 'مجموعه', 'music-wave-core' ) ),
 				'attributes'  => $music_library_attributes,
 				'supports'    => $supports,
 			),
 			array(
 				'name'        => 'music-wave/library-button',
-				'title'       => __( 'Add to library button', 'music-wave-core' ),
-				'description' => __( 'Lets visitors save a release, wishlist it, pre-save an upcoming release, or follow an artist.', 'music-wave-core' ),
+				'title'       => __( 'دکمه افزودن به کتابخانه', 'music-wave-core' ),
+				'description' => __( 'به بازدیدکنندگان اجازه می‌دهد انتشاری را ذخیره کنند، آن را در فهرست علاقه‌مندی‌ها قرار دهند، انتشاری آینده را از قبل ذخیره کنند، یا هنرمندی را دنبال کنند.', 'music-wave-core' ),
 				'icon'        => 'plus-alt',
-				'keywords'    => array( __( 'save', 'music-wave-core' ), __( 'follow', 'music-wave-core' ), __( 'favorite', 'music-wave-core' ) ),
+				'keywords'    => array( __( 'ذخیره', 'music-wave-core' ), __( 'دنبال‌کردن', 'music-wave-core' ), __( 'مورد علاقه', 'music-wave-core' ) ),
 				'attributes'  => $library_button_attributes,
 				'usesContext' => array( 'postId', 'postType' ),
 				'supports'    => $supports,
 			),
 			array(
 				'name'        => 'music-wave/playlists',
-				'title'       => __( 'Playlists', 'music-wave-core' ),
-				'description' => __( 'Lets signed-in listeners create, order, share, and delete their playlists.', 'music-wave-core' ),
+				'title'       => __( 'فهرست‌های پخش', 'music-wave-core' ),
+				'description' => __( 'به شنوندگانی که وارد سیستم شده‌اند اجازه می‌دهد فهرست‌های پخش خود را ایجاد، سفارش، اشتراک‌گذاری و حذف کنند.', 'music-wave-core' ),
 				'icon'        => 'playlist-audio',
-				'keywords'    => array( __( 'playlist', 'music-wave-core' ), __( 'queue', 'music-wave-core' ), __( 'collection', 'music-wave-core' ) ),
+				'keywords'    => array( __( 'فهرست پخش', 'music-wave-core' ), __( 'صف', 'music-wave-core' ), __( 'مجموعه', 'music-wave-core' ) ),
 				'attributes'  => array(
 					'heading' => array(
 						'type'    => 'string',
@@ -1347,10 +1378,10 @@ final class Rendering implements Module {
 			),
 			array(
 				'name'        => 'music-wave/add-to-playlist',
-				'title'       => __( 'Add to playlist', 'music-wave-core' ),
-				'description' => __( 'Adds the current release to one of the listener\'s playlists.', 'music-wave-core' ),
+				'title'       => __( 'افزودن به فهرست پخش', 'music-wave-core' ),
+				'description' => __( 'انتشار فعلی را به یکی از فهرست‌های پخش شنونده اضافه می‌کند.', 'music-wave-core' ),
 				'icon'        => 'plus-alt',
-				'keywords'    => array( __( 'playlist', 'music-wave-core' ), __( 'save', 'music-wave-core' ), __( 'queue', 'music-wave-core' ) ),
+				'keywords'    => array( __( 'فهرست پخش', 'music-wave-core' ), __( 'ذخیره', 'music-wave-core' ), __( 'صف', 'music-wave-core' ) ),
 				'attributes'  => array(
 					'releaseId' => array(
 						'type'    => 'integer',
@@ -1366,10 +1397,10 @@ final class Rendering implements Module {
 			),
 			array(
 				'name'        => 'music-wave/public-playlists',
-				'title'       => __( 'Public playlists', 'music-wave-core' ),
-				'description' => __( 'Browse and play community public playlists with search and pagination.', 'music-wave-core' ),
+				'title'       => __( 'فهرست پخش عمومی', 'music-wave-core' ),
+				'description' => __( 'فهرست‌های پخش عمومی جامعه را با جست‌وجو و صفحه‌بندی مرور و پخش کنید.', 'music-wave-core' ),
 				'icon'        => 'groups',
-				'keywords'    => array( __( 'playlist', 'music-wave-core' ), __( 'community', 'music-wave-core' ), __( 'public', 'music-wave-core' ) ),
+				'keywords'    => array( __( 'فهرست پخش', 'music-wave-core' ), __( 'جامعه', 'music-wave-core' ), __( 'عمومی', 'music-wave-core' ) ),
 				'attributes'  => array(
 					'eyebrow'           => array(
 						'type'    => 'string',
@@ -1460,10 +1491,10 @@ final class Rendering implements Module {
 			),
 			array(
 				'name'        => 'music-wave/continue-listening',
-				'title'       => __( 'Continue listening', 'music-wave-core' ),
-				'description' => __( 'Shows each listener their recently played and in-progress releases, with a consent-first opt-in for visitors who have not enabled listening history.', 'music-wave-core' ),
+				'title'       => __( 'به گوش‌دادن ادامه دهید', 'music-wave-core' ),
+				'description' => __( 'به هر شنونده انتشارهای اخیراً پخش‌شده و در دست اجرا خود را نشان می‌دهد، با انتخاب اول رضایت برای بازدیدکنندگانی که سابقهٔ گوش‌دادن را فعال نکرده‌اند.', 'music-wave-core' ),
 				'icon'        => 'controls-back',
-				'keywords'    => array( __( 'continue', 'music-wave-core' ), __( 'recently played', 'music-wave-core' ), __( 'history', 'music-wave-core' ), __( 'resume', 'music-wave-core' ), __( 'listening', 'music-wave-core' ) ),
+				'keywords'    => array( __( 'ادامه', 'music-wave-core' ), __( 'اخیراً پخش‌شده', 'music-wave-core' ), __( 'تاریخ', 'music-wave-core' ), __( 'سابقه', 'music-wave-core' ), __( 'گوش‌دادن', 'music-wave-core' ) ),
 				'attributes'  => array(
 					'heading'            => array(
 						'type'    => 'string',
@@ -1542,11 +1573,31 @@ final class Rendering implements Module {
 			),
 			array(
 				'name'        => 'music-wave/preview-button',
-				'title'       => __( 'Preview button', 'music-wave-core' ),
-				'description' => __( 'Displays a release audio preview button.', 'music-wave-core' ),
+				'title'       => __( 'دکمه پیش‌نمایش', 'music-wave-core' ),
+				'description' => __( 'یک دکمه پیش‌نمایش صوتی انتشار را نمایش می‌دهد.', 'music-wave-core' ),
 				'icon'        => 'controls-play',
-				'keywords'    => array( __( 'play', 'music-wave-core' ), __( 'listen', 'music-wave-core' ) ),
+				'keywords'    => array( __( 'پخش', 'music-wave-core' ), __( 'گوش کن', 'music-wave-core' ) ),
 				'attributes'  => $preview_button_attributes,
+				'usesContext' => array( 'postId', 'postType' ),
+				'supports'    => $supports,
+			),
+			array(
+				'name'        => 'music-wave/share-button',
+				'title'       => __( 'اشتراک‌گذاری انتشار', 'music-wave-core' ),
+				'description' => __( 'دکمه اشتراک‌گذاری بومی برای انتشار فعلی با Web Share API و بازگشت کپی پیوند.', 'music-wave-core' ),
+				'icon'        => 'share',
+				'keywords'    => array( __( 'اشتراک', 'music-wave-core' ), __( 'share', 'music-wave-core' ), __( 'پیوند', 'music-wave-core' ) ),
+				'attributes'  => $share_button_attributes,
+				'usesContext' => array( 'postId', 'postType' ),
+				'supports'    => $supports,
+			),
+			array(
+				'name'        => 'music-wave/shuffle-button',
+				'title'       => __( 'پخش تصادفی', 'music-wave-core' ),
+				'description' => __( 'انتشار فعلی یا مجموعه را به صورت تصادفی پخش می‌کند.', 'music-wave-core' ),
+				'icon'        => 'randomize',
+				'keywords'    => array( __( 'تصادفی', 'music-wave-core' ), __( 'shuffle', 'music-wave-core' ), __( 'پخش', 'music-wave-core' ) ),
+				'attributes'  => $share_button_attributes,
 				'usesContext' => array( 'postId', 'postType' ),
 				'supports'    => $supports,
 			),

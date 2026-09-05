@@ -372,19 +372,6 @@
 	justify-items: start;
 }
 
-.mw-account-library__actions.mw-download-action {
-	margin: 0;
-	padding: 0;
-	background: transparent;
-	border: 0;
-	border-radius: 0;
-	box-shadow: none;
-}
-
-.mw-account-library__actions .mw-download-action__controls {
-	grid-template-columns: 1fr;
-}
-
 .woocommerce-MyAccount-navigation {
 	padding: var(--wp--preset--spacing--20);
 	background: var(--mw-color-surface);

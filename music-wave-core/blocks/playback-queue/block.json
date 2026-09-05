@@ -1,32 +1,79 @@
 {
-	"apiVersion": 3,
-	"name": "music-wave/playback-queue",
-	"title": "Playback queue",
-	"category": "music-wave",
-	"description": "The signed-in listener's durable play queue with reorder, remove, clear, shuffle, and repeat controls that work without JavaScript.",
-	"keywords": [ "queue", "up next", "player", "shuffle", "repeat" ],
-	"textdomain": "music-wave-core",
-	"icon": "playlist-audio",
-	"attributes": {
-		"heading": { "type": "string", "default": "" },
-		"showArtwork": { "type": "boolean", "default": true },
-		"showPosition": { "type": "boolean", "default": true },
-		"showArtist": { "type": "boolean", "default": true },
-		"showControls": { "type": "boolean", "default": true },
-		"showClear": { "type": "boolean", "default": true },
-		"emptyMessage": { "type": "string", "default": "" }
-	},
-	"supports": {
-		"anchor": true,
-		"align": [ "wide", "full" ],
-		"border": { "color": true, "radius": true, "style": true, "width": true },
-		"color": { "background": true, "link": true, "text": true },
-		"spacing": { "blockGap": true, "margin": true, "padding": true },
-		"typography": { "fontSize": true, "lineHeight": true }
-	},
-	"example": {
-		"attributes": {
-			"heading": "Up next"
-		}
-	}
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "music-wave/playback-queue",
+  "title": "صف پخش",
+  "category": "music-wave",
+  "description": "صف پخش پایدار شنوندهٔ واردشده با کنترل‌های مرتب‌سازی مجدد، حذف، پاک‌کردن، پخش تصادفی و تکرار؛ بدون نیاز به JavaScript.",
+  "keywords": [
+    "صف",
+    "بعدی",
+    "پخش‌کننده",
+    "کلیک",
+    "تکرار"
+  ],
+  "textdomain": "music-wave-core",
+  "icon": "playlist-audio",
+  "attributes": {
+    "heading": {
+      "type": "string",
+      "default": ""
+    },
+    "showArtwork": {
+      "type": "boolean",
+      "default": true
+    },
+    "showPosition": {
+      "type": "boolean",
+      "default": true
+    },
+    "showArtist": {
+      "type": "boolean",
+      "default": true
+    },
+    "showControls": {
+      "type": "boolean",
+      "default": true
+    },
+    "showClear": {
+      "type": "boolean",
+      "default": true
+    },
+    "emptyMessage": {
+      "type": "string",
+      "default": ""
+    }
+  },
+  "supports": {
+    "anchor": true,
+    "align": [
+      "wide",
+      "full"
+    ],
+    "border": {
+      "color": true,
+      "radius": true,
+      "style": true,
+      "width": true
+    },
+    "color": {
+      "background": true,
+      "link": true,
+      "text": true
+    },
+    "spacing": {
+      "blockGap": true,
+      "margin": true,
+      "padding": true
+    },
+    "typography": {
+      "fontSize": true,
+      "lineHeight": true
+    }
+  },
+  "example": {
+    "attributes": {
+      "heading": "بعدی"
+    }
+  }
 }

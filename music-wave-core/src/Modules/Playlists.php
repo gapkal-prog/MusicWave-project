@@ -50,9 +50,9 @@ final class Playlists implements Module {
 
 		$panels['playlists'] = array(
 			'icon'        => '≡',
-			'label'       => __( 'Playlists', 'music-wave-core' ),
-			'description' => __( 'Create, order, and share your playlists.', 'music-wave-core' ),
-			'content'     => $this->blocks->render_manager( array( 'heading' => __( 'Your playlists', 'music-wave-core' ) ) ),
+			'label'       => __( 'فهرست‌های پخش', 'music-wave-core' ),
+			'description' => __( 'فهرست پخش خود را ایجاد کنید، سفارش دهید و به‌اشتراک بگذارید.', 'music-wave-core' ),
+			'content'     => $this->blocks->render_manager( array( 'heading' => __( 'فهرست‌های پخش شما', 'music-wave-core' ) ) ),
 		);
 
 		return $panels;

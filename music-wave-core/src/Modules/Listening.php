@@ -94,9 +94,9 @@ final class Listening implements Module {
 
 		$panels['queue'] = array(
 			'icon'        => '☰',
-			'label'       => __( 'Queue', 'music-wave-core' ),
-			'description' => __( 'Reorder, shuffle, and clear your play queue.', 'music-wave-core' ),
-			'content'     => $this->queue_block->render( array( 'heading' => __( 'Up next', 'music-wave-core' ) ) ),
+			'label'       => __( 'صف', 'music-wave-core' ),
+			'description' => __( 'صف پخش خود را دوباره مرتب کنید، به‌صورت تصادفی پخش کنید و پاک کنید.', 'music-wave-core' ),
+			'content'     => $this->queue_block->render( array( 'heading' => __( 'بعدی', 'music-wave-core' ) ) ),
 		);
 
 		return $panels;

@@ -226,17 +226,17 @@ final class FollowNotifier {
 		$subject = NotificationPreferences::CHANNEL_PRESAVE === $channel
 			? sprintf(
 				/* translators: %s: release title. */
-				__( '%s is out now', 'music-wave-core' ),
+				__( '%s اکنون منتشرشده است', 'music-wave-core' ),
 				$title
 			)
 			: sprintf(
 				/* translators: %s: release title. */
-				__( 'New release: %s', 'music-wave-core' ),
+				__( 'انتشار جدید: %s', 'music-wave-core' ),
 				$title
 			);
 
 		$unsubscribe = $this->preferences->unsubscribe_url( $user_id, $channel );
-		$body        = $title . "\n" . $url . "\n\n" . __( 'You are receiving this because you enabled these notifications.', 'music-wave-core' ) . "\n" . $unsubscribe;
+		$body        = $title . "\n" . $url . "\n\n" . __( 'شما این را دریافت می‌کنید زیرا این اعلان‌ها را فعال کرده اید.', 'music-wave-core' ) . "\n" . $unsubscribe;
 
 		/**
 		 * Filter one outgoing MusicWave notification.

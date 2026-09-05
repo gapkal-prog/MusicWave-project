@@ -46,9 +46,9 @@ final class NotificationPreferences {
 	 */
 	public function label( string $channel ): string {
 		$labels = array(
-			self::CHANNEL_ARTIST_RELEASE => __( 'New releases from artists I follow', 'music-wave-core' ),
-			self::CHANNEL_PRESAVE        => __( 'When something I pre-saved is out', 'music-wave-core' ),
-			self::CHANNEL_PODCAST        => __( 'New episodes of podcasts I follow', 'music-wave-core' ),
+			self::CHANNEL_ARTIST_RELEASE => __( 'انتشارات جدید از هنرمندانی که دنبال می‌کنم', 'music-wave-core' ),
+			self::CHANNEL_PRESAVE        => __( 'وقتی چیزی که از قبل ذخیره کرده بودم خارج شد', 'music-wave-core' ),
+			self::CHANNEL_PODCAST        => __( 'قسمت‌های جدید پادکست‌هایی که دنبال می‌کنم', 'music-wave-core' ),
 		);
 
 		return isset( $labels[ $channel ] ) ? $labels[ $channel ] : '';

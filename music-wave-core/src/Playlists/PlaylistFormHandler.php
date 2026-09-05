@@ -138,19 +138,19 @@ final class PlaylistFormHandler {
 	 */
 	public function notice_message( string $notice ): string {
 		$messages = array(
-			'created'            => __( 'Playlist created.', 'music-wave-core' ),
-			'create-failed'      => __( 'That playlist could not be created. Check the name and your playlist limit.', 'music-wave-core' ),
-			'updated'            => __( 'Playlist updated.', 'music-wave-core' ),
-			'update-failed'      => __( 'That playlist could not be updated.', 'music-wave-core' ),
-			'deleted'            => __( 'Playlist deleted.', 'music-wave-core' ),
-			'delete-failed'      => __( 'That playlist could not be deleted.', 'music-wave-core' ),
-			'item-added'         => __( 'Added to the playlist.', 'music-wave-core' ),
-			'item-add-failed'    => __( 'That release could not be added to the playlist.', 'music-wave-core' ),
-			'item-removed'       => __( 'Removed from the playlist.', 'music-wave-core' ),
-			'item-remove-failed' => __( 'That release is not in this playlist.', 'music-wave-core' ),
-			'moved'              => __( 'Playlist order updated.', 'music-wave-core' ),
-			'move-failed'        => __( 'The playlist order could not be changed.', 'music-wave-core' ),
-			'invalid'            => __( 'That playlist request was not valid. Try again.', 'music-wave-core' ),
+			'created'            => __( 'فهرست پخش ایجاد شد.', 'music-wave-core' ),
+			'create-failed'      => __( 'آن فهرست پخش ایجاد نشد. نام و محدودیت فهرست پخش خود را بررسی کنید.', 'music-wave-core' ),
+			'updated'            => __( 'فهرست پخش به‌روز شد.', 'music-wave-core' ),
+			'update-failed'      => __( 'آن فهرست پخش به‌روز نمی‌شود.', 'music-wave-core' ),
+			'deleted'            => __( 'فهرست پخش حذف شد', 'music-wave-core' ),
+			'delete-failed'      => __( 'آن فهرست پخش قابل حذف نیست.', 'music-wave-core' ),
+			'item-added'         => __( 'به فهرست پخش اضافه شد.', 'music-wave-core' ),
+			'item-add-failed'    => __( 'آن انتشار را نمی‌توان به فهرست پخش اضافه کرد.', 'music-wave-core' ),
+			'item-removed'       => __( 'از فهرست پخش حذف شد.', 'music-wave-core' ),
+			'item-remove-failed' => __( 'آن انتشار در این فهرست پخش نیست.', 'music-wave-core' ),
+			'moved'              => __( 'ترتیب فهرست پخش به‌روز شد.', 'music-wave-core' ),
+			'move-failed'        => __( 'ترتیب فهرست پخش را نمی‌توان تغییر داد.', 'music-wave-core' ),
+			'invalid'            => __( 'آن درخواست فهرست پخش معتبر نبود. دوباره امتحان کنید.', 'music-wave-core' ),
 		);
 
 		return isset( $messages[ $notice ] ) ? $messages[ $notice ] : '';

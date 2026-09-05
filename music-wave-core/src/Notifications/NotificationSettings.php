@@ -51,8 +51,8 @@ final class NotificationSettings {
 
 		$panels['notifications'] = array(
 			'icon'        => '✉',
-			'label'       => __( 'Notifications', 'music-wave-core' ),
-			'description' => __( 'Choose which release emails you want.', 'music-wave-core' ),
+			'label'       => __( 'اطلاعیه‌ها', 'music-wave-core' ),
+			'description' => __( 'ایمیل‌های انتشاری را که می‌خواهید انتخاب کنید.', 'music-wave-core' ),
 			'content'     => $this->markup( (int) $user_id ),
 		);
 
@@ -64,7 +64,7 @@ final class NotificationSettings {
 	 */
 	public function markup( int $user_id ): string {
 		if ( $user_id < 1 ) {
-			return '<p>' . esc_html__( 'Sign in to manage notifications.', 'music-wave-core' ) . '</p>';
+			return '<p>' . esc_html__( 'برای مدیریت اعلان‌ها وارد سیستم شوید.', 'music-wave-core' ) . '</p>';
 		}
 
 		$preferences = $this->preferences->all( $user_id );
@@ -83,9 +83,9 @@ final class NotificationSettings {
 			. '<form class="mw-notifications__form" method="post" action="' . esc_url( admin_url( 'admin-post.php' ) ) . '">'
 			. wp_nonce_field( self::NONCE, '_wpnonce', true, false )
 			. '<input type="hidden" name="action" value="' . esc_attr( self::ACTION ) . '">'
-			. '<fieldset><legend>' . esc_html__( 'Email me about', 'music-wave-core' ) . '</legend>' . $fields . '</fieldset>'
-			. '<p class="mw-notifications__hint">' . esc_html__( 'All notifications are off until you turn them on. Every email includes a one-click unsubscribe link.', 'music-wave-core' ) . '</p>'
-			. '<button type="submit">' . esc_html__( 'Save notification settings', 'music-wave-core' ) . '</button>'
+			. '<fieldset><legend>' . esc_html__( 'درباره', 'music-wave-core' ) . '</legend>' . $fields . '</fieldset>'
+			. '<p class="mw-notifications__hint">' . esc_html__( 'تا زمانی که آن‌ها را روشن نکنید، همه اعلان‌ها خاموش هستند. هر ایمیل شامل یک پیوند لغو اشتراک با یک کلیک است.', 'music-wave-core' ) . '</p>'
+			. '<button type="submit">' . esc_html__( 'تنظیمات اعلان را ذخیره کنید', 'music-wave-core' ) . '</button>'
 			. '</form></div>';
 	}
 
@@ -147,8 +147,8 @@ final class NotificationSettings {
 		}
 
 		$message = 'saved' === $notice
-			? __( 'Notification settings saved.', 'music-wave-core' )
-			: __( 'Notification settings could not be saved.', 'music-wave-core' );
+			? __( 'تنظیمات اعلان ذخیره شد.', 'music-wave-core' )
+			: __( 'تنظیمات اعلان ذخیره نشد.', 'music-wave-core' );
 		$class   = 'mw-notifications__notice' . ( 'failed' === $notice ? ' mw-notifications__notice--error' : '' );
 
 		return '<p class="' . esc_attr( $class ) . '" role="status" aria-live="polite">' . esc_html( $message ) . '</p>';

@@ -29,8 +29,8 @@ final class AccessPolicyEngine {
 	public function __construct(
 		ReleaseRepository $repository,
 		PurchaseChecker $purchase_checker,
-		MembershipProvider $membership_provider = null,
-		ManualAccessProvider $manual_provider = null
+		?MembershipProvider $membership_provider = null,
+		?ManualAccessProvider $manual_provider = null
 	) {
 		$this->repository          = $repository;
 		$this->purchase_checker    = $purchase_checker;

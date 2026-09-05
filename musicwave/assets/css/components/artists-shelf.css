@@ -17,8 +17,8 @@
 	align-self: center;
 	aspect-ratio: 1;
 	background:
-		radial-gradient(circle at 25% 20%, color-mix(in srgb, var(--wp--preset--color--accent, #fa2d48) 45%, transparent), transparent 50%),
-		var(--mw-color-surface-raised, #242733);
+		radial-gradient(circle at 25% 20%, color-mix(in srgb, var(--mw-color-accent, #1db954) 45%, transparent), transparent 50%),
+		var(--mw-color-surface-raised, #282828);
 	block-size: auto;
 	box-shadow: 0 .75rem 2rem rgb(0 0 0 / 16%);
 	display: flex;
@@ -71,17 +71,17 @@
 }
 
 .mw-artists-shelf__name a:is(:hover, :focus-visible) {
-	color: var(--wp--preset--color--accent, #fa2d48);
+	color: var(--mw-color-accent, #1db954);
 }
 
 .mw-artists-shelf__count {
-	color: var(--mw-color-muted, #9ca3af);
+	color: var(--mw-color-text-muted, #a0a0a0);
 	font-size: .8125rem;
 	margin: 0;
 }
 
 .mw-artists-shelf__bio {
-	color: var(--mw-color-muted, #9ca3af);
+	color: var(--mw-color-text-muted, #a0a0a0);
 	display: -webkit-box;
 	-webkit-box-orient: vertical;
 	-webkit-line-clamp: 2;
@@ -137,7 +137,7 @@
 
 /* ---- Empty state ---- */
 .mw-artists-shelf__empty {
-	color: var(--mw-color-muted, #9ca3af);
+	color: var(--mw-color-text-muted, #a0a0a0);
 	margin: 0;
 }
 

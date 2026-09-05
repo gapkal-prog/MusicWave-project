@@ -23,7 +23,7 @@ final class ReleaseMetaSchema {
 					'',
 					true,
 					array(
-						'label' => __( 'Catalog number', 'music-wave-core' ),
+						'label' => __( 'شماره کاتالوگ', 'music-wave-core' ),
 						'type'  => 'text',
 						'group' => 'release',
 					)
@@ -34,7 +34,7 @@ final class ReleaseMetaSchema {
 					'',
 					true,
 					array(
-						'label' => __( 'Album', 'music-wave-core' ),
+						'label' => __( 'آلبوم', 'music-wave-core' ),
 						'type'  => 'text',
 						'group' => 'release',
 					)
@@ -45,7 +45,7 @@ final class ReleaseMetaSchema {
 					0,
 					true,
 					array(
-						'label' => __( 'Release year', 'music-wave-core' ),
+						'label' => __( 'سال انتشار', 'music-wave-core' ),
 						'type'  => 'number',
 						'min'   => 1000,
 						'max'   => 9999,
@@ -58,7 +58,7 @@ final class ReleaseMetaSchema {
 					'',
 					true,
 					array(
-						'label' => __( 'Release date', 'music-wave-core' ),
+						'label' => __( 'تاریخ انتشار', 'music-wave-core' ),
 						'type'  => 'date',
 						'group' => 'release',
 					)
@@ -80,7 +80,7 @@ final class ReleaseMetaSchema {
 					0,
 					true,
 					array(
-						'label' => __( 'Duration in seconds', 'music-wave-core' ),
+						'label' => __( 'مدت زمان بر حسب ثانیه', 'music-wave-core' ),
 						'type'  => 'number',
 						'min'   => 0,
 						'group' => 'media',
@@ -92,7 +92,7 @@ final class ReleaseMetaSchema {
 					30,
 					true,
 					array(
-						'label' => __( 'Preview duration in seconds', 'music-wave-core' ),
+						'label' => __( 'مدت زمان پیش‌نمایش بر حسب ثانیه', 'music-wave-core' ),
 						'type'  => 'number',
 						'min'   => 10,
 						'max'   => 120,
@@ -118,7 +118,7 @@ final class ReleaseMetaSchema {
 					'',
 					true,
 					array(
-						'label' => __( 'Musical key', 'music-wave-core' ),
+						'label' => __( 'کلید موسیقی', 'music-wave-core' ),
 						'type'  => 'text',
 						'group' => 'media',
 					)
@@ -129,7 +129,7 @@ final class ReleaseMetaSchema {
 					false,
 					true,
 					array(
-						'label' => __( 'Contains explicit content', 'music-wave-core' ),
+						'label' => __( 'محتوای صریح', 'music-wave-core' ),
 						'type'  => 'checkbox',
 						'group' => 'release',
 					)
@@ -140,7 +140,7 @@ final class ReleaseMetaSchema {
 					'',
 					true,
 					array(
-						'label' => __( 'HTTPS preview URL', 'music-wave-core' ),
+						'label' => __( 'نشانی HTTPS پیش‌نمایش', 'music-wave-core' ),
 						'type'  => 'url',
 						'group' => 'media',
 					)
@@ -151,7 +151,7 @@ final class ReleaseMetaSchema {
 					0,
 					true,
 					array(
-						'label' => __( 'Track number', 'music-wave-core' ),
+						'label' => __( 'شماره قطعه', 'music-wave-core' ),
 						'type'  => 'number',
 						'min'   => 0,
 						'group' => 'track',
@@ -163,7 +163,7 @@ final class ReleaseMetaSchema {
 					0,
 					true,
 					array(
-						'label' => __( 'Episode number', 'music-wave-core' ),
+						'label' => __( 'شماره قسمت', 'music-wave-core' ),
 						'type'  => 'number',
 						'min'   => 0,
 						'group' => 'podcast',
@@ -175,7 +175,7 @@ final class ReleaseMetaSchema {
 					0,
 					true,
 					array(
-						'label' => __( 'Season number', 'music-wave-core' ),
+						'label' => __( 'شماره فصل', 'music-wave-core' ),
 						'type'  => 'number',
 						'min'   => 0,
 						'group' => 'podcast',
@@ -237,15 +237,15 @@ final class ReleaseMetaSchema {
 					'public',
 					true,
 					array(
-						'label'   => __( 'Access mode', 'music-wave-core' ),
+						'label'   => __( 'حالت دسترسی', 'music-wave-core' ),
 						'type'    => 'select',
 						'group'   => 'access',
 						'options' => array(
-							'public'                 => __( 'Public', 'music-wave-core' ),
-							'purchase'               => __( 'Purchase required', 'music-wave-core' ),
-							'membership'             => __( 'Membership required', 'music-wave-core' ),
-							'purchase_or_membership' => __( 'Purchase or membership', 'music-wave-core' ),
-							'restricted'             => __( 'Restricted / unavailable', 'music-wave-core' ),
+							'public'                 => __( 'عمومی', 'music-wave-core' ),
+							'purchase'               => __( 'خرید الزامی است', 'music-wave-core' ),
+							'membership'             => __( 'عضویت الزامی است', 'music-wave-core' ),
+							'purchase_or_membership' => __( 'خرید یا عضویت', 'music-wave-core' ),
+							'restricted'             => __( 'محدود / در دسترس نیست', 'music-wave-core' ),
 						),
 					)
 				),
@@ -255,7 +255,7 @@ final class ReleaseMetaSchema {
 					array(),
 					false,
 					array(
-						'label' => __( 'WooCommerce products', 'music-wave-core' ),
+						'label' => __( 'محصولات WooCommerce', 'music-wave-core' ),
 						'type'  => 'products',
 						'group' => 'access',
 					)
@@ -266,7 +266,7 @@ final class ReleaseMetaSchema {
 					array(),
 					false,
 					array(
-						'label' => __( 'Membership level keys', 'music-wave-core' ),
+						'label' => __( 'کلیدهای سطح عضویت', 'music-wave-core' ),
 						'type'  => 'key_list',
 						'group' => 'access',
 					)
@@ -281,7 +281,7 @@ final class ReleaseMetaSchema {
 					array(),
 					false,
 					array(
-						'label' => __( 'Protected files and download qualities', 'music-wave-core' ),
+						'label' => __( 'فایل‌های حفاظت‌شده و کیفیت دانلود', 'music-wave-core' ),
 						'type'  => 'protected_assets',
 						'group' => 'access',
 					)

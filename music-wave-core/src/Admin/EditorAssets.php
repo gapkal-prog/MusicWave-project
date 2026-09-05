@@ -26,6 +26,9 @@ final class EditorAssets {
 			MUSIC_WAVE_CORE_VERSION,
 			true
 		);
+		if ( function_exists( 'wp_set_script_translations' ) ) {
+			wp_set_script_translations( 'music-wave-editor', 'music-wave-core', MUSIC_WAVE_CORE_PATH . 'languages' );
+		}
 		wp_enqueue_style(
 			'music-wave-editor',
 			MUSIC_WAVE_CORE_URL . 'assets/editor.css',

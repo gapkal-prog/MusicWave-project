@@ -1,6 +1,6 @@
 <?php
 /**
- * Title: Curated release shelf
+ * Title: ویترین انتشارهای منتخب
  * Slug: musicwave/curated-release-shelf
  * Categories: musicwave, featured
  * Inserter: true
@@ -9,4 +9,4 @@
  */
 
 ?>
-<!-- wp:musicwave/release-shelf {"eyebrow":"HANDPICKED","title":"A collection worth replaying","description":"Select exact releases and their display order from the block settings.","releaseIds":"","itemsToShow":8,"columns":4,"layout":"scroll","showAction":false,"sectionLinkLabel":"See all"} /-->
+<!-- wp:music-wave/release-shelf {"eyebrow":"منتخب ویژه","title":"مجموعه‌ای ارزشمند برای شنیدن دوباره","description":"انتشارهای دقیق و ترتیب نمایش آن‌ها را از تنظیمات بلوک انتخاب کنید.","releaseIds":"","itemsToShow":8,"columns":4,"layout":"scroll","showAction":false,"sectionLinkLabel":"مشاهده همه"} /-->

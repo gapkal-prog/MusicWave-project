@@ -45,13 +45,21 @@
 		);
 	}
 
+	// Innermost interactive scope a control belongs to: one panel row or one
+	// inline track-row group. Falls back to the whole action container.
+	function actionScope( element ) {
+		return (
+			element.closest( '.mw-download-file-row' ) ||
+			element.closest( '.mw-download-inline' )
+		);
+	}
+
 	function selectedQuality( button ) {
-		var row = button.closest( '.mw-download-file-row' );
-		var container =
-			button.closest( '.mw-download-action' ) || button.parentNode;
-		var qualitySelect = row
-			? row.querySelector( '.mw-download-quality' )
-			: container.querySelector( '.mw-download-quality' );
+		var container = button.closest( '.mw-download-action' );
+		var scope = actionScope( button ) || container;
+		var qualitySelect = scope
+			? scope.querySelector( '.mw-download-quality' )
+			: null;
 
 		return qualitySelect
 			? qualitySelect.value
@@ -96,21 +104,20 @@
 
 	function setPlayButton( button, playing ) {
 		var labels = window.musicWaveDownload || {};
-		var spans = button.querySelectorAll( 'span' );
+		var icon = button.querySelector( '.mw-secure-play-button__icon' );
 		var playLabel =
 			button.getAttribute( 'data-play-label' ) ||
 			labels.playLabel ||
-			'Play';
+			'پخش';
 		var pauseLabel =
 			button.getAttribute( 'data-pause-label' ) ||
 			labels.pauseLabel ||
-			'Pause';
+			'مکث';
 		button.setAttribute( 'aria-pressed', playing ? 'true' : 'false' );
-		if ( spans[ 0 ] ) {
-			spans[ 0 ].textContent = playing ? '\u23F8' : '\u25B6';
-		}
-		if ( spans[ 1 ] ) {
-			spans[ 1 ].textContent = playing ? pauseLabel : playLabel;
+		// Icon-only affordance: the accessible name stays on aria-label.
+		button.setAttribute( 'aria-label', playing ? pauseLabel : playLabel );
+		if ( icon ) {
+			icon.textContent = playing ? '❚❚' : '▶';
 		}
 	}
 
@@ -148,16 +155,16 @@
 		}
 
 		var qualitySelect = event.target.closest(
-			'.mw-download-file-row .mw-download-quality'
+			'.mw-download-file-row .mw-download-quality, .mw-download-inline .mw-download-quality'
 		);
 		if ( ! qualitySelect ) {
 			return;
 		}
-		var row = qualitySelect.closest( '.mw-download-file-row' );
-		var playButton = row
-			? row.querySelector( '.mw-secure-play-button' )
+		var scope = actionScope( qualitySelect );
+		var playButton = scope
+			? scope.querySelector( '.mw-secure-play-button' )
 			: null;
-		var container = row ? row.closest( '.mw-download-action' ) : null;
+		var container = qualitySelect.closest( '.mw-download-action' );
 		var audio = container
 			? container.querySelector( '.mw-secure-audio' )
 			: null;
@@ -182,9 +189,10 @@
 			button.getAttribute( 'data-release-id' ),
 			10
 		);
-		var container =
-			button.closest( '.mw-download-action' ) || button.parentNode;
-		var status = container.querySelector( '.mw-download-status' );
+		var container = button.closest( '.mw-download-action' );
+		var status = container
+			? container.querySelector( '.mw-download-status' )
+			: null;
 		var quality = selectedQuality( button );
 		button.disabled = true;
 		if ( status ) {
@@ -229,7 +237,7 @@
 			10
 		);
 		var quality = selectedQuality( button );
-		if ( ! audio || ! status || ! releaseId || ! quality ) {
+		if ( ! container || ! audio || ! status || ! releaseId || ! quality ) {
 			return;
 		}
 		if (

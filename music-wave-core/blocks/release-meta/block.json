@@ -1,48 +1,130 @@
 {
-	"apiVersion": 3,
-	"name": "music-wave/release-meta",
-	"title": "Release metadata",
-	"category": "music-wave",
-	"description": "Release detail panel: metadata, linked taxonomies, library and playlist actions, secure downloads, and the track list.",
-	"keywords": [ "catalog number", "bpm", "details" ],
-	"textdomain": "music-wave-core",
-	"icon": "list-view",
-	"attributes": {
-		"releaseId": { "type": "integer", "default": 0 },
-		"compact": { "type": "boolean", "default": false },
-		"showCatalogNumber": { "type": "boolean", "default": true },
-		"showReleaseDate": { "type": "boolean", "default": true },
-		"showDuration": { "type": "boolean", "default": true },
-		"showBpm": { "type": "boolean", "default": true },
-		"showKey": { "type": "boolean", "default": true },
-		"showArtist": { "type": "boolean", "default": true },
-		"showGenre": { "type": "boolean", "default": true },
-		"showLibraryButton": { "type": "boolean", "default": true },
-		"showTaxonomyChips": { "type": "boolean", "default": true },
-		"showActions": { "type": "boolean", "default": true },
-		"layout": { "type": "string", "default": "grid" },
-		"showLabels": { "type": "boolean", "default": true },
-		"linkTerms": { "type": "boolean", "default": false },
-		"showMood": { "type": "boolean", "default": false },
-		"showReleaseType": { "type": "boolean", "default": false }
-	},
-	"usesContext": [ "postId", "postType" ],
-	"supports": {
-		"anchor": true,
-		"align": [ "wide", "full" ],
-		"border": { "color": true, "radius": true, "style": true, "width": true },
-		"color": { "background": true, "link": true, "text": true },
-		"spacing": { "blockGap": true, "margin": true, "padding": true },
-		"typography": { "fontSize": true, "lineHeight": true }
-	},
-	"example": {
-		"attributes": {
-			"layout": "grid",
-			"showCatalogNumber": true,
-			"showReleaseDate": true,
-			"showDuration": true,
-			"showBpm": true,
-			"showKey": true
-		}
-	}
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "music-wave/release-meta",
+  "title": "فرادادهٔ انتشار",
+  "category": "music-wave",
+  "description": "پنل جزئیات انتشار: فراداده، طبقه‌بندی‌های مرتبط، اقدامات کتابخانه و فهرست پخش، دانلودهای امن و فهرست قطعه‌ها.",
+  "keywords": [
+    "شماره کاتالوگ",
+    "bpm",
+    "جزئیات"
+  ],
+  "textdomain": "music-wave-core",
+  "icon": "list-view",
+  "attributes": {
+    "releaseId": {
+      "type": "integer",
+      "default": 0
+    },
+    "compact": {
+      "type": "boolean",
+      "default": false
+    },
+    "showCatalogNumber": {
+      "type": "boolean",
+      "default": true
+    },
+    "showReleaseDate": {
+      "type": "boolean",
+      "default": true
+    },
+    "showDuration": {
+      "type": "boolean",
+      "default": true
+    },
+    "showBpm": {
+      "type": "boolean",
+      "default": true
+    },
+    "showKey": {
+      "type": "boolean",
+      "default": true
+    },
+    "showArtist": {
+      "type": "boolean",
+      "default": true
+    },
+    "showGenre": {
+      "type": "boolean",
+      "default": true
+    },
+    "showLibraryButton": {
+      "type": "boolean",
+      "default": true
+    },
+    "showTaxonomyChips": {
+      "type": "boolean",
+      "default": true
+    },
+    "showActions": {
+      "type": "boolean",
+      "default": true
+    },
+    "layout": {
+      "type": "string",
+      "default": "grid"
+    },
+    "showLabels": {
+      "type": "boolean",
+      "default": true
+    },
+    "linkTerms": {
+      "type": "boolean",
+      "default": true
+    },
+    "showMood": {
+      "type": "boolean",
+      "default": false
+    },
+    "showLabel": {
+      "type": "boolean",
+      "default": false
+    },
+    "showReleaseType": {
+      "type": "boolean",
+      "default": false
+    }
+  },
+  "usesContext": [
+    "postId",
+    "postType"
+  ],
+  "supports": {
+    "anchor": true,
+    "align": [
+      "wide",
+      "full"
+    ],
+    "border": {
+      "color": true,
+      "radius": true,
+      "style": true,
+      "width": true
+    },
+    "color": {
+      "background": true,
+      "link": true,
+      "text": true
+    },
+    "spacing": {
+      "blockGap": true,
+      "margin": true,
+      "padding": true
+    },
+    "typography": {
+      "fontSize": true,
+      "lineHeight": true
+    }
+  },
+  "example": {
+    "attributes": {
+      "layout": "grid",
+      "showCatalogNumber": true,
+      "showReleaseDate": true,
+      "showDuration": true,
+      "showBpm": true,
+      "showKey": true
+    }
+  }
 }

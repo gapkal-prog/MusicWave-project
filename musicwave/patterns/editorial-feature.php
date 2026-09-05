@@ -1,6 +1,6 @@
 <?php
 /**
- * Title: Editorial music feature
+ * Title: ویژه‌نامه موسیقی سرمقاله‌ای
  * Slug: musicwave/editorial-feature
  * Categories: musicwave, featured
  * Inserter: true
@@ -9,12 +9,12 @@
  */
 
 ?>
-<!-- wp:musicwave/release-shelf 
+<!-- wp:music-wave/release-shelf
 <?php
 echo wp_json_encode(
 	array(
-		'eyebrow'     => __( 'EDITORIAL', 'musicwave' ),
-		'title'       => __( 'Top picks this week', 'musicwave' ),
+		'eyebrow'     => __( 'سرمقاله', 'musicwave' ),
+		'title'       => __( 'انتخاب‌های برتر این هفته', 'musicwave' ),
 		'orderBy'     => 'rand',
 		'itemsToShow' => 5,
 		'layout'      => 'feature',

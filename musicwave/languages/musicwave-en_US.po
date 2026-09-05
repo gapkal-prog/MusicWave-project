@@ -1,0 +1,1059 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: musicwave\n"
+"Language: en_US\n"
+"Language-Team: English\n"
+"PO-Revision-Date: 2026-08-30 00:00+0000\n"
+"Last-Translator: MusicWave Translation Team\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "%d قطعه"
+msgid_plural "%d قطعه"
+msgstr[0] "%d track"
+msgstr[1] "%d tracks"
+
+msgid "%d مورد سفارشی‌سازی قالب MusicWave به زباله‌دان منتقل شد. فایل‌های معتبر قالب اکنون فعال هستند."
+msgstr ""
+"%d customized MusicWave template records were moved to the Trash. The validated theme "
+"files are active again."
+
+msgid "MusicWave"
+msgstr "MusicWave"
+
+msgid "آخرین انتشارها"
+msgstr "Latest releases"
+
+msgid "ابزارک — جست‌وجو و دسته‌بندی‌ها"
+msgstr "Widget — Search and categories"
+
+msgid "ابزارک‌های MusicWave"
+msgstr "MusicWave Widgets"
+
+msgid "ابزارک‌های سربرگ MusicWave"
+msgstr "MusicWave header widgets"
+
+msgid "ابزارک‌های پابرگ MusicWave"
+msgstr "MusicWave footer widgets"
+
+msgid "اختیاری. با نامک نوع انتشار مانند album، single، ep، podcast_show یا podcast_episode فیلتر کنید. برای نمایش همه انواع، خالی بگذارید. این موارد در MusicWave → انواع انتشار قرار دارند."
+msgstr ""
+"Optional. Filter by a release-type slug such as album, single, ep, podcast_show, podcast_episode."
+" Leave empty to include all types. Found under MusicWave → Release Types."
+
+msgid "اختیاری. برای تعیین ترتیب دقیق، شناسه انتشارها را با کاما جدا کرده و وارد کنید (مثلاً ۱۲، ۴۵، ۷۸). با بردن نشانگر روی عنوان انتشار در MusicWave → انتشارها، شناسه را در پیش‌نمایش پیوند ببینید. این گزینه همه فیلترهای دیگر را نادیده می‌گیرد."
+msgstr ""
+"Optional. Paste comma-separated release IDs to fix an exact order (e.g. 12, 45, 78)."
+" Find the ID by hovering a release title in MusicWave → Releases — the ID shows in "
+"the link preview. Overrides all other filters."
+
+msgid "اختیاری. فقط فهرست‌های پخش عمومی را نمایش بده که عنوانشان با این متن مطابقت دارد."
+msgstr "Optional. Only show public playlists whose title matches this text."
+
+msgid "اختیاری. نامک را از فهرست هنرمندان / سبک‌ها / حال‌وهواها در وردپرس → MusicWave کپی کنید. اگر خالی بگذارید، همهٔ موارد نمایش داده می‌شوند. نمونه: pop یا lo-fi."
+msgstr ""
+"Optional. Copy the slug from WordPress → MusicWave → Artists / Genres / Moods list "
+"(the slug column). Leave empty to include every term. Example: pop or lo-fi."
+
+msgid "اختیاری: ناحیه کوچک ابزارک برای سربرگ (مثلاً اعلان یا تغییر زبان). بلوک‌ها را از نمایش → ابزارک‌ها یا مستقیماً در بخش قالب سربرگ اضافه کنید."
+msgstr ""
+"Optional: small widget area for the header (e.g., announcement, language switcher)."
+" Add blocks under Appearance → Widgets or directly in the Header template part."
+
+msgid "از این عنوان قابل ویرایش بالای حلقه پرس‌وجو، فهرست پخش، مجموعه هنرمندان یا هر بلوک سفارشی استفاده کنید."
+msgstr ""
+"Use this editable heading above a Query Loop, playlist, artist collection, or any "
+"custom block."
+
+msgid "استفاده از تنظیمات کلی"
+msgstr "Use global setting"
+
+msgid "استفاده از فیلد توضیحات"
+msgstr "Use description field"
+
+msgid "استفاده از پوسته تیره"
+msgstr "Use dark theme"
+
+msgid "استفاده از پوسته روشن"
+msgstr "Use light theme"
+
+msgid "استفاده از پوسته سیستم"
+msgstr "Use system theme"
+
+msgid "استفاده از چکیده"
+msgstr "Use excerpt"
+
+msgid "اسلایدر"
+msgstr "Slider"
+
+msgid "اسلایدر انتشارهای MusicWave"
+msgstr "MusicWave release slider"
+
+msgid "اسلایدر انتشارهای منتخب"
+msgstr "Featured release slider"
+
+msgid "اسلایدر واکنش‌گرا و دسترس‌پذیر برای انتشارهای منتخب یا جدید. از طریق ویرایشگر سایت و تنظیمات کلی اسلایدر کاملاً قابل سفارشی‌سازی است."
+msgstr ""
+"A responsive, accessible slider for featured or recent releases. Fully customizable "
+"via Site Editor and global slider settings."
+
+msgid "افقی"
+msgstr "Landscape"
+
+msgid "امروز شنیدن را شروع کنید"
+msgstr "Start listening today"
+
+msgid "انتخاب‌های برتر این هفته"
+msgstr "Top picks this week"
+
+msgid "انتخاب‌هایی آرام برای کار و استراحت."
+msgstr "Calm selections for work and rest."
+
+msgid "انتشار MusicWave"
+msgstr "MusicWave release"
+
+msgid "انتشارها"
+msgstr "Releases"
+
+msgid "انتشارها برای نمایش"
+msgstr "Releases to show"
+
+msgid "انتشارها، هنرمندان، آلبوم‌ها و دانلودهای اختصاصی را در تجربه‌ای یکپارچه کشف کنید."
+msgstr "Explore releases, artists, albums, and exclusive downloads in one focused experience."
+
+msgid "انتشارهای بعدی"
+msgstr "Next releases"
+
+msgid "انتشارهای بیشتر"
+msgstr "More releases"
+
+msgid "انتشارهای تازه و صداهای نوظهور."
+msgstr "Fresh releases and emerging sounds."
+
+msgid "انتشارهای جدید و انتخاب‌های سرمقاله‌ای را دریافت کنید. این بخش را با بلوک خبرنامه، فرم یا ابزارک قدیمی خود جایگزین کنید؛ بدون نیاز به کدنویسی."
+msgstr ""
+"Get new releases and editorial picks. Replace this with your newsletter block, form,"
+" or legacy widget — no code needed."
+
+msgid "انتشارهای قبلی"
+msgstr "Previous releases"
+
+msgid "انتشارهای منتخب"
+msgstr "Featured releases"
+
+msgid "اندازه فونت عنوان (پیکسل، ۰ = پیش‌فرض)"
+msgstr "Title font size (px, 0 = default)"
+
+msgid "این بخش معرفی را هرجا می‌خواهید قرار دهید؛ صفحهٔ اصلی، صفحهٔ فرود یا صفحه عریض. هر رنگ، فونت و فاصله‌ای در بخش سبک‌ها قابل ویرایش است."
+msgstr ""
+"Drop this hero anywhere — front page, landing, or page-wide. Every color, font, and "
+"spacing is editable in Styles."
+
+msgid "این چیدمان دو ستونه از بخش قالب قابل استفادهٔ مجدد «نوار کناری» استفاده می‌کند. آن را یک‌بار به‌روزرسانی کنید تا تغییرات فوراً در همه صفحات این الگو دیده شود؛ مناسب برای صاحبان فروشگاه بدون دانش فنی."
+msgstr ""
+"This two-column layout uses the reusable Sidebar template part. Update it once and "
+"every page using this pattern reflects the change instantly — perfect for non-technical "
+"store owners."
+
+msgid "این کار انتشارها، صفحات، منوها، رسانه‌ها، تنظیمات افزونه یا سبک‌های کلی را حذف نمی‌کند."
+msgstr "This does not delete releases, pages, menus, media, plugin settings, or global styles."
+
+msgid "اینجا چیزی در حال پخش نیست."
+msgstr "Nothing playing here."
+
+msgid "با هر بلوکی کار می‌کند؛ دسته‌بندی‌ها را با ابر برچسب، آخرین انتشارها یا ابزارک قدیمی جایگزین کنید. بدون نیاز به کدنویسی."
+msgstr ""
+"Works with any block — replace categories with tag cloud, latest releases, or a legacy "
+"widget. No code needed."
+
+msgid "با چیزی شروع کنید که شما را به حرکت درمی‌آورد"
+msgstr "Start with what moves you"
+
+msgid "باز کردن %s"
+msgstr "Open %s"
+
+msgid "باز کردن انتشار"
+msgstr "Open release"
+
+msgid "بازدیدها"
+msgstr "Views"
+
+msgid "بازیابی فایل‌های معتبر قالب"
+msgstr "Restore validated theme templates"
+
+msgid "بایگانی"
+msgstr "Archives"
+
+msgid "بخش‌های معرفی MusicWave"
+msgstr "MusicWave Hero"
+
+msgid "بدون متن بدنه"
+msgstr "No body text"
+
+msgid "برای استفاده از رنگ تأکیدی قالب، خالی بگذارید."
+msgstr "Leave empty to use theme accent color."
+
+msgid "برای استفاده از مقدار پیش‌فرض قالب، خالی بگذارید."
+msgstr "Leave empty to use theme default."
+
+msgid "برای شما"
+msgstr "Made for you"
+
+msgid "برای نمایش پیش‌نمایش زنده، انتشار منتشرشده اضافه کنید یا این بلوک را فعال کنید."
+msgstr "Add published releases or enable this block to display its live preview."
+
+msgid "برچسب"
+msgstr "Label"
+
+msgid "برچسب اقدام"
+msgstr "Action label"
+
+msgid "برچسب بالایی"
+msgstr "Eyebrow"
+
+msgid "برچسب دکمه"
+msgstr "Button label"
+
+msgid "برچسب مشاهده همه"
+msgstr "View-all label"
+
+msgid "برگه (بدون نوار کناری)"
+msgstr "Page (no sidebar)"
+
+msgid "برگه (عریض)"
+msgstr "Page (wide)"
+
+msgid "برگه با نوار کناری"
+msgstr "Page with sidebar"
+
+msgid "بنر فراخوان اقدام"
+msgstr "Call to action banner"
+
+msgid "به‌تازگی به‌روزرسانی‌شده"
+msgstr "Recently updated"
+
+msgid "تاریخ انتشار"
+msgstr "Published date"
+
+msgid "تاریخ ویرایش"
+msgstr "Modified date"
+
+msgid "ترجمه"
+msgstr "Translation"
+
+msgid "ترجیح نمایش MusicWave"
+msgstr "MusicWave display preference"
+
+msgid "تسویه‌حساب"
+msgstr "Checkout"
+
+msgid "تصادفی"
+msgstr "Random"
+
+msgid "تعداد انتشارهای بارگذاری‌شده"
+msgstr "Releases loaded"
+
+msgid "تعداد سفارشی‌سازی‌های ذخیره‌شده قالب: %d"
+msgstr "Customized built-in template overrides found: %d"
+
+msgid "تعمیر قالب MusicWave"
+msgstr "MusicWave template repair"
+
+msgid "تغییر ترجیح نمایش بین حالت روشن، تیره و سیستم."
+msgstr "Light / dark / system display preference toggle."
+
+msgid "تماس"
+msgstr "Contact"
+
+msgid "تمرکز و آرامش"
+msgstr "Focus and chill"
+
+msgid "توضیح کوتاهی برای معرفی بخش. برچسب بالایی، عنوان، رنگ متن، فاصله‌ها و تایپوگرافی را بدون کدنویسی در ویرایشگر سایت تغییر دهید."
+msgstr ""
+"Short description that explains the section. Edit the eyebrow, heading, and text colors,"
+" spacing, and typography in the Site Editor without code."
+
+msgid "توضیحات"
+msgstr "Description"
+
+msgid "توقف هنگام قرارگیری نشانگر یا تمرکز"
+msgstr "Pause on hover or focus"
+
+msgid "تکرار"
+msgstr "Loop"
+
+msgid "تیرگی لایه رویی"
+msgstr "Overlay darkness"
+
+msgid "جدیدترین‌ها در ابتدا"
+msgstr "Newest first"
+
+msgid "جهت"
+msgstr "Direction"
+
+msgid "حال‌وهوا"
+msgstr "Mood"
+
+msgid "حساب موسیقی"
+msgstr "Music account"
+
+msgid "حساب کاربری من"
+msgstr "My account"
+
+msgid "خریدها، کتابخانه موسیقی شخصی و ابزارهای حساب کاربری شما در یک‌جا."
+msgstr "Your purchases, personal music library, and account tools in one place."
+
+msgid "خط تأکیدی"
+msgstr "Accent line"
+
+msgid "خط تأکیدی خطی"
+msgstr "Outline accent"
+
+msgid "خطی"
+msgstr "Outline"
+
+msgid "داشبورد موسیقی کاربر"
+msgstr "User music dashboard"
+
+msgid "دایره"
+msgstr "Circle"
+
+msgid "در بخش قالب «ابزارک‌های پابرگ» نمایش داده می‌شود (نمایش → ویرایشگر → بخش‌های قالب → ابزارک‌های پابرگ). هر بلوک یا ابزارک قدیمی را بکشید و رها کنید؛ رنگ‌ها از سبک‌های کلی پیروی می‌کنند."
+msgstr ""
+"Appears in the Footer widgets template part (Appearance → Editor → Template Parts "
+"→ Footer widgets). Drag any block or legacy widget — colors follow global Styles."
+
+msgid "در بخش قالب «نوار کناری فروشگاه» نمایش داده می‌شود (بخش‌های قالب → نوار کناری فروشگاه). از فیلترها و دسته‌بندی‌های ووکامرس یا هر بلوکی استفاده کنید."
+msgstr ""
+"Appears in the Shop sidebar template part (Template Parts → Shop sidebar). Use WooCommerce "
+"filters, categories, or any block."
+
+msgid "در بخش قالب «نوار کناری» نمایش داده می‌شود (نمایش → ویرایشگر → بخش‌های قالب → نوار کناری). هر بلوک یا ابزارک قدیمی را اینجا اضافه کنید. همه‌چیز بدون نیاز به کدنویسی از رابط بصری قابل ویرایش است."
+msgstr ""
+"Appears in the Sidebar template part (Appearance → Editor → Template Parts → Sidebar)."
+" Add any block or legacy widget here. Fully editable visually — no code required."
+
+msgid "در جریان بمانید"
+msgstr "Stay in the loop"
+
+msgid "دسته‌بندی‌ها"
+msgstr "Categories"
+
+msgid "دکمه فراخوان اقدام"
+msgstr "Call-to-action button"
+
+msgid "رادیو و میکس‌ها"
+msgstr "Radio and mixes"
+
+msgid "راهنما و پرسش‌های متداول"
+msgstr "Help & FAQs"
+
+msgid "رفتار اسلایدر"
+msgstr "Slider behavior"
+
+msgid "رفتن به گروه اسلاید %d"
+msgstr "Go to slide group %d"
+
+msgid "رنگ عنوان (هگز)"
+msgstr "Title color (hex)"
+
+msgid "رنگ متن بدنه (هگز)"
+msgstr "Body text color (hex)"
+
+msgid "رنگ متن دکمه (هگز)"
+msgstr "Button text color (hex)"
+
+msgid "ساخته‌شده برای شما"
+msgstr "MADE FOR YOU"
+
+msgid "سبد خرید"
+msgstr "Cart"
+
+msgid "سبد خرید شما"
+msgstr "Your cart"
+
+msgid "سبد خرید و تسویه‌حساب"
+msgstr "Cart & checkout"
+
+msgid "سبک"
+msgstr "Genre"
+
+msgid "سبک دکمه"
+msgstr "Button style"
+
+msgid "سبک‌ها و حال‌وهواها"
+msgstr "Genres & moods"
+
+msgid "ستون اصلی؛ پاراگراف، تصویر، انتشار یا هر بلوکی را اضافه کنید. نوار کناری سمت راست به‌صورت جداگانه کاملاً قابل ویرایش است."
+msgstr ""
+"Main column — add paragraphs, images, releases, or any block. The sidebar on the right "
+"is fully editable piece-by-piece."
+
+msgid "ستون‌های ابزارک پابرگ"
+msgstr "Footer widget columns"
+
+msgid "ستون‌های دسکتاپ"
+msgstr "Desktop columns"
+
+msgid "سربرگ‌های MusicWave"
+msgstr "MusicWave Headers"
+
+msgid "سرمقاله"
+msgstr "EDITORIAL"
+
+msgid "سطح برجسته"
+msgstr "Raised surface"
+
+msgid "سفارشی‌سازی‌های ویرایشگر سایت در پایگاه داده ذخیره می‌شوند و بر فایل‌های به‌روزشده قالب اولویت دارند. فقط زمانی از این ابزار استفاده کنید که قالب MusicWave بخش قالبی ناموجود یا محتوای بلوک نامعتبر گزارش کند."
+msgstr ""
+"Site Editor customizations are stored in the database and override updated theme files."
+" Use this tool only when a MusicWave template reports an unavailable template part "
+"or invalid block content."
+
+msgid "شبکه"
+msgstr "Grid"
+
+msgid "شبکه واکنش‌گرا"
+msgstr "Responsive grid"
+
+msgid "شروع شنیدن"
+msgstr "Start listening"
+
+msgid "شعاع گوشه دکمه (پیکسل)"
+msgstr "Button corner radius (px)"
+
+msgid "شفاف"
+msgstr "Ghost"
+
+msgid "شما اجازه تعمیر قالب‌ها را ندارید."
+msgstr "You are not allowed to repair theme templates."
+
+msgid "شناسه انتشار منتخب (۰ = اولین نتیجه)"
+msgstr "Featured release ID (0 = first result)"
+
+msgid "شناسه انتشارهای منتخب"
+msgstr "Curated release IDs"
+
+msgid "شنیدن حرفه‌ای"
+msgstr "PREMIUM LISTENING"
+
+msgid "شنیدن پیوسته برای هر لحظه."
+msgstr "Continuous listening for every moment."
+
+msgid "شکل تصویر"
+msgstr "Artwork shape"
+
+msgid "صدای شما، به‌زیبایی سازمان‌یافته"
+msgstr "Your sound, beautifully organized"
+
+msgid "صدای شما، به‌زیبایی سازمان‌یافته. این پابرگ را از نمایش → ویرایشگر → بخش‌های قالب → ابزارک‌های پابرگ ویرایش کنید؛ بدون نیاز به کدنویسی."
+msgstr ""
+"Your sound, beautifully organized. Edit this footer in Appearance → Editor → Template "
+"Parts → Footer widgets — no code needed."
+
+msgid "صعودی"
+msgstr "Ascending"
+
+msgid "صفحه سرمقاله موسیقی"
+msgstr "Music editorial home"
+
+msgid "صفحه فرود (بدون سربرگ/پابرگ)"
+msgstr "Landing (no header/footer)"
+
+msgid "صفحه کامل سرمقاله موسیقی"
+msgstr "Complete music editorial home"
+
+msgid "صفحه‌بندی اسلایدر"
+msgstr "Slider pagination"
+
+msgid "عرض ستون کناری (پیکسل)"
+msgstr "Side column width (px)"
+
+msgid "عضویت در خبرنامه"
+msgstr "Newsletter signup"
+
+msgid "عضویت‌ها، انتشارهای اختصاصی، دانلودها یا یک فهرست پخش منتخب را با این فراخوان قابل ویرایش برجسته کنید."
+msgstr ""
+"Highlight memberships, exclusive releases, downloads, or a curated playlist with this "
+"editable callout."
+
+msgid "عمودی"
+msgstr "Portrait"
+
+msgid "عنوان"
+msgstr "Title"
+
+msgid "عنوان بخش"
+msgstr "Section heading"
+
+msgid "عنوان بخش اینجا قرار می‌گیرد"
+msgstr "Section title goes here"
+
+msgid "عنوان بخش معرفی"
+msgstr "Hero title"
+
+msgid "عنوان بخش کاتالوگ"
+msgstr "Catalog section heading"
+
+msgid "عنوان صفحه"
+msgstr "Page title"
+
+msgid "غیرفعال"
+msgstr "Disabled"
+
+msgid "فاصلهٔ پخش خودکار (میلی‌ثانیه)"
+msgstr "Autoplay interval (milliseconds)"
+
+msgid "فاصله کم"
+msgstr "Tight gap"
+
+msgid "فراخوان اقدام MusicWave"
+msgstr "MusicWave Call to Action"
+
+msgid "فراخوان سرویس موسیقی"
+msgstr "Music service callout"
+
+msgid "فروشگاه با نوار کناری"
+msgstr "Shop with sidebar"
+
+msgid "فروشگاهی با حال‌وهوای اتاق صفحه‌های موسیقی"
+msgstr "A store that feels like a record room"
+
+msgid "فعال"
+msgstr "Enabled"
+
+msgid "فلش‌های پیمایش"
+msgstr "Navigation arrows"
+
+msgid "فهرست جمع‌وجور"
+msgstr "Compact list"
+
+msgid "فهرست نمودار انتشارها"
+msgstr "Release chart list"
+
+msgid "فهرست پخش"
+msgstr "Playlist"
+
+msgid "فهرست‌های پخش"
+msgstr "Playlists"
+
+msgid "فهرست‌های پخش اجتماعی"
+msgstr "Community playlists"
+
+msgid "فهرست‌های پخش برای نمایش"
+msgstr "Playlists to show"
+
+msgid "فهرست‌های پخش عمومی"
+msgstr "Public playlists"
+
+msgid "فیلتر جست‌وجوی فهرست پخش"
+msgstr "Playlist search filter"
+
+msgid "فیلتر طبقه‌بندی"
+msgstr "Filter taxonomy"
+
+msgid "قالب"
+msgstr "Template"
+
+msgid "قدرت‌گرفته از MusicWave."
+msgstr "Powered by MusicWave."
+
+msgid "قطعه بعدی موردعلاقه‌تان را پیدا کنید."
+msgstr "Discover the next track you will love."
+
+msgid "معرفی مرکزی"
+msgstr "Centered hero"
+
+msgid "معرفی کشف موسیقی"
+msgstr "Music discovery hero"
+
+msgid "متن"
+msgstr "Text"
+
+msgid "متن بخش منتخب"
+msgstr "Featured body"
+
+msgid "متن ترجمه‌شده برای قالب‌های MusicWave. کلید، رشتهٔ متناسب با زبان را انتخاب می‌کند."
+msgstr ""
+"Translated template text for MusicWave templates. The key selects a language-aware "
+"string."
+
+msgid "متن قالب MusicWave"
+msgstr "MusicWave template text"
+
+msgid "مثلاً #cccccc"
+msgstr "e.g. #cccccc"
+
+msgid "مثلاً #ffffff"
+msgstr "e.g. #ffffff"
+
+msgid "مثلاً album، single، podcast_show"
+msgstr "e.g. album, single, podcast_show"
+
+msgid "مثلاً pop، lo-fi، hip-hop"
+msgstr "e.g. pop, lo-fi, hip-hop"
+
+msgid "مثلاً ۱۲، ۴۵، ۷۸"
+msgstr "e.g. 12, 45, 78"
+
+msgid "محبوب"
+msgstr "Popular"
+
+msgid "محتوا با نوار کناری"
+msgstr "Content with sidebar"
+
+msgid "محتوای اسلایدر"
+msgstr "Slider content"
+
+msgid "محتوای صفحه شما"
+msgstr "Your page content"
+
+msgid "محتوای ویترین"
+msgstr "Shelf content"
+
+msgid "مربع"
+msgstr "Square"
+
+msgid "مرتب‌سازی بر اساس"
+msgstr "Order by"
+
+msgid "مرتب‌سازی فهرست‌های پخش بر اساس"
+msgstr "Order playlists by"
+
+msgid "مرور"
+msgstr "Browse"
+
+msgid "مرور بر اساس حال‌وهوا و سبک"
+msgstr "Browse by mood and genre"
+
+msgid "مرور حال‌وهواها"
+msgstr "Browse moods"
+
+msgid "مرور دسته‌بندی‌های موسیقی"
+msgstr "Browse music categories"
+
+msgid "مرور سبک‌ها و حال‌وهواها"
+msgstr "Browse genres and moods"
+
+msgid "مرور موسیقی"
+msgstr "Browse music"
+
+msgid "مرور کاتالوگ"
+msgstr "Browse catalog"
+
+msgid "مرکز حساب کاربری"
+msgstr "Account hub"
+
+msgid "مشاهده همه"
+msgstr "See all"
+
+msgid "مشاهدهٔ همهٔ فهرست‌های پخش"
+msgstr "See all playlists"
+
+msgid "ممکن است صفحه جابه‌جا شده باشد. کاتالوگ را جست‌وجو کنید."
+msgstr "The page may have moved. Try searching the catalog."
+
+msgid "منبع محتوا"
+msgstr "Content source"
+
+msgid "منتخب"
+msgstr "Featured"
+
+msgid "منتخب برای شما"
+msgstr "CURATED FOR YOU"
+
+msgid "منتخب شنوندگان"
+msgstr "Curated by listeners"
+
+msgid "موسیقی"
+msgstr "Music"
+
+msgid "موسیقی با فضایی برای نفس کشیدن."
+msgstr "Music with room to breathe."
+
+msgid "موسیقی جدید"
+msgstr "New music"
+
+msgid "موسیقی شما"
+msgstr "YOUR MUSIC"
+
+msgid "موسیقی‌ای پیدا نشد."
+msgstr "No music was found."
+
+msgid "نامک عبارت"
+msgstr "Term slug"
+
+msgid "نحوه مرتب‌سازی انتشارها پیش از نمایش."
+msgstr "How releases are sorted before they are displayed."
+
+msgid "نزولی"
+msgstr "Descending"
+
+msgid "نقاط صفحه‌بندی"
+msgstr "Pagination dots"
+
+msgid "نمایش اسلایدر"
+msgstr "Slider visibility"
+
+msgid "نمایش انتشارها به‌صورت شبکه‌ای، ویترین افقی یا فهرست جمع‌وجور. بین انتشارها و فهرست‌های پخش عمومی جامعه جابه‌جا شوید. چیدمان، رنگ‌ها و فاصله‌ها در ویرایشگر سایت قابل ویرایش هستند."
+msgstr ""
+"A configurable grid, horizontal shelf, or compact list of releases. Switch between "
+"releases and community public playlists. All layout, colors, and spacing are editable "
+"in the Site Editor."
+
+msgid "نمایش تاریخ"
+msgstr "Show date"
+
+msgid "نمایش تصویر"
+msgstr "Show artwork"
+
+msgid "نمایش تعداد بازدید"
+msgstr "Show view count"
+
+msgid "نمایش شماره رتبه"
+msgstr "Show rank numbers"
+
+msgid "نمایش هنرمند"
+msgstr "Show artist"
+
+msgid "نمایش پیوند اقدام"
+msgstr "Show action link"
+
+msgid "نمایش چکیده"
+msgstr "Show excerpt"
+
+msgid "نمایش چکیده‌ها"
+msgstr "Show excerpts"
+
+msgid "نمایش کنترل پخش"
+msgstr "Show play affordance"
+
+msgid "نوار کناری MusicWave"
+msgstr "MusicWave sidebar"
+
+msgid "نوار کناری ابزارک‌های کامل"
+msgstr "Rich widget sidebar"
+
+msgid "نوار کناری فروشگاه MusicWave"
+msgstr "MusicWave shop sidebar"
+
+msgid "نوشتن را شروع کنید. در ویرایشگر سایت می‌توانید هر بلوکی را اینجا اضافه، جابه‌جا یا حذف کنید و نوار کناری را جداگانه از بخش‌های قالب → نوار کناری ویرایش کنید."
+msgstr ""
+"Start writing. In the Site Editor you can add, reorder, or remove any block here —"
+" and edit the sidebar separately under Template Parts → Sidebar."
+
+msgid "نوع انتشار"
+msgstr "Release type"
+
+msgid "نوع انتشار (نامک)"
+msgstr "Release type (slug)"
+
+msgid "نکته برای خریداران: برای تغییر کلی ابزارک‌ها به ویرایشگر سایت → بخش‌های قالب → نوار کناری بروید، یا اتصال این بلوک ستون‌ها را جدا کنید تا نوار کناری فقط در همین صفحه ویرایش شود."
+msgstr ""
+"Tip for buyers: open Site Editor → Template Parts → Sidebar to change widgets globally,"
+" or detach this columns block to edit the sidebar only on this page."
+
+msgid "نکته: بلوک جست‌وجوی بالا را با بلوک Mailchimp، Jetpack یا HTML جایگزین کنید. رنگ‌ها از سبک‌های کلی پیروی می‌کنند."
+msgstr ""
+"Tip: Swap the Search block above with a Mailchimp, Jetpack, or HTML block. Colors "
+"follow global Styles."
+
+msgid "نکته: رنگ‌ها، فونت‌ها و فاصله‌ها را در سبک‌ها تغییر دهید؛ بدون نیاز به کدنویسی."
+msgstr "Tip: change colors, fonts, and spacing in Styles → no code required."
+
+msgid "هر بلوکی را اینجا بکشید و رها کنید؛ جست‌وجو، خبرنامه، انتشارهای جدید، دسته‌بندی‌ها، ابزارک قدیمی یا HTML سفارشی، همه به‌سادگی کار می‌کنند."
+msgstr ""
+"Drag any block here — search, newsletter, recent releases, categories, legacy widget,"
+" or custom HTML — it just works."
+
+msgid "همراه بمانید"
+msgstr "Stay tuned"
+
+msgid "همهٔ انتشارها"
+msgstr "All releases"
+
+msgid "همه چیزهایی که دارید، آماده پخش است."
+msgstr "Everything you own, ready to play."
+
+msgid "هنرمند"
+msgstr "Artist"
+
+msgid "هنرمندان"
+msgstr "Artists"
+
+msgid "هنرمندان محبوب"
+msgstr "Popular artists"
+
+msgid "هیچ سفارشی‌سازی ذخیره‌شده‌ای پیدا نشد. وردپرس در حال حاضر از فایل‌های قالب بسته استفاده می‌کند."
+msgstr "No database overrides were found. WordPress is already using the bundled template files."
+
+msgid "ورود به کاتالوگ"
+msgstr "Enter catalog"
+
+msgid "ویترین"
+msgstr "Shelf"
+
+msgid "ویترین افقی"
+msgstr "Horizontal shelf"
+
+msgid "ویترین افقی انتشارها"
+msgstr "Horizontal release shelf"
+
+msgid "ویترین انتشارهای MusicWave"
+msgstr "MusicWave release shelf"
+
+msgid "ویترین انتشارهای جدید"
+msgstr "New releases shelf"
+
+msgid "ویترین انتشارهای منتخب"
+msgstr "Curated release shelf"
+
+msgid "ویترین انتشارهای هنرمند"
+msgstr "Artist release shelf"
+
+msgid "ویترین را بین انتشارهای کاتالوگ و فهرست‌های پخش عمومی جامعه جابه‌جا کنید."
+msgstr "Switch the shelf between catalog releases and community public playlists."
+
+msgid "ویترین یا اسلایدر را به یک طبقه‌بندی محدود کنید، یا روی «همهٔ انتشارها» بگذارید."
+msgstr "Limit the shelf/slider to one taxonomy, or leave on All releases."
+
+msgid "ویترین‌های MusicWave"
+msgstr "MusicWave Shelves"
+
+msgid "ویژه‌نامه سرمقاله"
+msgstr "Editorial feature"
+
+msgid "ویژه‌نامه موسیقی سرمقاله‌ای"
+msgstr "Editorial music feature"
+
+msgid "پابرگ‌های MusicWave"
+msgstr "MusicWave Footers"
+
+msgid "پخش خودکار"
+msgstr "Autoplay"
+
+msgid "پخش همه قطعه‌های %s"
+msgstr "Play all tracks in %s"
+
+msgid "پربازدیدترین"
+msgstr "Most viewed"
+
+msgid "پرس‌وجو و فیلتر"
+msgstr "Query and filtering"
+
+msgid "پرس‌وجوی فهرست پخش"
+msgstr "Playlist query"
+
+msgid "پرشدگی یکدست"
+msgstr "Solid fill"
+
+msgid "پس‌زمینه دکمه (هگز)"
+msgstr "Button background (hex)"
+
+msgid "پشتیبانی"
+msgstr "Support"
+
+msgid "پیوند بخش"
+msgstr "Section link"
+
+msgid "پیوند مشاهده همه"
+msgstr "View-all link"
+
+msgid "چرخان"
+msgstr "Carousel"
+
+msgid "چک‌لیست"
+msgstr "Checklist"
+
+msgid "چیدمان"
+msgstr "Layout"
+
+msgid "چیدمان و تصویر"
+msgstr "Layout and artwork"
+
+msgid "کاتالوگ"
+msgstr "Catalog"
+
+msgid "کاتالوگ خود را مدیریت کنید، انتشارها را به‌اشتراک بگذارید و با اطمینان بفروشید؛ همه‌چیز از رابط بصری قابل ویرایش است."
+msgstr "Curate your catalog, share releases, and sell with confidence — all visually editable."
+
+msgid "کارت سطحی"
+msgstr "Surface card"
+
+msgid "کارت‌های MusicWave"
+msgstr "MusicWave Cards"
+
+msgid "کتابخانه‌ای مطابق سلیقه خود بسازید."
+msgstr "Build a library that sounds like you."
+
+msgid "کشف موسیقی"
+msgstr "Explore music"
+
+msgid "کپسولی (MusicWave)"
+msgstr "Pill (MusicWave)"
+
+msgid "گرد"
+msgstr "Rounded"
+
+msgid "گروه اسلاید %1$d از %2$d"
+msgstr "Slide group %1$d of %2$d"
+
+#: theme.json
+msgid "کارت"
+msgstr "Card"
+
+#: theme.json
+msgid "پخش‌کننده شناور"
+msgstr "Floating player"
+
+#: theme.json
+msgid "ظریف"
+msgstr "Subtle"
+
+#: theme.json
+msgid "برجسته"
+msgstr "Elevated"
+
+#: theme.json
+msgid "گرادیان تأکیدی"
+msgstr "Accent gradient"
+
+#: theme.json
+msgid "دکمه تأکیدی"
+msgstr "Accent button"
+
+#: theme.json
+msgid "رز تحریریه"
+msgstr "Editorial rose"
+
+#: theme.json
+msgid "رادیوی نیمه‌شب"
+msgstr "Midnight radio"
+
+#: theme.json
+msgid "درخشش غروب"
+msgstr "Sunset glow"
+
+#: theme.json
+msgid "جوهر نیمه‌شب"
+msgstr "Midnight ink"
+
+#: theme.json
+msgid "بوم"
+msgstr "Canvas"
+
+#: theme.json
+msgid "سطح"
+msgstr "Surface"
+
+#: theme.json
+msgid "متن کم‌رنگ"
+msgstr "Muted text"
+
+#: theme.json
+msgid "رنگ تأکیدی"
+msgstr "Accent"
+
+#: theme.json
+msgid "رنگ تأکیدی پررنگ"
+msgstr "Strong accent"
+
+#: theme.json
+msgid "روی رنگ تأکیدی"
+msgstr "On accent"
+
+#: theme.json
+msgid "تأکید روی بوم"
+msgstr "Accent on canvas"
+
+#: theme.json
+msgid "تحریریه روی بوم"
+msgstr "Editorial on canvas"
+
+#: theme.json
+msgid "خیلی کوچک"
+msgstr "X Small"
+
+#: theme.json
+msgid "کوچک"
+msgstr "Small"
+
+#: theme.json
+msgid "متوسط"
+msgstr "Medium"
+
+#: theme.json
+msgid "بزرگ"
+msgstr "Large"
+
+#: theme.json
+msgid "خیلی بزرگ"
+msgstr "X Large"
+
+#: theme.json
+msgid "بسیار بزرگ"
+msgstr "XX Large"
+
+#: theme.json
+msgid "سن‌سریف سیستمی"
+msgstr "System Sans"
+
+#: theme.json
+msgid "سریف تحریریه"
+msgstr "Editorial Serif"
+
+#: theme.json
+msgid "تک‌فاصله استودیو"
+msgstr "Studio Mono"
+
+#: theme.json
+msgid "سن‌سریف نمایشی"
+msgstr "Display Sans"
+
+#: theme.json
+msgid "نمایشی"
+msgstr "Display"
+
+#: theme.json
+msgid "تیتر اصلی"
+msgstr "Hero"
+
+#: theme.json
+msgid "سربرگ"
+msgstr "Header"
+
+#: theme.json
+msgid "سربرگ (وسط‌چین)"
+msgstr "Header (centered)"
+
+#: theme.json
+msgid "سربرگ (ساده)"
+msgstr "Header (minimal)"
+
+#: theme.json
+msgid "پابرگ"
+msgstr "Footer"
+
+#: theme.json
+msgid "ابزارک‌های پابرگ"
+msgstr "Footer widgets"
+
+#: theme.json
+msgid "پابرگ (ساده)"
+msgstr "Footer (simple)"
+
+#: theme.json
+msgid "نوار کناری"
+msgstr "Sidebar"
+
+#: theme.json
+msgid "نوار کناری فروشگاه"
+msgstr "Shop sidebar"
+
+#: theme.json
+msgid "بخش معرفی"
+msgstr "Hero"
+
+

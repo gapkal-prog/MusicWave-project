@@ -164,7 +164,7 @@ final class PlaylistRoutes {
 			return true;
 		}
 
-		return new WP_Error( 'mw_authentication_required', __( 'Sign in to manage playlists.', 'music-wave-core' ), array( 'status' => 401 ) );
+		return new WP_Error( 'mw_authentication_required', __( 'برای مدیریت فهرست‌های پخش وارد سیستم شوید.', 'music-wave-core' ), array( 'status' => 401 ) );
 	}
 
 	/** @return WP_REST_Response */
@@ -188,16 +188,16 @@ final class PlaylistRoutes {
 		$visibility  = (string) $request->get_param( 'visibility' );
 
 		if ( '' === $title_param ) {
-			return new WP_Error( 'mw_playlist_invalid_title', __( 'Please enter a playlist name.', 'music-wave-core' ), array( 'status' => 422 ) );
+			return new WP_Error( 'mw_playlist_invalid_title', __( 'لطفاً یک نام فهرست پخش وارد کنید.', 'music-wave-core' ), array( 'status' => 422 ) );
 		}
 		if ( $this->repository->count_for_user( $user_id ) >= PlaylistRepository::MAX_PLAYLISTS ) {
-			return new WP_Error( 'mw_playlist_limit_reached', __( 'You have reached the maximum of 50 playlists.', 'music-wave-core' ), array( 'status' => 422 ) );
+			return new WP_Error( 'mw_playlist_limit_reached', __( 'شما به حداکثر 50 فهرست پخش رسیده اید.', 'music-wave-core' ), array( 'status' => 422 ) );
 		}
 
 		$playlist_id = $this->repository->create( $user_id, $title_param, $visibility );
 
 		if ( $playlist_id < 1 ) {
-			return new WP_Error( 'mw_playlist_create_failed', __( 'The playlist could not be created. Check the name and your playlist limit.', 'music-wave-core' ), array( 'status' => 422 ) );
+			return new WP_Error( 'mw_playlist_create_failed', __( 'فهرست پخش ایجاد نشد. نام و محدودیت فهرست پخش خود را بررسی کنید.', 'music-wave-core' ), array( 'status' => 422 ) );
 		}
 
 		return new WP_REST_Response( $this->repository->view( $playlist_id, $user_id ), 201 );
@@ -259,7 +259,7 @@ final class PlaylistRoutes {
 
 		// Explicit validation so the UI can show a precise message instead of a generic 422.
 		if ( $playlist_id < 1 || $release_id < 1 ) {
-			return $this->rejected( __( 'That release could not be added to the playlist.', 'music-wave-core' ), 'mw_playlist_invalid_release' );
+			return $this->rejected( __( 'آن انتشار را نمی‌توان به فهرست پخش اضافه کرد.', 'music-wave-core' ), 'mw_playlist_invalid_release' );
 		}
 
 		$playlist = $this->repository->find( $playlist_id );
@@ -270,10 +270,10 @@ final class PlaylistRoutes {
 
 		$visibility = new ReleaseVisibility();
 		if ( ! $visibility->is_release( $release_id ) ) {
-			return new WP_Error( 'mw_playlist_invalid_release', __( 'That item is not a release and cannot be added to a playlist.', 'music-wave-core' ), array( 'status' => 422 ) );
+			return new WP_Error( 'mw_playlist_invalid_release', __( 'آن مورد منتشر نشده است و نمی‌توان آن را به فهرست پخش اضافه کرد.', 'music-wave-core' ), array( 'status' => 422 ) );
 		}
 		if ( ! $visibility->can_read( $release_id ) ) {
-			return new WP_Error( 'mw_playlist_invalid_release', __( 'That release is not available for playlists right now.', 'music-wave-core' ), array( 'status' => 422 ) );
+			return new WP_Error( 'mw_playlist_invalid_release', __( 'این انتشار در حال حاضر برای فهرست‌های پخش در دسترس نیست.', 'music-wave-core' ), array( 'status' => 422 ) );
 		}
 
 		// Idempotent: adding the same release twice is a no-op (200) — avoids noisy 422 in console.
@@ -282,11 +282,11 @@ final class PlaylistRoutes {
 		}
 
 		if ( $this->repository->count_items( $playlist_id ) >= PlaylistRepository::MAX_ITEMS ) {
-			return new WP_Error( 'mw_playlist_limit_reached', __( 'This playlist has reached the maximum of 500 tracks.', 'music-wave-core' ), array( 'status' => 422 ) );
+			return new WP_Error( 'mw_playlist_limit_reached', __( 'این فهرست پخش به حداکثر 500 قطعه رسیده است.', 'music-wave-core' ), array( 'status' => 422 ) );
 		}
 
 		if ( ! $this->repository->add_item( $user_id, $playlist_id, $release_id ) ) {
-			return $this->rejected( __( 'That release could not be added to the playlist.', 'music-wave-core' ) );
+			return $this->rejected( __( 'آن انتشار را نمی‌توان به فهرست پخش اضافه کرد.', 'music-wave-core' ) );
 		}
 
 		return new WP_REST_Response( $this->repository->view( $playlist_id, $user_id ), 201 );
@@ -298,7 +298,7 @@ final class PlaylistRoutes {
 		$release_id  = absint( $request->get_param( 'release_id' ) );
 
 		if ( ! $this->repository->remove_item( get_current_user_id(), $playlist_id, $release_id ) ) {
-			return $this->rejected( __( 'That release is not in this playlist.', 'music-wave-core' ) );
+			return $this->rejected( __( 'آن انتشار در این فهرست پخش نیست.', 'music-wave-core' ) );
 		}
 
 		return new WP_REST_Response( $this->repository->view( $playlist_id, get_current_user_id() ), 200 );
@@ -309,7 +309,7 @@ final class PlaylistRoutes {
 		$playlist_id = absint( $request->get_param( 'id' ) );
 		$ids         = $request->get_param( 'release_ids' );
 		if ( ! is_array( $ids ) ) {
-			return $this->rejected( __( 'Send the playlist order as a list of release IDs.', 'music-wave-core' ) );
+			return $this->rejected( __( 'ترتیب فهرست پخش را به‌صورت فهرستی از شناسه‌های انتشار ارسال کنید.', 'music-wave-core' ) );
 		}
 
 		if ( ! $this->repository->reorder( get_current_user_id(), $playlist_id, $ids ) ) {
@@ -343,7 +343,7 @@ final class PlaylistRoutes {
 
 		$items = $this->repository->items_for_viewer( $playlist_id, $viewer_id, $share );
 		if ( empty( $items ) ) {
-			return new WP_Error( 'mw_playback_unavailable', __( 'This playlist has no playable audio right now.', 'music-wave-core' ), array( 'status' => 404 ) );
+			return new WP_Error( 'mw_playback_unavailable', __( 'این فهرست پخش در حال حاضر صدای قابل پخش ندارد.', 'music-wave-core' ), array( 'status' => 404 ) );
 		}
 
 		$ids = array_slice(
@@ -375,7 +375,7 @@ final class PlaylistRoutes {
 		}
 
 		if ( empty( $tracks ) ) {
-			return new WP_Error( 'mw_playback_unavailable', __( 'This playlist has no playable audio right now.', 'music-wave-core' ), array( 'status' => 404 ) );
+			return new WP_Error( 'mw_playback_unavailable', __( 'این فهرست پخش در حال حاضر صدای قابل پخش ندارد.', 'music-wave-core' ), array( 'status' => 404 ) );
 		}
 
 		$payload = array(
@@ -471,7 +471,7 @@ final class PlaylistRoutes {
 	}
 
 	private function not_found(): WP_Error {
-		return new WP_Error( 'mw_playlist_not_found', __( 'That playlist is not available.', 'music-wave-core' ), array( 'status' => 404 ) );
+		return new WP_Error( 'mw_playlist_not_found', __( 'آن فهرست پخش در دسترس نیست.', 'music-wave-core' ), array( 'status' => 404 ) );
 	}
 
 	private function rejected( string $message, string $code = 'mw_playlist_rejected' ): WP_Error {
@@ -585,9 +585,9 @@ final class PlaylistRoutes {
 				'message'     => '',
 				'ctaLabel'    => '',
 				'ctaUrl'      => '',
-				'previewNote' => __( 'You are listening to a limited preview. Get access to enjoy full playback.', 'music-wave-core' ),
+				'previewNote' => __( 'شما در حال گوش‌دادن به یک پیش‌نمایش محدود هستید. دسترسی داشته باشید تا از پخش کامل لذت ببرید.', 'music-wave-core' ),
 				'loginUrl'    => get_current_user_id() < 1 ? wp_login_url( (string) get_permalink( $release_id ) ) : '',
-				'loginLabel'  => get_current_user_id() < 1 ? __( 'Sign in', 'music-wave-core' ) : '',
+				'loginLabel'  => get_current_user_id() < 1 ? __( 'وارد شوید', 'music-wave-core' ) : '',
 			);
 		}
 		$decision  = $this->policy->decide( $release_id, $subject );
@@ -599,9 +599,9 @@ final class PlaylistRoutes {
 			switch ( $decision->reason() ) {
 				case 'purchase_required':
 					$message   = (string) Settings::get( 'purchase_message' );
-					$message   = '' !== $message ? $message : __( 'Purchase this release to unlock full playback.', 'music-wave-core' );
+					$message   = '' !== $message ? $message : __( 'این انتشار را بخرید تا قفل پخش کامل باز شود.', 'music-wave-core' );
 					$cta_label = (string) Settings::get( 'purchase_cta_label' );
-					$cta_label = '' !== $cta_label ? $cta_label : __( 'View purchase options', 'music-wave-core' );
+					$cta_label = '' !== $cta_label ? $cta_label : __( 'مشاهده گزینه‌های خرید', 'music-wave-core' );
 					if ( null !== $this->releases ) {
 						foreach ( $this->releases->product_ids( $release_id ) as $product_id ) {
 							if ( 'product' !== get_post_type( $product_id ) ) {
@@ -618,14 +618,14 @@ final class PlaylistRoutes {
 					break;
 				case 'membership_required':
 					$message   = (string) Settings::get( 'membership_message' );
-					$message   = '' !== $message ? $message : __( 'Subscribe to listen to full tracks without limits.', 'music-wave-core' );
+					$message   = '' !== $message ? $message : __( 'برای گوش‌دادن به قطعه‌های کامل بدون محدودیت مشترک شوید.', 'music-wave-core' );
 					$cta_label = (string) Settings::get( 'membership_cta_label' );
-					$cta_label = '' !== $cta_label ? $cta_label : __( 'View membership options', 'music-wave-core' );
+					$cta_label = '' !== $cta_label ? $cta_label : __( 'مشاهده گزینه‌های عضویت', 'music-wave-core' );
 					$cta_url   = (string) Settings::get( 'membership_cta_url' );
 					break;
 				default:
 					$message = (string) Settings::get( 'restricted_message' );
-					$message = '' !== $message ? $message : __( 'This release is not currently available.', 'music-wave-core' );
+					$message = '' !== $message ? $message : __( 'این انتشار در حال حاضر در دسترس نیست.', 'music-wave-core' );
 					break;
 			}
 		}
@@ -634,9 +634,9 @@ final class PlaylistRoutes {
 			'message'     => $message,
 			'ctaLabel'    => $cta_label,
 			'ctaUrl'      => $cta_url,
-			'previewNote' => __( 'You are listening to a limited preview. Get access to enjoy full playback.', 'music-wave-core' ),
+			'previewNote' => __( 'شما در حال گوش‌دادن به یک پیش‌نمایش محدود هستید. دسترسی داشته باشید تا از پخش کامل لذت ببرید.', 'music-wave-core' ),
 			'loginUrl'    => get_current_user_id() < 1 && '' !== $link ? wp_login_url( $link ) : '',
-			'loginLabel'  => get_current_user_id() < 1 && '' !== $link ? __( 'Sign in', 'music-wave-core' ) : '',
+			'loginLabel'  => get_current_user_id() < 1 && '' !== $link ? __( 'وارد شوید', 'music-wave-core' ) : '',
 		);
 	}
 }

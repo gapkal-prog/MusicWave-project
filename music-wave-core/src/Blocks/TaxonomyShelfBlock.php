@@ -61,7 +61,7 @@ final class TaxonomyShelfBlock {
 			$options = $this->resolve_options( $attributes );
 			$message = '' !== $options['empty_message']
 				? $options['empty_message']
-				: __( 'Nothing to browse yet.', 'music-wave-core' );
+				: __( 'هنوز چیزی برای مرور وجود ندارد.', 'music-wave-core' );
 
 			return '<section '
 				. BlockSupport::wrapper_attributes( 'mw-terms-shelf mw-terms-shelf--empty' )
@@ -251,20 +251,20 @@ final class TaxonomyShelfBlock {
 			return '';
 		}
 
-		$name = '' !== $term->name ? $term->name : __( 'Untitled', 'music-wave-core' );
+		$name = '' !== $term->name ? $term->name : __( 'بدون عنوان', 'music-wave-core' );
 
 		$count_html = '';
 		if ( $options['show_count'] && (int) $term->count > 0 ) {
 			$count_html = '<span class="mw-terms-shelf__count">' . esc_html(
 				sprintf(
 					/* translators: %s: number of published releases. */
-					_n( '%s release', '%s releases', (int) $term->count, 'music-wave-core' ),
+					_n( 'انتشار %s', 'انتشار %s', (int) $term->count, 'music-wave-core' ),
 					number_format_i18n( (int) $term->count )
 				)
 			) . '</span>';
 		}
 		/* translators: %s: taxonomy term name. */
-		$open_label = sprintf( __( 'Browse %s', 'music-wave-core' ), $name );
+		$open_label = sprintf( __( 'مرور %s', 'music-wave-core' ), $name );
 
 		$hue = ( $index % 6 ) + 1;
 
@@ -286,13 +286,13 @@ final class TaxonomyShelfBlock {
 	private function header( array $options ): string {
 		$heading = '' !== $options['heading']
 			? $options['heading']
-			: __( 'Browse the catalog', 'music-wave-core' );
+			: __( 'فهرست کاتالوگ را مرور کنید', 'music-wave-core' );
 
 		$more = '';
 		if ( '' !== $options['section_url'] ) {
 			$label = '' !== $options['section_label']
 				? $options['section_label']
-				: __( 'See everything', 'music-wave-core' );
+				: __( 'همه چیز را ببینید', 'music-wave-core' );
 			$more  = '<a class="mw-release-shelf__more" href="' . esc_url( $options['section_url'] ) . '">' . esc_html( $label ) . '<span aria-hidden="true">&rarr;</span></a>';
 		}
 
@@ -328,10 +328,10 @@ final class TaxonomyShelfBlock {
 	 * @return string
 	 */
 	private function render_editor_placeholder( array $attributes ): string {
-		$label = __( 'Taxonomy shelf', 'music-wave-core' );
+		$label = __( 'ویترین طبقه‌بندی', 'music-wave-core' );
 		$help  = isset( $attributes['source'] ) && 'manual' === $attributes['source']
-			? __( 'No matching terms were found. Check the selected term IDs.', 'music-wave-core' )
-			: __( 'No terms with published releases were found yet. Assign this taxonomy to releases and they appear here automatically.', 'music-wave-core' );
+			? __( 'هیچ اصطلاح منطبقی پیدا نشد. شناسه‌های اصطلاح انتخاب‌شده را بررسی کنید.', 'music-wave-core' )
+			: __( 'هنوز هیچ اصطلاحی با انتشارهای منتشرشده پیدا نشده است. این طبقه‌بندی را به انتشارها اختصاص دهید تا خودکار اینجا ظاهر شوند.', 'music-wave-core' );
 
 		return '<div class="mw-terms-shelf mw-terms-shelf--placeholder" style="border:1px dashed currentColor;border-radius:12px;padding:2.5rem 1.5rem;text-align:center;opacity:.8;">'
 			. '<span class="dashicons dashicons-tag" aria-hidden="true" style="font-size:2rem;width:2rem;height:2rem;"></span>'

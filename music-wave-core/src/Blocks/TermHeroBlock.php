@@ -209,16 +209,16 @@ final class TermHeroBlock {
 	private function taxonomy_eyebrow( string $taxonomy ): string {
 		switch ( $taxonomy ) {
 			case 'mw_artist':
-				return __( 'Artist', 'music-wave-core' );
+				return __( 'هنرمند', 'music-wave-core' );
 			case 'mw_genre':
-				return __( 'Genre', 'music-wave-core' );
+				return __( 'سبک', 'music-wave-core' );
 			case 'mw_mood':
-				return __( 'Mood', 'music-wave-core' );
+				return __( 'حال‌وهوا', 'music-wave-core' );
 			case 'mw_label':
-				return __( 'Label', 'music-wave-core' );
+				return __( 'برچسب', 'music-wave-core' );
 		}
 
-		return __( 'Browse', 'music-wave-core' );
+		return __( 'مرور', 'music-wave-core' );
 	}
 
 	/**
@@ -238,7 +238,7 @@ final class TermHeroBlock {
 		}
 
 		if ( $options['show_name'] ) {
-			$name = '' !== $term->name ? $term->name : __( 'Untitled', 'music-wave-core' );
+			$name = '' !== $term->name ? $term->name : __( 'بدون عنوان', 'music-wave-core' );
 
 			$parts[] = '<h1 class="mw-term-hero__name">' . esc_html( $name ) . '</h1>';
 		}
@@ -247,7 +247,7 @@ final class TermHeroBlock {
 			$parts[] = '<p class="mw-term-hero__count">' . esc_html(
 				sprintf(
 					/* translators: %s: number of published releases. */
-					_n( '%s release', '%s releases', (int) $term->count, 'music-wave-core' ),
+					_n( 'انتشار %s', 'انتشار %s', (int) $term->count, 'music-wave-core' ),
 					number_format_i18n( (int) $term->count )
 				)
 			) . '</p>';
@@ -315,10 +315,10 @@ final class TermHeroBlock {
 	 * @param array<string, mixed> $attributes Block attributes.
 	 */
 	private function render_editor_placeholder( array $attributes ): string {
-		$label = __( 'Term hero', 'music-wave-core' );
+		$label = __( 'معرفی اصطلاح', 'music-wave-core' );
 		$help  = isset( $attributes['termId'] ) && absint( $attributes['termId'] ) > 0
-			? __( 'The selected term was not found. Check the taxonomy and term ID in the block sidebar.', 'music-wave-core' )
-			: __( 'This header renders automatically on artist, genre, mood, and label archives.', 'music-wave-core' );
+			? __( 'عبارت انتخابی یافت نشد. طبقه‌بندی و شناسهٔ عبارت را در نوار کناری بلوک بررسی کنید.', 'music-wave-core' )
+			: __( 'این سربرگ به‌طور خودکار در آرشیوهای هنرمند، ژانر، حال‌وهوا و برچسب ارائه می‌شود.', 'music-wave-core' );
 
 		return '<div class="mw-term-hero mw-term-hero--placeholder" style="border:1px dashed currentColor;border-radius:12px;padding:2.5rem 1.5rem;text-align:center;opacity:.8;">'
 			. '<span class="dashicons dashicons-format-audio" aria-hidden="true" style="font-size:2rem;width:2rem;height:2rem;"></span>'

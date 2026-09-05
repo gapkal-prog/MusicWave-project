@@ -40,7 +40,7 @@ final class ReleaseReadiness {
 	public function register_meta_box(): void {
 		add_meta_box(
 			'music-wave-release-readiness',
-			__( 'Release readiness', 'music-wave-core' ),
+			__( 'آمادگی انتشار', 'music-wave-core' ),
 			array( $this, 'render_meta_box' ),
 			ReleasePostType::KEY,
 			'side',
@@ -54,15 +54,15 @@ final class ReleaseReadiness {
 	public function render_meta_box( WP_Post $post ): void {
 		$issues = $this->issues( $post->ID );
 		if ( empty( $issues ) ) {
-			echo '<p><strong>' . esc_html__( 'Ready for review', 'music-wave-core' ) . '</strong></p><p>' . esc_html__( 'Core catalog, access, and delivery checks are complete for this release.', 'music-wave-core' ) . '</p>';
+			echo '<p><strong>' . esc_html__( 'آماده برای بررسی', 'music-wave-core' ) . '</strong></p><p>' . esc_html__( 'کاتالوگ اصلی، دسترسی، و بررسی تحویل برای این انتشار کامل است.', 'music-wave-core' ) . '</p>';
 			return;
 		}
 
-		echo '<p><strong>' . esc_html__( 'Needs attention before launch', 'music-wave-core' ) . '</strong></p><ul class="ul-disc">';
+		echo '<p><strong>' . esc_html__( 'قبل از راه‌اندازی نیاز به توجه دارد', 'music-wave-core' ) . '</strong></p><ul class="ul-disc">';
 		foreach ( $issues as $issue ) {
 			echo '<li>' . esc_html( $issue ) . '</li>';
 		}
-		echo '</ul><p class="description">' . esc_html__( 'This checklist does not block drafts or publishing. It makes missing catalog data visible during editorial review.', 'music-wave-core' ) . '</p>';
+		echo '</ul><p class="description">' . esc_html__( 'این فهرست بررسی مانع پیش‌نویس یا انتشار نمی‌شود؛ در عوض، داده‌های ناقص کاتالوگ را هنگام بازبینی تحریریه قابل مشاهده می‌کند.', 'music-wave-core' ) . '</p>';
 	}
 
 	/**
@@ -74,8 +74,8 @@ final class ReleaseReadiness {
 		foreach ( $columns as $key => $label ) {
 			$result[ $key ] = $label;
 			if ( 'title' === $key ) {
-				$result['mw_readiness'] = __( 'Readiness', 'music-wave-core' );
-				$result['mw_access']    = __( 'Access', 'music-wave-core' );
+				$result['mw_readiness'] = __( 'آمادگی', 'music-wave-core' );
+				$result['mw_access']    = __( 'دسترسی', 'music-wave-core' );
 			}
 		}
 
@@ -91,13 +91,13 @@ final class ReleaseReadiness {
 		if ( 'mw_readiness' === $column ) {
 			$issues = $this->issues( $post_id );
 			if ( empty( $issues ) ) {
-				echo '<span class="dashicons dashicons-yes-alt" aria-hidden="true"></span> ' . esc_html__( 'Ready', 'music-wave-core' );
+				echo '<span class="dashicons dashicons-yes-alt" aria-hidden="true"></span> ' . esc_html__( 'آماده', 'music-wave-core' );
 			} else {
 				$count = count( $issues );
 				echo '<span class="dashicons dashicons-warning" aria-hidden="true"></span> ' . esc_html(
 					sprintf(
 						/* translators: %d: number of outstanding readiness items. */
-						_n( '%d item', '%d items', $count, 'music-wave-core' ),
+						_n( '%d مورد', '%d مورد', $count, 'music-wave-core' ),
 						$count
 					)
 				);
@@ -108,13 +108,13 @@ final class ReleaseReadiness {
 		if ( 'mw_access' === $column ) {
 			$mode   = (string) $this->releases->get( $post_id, 'mw_access_mode' );
 			$labels = array(
-				'public'                 => __( 'Public', 'music-wave-core' ),
-				'purchase'               => __( 'Purchase', 'music-wave-core' ),
-				'membership'             => __( 'Membership', 'music-wave-core' ),
-				'purchase_or_membership' => __( 'Purchase or membership', 'music-wave-core' ),
-				'restricted'             => __( 'Restricted', 'music-wave-core' ),
+				'public'                 => __( 'عمومی', 'music-wave-core' ),
+				'purchase'               => __( 'خرید', 'music-wave-core' ),
+				'membership'             => __( 'عضویت', 'music-wave-core' ),
+				'purchase_or_membership' => __( 'خرید یا عضویت', 'music-wave-core' ),
+				'restricted'             => __( 'محدود', 'music-wave-core' ),
 			);
-			echo esc_html( isset( $labels[ $mode ] ) ? $labels[ $mode ] : __( 'Restricted', 'music-wave-core' ) );
+			echo esc_html( isset( $labels[ $mode ] ) ? $labels[ $mode ] : __( 'محدود', 'music-wave-core' ) );
 		}
 	}
 
@@ -132,30 +132,30 @@ final class ReleaseReadiness {
 		$types = wp_get_post_terms( $release_id, 'mw_release_type', array( 'fields' => 'slugs' ) );
 		$types = is_array( $types ) ? array_values( array_map( 'sanitize_key', $types ) ) : array();
 		if ( empty( $types ) ) {
-			$issues[] = __( 'Assign a release type.', 'music-wave-core' );
+			$issues[] = __( 'یک نوع انتشار اختصاص دهید.', 'music-wave-core' );
 		}
 		if ( ! has_post_thumbnail( $release_id ) ) {
-			$issues[] = __( 'Add cover artwork.', 'music-wave-core' );
+			$issues[] = __( 'تصویر جلد را اضافه کنید.', 'music-wave-core' );
 		}
 		if ( '' === (string) $this->releases->get( $release_id, 'mw_release_date' ) ) {
-			$issues[] = __( 'Add a release date.', 'music-wave-core' );
+			$issues[] = __( 'تاریخ انتشار اضافه کنید.', 'music-wave-core' );
 		}
 		if ( (int) $this->releases->get( $release_id, 'mw_duration' ) < 1 ) {
-			$issues[] = __( 'Add a duration.', 'music-wave-core' );
+			$issues[] = __( 'مدت زمان اضافه کنید.', 'music-wave-core' );
 		}
 		if ( $this->is_collection( $types ) && $this->collection_is_empty( $release_id ) ) {
-			$issues[] = __( 'Add at least one track or episode to this collection.', 'music-wave-core' );
+			$issues[] = __( 'حداقل یک قطعه یا قسمت را به این مجموعه اضافه کنید.', 'music-wave-core' );
 		}
 
 		$mode = (string) $this->releases->get( $release_id, 'mw_access_mode' );
 		if ( 'purchase' === $mode && empty( $this->releases->product_ids( $release_id ) ) ) {
-			$issues[] = __( 'Map at least one WooCommerce product for purchase access.', 'music-wave-core' );
+			$issues[] = __( 'برای دسترسی به خرید، حداقل یک محصول WooCommerce را نگاشت کنید.', 'music-wave-core' );
 		}
 		if ( in_array( $mode, array( 'membership', 'purchase_or_membership' ), true ) && empty( $this->membership_levels( $release_id ) ) ) {
-			$issues[] = __( 'Add a membership level for membership access.', 'music-wave-core' );
+			$issues[] = __( 'یک سطح عضویت برای دسترسی به عضویت اضافه کنید.', 'music-wave-core' );
 		}
 		if ( in_array( $mode, array( 'purchase', 'membership', 'purchase_or_membership' ), true ) && ! $this->has_download_assets( $release_id ) ) {
-			$issues[] = __( 'Select a protected download asset for this gated release.', 'music-wave-core' );
+			$issues[] = __( 'یک دارایی دانلود حفاظت‌شده برای این انتشار دردار انتخاب کنید.', 'music-wave-core' );
 		}
 
 		/**

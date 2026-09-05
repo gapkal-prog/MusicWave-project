@@ -192,21 +192,21 @@ final class QueueFormHandler {
 	 */
 	public function notice_message( string $notice ): string {
 		$messages = array(
-			'added'              => __( 'Added to your queue.', 'music-wave-core' ),
-			'add-failed'         => __( 'That release could not be added to the queue.', 'music-wave-core' ),
-			'already-queued'     => __( 'Already in your queue.', 'music-wave-core' ),
-			'item-removed'       => __( 'Removed from the queue.', 'music-wave-core' ),
-			'item-remove-failed' => __( 'That release is not in your queue.', 'music-wave-core' ),
-			'moved'              => __( 'Queue order updated.', 'music-wave-core' ),
-			'move-failed'        => __( 'The queue order could not be changed.', 'music-wave-core' ),
-			'cleared'            => __( 'Queue cleared.', 'music-wave-core' ),
-			'clear-failed'       => __( 'The queue could not be cleared.', 'music-wave-core' ),
-			'shuffle-updated'    => __( 'Shuffle preference updated.', 'music-wave-core' ),
-			'shuffle-failed'     => __( 'The shuffle preference could not be saved.', 'music-wave-core' ),
-			'repeat-updated'     => __( 'Repeat preference updated.', 'music-wave-core' ),
-			'repeat-failed'      => __( 'The repeat preference could not be saved.', 'music-wave-core' ),
-			'invalid'            => __( 'That queue request was not valid. Try again.', 'music-wave-core' ),
-			'guest'              => __( 'Sign in to manage your queue.', 'music-wave-core' ),
+			'added'              => __( 'به صف شما اضافه شد', 'music-wave-core' ),
+			'add-failed'         => __( 'آن انتشار را نمی‌توان به صف اضافه کرد.', 'music-wave-core' ),
+			'already-queued'     => __( 'در حال حاضر در صف شما.', 'music-wave-core' ),
+			'item-removed'       => __( 'از صف حذف شد.', 'music-wave-core' ),
+			'item-remove-failed' => __( 'آن انتشار در صف شما نیست.', 'music-wave-core' ),
+			'moved'              => __( 'ترتیب صف به‌روز شد.', 'music-wave-core' ),
+			'move-failed'        => __( 'ترتیب صف را نمی‌توان تغییر داد.', 'music-wave-core' ),
+			'cleared'            => __( 'صف پاک شد.', 'music-wave-core' ),
+			'clear-failed'       => __( 'صف پاک نشد.', 'music-wave-core' ),
+			'shuffle-updated'    => __( 'اولویت ترکیبی به‌روزرسانی شد.', 'music-wave-core' ),
+			'shuffle-failed'     => __( 'ترجیح حالت تصادفی ذخیره نشد.', 'music-wave-core' ),
+			'repeat-updated'     => __( 'تکرار اولویت به‌روزرسانی شد.', 'music-wave-core' ),
+			'repeat-failed'      => __( 'اولویت تکرار ذخیره نشد.', 'music-wave-core' ),
+			'invalid'            => __( 'آن درخواست صف معتبر نبود. دوباره امتحان کنید.', 'music-wave-core' ),
+			'guest'              => __( 'برای مدیریت صف خود وارد سیستم شوید.', 'music-wave-core' ),
 		);
 
 		return isset( $messages[ $notice ] ) ? $messages[ $notice ] : '';

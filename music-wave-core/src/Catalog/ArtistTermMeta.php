@@ -142,8 +142,8 @@ final class ArtistTermMeta {
 			'music-wave-artist-term',
 			'musicWaveArtistTerm',
 			array(
-				'title'  => __( 'Select artist image', 'music-wave-core' ),
-				'button' => __( 'Use artist image', 'music-wave-core' ),
+				'title'  => __( 'تصویر هنرمند را انتخاب کنید', 'music-wave-core' ),
+				'button' => __( 'استفاده از تصویر هنرمند', 'music-wave-core' ),
 			)
 		);
 	}
@@ -186,8 +186,8 @@ final class ArtistTermMeta {
 		$url       = $term_id > 0 ? (string) get_term_meta( $term_id, 'mw_artist_canonical_url', true ) : '';
 		$image     = $image_id > 0 ? wp_get_attachment_image( $image_id, 'thumbnail', false, array( 'alt' => '' ) ) : '';
 
-		echo '<div class="form-field term-group"><label for="mw_artist_biography">' . esc_html__( 'Artist biography', 'music-wave-core' ) . '</label><textarea id="mw_artist_biography" name="mw_artist_biography" rows="6" class="large-text">' . esc_textarea( $biography ) . '</textarea><p>' . esc_html__( 'A short editorial biography displayed on the public artist archive.', 'music-wave-core' ) . '</p></div>';
-		echo '<div class="form-field term-group"><label for="mw_artist_image_id">' . esc_html__( 'Artist image', 'music-wave-core' ) . '</label><input type="hidden" id="mw_artist_image_id" name="mw_artist_image_id" value="' . esc_attr( (string) $image_id ) . '"><div class="mw-artist-image-preview">' . wp_kses_post( $image ) . '</div><p><button type="button" class="button mw-artist-image-select">' . esc_html__( 'Select image', 'music-wave-core' ) . '</button> <button type="button" class="button-link-delete mw-artist-image-remove">' . esc_html__( 'Remove image', 'music-wave-core' ) . '</button></p></div>';
-		echo '<div class="form-field term-group"><label for="mw_artist_canonical_url">' . esc_html__( 'Canonical artist URL', 'music-wave-core' ) . '</label><input type="url" id="mw_artist_canonical_url" name="mw_artist_canonical_url" value="' . esc_attr( $url ) . '" class="regular-text" placeholder="https://"><p>' . esc_html__( 'Optional official artist or label URL. HTTPS only.', 'music-wave-core' ) . '</p></div>';
+		echo '<div class="form-field term-group"><label for="mw_artist_biography">' . esc_html__( 'بیوگرافی هنرمند', 'music-wave-core' ) . '</label><textarea id="mw_artist_biography" name="mw_artist_biography" rows="6" class="large-text">' . esc_textarea( $biography ) . '</textarea><p>' . esc_html__( 'یک زندگی‌نامهٔ کوتاه در آرشیو عمومی هنرمندان نمایش داده‌شده است.', 'music-wave-core' ) . '</p></div>';
+		echo '<div class="form-field term-group"><label for="mw_artist_image_id">' . esc_html__( 'تصویر هنرمند', 'music-wave-core' ) . '</label><input type="hidden" id="mw_artist_image_id" name="mw_artist_image_id" value="' . esc_attr( (string) $image_id ) . '"><div class="mw-artist-image-preview">' . wp_kses_post( $image ) . '</div><p><button type="button" class="button mw-artist-image-select">' . esc_html__( 'انتخاب تصویر', 'music-wave-core' ) . '</button> <button type="button" class="button-link-delete mw-artist-image-remove">' . esc_html__( 'حذف تصویر', 'music-wave-core' ) . '</button></p></div>';
+		echo '<div class="form-field term-group"><label for="mw_artist_canonical_url">' . esc_html__( 'هنرمند متعارف URL', 'music-wave-core' ) . '</label><input type="url" id="mw_artist_canonical_url" name="mw_artist_canonical_url" value="' . esc_attr( $url ) . '" class="regular-text" placeholder="https://"><p>' . esc_html__( 'هنرمند یا برچسب رسمی اختیاری URL. فقط HTTPS.', 'music-wave-core' ) . '</p></div>';
 	}
 }

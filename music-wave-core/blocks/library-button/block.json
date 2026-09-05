@@ -1,34 +1,82 @@
 {
-	"apiVersion": 3,
-	"name": "music-wave/library-button",
-	"title": "Add to library button",
-	"category": "music-wave",
-	"description": "Lets visitors save a release, wishlist it, pre-save an upcoming release, or follow an artist.",
-	"keywords": [ "save", "follow", "favorite" ],
-	"textdomain": "music-wave-core",
-	"icon": "plus-alt",
-	"attributes": {
-		"releaseId": { "type": "integer", "default": 0 },
-		"itemType": { "type": "string", "default": "release" },
-		"termId": { "type": "integer", "default": 0 },
-		"label": { "type": "string", "default": "" },
-		"addedLabel": { "type": "string", "default": "" },
-		"style": { "type": "string", "default": "solid" },
-		"compact": { "type": "boolean", "default": false }
-	},
-	"usesContext": [ "postId", "postType" ],
-	"supports": {
-		"anchor": true,
-		"align": [ "wide", "full" ],
-		"border": { "color": true, "radius": true, "style": true, "width": true },
-		"color": { "background": true, "link": true, "text": true },
-		"spacing": { "blockGap": true, "margin": true, "padding": true },
-		"typography": { "fontSize": true, "lineHeight": true }
-	},
-	"example": {
-		"attributes": {
-			"style": "solid",
-			"compact": false
-		}
-	}
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "music-wave/library-button",
+  "title": "دکمه افزودن به کتابخانه",
+  "category": "music-wave",
+  "description": "به بازدیدکنندگان اجازه می‌دهد انتشاری را ذخیره کنند، آن را در فهرست علاقه‌مندی‌ها قرار دهند، انتشاری آینده را از قبل ذخیره کنند، یا هنرمندی را دنبال کنند.",
+  "keywords": [
+    "ذخیره",
+    "دنبال‌کردن",
+    "مورد علاقه"
+  ],
+  "textdomain": "music-wave-core",
+  "icon": "plus-alt",
+  "attributes": {
+    "releaseId": {
+      "type": "integer",
+      "default": 0
+    },
+    "itemType": {
+      "type": "string",
+      "default": "release"
+    },
+    "termId": {
+      "type": "integer",
+      "default": 0
+    },
+    "label": {
+      "type": "string",
+      "default": ""
+    },
+    "addedLabel": {
+      "type": "string",
+      "default": ""
+    },
+    "style": {
+      "type": "string",
+      "default": "solid"
+    },
+    "compact": {
+      "type": "boolean",
+      "default": false
+    }
+  },
+  "usesContext": [
+    "postId",
+    "postType"
+  ],
+  "supports": {
+    "anchor": true,
+    "align": [
+      "wide",
+      "full"
+    ],
+    "border": {
+      "color": true,
+      "radius": true,
+      "style": true,
+      "width": true
+    },
+    "color": {
+      "background": true,
+      "link": true,
+      "text": true
+    },
+    "spacing": {
+      "blockGap": true,
+      "margin": true,
+      "padding": true
+    },
+    "typography": {
+      "fontSize": true,
+      "lineHeight": true
+    }
+  },
+  "example": {
+    "attributes": {
+      "style": "solid",
+      "compact": false
+    }
+  }
 }

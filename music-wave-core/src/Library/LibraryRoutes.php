@@ -69,7 +69,7 @@ final class LibraryRoutes {
 
 		return new WP_Error(
 			'mw_authentication_required',
-			__( 'Sign in to manage your personal music library.', 'music-wave-core' ),
+			__( 'برای مدیریت کتابخانه موسیقی شخصی خود وارد سیستم شوید.', 'music-wave-core' ),
 			array( 'status' => 401 )
 		);
 	}
@@ -94,7 +94,7 @@ final class LibraryRoutes {
 	public function store( WP_REST_Request $request ) {
 		list( $type, $item_id ) = $this->item_params( $request );
 		if ( '' === $type || $item_id < 1 ) {
-			return new WP_Error( 'mw_library_invalid_item', __( 'Choose a valid release or artist to add.', 'music-wave-core' ), array( 'status' => 400 ) );
+			return new WP_Error( 'mw_library_invalid_item', __( 'یک انتشار معتبر یا هنرمند را برای افزودن انتخاب کنید.', 'music-wave-core' ), array( 'status' => 400 ) );
 		}
 
 		$user_id = get_current_user_id();
@@ -103,7 +103,7 @@ final class LibraryRoutes {
 		}
 
 		if ( ! $this->repository->add( $user_id, $type, $item_id ) ) {
-			return new WP_Error( 'mw_library_add_failed', __( 'This item could not be added to your library.', 'music-wave-core' ), array( 'status' => 422 ) );
+			return new WP_Error( 'mw_library_add_failed', __( 'این مورد به کتابخانه شما اضافه نشد.', 'music-wave-core' ), array( 'status' => 422 ) );
 		}
 
 		/**
@@ -126,7 +126,7 @@ final class LibraryRoutes {
 	public function destroy( WP_REST_Request $request ) {
 		list( $type, $item_id ) = $this->item_params( $request );
 		if ( '' === $type || $item_id < 1 ) {
-			return new WP_Error( 'mw_library_invalid_item', __( 'Choose a valid release or artist to remove.', 'music-wave-core' ), array( 'status' => 400 ) );
+			return new WP_Error( 'mw_library_invalid_item', __( 'انتشار یا هنرمند معتبری را برای حذف انتخاب کنید.', 'music-wave-core' ), array( 'status' => 400 ) );
 		}
 
 		$user_id = get_current_user_id();

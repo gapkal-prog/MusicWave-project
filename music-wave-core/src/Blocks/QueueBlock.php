@@ -95,22 +95,22 @@ final class QueueBlock {
 		if ( $user_id < 1 ) {
 			return '<div class="mw-add-to-queue mw-add-to-queue--guest"><a class="wp-element-button" href="'
 				. esc_url( wp_login_url( BlockSupport::current_url() ) ) . '">'
-				. esc_html( __( 'Sign in to queue', 'music-wave-core' ) ) . '</a></div>';
+				. esc_html( __( 'ورود به صف', 'music-wave-core' ) ) . '</a></div>';
 		}
 
 		$queued = in_array( $release_id, $this->repository->queue( $user_id )['ids'], true );
 		if ( $queued ) {
 			return '<div class="mw-add-to-queue mw-add-to-queue--queued"><span class="mw-add-to-queue__in">'
 				. '<span aria-hidden="true">&#10003;</span> '
-				. esc_html( __( 'In your queue', 'music-wave-core' ) )
+				. esc_html( __( 'در صف شما', 'music-wave-core' ) )
 				. '</span></div>';
 		}
 
 		$label = isset( $attributes['label'] ) && '' !== sanitize_text_field( (string) $attributes['label'] )
 			? sanitize_text_field( (string) $attributes['label'] )
 			: ( 'end' === $position
-				? __( 'Add to queue', 'music-wave-core' )
-				: __( 'Play next', 'music-wave-core' ) );
+				? __( 'افزودن به صف', 'music-wave-core' )
+				: __( 'پخش بعدی', 'music-wave-core' ) );
 
 		return '<div class="mw-add-to-queue"><form method="post" action="' . esc_url( admin_url( 'admin-post.php' ) ) . '">'
 			. '<input type="hidden" name="mw_operation" value="add">'
@@ -164,7 +164,7 @@ final class QueueBlock {
 		$ids   = $queue['ids'];
 
 		$options = array(
-			'heading'       => BlockSupport::text_attribute( $attributes, 'heading', __( 'Up next', 'music-wave-core' ) ),
+			'heading'       => BlockSupport::text_attribute( $attributes, 'heading', __( 'بعدی', 'music-wave-core' ) ),
 			'show_artwork'  => ! isset( $attributes['showArtwork'] ) || (bool) $attributes['showArtwork'],
 			'show_position' => ! isset( $attributes['showPosition'] ) || (bool) $attributes['showPosition'],
 			'show_artist'   => ! isset( $attributes['showArtist'] ) || (bool) $attributes['showArtist'],
@@ -176,11 +176,11 @@ final class QueueBlock {
 			. '<h2 class="mw-playback-queue__title">' . esc_html( (string) $options['heading'] ) . '</h2>'
 			. '</div>'
 			. /* translators: %d: number of queued releases. */
-			'<span class="mw-playback-queue__count" aria-label="' . esc_attr( sprintf( __( '%d queued', 'music-wave-core' ), count( $ids ) ) ) . '">' . esc_html( number_format_i18n( count( $ids ) ) ) . '</span>'
+			'<span class="mw-playback-queue__count" aria-label="' . esc_attr( sprintf( __( '%d در صف', 'music-wave-core' ), count( $ids ) ) ) . '">' . esc_html( number_format_i18n( count( $ids ) ) ) . '</span>'
 			. '</header>';
 
 		if ( array() === $ids ) {
-			$empty = BlockSupport::text_attribute( $attributes, 'emptyMessage', __( 'Your queue is empty. Use “Play next” on any release to build it.', 'music-wave-core' ) );
+			$empty = BlockSupport::text_attribute( $attributes, 'emptyMessage', __( 'صف شما خالی است. برای ساختن آن، روی هر انتشار «پخش بعدی» را انتخاب کنید.', 'music-wave-core' ) );
 
 			return '<section ' . BlockSupport::wrapper_attributes( 'mw-playback-queue mw-playback-queue--empty' ) . '>'
 				. $header
@@ -209,13 +209,13 @@ final class QueueBlock {
 	 * @param array<string, mixed> $attributes Block attributes.
 	 */
 	private function render_guest( array $attributes ): string {
-		$heading = BlockSupport::text_attribute( $attributes, 'heading', __( 'Up next', 'music-wave-core' ) );
+		$heading = BlockSupport::text_attribute( $attributes, 'heading', __( 'بعدی', 'music-wave-core' ) );
 
 		return '<section ' . BlockSupport::wrapper_attributes( 'mw-playback-queue mw-playback-queue--guest' ) . '>'
 			. '<div class="mw-playback-queue__panel"><span class="mw-playback-queue__panel-icon" aria-hidden="true">☰</span>'
 			. '<div><h2 class="mw-playback-queue__title">' . esc_html( $heading ) . '</h2>'
-			. '<p class="mw-playback-queue__guest-text">' . esc_html__( 'Sign in to keep a play queue across pages and visits.', 'music-wave-core' ) . '</p></div>'
-			. '<a class="wp-element-button mw-playback-queue__guest-cta" href="' . esc_url( wp_login_url( BlockSupport::current_url() ) ) . '">' . esc_html__( 'Sign in', 'music-wave-core' ) . '</a></div>'
+			. '<p class="mw-playback-queue__guest-text">' . esc_html__( 'برای حفظ صف پخش در بین صفحات و بازدیدها وارد سیستم شوید.', 'music-wave-core' ) . '</p></div>'
+			. '<a class="wp-element-button mw-playback-queue__guest-cta" href="' . esc_url( wp_login_url( BlockSupport::current_url() ) ) . '">' . esc_html__( 'وارد شوید', 'music-wave-core' ) . '</a></div>'
 			. '</section>';
 	}
 
@@ -233,14 +233,14 @@ final class QueueBlock {
 		if ( $release_id < 1 || ! is_string( $link ) || '' === $link ) {
 			return '';
 		}
-		$title = '' !== $title ? $title : __( 'Untitled release', 'music-wave-core' );
+		$title = '' !== $title ? $title : __( 'انتشار بدون عنوان', 'music-wave-core' );
 
 		/* translators: %s: release title. */
-		$move_up_label = sprintf( __( 'Move %s up', 'music-wave-core' ), $title );
+		$move_up_label = sprintf( __( '%s را به بالا منتقل کنید', 'music-wave-core' ), $title );
 		/* translators: %s: release title. */
-		$move_down_label = sprintf( __( 'Move %s down', 'music-wave-core' ), $title );
+		$move_down_label = sprintf( __( '%s را به پایین حرکت دهید', 'music-wave-core' ), $title );
 		/* translators: %s: release title. */
-		$remove_label = sprintf( __( 'Remove %s from the queue', 'music-wave-core' ), $title );
+		$remove_label = sprintf( __( '%s را از صف حذف کنید', 'music-wave-core' ), $title );
 
 		$art = '';
 		if ( $options['show_artwork'] ) {
@@ -299,7 +299,7 @@ final class QueueBlock {
 	 * @param array<string, mixed> $queue Normalized queue snapshot.
 	 */
 	private function controls_markup( array $queue ): string {
-		$shuffle_label = $queue['shuffle'] ? __( 'Shuffle: on', 'music-wave-core' ) : __( 'Shuffle: off', 'music-wave-core' );
+		$shuffle_label = $queue['shuffle'] ? __( 'تصادفی: روشن', 'music-wave-core' ) : __( 'پخش تصادفی: خاموش', 'music-wave-core' );
 
 		return '<div class="mw-playback-queue__controls">'
 			. '<form method="post" action="' . esc_url( admin_url( 'admin-post.php' ) ) . '">'
@@ -309,14 +309,14 @@ final class QueueBlock {
 			. $this->hidden_fields()
 			. '</form>'
 			. '<form method="post" action="' . esc_url( admin_url( 'admin-post.php' ) ) . '">'
-			. '<label class="screen-reader-text" for="mw-queue-repeat">' . esc_html__( 'Repeat mode', 'music-wave-core' ) . '</label>'
+			. '<label class="screen-reader-text" for="mw-queue-repeat">' . esc_html__( 'حالت تکرار', 'music-wave-core' ) . '</label>'
 			. '<select id="mw-queue-repeat" name="mw_value">'
-			. '<option value="off"' . selected( 'off', $queue['repeat'], false ) . '>' . esc_html__( 'Repeat: off', 'music-wave-core' ) . '</option>'
-			. '<option value="all"' . selected( 'all', $queue['repeat'], false ) . '>' . esc_html__( 'Repeat: all', 'music-wave-core' ) . '</option>'
-			. '<option value="one"' . selected( 'one', $queue['repeat'], false ) . '>' . esc_html__( 'Repeat: one', 'music-wave-core' ) . '</option>'
+			. '<option value="off"' . selected( 'off', $queue['repeat'], false ) . '>' . esc_html__( 'تکرار: خاموش', 'music-wave-core' ) . '</option>'
+			. '<option value="all"' . selected( 'all', $queue['repeat'], false ) . '>' . esc_html__( 'تکرار: همه', 'music-wave-core' ) . '</option>'
+			. '<option value="one"' . selected( 'one', $queue['repeat'], false ) . '>' . esc_html__( 'تکرار: یک', 'music-wave-core' ) . '</option>'
 			. '</select>'
 			. '<input type="hidden" name="mw_operation" value="repeat">'
-			. '<button type="submit">' . esc_html__( 'Save repeat', 'music-wave-core' ) . '</button>'
+			. '<button type="submit">' . esc_html__( 'ذخیره تکرار', 'music-wave-core' ) . '</button>'
 			. $this->hidden_fields()
 			. '</form>'
 			. '</div>';
@@ -328,7 +328,7 @@ final class QueueBlock {
 	private function clear_markup(): string {
 		return '<form class="mw-playback-queue__clear" method="post" action="' . esc_url( admin_url( 'admin-post.php' ) ) . '">'
 			. '<input type="hidden" name="mw_operation" value="clear">'
-			. '<button type="submit">' . esc_html__( 'Clear queue', 'music-wave-core' ) . '</button>'
+			. '<button type="submit">' . esc_html__( 'پاک کردن صف', 'music-wave-core' ) . '</button>'
 			. $this->hidden_fields()
 			. '</form>';
 	}

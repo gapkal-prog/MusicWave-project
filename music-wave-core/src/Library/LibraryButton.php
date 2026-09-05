@@ -114,8 +114,8 @@ final class LibraryButton {
 			array(
 				'restUrl'      => esc_url_raw( rest_url() ),
 				'restNonce'    => wp_create_nonce( 'wp_rest' ),
-				'errorMessage' => __( 'Your library could not be updated. Try again.', 'music-wave-core' ),
-				'sessionError' => __( 'Your session has expired. Refresh the page or sign in again.', 'music-wave-core' ),
+				'errorMessage' => __( 'کتابخانه شما به‌روز نشد. دوباره امتحان کنید.', 'music-wave-core' ),
+				'sessionError' => __( 'جلسه شما تمام شده است. صفحه را تازه کنید یا دوباره وارد شوید.', 'music-wave-core' ),
 			)
 		);
 	}
@@ -137,15 +137,15 @@ final class LibraryButton {
 		}
 
 		if ( LibraryRepository::TYPE_ARTIST === $type ) {
-			return $in_library ? __( 'Following', 'music-wave-core' ) : __( 'Follow artist', 'music-wave-core' );
+			return $in_library ? __( 'دنبال', 'music-wave-core' ) : __( 'هنرمند را دنبال‌کردن', 'music-wave-core' );
 		}
 		if ( LibraryRepository::TYPE_WISHLIST === $type ) {
-			return $in_library ? __( 'On your wishlist', 'music-wave-core' ) : __( 'Add to wishlist', 'music-wave-core' );
+			return $in_library ? __( 'در فهرست علاقه‌مندی‌های شما', 'music-wave-core' ) : __( 'افزودن به فهرست علاقه‌مندی‌ها', 'music-wave-core' );
 		}
 		if ( LibraryRepository::TYPE_PRESAVE === $type ) {
-			return $in_library ? __( 'Pre-saved', 'music-wave-core' ) : __( 'Pre-save', 'music-wave-core' );
+			return $in_library ? __( 'از پیش ذخیره‌شده', 'music-wave-core' ) : __( 'پیش ذخیره', 'music-wave-core' );
 		}
 
-		return $in_library ? __( 'In your library', 'music-wave-core' ) : __( 'Add to library', 'music-wave-core' );
+		return $in_library ? __( 'در کتابخانه شما', 'music-wave-core' ) : __( 'افزودن به کتابخانه', 'music-wave-core' );
 	}
 }

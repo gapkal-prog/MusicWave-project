@@ -8,952 +8,1355 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Domain: musicwave\n"
 
-#: functions.php:856
+#: functions.php:1482
 #, php-format
-msgid "%d customized MusicWave template records were moved to the Trash. The validated theme files are active again."
-msgstr ""
-
-#: functions.php:1289
-#, php-format
-msgid "%d track"
-msgid_plural "%d tracks"
+msgid "%d قطعه"
+msgid_plural "%d قطعه"
 msgstr[0] ""
 msgstr[1] ""
 
-#: functions.php:543
-msgid "A configurable grid, horizontal shelf, or compact list of releases."
-msgstr ""
-
-#: functions.php:542
-msgid "A responsive, accessible slider for featured or recent releases."
-msgstr ""
-
-#: patterns/hero-centered.php:16
-msgid "A store that feels like a record room"
-msgstr ""
-
-#: functions.php:344
-msgid "Accent line"
-msgstr ""
-
-#: assets/editor-blocks.js:453
-msgid "Action label"
-msgstr ""
-
-#: assets/editor-blocks.js:702
-msgid "Add published releases or enable this block to display its live preview."
-msgstr ""
-
-#: assets/editor-blocks.js:90 patterns/footer-widget-columns.php:29
-msgid "All releases"
-msgstr ""
-
-#: functions.php:400
-msgid "Appears in the Footer widgets template part (Appearance → Editor → Template Parts → Footer widgets). Drag any block or legacy widget — colors follow global Styles."
-msgstr ""
-
-#: functions.php:409
-msgid "Appears in the Shop sidebar template part (Template Parts → Shop sidebar). Use WooCommerce filters, categories, or any block."
-msgstr ""
-
-#: functions.php:391
-msgid "Appears in the Sidebar template part (Appearance → Editor → Template Parts → Sidebar). Add any block or legacy widget here. Fully editable visually — no code required."
-msgstr ""
-
-#: patterns/widget-rich-sidebar.php:41
-msgid "Archives"
-msgstr ""
-
-#: assets/editor-blocks.js:91
-msgid "Artist"
-msgstr ""
-
-#: patterns/footer-widget-columns.php:29
-msgid "Artists"
-msgstr ""
-
-#: assets/editor-blocks.js:425
-msgid "Artwork shape"
-msgstr ""
-
-#: assets/editor-blocks.js:76
-msgid "Ascending"
-msgstr ""
-
-#: assets/editor-blocks.js:230
-msgid "Autoplay"
-msgstr ""
-
-#: assets/editor-blocks.js:239
-msgid "Autoplay interval (milliseconds)"
-msgstr ""
-
-#: assets/editor-blocks.js:571
-msgid "Body text color (hex)"
-msgstr ""
-
-#: patterns/footer-widget-columns.php:27
-msgid "Browse"
-msgstr ""
-
-#: patterns/browse-categories.php:13
-msgid "Browse by mood and genre"
-msgstr ""
-
-#: patterns/cta-banner.php:23
-msgid "Browse catalog"
-msgstr ""
-
-#: patterns/hero-centered.php:23
-msgid "Browse moods"
-msgstr ""
-
-#: patterns/music-service-callout.php:18
-msgid "Build a library that sounds like you."
-msgstr ""
-
-#: assets/editor-blocks.js:616
-msgid "Button background (hex)"
-msgstr ""
-
-#: assets/editor-blocks.js:638
-msgid "Button corner radius (px)"
-msgstr ""
-
-#: assets/editor-blocks.js:588
-msgid "Button label"
-msgstr ""
-
-#: assets/editor-blocks.js:595
-msgid "Button style"
-msgstr ""
-
-#: assets/editor-blocks.js:627
-msgid "Button text color (hex)"
-msgstr ""
-
-#: patterns/catalog-heading.php:13
-msgid "CURATED FOR YOU"
-msgstr ""
-
-#: assets/editor-blocks.js:584
-msgid "Call-to-action button"
-msgstr ""
-
-#: patterns/browse-categories.php:29
-msgid "Calm selections for work and rest."
-msgstr ""
-
-#: patterns/footer-widget-columns.php:35
-msgid "Cart & checkout"
-msgstr ""
-
-#: patterns/widget-rich-sidebar.php:36 patterns/widget-search.php:20
-msgid "Categories"
-msgstr ""
-
-#: functions.php:359
-msgid "Checklist"
-msgstr ""
-
-#: functions.php:935
-msgid "Checkout"
-msgstr ""
-
-#: assets/editor-blocks.js:437 functions.php:354
-msgid "Circle"
-msgstr ""
-
-#: functions.php:1210
-msgid "Community playlists"
-msgstr ""
-
-#: assets/editor-blocks.js:403
-msgid "Compact list"
-msgstr ""
-
-#: patterns/footer-widget-columns.php:35
-msgid "Contact"
-msgstr ""
-
-#: assets/editor-blocks.js:283
-msgid "Content source"
-msgstr ""
-
-#: patterns/browse-categories.php:24
-msgid "Continuous listening for every moment."
-msgstr ""
-
-#: patterns/cta-banner.php:19
-msgid "Curate your catalog, share releases, and sell with confidence — all visually editable."
-msgstr ""
-
-#: functions.php:1213
-msgid "Curated by listeners"
-msgstr ""
-
-#: assets/editor-blocks.js:132
-msgid "Curated release IDs"
-msgstr ""
-
-#: functions.php:869
+#: functions.php:984
 #, php-format
-msgid "Customized built-in template overrides found: %d"
+msgid "%d مورد سفارشی‌سازی قالب MusicWave به زباله‌دان منتقل شد. فایل‌های معتبر قالب اکنون فعال هستند."
 msgstr ""
 
-#: assets/editor-blocks.js:75
-msgid "Descending"
-msgstr ""
-
-#: assets/editor-blocks.js:318
-msgid "Description"
-msgstr ""
-
-#: assets/editor-blocks.js:416
-msgid "Desktop columns"
-msgstr ""
-
-#: assets/editor-blocks.js:72
-msgid "Direction"
-msgstr ""
-
-#: assets/editor-blocks.js:30
-msgid "Disabled"
-msgstr ""
-
-#: patterns/home-hero.php:15
-msgid "Discover the next track you will love."
-msgstr ""
-
-#: patterns/footer-widget-columns.php:41
-msgid "Drag any block here — search, newsletter, recent releases, categories, legacy widget, or custom HTML — it just works."
-msgstr ""
-
-#: patterns/hero-centered.php:20
-msgid "Drop this hero anywhere — front page, landing, or page-wide. Every color, font, and spacing is editable in Styles."
-msgstr ""
-
-#: patterns/editorial-feature.php:16
-msgid "EDITORIAL"
-msgstr ""
-
-#: assets/editor-blocks.js:407 assets/editor-blocks.js:464
-msgid "Editorial feature"
-msgstr ""
-
-#: assets/editor-blocks.js:29
-msgid "Enabled"
-msgstr ""
-
-#: patterns/hero-centered.php:22
-msgid "Enter catalog"
-msgstr ""
-
-#: patterns/user-dashboard.php:18
-msgid "Everything you own, ready to play."
-msgstr ""
-
-#: patterns/home-hero.php:18
-msgid "Explore music"
-msgstr ""
-
-#: patterns/home-hero.php:17
-msgid "Explore releases, artists, albums, and exclusive downloads in one focused experience."
-msgstr ""
-
-#: patterns/widget-search.php:15
-msgid "Explore the catalog"
-msgstr ""
-
-#: assets/editor-blocks.js:171 assets/editor-blocks.js:304
-msgid "Eyebrow"
-msgstr ""
-
-#: functions.php:285 patterns/section-heading.php:16
-msgid "Featured"
-msgstr ""
-
-#: assets/editor-blocks.js:480
-msgid "Featured body"
-msgstr ""
-
-#: assets/editor-blocks.js:468
-msgid "Featured release ID (0 = first result)"
-msgstr ""
-
-#: functions.php:1070 patterns/featured-release-slider.php:12
-msgid "Featured releases"
-msgstr ""
-
-#: assets/editor-blocks.js:83
-msgid "Filter taxonomy"
-msgstr ""
-
-#: patterns/browse-categories.php:28
-msgid "Focus and chill"
-msgstr ""
-
-#: patterns/browse-categories.php:19
-msgid "Fresh releases and emerging sounds."
-msgstr ""
-
-#: assets/editor-blocks.js:92
-msgid "Genre"
-msgstr ""
-
-#: patterns/footer-widget-columns.php:29
-msgid "Genres & moods"
-msgstr ""
-
-#: patterns/newsletter-signup.php:18
-msgid "Get new releases and editorial picks. Replace this with your newsletter block, form, or legacy widget — no code needed."
-msgstr ""
-
-#: assets/editor-blocks.js:607
-msgid "Ghost"
-msgstr ""
-
-#: functions.php:226
-#, php-format
-msgid "Go to slide group %d"
-msgstr ""
-
-#: assets/editor-blocks.js:178 assets/editor-blocks.js:311
-msgid "Heading"
-msgstr ""
-
-#: patterns/footer-widget-columns.php:35
-msgid "Help & FAQs"
-msgstr ""
-
-#: assets/editor-blocks.js:547
-msgid "Hero title"
-msgstr ""
-
-#: patterns/music-service-callout.php:21
-msgid "Highlight memberships, exclusive releases, downloads, or a curated playlist with this editable callout."
-msgstr ""
-
-#: assets/editor-blocks.js:399
-msgid "Horizontal shelf"
-msgstr ""
-
-#: assets/editor-blocks.js:49
-msgid "How releases are sorted before they are displayed."
-msgstr ""
-
-#: assets/editor-blocks.js:98
-msgid "Label"
-msgstr ""
-
-#: assets/editor-blocks.js:430
-msgid "Landscape"
-msgstr ""
-
-#: functions.php:930
-msgid "Latest releases"
-msgstr ""
-
-#: assets/editor-blocks.js:391
-msgid "Layout"
-msgstr ""
-
-#: assets/editor-blocks.js:387
-msgid "Layout and artwork"
-msgstr ""
-
-#: assets/editor-blocks.js:617
-msgid "Leave empty to use theme accent color."
-msgstr ""
-
-#: assets/editor-blocks.js:628
-msgid "Leave empty to use theme default."
-msgstr ""
-
-#: assets/editor-blocks.js:84
-msgid "Limit the shelf/slider to one taxonomy, or leave on All releases."
-msgstr ""
-
-#: assets/editor-blocks.js:231
-msgid "Loop"
-msgstr ""
-
-#: patterns/featured-release-slider.php:12
-msgid "MADE FOR YOU"
-msgstr ""
-
-#: functions.php:1069
-msgid "Made for you"
-msgstr ""
-
-#: patterns/widget-rich-sidebar.php:20
-msgid "Main column — add paragraphs, images, releases, or any block. The sidebar on the right is fully editable piece-by-piece."
-msgstr ""
-
-#: assets/editor-blocks.js:60
-msgid "Modified date"
-msgstr ""
-
-#: assets/editor-blocks.js:93
-msgid "Mood"
-msgstr ""
-
-#: functions.php:1531
-msgid "More releases"
-msgstr ""
-
-#: assets/editor-blocks.js:65
-msgid "Most viewed"
-msgstr ""
-
-#: patterns/hero-centered.php:18
-msgid "Music with room to breathe."
-msgstr ""
-
-#: functions.php:284
+#: functions.php:342 functions.php:385
 msgid "MusicWave"
 msgstr ""
 
-#: functions.php:292
-msgid "MusicWave Call to Action"
+#: functions.php:1058
+msgid "آخرین انتشارها"
 msgstr ""
 
-#: functions.php:291
-msgid "MusicWave Cards"
+#: /patterns/widget-search.php
+msgid "ابزارک — جست‌وجو و دسته‌بندی‌ها"
 msgstr ""
 
-#: functions.php:289
-msgid "MusicWave Footers"
+#: functions.php:346
+msgid "ابزارک‌های MusicWave"
 msgstr ""
 
-#: functions.php:290
-msgid "MusicWave Headers"
+#: functions.php:505
+msgid "ابزارک‌های سربرگ MusicWave"
 msgstr ""
 
-#: functions.php:286
-msgid "MusicWave Hero"
+#: theme.json
+msgid "ابزارک‌های پابرگ"
 msgstr ""
 
-#: functions.php:287
-msgid "MusicWave Shelves"
+#: functions.php:487
+msgid "ابزارک‌های پابرگ MusicWave"
 msgstr ""
 
-#: functions.php:288
-msgid "MusicWave Widgets"
+#: assets/editor-blocks.js:124
+msgid "اختیاری. با نامک نوع انتشار مانند album، single، ep، podcast_show یا podcast_episode فیلتر کنید. برای نمایش همه انواع، خالی بگذارید. این موارد در MusicWave → انواع انتشار قرار دارند."
 msgstr ""
 
-#: functions.php:534
-msgid "MusicWave display preference"
+#: assets/editor-blocks.js:139
+msgid "اختیاری. برای تعیین ترتیب دقیق، شناسه انتشارها را با کاما جدا کرده و وارد کنید (مثلاً ۱۲، ۴۵، ۷۸). با بردن نشانگر روی عنوان انتشار در MusicWave → انتشارها، شناسه را در پیش‌نمایش پیوند ببینید. این گزینه همه فیلترهای دیگر را نادیده می‌گیرد."
 msgstr ""
 
-#: functions.php:398
-msgid "MusicWave footer widgets"
+#: assets/editor-blocks.js:385
+msgid "اختیاری. فقط فهرست‌های پخش عمومی را نمایش بده که عنوانشان با این متن مطابقت دارد."
 msgstr ""
 
-#: functions.php:416
-msgid "MusicWave header widgets"
+#: assets/editor-blocks.js:112
+msgid "اختیاری. نامک را از فهرست هنرمندان / سبک‌ها / حال‌وهواها در وردپرس → MusicWave کپی کنید. اگر خالی بگذارید، همهٔ موارد نمایش داده می‌شوند. نمونه: pop یا lo-fi."
 msgstr ""
 
-#: functions.php:1036
-msgid "MusicWave release"
-msgstr ""
-
-#: functions.php:536
-msgid "MusicWave release shelf"
-msgstr ""
-
-#: functions.php:535
-msgid "MusicWave release slider"
-msgstr ""
-
-#: functions.php:407
-msgid "MusicWave shop sidebar"
-msgstr ""
-
-#: functions.php:389
-msgid "MusicWave sidebar"
-msgstr ""
-
-#: functions.php:579 functions.php:580 functions.php:849
-msgid "MusicWave template repair"
-msgstr ""
-
-#: functions.php:533
-msgid "MusicWave template text"
-msgstr ""
-
-#: functions.php:936 patterns/cta-banner.php:24 patterns/footer-widget-columns.php:35
-msgid "My account"
-msgstr ""
-
-#: assets/editor-blocks.js:236
-msgid "Navigation arrows"
-msgstr ""
-
-#: patterns/browse-categories.php:18 patterns/footer-widget-columns.php:29
-msgid "New music"
-msgstr ""
-
-#: assets/editor-blocks.js:359
-msgid "Newest first"
-msgstr ""
-
-#: functions.php:1072
-msgid "Next releases"
-msgstr ""
-
-#: assets/editor-blocks.js:495
-msgid "No body text"
-msgstr ""
-
-#: functions.php:886
-msgid "No database overrides were found. WordPress is already using the bundled template files."
-msgstr ""
-
-#: functions.php:931
-msgid "No music was found."
-msgstr ""
-
-#: functions.php:932
-msgid "Nothing playing here."
-msgstr ""
-
-#: functions.php:1286 functions.php:1358
-#, php-format
-msgid "Open %s"
-msgstr ""
-
-#: functions.php:1329 functions.php:1450
-msgid "Open release"
-msgstr ""
-
-#: assets/editor-blocks.js:106
-msgid "Optional. Copy the slug from WordPress → MusicWave → Artists / Genres / Moods list (the slug column). Leave empty to include every term. Example: pop or lo-fi."
-msgstr ""
-
-#: assets/editor-blocks.js:118
-msgid "Optional. Filter by a release-type slug such as album, single, ep, podcast_show, podcast_episode. Leave empty to include all types. Found under MusicWave → Release Types."
-msgstr ""
-
-#: assets/editor-blocks.js:373
-msgid "Optional. Only show public playlists whose title matches this text."
-msgstr ""
-
-#: assets/editor-blocks.js:133
-msgid "Optional. Paste comma-separated release IDs to fix an exact order (e.g. 12, 45, 78). Find the ID by hovering a release title in MusicWave → Releases — the ID shows in the link preview. Overrides all other filters."
-msgstr ""
-
-#: functions.php:418
-msgid "Optional: small widget area for the header (e.g., announcement, language switcher). Add blocks under Appearance → Widgets or directly in the Header template part."
-msgstr ""
-
-#: assets/editor-blocks.js:48
-msgid "Order by"
-msgstr ""
-
-#: assets/editor-blocks.js:346
-msgid "Order playlists by"
-msgstr ""
-
-#: assets/editor-blocks.js:603
-msgid "Outline"
-msgstr ""
-
-#: functions.php:324
-msgid "Outline accent"
-msgstr ""
-
-#: assets/editor-blocks.js:504
-msgid "Overlay darkness"
-msgstr ""
-
-#: patterns/music-service-callout.php:15
-msgid "PREMIUM LISTENING"
-msgstr ""
-
-#: patterns/sidebar-content.php:18
-msgid "Page title"
-msgstr ""
-
-#: assets/editor-blocks.js:237
-msgid "Pagination dots"
-msgstr ""
-
-#: assets/editor-blocks.js:234
-msgid "Pause on hover or focus"
-msgstr ""
-
-#: functions.php:319
-msgid "Pill (MusicWave)"
-msgstr ""
-
-#: functions.php:1283
-#, php-format
-msgid "Play all tracks in %s"
-msgstr ""
-
-#: assets/editor-blocks.js:342
-msgid "Playlist query"
-msgstr ""
-
-#: assets/editor-blocks.js:372
-msgid "Playlist search filter"
-msgstr ""
-
-#: patterns/footer-widget-columns.php:29
-msgid "Playlists"
-msgstr ""
-
-#: assets/editor-blocks.js:328
-msgid "Playlists to show"
-msgstr ""
-
-#: patterns/widget-rich-sidebar.php:31
-msgid "Popular"
-msgstr ""
-
-#: assets/editor-blocks.js:434
-msgid "Portrait"
-msgstr ""
-
-#: functions.php:937
-msgid "Powered by MusicWave."
-msgstr ""
-
-#: functions.php:1072
-msgid "Previous releases"
-msgstr ""
-
-#: assets/editor-blocks.js:295 functions.php:736
-msgid "Public playlists"
-msgstr ""
-
-#: assets/editor-blocks.js:56
-msgid "Published date"
-msgstr ""
-
-#: assets/editor-blocks.js:44
-msgid "Query and filtering"
-msgstr ""
-
-#: patterns/browse-categories.php:23
-msgid "Radio and mixes"
-msgstr ""
-
-#: functions.php:334
-msgid "Raised surface"
-msgstr ""
-
-#: assets/editor-blocks.js:64
-msgid "Random"
-msgstr ""
-
-#: assets/editor-blocks.js:352
-msgid "Recently updated"
-msgstr ""
-
-#: assets/editor-blocks.js:95
-msgid "Release type"
-msgstr ""
-
-#: assets/editor-blocks.js:117
-msgid "Release type (slug)"
-msgstr ""
-
-#: assets/editor-blocks.js:291
-msgid "Releases"
-msgstr ""
-
-#: assets/editor-blocks.js:185
-msgid "Releases loaded"
-msgstr ""
-
-#: assets/editor-blocks.js:329
-msgid "Releases to show"
-msgstr ""
-
-#: assets/editor-blocks.js:395
-msgid "Responsive grid"
-msgstr ""
-
-#: functions.php:883
-msgid "Restore validated theme templates"
-msgstr ""
-
-#: functions.php:349
-msgid "Rounded"
-msgstr ""
-
-#: assets/editor-blocks.js:660
-msgid "Section link"
-msgstr ""
-
-#: patterns/section-heading.php:18
-msgid "Section title goes here"
-msgstr ""
-
-#: functions.php:1386
-msgid "See all"
-msgstr ""
-
-#: functions.php:1208
-msgid "See all playlists"
-msgstr ""
-
-#: assets/editor-blocks.js:279
-msgid "Shelf content"
-msgstr ""
-
-#: patterns/section-heading.php:20
-msgid "Short description that explains the section. Edit the eyebrow, heading, and text colors, spacing, and typography in the Site Editor without code."
-msgstr ""
-
-#: assets/editor-blocks.js:451
-msgid "Show action link"
-msgstr ""
-
-#: assets/editor-blocks.js:201 assets/editor-blocks.js:448
-msgid "Show artist"
-msgstr ""
-
-#: assets/editor-blocks.js:443
-msgid "Show artwork"
-msgstr ""
-
-#: assets/editor-blocks.js:208 assets/editor-blocks.js:449
-msgid "Show date"
-msgstr ""
-
-#: assets/editor-blocks.js:450
-msgid "Show excerpt"
-msgstr ""
-
-#: assets/editor-blocks.js:194
-msgid "Show excerpts"
-msgstr ""
-
-#: assets/editor-blocks.js:446
-msgid "Show play affordance"
-msgstr ""
-
-#: assets/editor-blocks.js:519
-msgid "Show rank numbers"
-msgstr ""
-
-#: assets/editor-blocks.js:215 assets/editor-blocks.js:526
-msgid "Show view count"
-msgstr ""
-
-#: assets/editor-blocks.js:533
-msgid "Side column width (px)"
-msgstr ""
-
-#: functions.php:863
-msgid "Site Editor customizations are stored in the database and override updated theme files. Use this tool only when a MusicWave template reports an unavailable template part or invalid block content."
-msgstr ""
-
-#: functions.php:228
-#, php-format
-msgid "Slide group %1$d of %2$d"
-msgstr ""
-
-#: assets/editor-blocks.js:226
-msgid "Slider behavior"
-msgstr ""
-
-#: assets/editor-blocks.js:167
-msgid "Slider content"
-msgstr ""
-
-#: functions.php:1073
-msgid "Slider pagination"
-msgstr ""
-
-#: assets/editor-blocks.js:229
-msgid "Slider visibility"
-msgstr ""
-
-#: assets/editor-blocks.js:599
-msgid "Solid fill"
-msgstr ""
-
-#: assets/editor-blocks.js:428
-msgid "Square"
-msgstr ""
-
-#: patterns/music-service-callout.php:26
-msgid "Start listening"
-msgstr ""
-
-#: patterns/cta-banner.php:17
-msgid "Start listening today"
-msgstr ""
-
-#: patterns/catalog-heading.php:16
-msgid "Start with what moves you"
-msgstr ""
-
-#: patterns/sidebar-content.php:20
-msgid "Start writing. In the Site Editor you can add, reorder, or remove any block here — and edit the sidebar separately under Template Parts → Sidebar."
-msgstr ""
-
-#: patterns/newsletter-signup.php:16
-msgid "Stay in the loop"
-msgstr ""
-
-#: patterns/footer-widget-columns.php:39
-msgid "Stay tuned"
-msgstr ""
-
-#: patterns/footer-widget-columns.php:33
-msgid "Support"
-msgstr ""
-
-#: functions.php:329
-msgid "Surface card"
-msgstr ""
-
-#: assets/editor-blocks.js:284
-msgid "Switch the shelf between catalog releases and community public playlists."
-msgstr ""
-
-#: assets/editor-blocks.js:105
-msgid "Term slug"
-msgstr ""
-
-#: functions.php:933
-msgid "The page may have moved. Try searching the catalog."
-msgstr ""
-
-#: functions.php:864
-msgid "This does not delete releases, pages, menus, media, plugin settings, or global styles."
-msgstr ""
-
-#: patterns/sidebar-content.php:24
-msgid "This two-column layout uses the reusable Sidebar template part. Update it once and every page using this pattern reflects the change instantly — perfect for non-technical store owners."
-msgstr ""
-
-#: functions.php:339
-msgid "Tight gap"
-msgstr ""
-
-#: patterns/widget-rich-sidebar.php:24
-msgid "Tip for buyers: open Site Editor → Template Parts → Sidebar to change widgets globally, or detach this columns block to edit the sidebar only on this page."
-msgstr ""
-
-#: patterns/newsletter-signup.php:22
-msgid "Tip: Swap the Search block above with a Mailchimp, Jetpack, or HTML block. Colors follow global Styles."
-msgstr ""
-
-#: patterns/footer-widget-columns.php:46
-msgid "Tip: change colors, fonts, and spacing in Styles → no code required."
-msgstr ""
-
-#: assets/editor-blocks.js:63 assets/editor-blocks.js:363
-msgid "Title"
-msgstr ""
-
-#: assets/editor-blocks.js:551
-msgid "Title color (hex)"
-msgstr ""
-
-#: assets/editor-blocks.js:559
-msgid "Title font size (px, 0 = default)"
-msgstr ""
-
-#: patterns/editorial-feature.php:17
-msgid "Top picks this week"
-msgstr ""
-
-#: functions.php:238
-msgid "Use dark theme"
-msgstr ""
-
-#: assets/editor-blocks.js:488
-msgid "Use description field"
-msgstr ""
-
-#: assets/editor-blocks.js:484
-msgid "Use excerpt"
-msgstr ""
-
-#: assets/editor-blocks.js:28
-msgid "Use global setting"
-msgstr ""
-
-#: functions.php:237
-msgid "Use light theme"
-msgstr ""
-
-#: functions.php:236 functions.php:1577
-msgid "Use system theme"
+#: functions.php:507
+msgid "اختیاری: ناحیه کوچک ابزارک برای سربرگ (مثلاً اعلان یا تغییر زبان). بلوک‌ها را از نمایش → ابزارک‌ها یا مستقیماً در بخش قالب سربرگ اضافه کنید."
 msgstr ""
 
 #: patterns/catalog-heading.php:19
-msgid "Use this editable heading above a Query Loop, playlist, artist collection, or any custom block."
+msgid "از این عنوان قابل ویرایش بالای حلقه پرس‌وجو، فهرست پخش، مجموعه هنرمندان یا هر بلوک سفارشی استفاده کنید."
 msgstr ""
 
-#: assets/editor-blocks.js:671
-msgid "View-all label"
+#: assets/editor-blocks.js:29
+msgid "استفاده از تنظیمات کلی"
 msgstr ""
 
-#: assets/editor-blocks.js:664
-msgid "View-all link"
+#: assets/editor-blocks.js:507
+msgid "استفاده از فیلد توضیحات"
+msgstr ""
+
+#: functions.php:278 /blocks/theme-toggle/block.json
+msgid "استفاده از پوسته تیره"
+msgstr ""
+
+#: functions.php:277 /blocks/theme-toggle/block.json
+msgid "استفاده از پوسته روشن"
+msgstr ""
+
+#: functions.php:276 functions.php:1966 /blocks/theme-toggle/block.json
+msgid "استفاده از پوسته سیستم"
+msgstr ""
+
+#: assets/editor-blocks.js:500
+msgid "استفاده از چکیده"
+msgstr ""
+
+#: functions.php:268
+#, php-format
+msgid "اسلاید %1$d از %2$d"
+msgstr ""
+
+#: functions.php:1885
+#, php-format
+msgid "اسلاید %1$d: %2$s"
+msgstr ""
+
+#: functions.php:264 functions.php:1906
+msgid "اسلاید بعدی"
+msgstr ""
+
+#: functions.php:263 functions.php:1905
+msgid "اسلاید قبلی"
+msgstr ""
+
+#: functions.php:1924 /blocks/release-shelf/block.json /blocks/release-slider/block.json
+msgid "اسلایدر"
+msgstr ""
+
+#: functions.php:1918
+msgid "اسلایدر انتشارها"
+msgstr ""
+
+#: /blocks/release-slider/block.json
+msgid "اسلایدر انتشارهای MusicWave"
+msgstr ""
+
+#: /patterns/featured-release-slider.php
+msgid "اسلایدر انتشارهای منتخب"
+msgstr ""
+
+#: assets/editor-blocks.js:423
+msgid "اسلایدر هیرو"
+msgstr ""
+
+#: /blocks/release-slider/block.json
+msgid "اسلایدر واکنش‌گرا و دسترس‌پذیر برای انتشارهای منتخب یا جدید. از طریق ویرایشگر سایت و تنظیمات کلی اسلایدر کاملاً قابل سفارشی‌سازی است."
+msgstr ""
+
+#: assets/editor-blocks.js:446
+msgid "افقی"
+msgstr ""
+
+#: patterns/cta-banner.php:17
+msgid "امروز شنیدن را شروع کنید"
+msgstr ""
+
+#: patterns/editorial-feature.php:17
+msgid "انتخاب‌های برتر این هفته"
+msgstr ""
+
+#: patterns/browse-categories.php:29
+msgid "انتخاب‌هایی آرام برای کار و استراحت."
+msgstr ""
+
+#: functions.php:1215
+msgid "انتشار MusicWave"
+msgstr ""
+
+#: assets/editor-blocks.js:294 /blocks/release-shelf/block.json /blocks/release-slider/block.json
+msgid "انتشارها"
+msgstr ""
+
+#: assets/editor-blocks.js:332
+msgid "انتشارها برای نمایش"
+msgstr ""
+
+#: patterns/home-hero.php:17
+msgid "انتشارها، هنرمندان، آلبوم‌ها و دانلودهای اختصاصی را در تجربه‌ای یکپارچه کشف کنید."
+msgstr ""
+
+#: functions.php:1265
+msgid "انتشارهای بعدی"
+msgstr ""
+
+#: functions.php:1750
+msgid "انتشارهای بیشتر"
+msgstr ""
+
+#: patterns/browse-categories.php:19
+msgid "انتشارهای تازه و صداهای نوظهور."
+msgstr ""
+
+#: patterns/newsletter-signup.php:18
+msgid "انتشارهای جدید و انتخاب‌های سرمقاله‌ای را دریافت کنید. این بخش را با بلوک خبرنامه، فرم یا ابزارک قدیمی خود جایگزین کنید؛ بدون نیاز به کدنویسی."
+msgstr ""
+
+#: functions.php:1265
+msgid "انتشارهای قبلی"
+msgstr ""
+
+#: functions.php:1263 patterns/featured-release-slider.php:12
+msgid "انتشارهای منتخب"
+msgstr ""
+
+#: assets/editor-blocks.js:578
+msgid "اندازه فونت عنوان (پیکسل، ۰ = پیش‌فرض)"
+msgstr ""
+
+#: patterns/hero-centered.php:20
+msgid "این بخش معرفی را هرجا می‌خواهید قرار دهید؛ صفحهٔ اصلی، صفحهٔ فرود یا صفحه عریض. هر رنگ، فونت و فاصله‌ای در بخش سبک‌ها قابل ویرایش است."
+msgstr ""
+
+#: patterns/sidebar-content.php:24
+msgid "این چیدمان دو ستونه از بخش قالب قابل استفادهٔ مجدد «نوار کناری» استفاده می‌کند. آن را یک‌بار به‌روزرسانی کنید تا تغییرات فوراً در همه صفحات این الگو دیده شود؛ مناسب برای صاحبان فروشگاه بدون دانش فنی."
+msgstr ""
+
+#: functions.php:992
+msgid "این کار انتشارها، صفحات، منوها، رسانه‌ها، تنظیمات افزونه یا سبک‌های کلی را حذف نمی‌کند."
+msgstr ""
+
+#: functions.php:1060
+msgid "اینجا چیزی در حال پخش نیست."
 msgstr ""
 
 #: patterns/widget-search.php:23
-msgid "Works with any block — replace categories with tag cloud, latest releases, or a legacy widget. No code needed."
+msgid "با هر بلوکی کار می‌کند؛ دسته‌بندی‌ها را با ابر برچسب، آخرین انتشارها یا ابزارک قدیمی جایگزین کنید. بدون نیاز به کدنویسی."
 msgstr ""
 
-#: patterns/account-hub.php:15 patterns/user-dashboard.php:15
-msgid "YOUR MUSIC"
+#: patterns/catalog-heading.php:16
+msgid "با چیزی شروع کنید که شما را به حرکت درمی‌آورد"
 msgstr ""
 
-#: functions.php:899
-msgid "You are not allowed to repair theme templates."
+#: functions.php:1245 functions.php:1479 functions.php:1573 functions.php:1808
+#, php-format
+msgid "باز کردن %s"
 msgstr ""
 
-#: functions.php:934
-msgid "Your cart"
+#: functions.php:1544 functions.php:1667 functions.php:1794
+msgid "باز کردن انتشار"
 msgstr ""
 
-#: patterns/widget-rich-sidebar.php:18
-msgid "Your page content"
+#: functions.php:1238 functions.php:1694
+msgid "بازدیدها"
+msgstr ""
+
+#: functions.php:1011
+msgid "بازیابی فایل‌های معتبر قالب"
+msgstr ""
+
+#: patterns/widget-rich-sidebar.php:41
+msgid "بایگانی"
+msgstr ""
+
+#: theme.json
+msgid "بخش معرفی"
+msgstr ""
+
+#: functions.php:344
+msgid "بخش‌های معرفی MusicWave"
+msgstr ""
+
+#: theme.json
+msgid "بدنه پلاس جاکارتا"
+msgstr ""
+
+#: assets/editor-blocks.js:514
+msgid "بدون متن بدنه"
+msgstr ""
+
+#: assets/editor-blocks.js:636
+msgid "برای استفاده از رنگ تأکیدی قالب، خالی بگذارید."
+msgstr ""
+
+#: assets/editor-blocks.js:647
+msgid "برای استفاده از مقدار پیش‌فرض قالب، خالی بگذارید."
+msgstr ""
+
+#: functions.php:1262
+msgid "برای شما"
+msgstr ""
+
+#: assets/editor-blocks.js:789
+msgid "برای نمایش پیش‌نمایش زنده، انتشار منتشرشده اضافه کنید یا این بلوک را فعال کنید."
+msgstr ""
+
+#: theme.json
+msgid "برجسته"
+msgstr ""
+
+#: assets/editor-blocks.js:104
+msgid "برچسب"
+msgstr ""
+
+#: assets/editor-blocks.js:469
+msgid "برچسب اقدام"
+msgstr ""
+
+#: assets/editor-blocks.js:177 assets/editor-blocks.js:307
+msgid "برچسب بالایی"
+msgstr ""
+
+#: assets/editor-blocks.js:607
+msgid "برچسب دکمه"
+msgstr ""
+
+#: assets/editor-blocks.js:744
+msgid "برچسب مشاهده همه"
+msgstr ""
+
+#: theme.json
+msgid "برگه (بدون نوار کناری)"
+msgstr ""
+
+#: theme.json
+msgid "برگه (عریض)"
+msgstr ""
+
+#: theme.json
+msgid "برگه با نوار کناری"
+msgstr ""
+
+#: theme.json
+msgid "بزرگ"
+msgstr ""
+
+#: theme.json
+msgid "بسیار بزرگ"
+msgstr ""
+
+#: functions.php:1605
+msgid "بعدی"
+msgstr ""
+
+#: /patterns/cta-banner.php
+msgid "بنر فراخوان اقدام"
+msgstr ""
+
+#: assets/editor-blocks.js:358
+msgid "به‌تازگی به‌روزرسانی‌شده"
+msgstr ""
+
+#: theme.json
+msgid "بوم"
+msgstr ""
+
+#: theme.json
+msgid "تأکید روی بوم"
+msgstr ""
+
+#: assets/editor-blocks.js:59
+msgid "تاریخ انتشار"
+msgstr ""
+
+#: assets/editor-blocks.js:63
+msgid "تاریخ ویرایش"
+msgstr ""
+
+#: theme.json
+msgid "تحریریه روی بوم"
+msgstr ""
+
+#: /blocks/theme-text/block.json
+msgid "ترجمه"
+msgstr ""
+
+#: /blocks/theme-toggle/block.json
+msgid "ترجیح نمایش MusicWave"
+msgstr ""
+
+#: functions.php:1063 theme.json
+msgid "تسویه‌حساب"
+msgstr ""
+
+#: assets/editor-blocks.js:67
+msgid "تصادفی"
+msgstr ""
+
+#: assets/editor-blocks.js:191
+msgid "تعداد انتشارهای بارگذاری‌شده"
+msgstr ""
+
+#: functions.php:997
+#, php-format
+msgid "تعداد سفارشی‌سازی‌های ذخیره‌شده قالب: %d"
+msgstr ""
+
+#: functions.php:707 functions.php:708 functions.php:977
+msgid "تعمیر قالب MusicWave"
+msgstr ""
+
+#: /blocks/theme-toggle/block.json
+msgid "تغییر ترجیح نمایش بین حالت روشن، تیره و سیستم."
+msgstr ""
+
+#: patterns/footer-widget-columns.php:35
+msgid "تماس"
+msgstr ""
+
+#: patterns/browse-categories.php:28
+msgid "تمرکز و آرامش"
+msgstr ""
+
+#: assets/editor-blocks.js:677
+msgid "تنظیمات اسلایدر هیرو"
+msgstr ""
+
+#: patterns/section-heading.php:20
+msgid "توضیح کوتاهی برای معرفی بخش. برچسب بالایی، عنوان، رنگ متن، فاصله‌ها و تایپوگرافی را بدون کدنویسی در ویرایشگر سایت تغییر دهید."
+msgstr ""
+
+#: assets/editor-blocks.js:321
+msgid "توضیحات"
+msgstr ""
+
+#: assets/editor-blocks.js:240
+msgid "توقف هنگام قرارگیری نشانگر یا تمرکز"
+msgstr ""
+
+#: assets/editor-blocks.js:237
+msgid "تکرار"
+msgstr ""
+
+#: theme.json
+msgid "تک‌فاصله استودیو"
+msgstr ""
+
+#: theme.json
+msgid "تیتر اصلی"
+msgstr ""
+
+#: assets/editor-blocks.js:523
+msgid "تیرگی لایه رویی"
+msgstr ""
+
+#: assets/editor-blocks.js:365
+msgid "جدیدترین‌ها در ابتدا"
+msgstr ""
+
+#: assets/editor-blocks.js:78
+msgid "جهت"
+msgstr ""
+
+#: theme.json
+msgid "جوهر نیمه‌شب"
+msgstr ""
+
+#: assets/editor-blocks.js:99
+msgid "حال‌وهوا"
+msgstr ""
+
+#: theme.json
+msgid "حساب موسیقی"
+msgstr ""
+
+#: functions.php:1064 patterns/cta-banner.php:24 patterns/footer-widget-columns.php:35
+msgid "حساب کاربری من"
 msgstr ""
 
 #: patterns/account-hub.php:19
-msgid "Your purchases, personal music library, and account tools in one place."
+msgid "خریدها، کتابخانه موسیقی شخصی و ابزارهای حساب کاربری شما در یک‌جا."
+msgstr ""
+
+#: functions.php:433
+msgid "خط تأکیدی"
+msgstr ""
+
+#: functions.php:413
+msgid "خط تأکیدی خطی"
+msgstr ""
+
+#: assets/editor-blocks.js:622
+msgid "خطی"
+msgstr ""
+
+#: theme.json
+msgid "خیلی بزرگ"
+msgstr ""
+
+#: theme.json
+msgid "خیلی کوچک"
+msgstr ""
+
+#: /patterns/user-dashboard.php
+msgid "داشبورد موسیقی کاربر"
+msgstr ""
+
+#: assets/editor-blocks.js:453 functions.php:443
+msgid "دایره"
+msgstr ""
+
+#: functions.php:489
+msgid "در بخش قالب «ابزارک‌های پابرگ» نمایش داده می‌شود (نمایش → ویرایشگر → بخش‌های قالب → ابزارک‌های پابرگ). هر بلوک یا ابزارک قدیمی را بکشید و رها کنید؛ رنگ‌ها از سبک‌های کلی پیروی می‌کنند."
+msgstr ""
+
+#: functions.php:498
+msgid "در بخش قالب «نوار کناری فروشگاه» نمایش داده می‌شود (بخش‌های قالب → نوار کناری فروشگاه). از فیلترها و دسته‌بندی‌های ووکامرس یا هر بلوکی استفاده کنید."
+msgstr ""
+
+#: functions.php:480
+msgid "در بخش قالب «نوار کناری» نمایش داده می‌شود (نمایش → ویرایشگر → بخش‌های قالب → نوار کناری). هر بلوک یا ابزارک قدیمی را اینجا اضافه کنید. همه‌چیز بدون نیاز به کدنویسی از رابط بصری قابل ویرایش است."
+msgstr ""
+
+#: patterns/newsletter-signup.php:16
+msgid "در جریان بمانید"
+msgstr ""
+
+#: theme.json
+msgid "درخشش غروب"
+msgstr ""
+
+#: patterns/widget-rich-sidebar.php:36 patterns/widget-search.php:20
+msgid "دسته‌بندی‌ها"
+msgstr ""
+
+#: theme.json
+msgid "دکمه تأکیدی"
+msgstr ""
+
+#: assets/editor-blocks.js:603
+msgid "دکمه فراخوان اقدام"
+msgstr ""
+
+#: patterns/browse-categories.php:23
+msgid "رادیو و میکس‌ها"
+msgstr ""
+
+#: theme.json
+msgid "رادیوی نیمه‌شب"
+msgstr ""
+
+#: patterns/footer-widget-columns.php:35
+msgid "راهنما و پرسش‌های متداول"
+msgstr ""
+
+#: theme.json
+msgid "رز تحریریه"
+msgstr ""
+
+#: assets/editor-blocks.js:232
+msgid "رفتار اسلایدر"
+msgstr ""
+
+#: functions.php:266 functions.php:1912
+#, php-format
+msgid "رفتن به اسلاید %d"
+msgstr ""
+
+#: functions.php:242
+#, php-format
+msgid "رفتن به گروه اسلاید %d"
+msgstr ""
+
+#: theme.json
+msgid "رنگ تأکیدی"
+msgstr ""
+
+#: theme.json
+msgid "رنگ تأکیدی پررنگ"
+msgstr ""
+
+#: assets/editor-blocks.js:570
+msgid "رنگ عنوان (هگز)"
+msgstr ""
+
+#: assets/editor-blocks.js:590
+msgid "رنگ متن بدنه (هگز)"
+msgstr ""
+
+#: assets/editor-blocks.js:646
+msgid "رنگ متن دکمه (هگز)"
+msgstr ""
+
+#: theme.json
+msgid "روی رنگ تأکیدی"
+msgstr ""
+
+#: patterns/featured-release-slider.php:12
+msgid "ساخته‌شده برای شما"
+msgstr ""
+
+#: theme.json
+msgid "سبد خرید"
+msgstr ""
+
+#: functions.php:1062
+msgid "سبد خرید شما"
+msgstr ""
+
+#: patterns/footer-widget-columns.php:35
+msgid "سبد خرید و تسویه‌حساب"
+msgstr ""
+
+#: assets/editor-blocks.js:98
+msgid "سبک"
+msgstr ""
+
+#: assets/editor-blocks.js:614
+msgid "سبک دکمه"
+msgstr ""
+
+#: patterns/footer-widget-columns.php:29
+msgid "سبک‌ها و حال‌وهواها"
+msgstr ""
+
+#: patterns/widget-rich-sidebar.php:20
+msgid "ستون اصلی؛ پاراگراف، تصویر، انتشار یا هر بلوکی را اضافه کنید. نوار کناری سمت راست به‌صورت جداگانه کاملاً قابل ویرایش است."
+msgstr ""
+
+#: /patterns/footer-widget-columns.php
+msgid "ستون‌های ابزارک پابرگ"
+msgstr ""
+
+#: assets/editor-blocks.js:432
+msgid "ستون‌های دسکتاپ"
+msgstr ""
+
+#: theme.json
+msgid "سربرگ"
+msgstr ""
+
+#: theme.json
+msgid "سربرگ (استریم)"
+msgstr ""
+
+#: theme.json
+msgid "سربرگ (ساده)"
+msgstr ""
+
+#: theme.json
+msgid "سربرگ (وسط‌چین)"
+msgstr ""
+
+#: functions.php:348
+msgid "سربرگ‌های MusicWave"
+msgstr ""
+
+#: patterns/editorial-feature.php:16
+msgid "سرمقاله"
+msgstr ""
+
+#: theme.json
+msgid "سریف تحریریه"
+msgstr ""
+
+#: theme.json
+msgid "سطح"
+msgstr ""
+
+#: functions.php:423 theme.json
+msgid "سطح برجسته"
+msgstr ""
+
+#: functions.php:991
+msgid "سفارشی‌سازی‌های ویرایشگر سایت در پایگاه داده ذخیره می‌شوند و بر فایل‌های به‌روزشده قالب اولویت دارند. فقط زمانی از این ابزار استفاده کنید که قالب MusicWave بخش قالبی ناموجود یا محتوای بلوک نامعتبر گزارش کند."
+msgstr ""
+
+#: /blocks/release-shelf/block.json
+msgid "شبکه"
+msgstr ""
+
+#: assets/editor-blocks.js:407
+msgid "شبکه واکنش‌گرا"
+msgstr ""
+
+#: patterns/music-service-callout.php:26
+msgid "شروع شنیدن"
+msgstr ""
+
+#: assets/editor-blocks.js:657
+msgid "شعاع گوشه دکمه (پیکسل)"
+msgstr ""
+
+#: assets/editor-blocks.js:626
+msgid "شفاف"
+msgstr ""
+
+#: functions.php:1027
+msgid "شما اجازه تعمیر قالب‌ها را ندارید."
+msgstr ""
+
+#: assets/editor-blocks.js:484
+msgid "شناسه انتشار منتخب (۰ = اولین نتیجه)"
+msgstr ""
+
+#: assets/editor-blocks.js:138
+msgid "شناسه انتشارهای منتخب"
+msgstr ""
+
+#: patterns/music-service-callout.php:15
+msgid "شنیدن حرفه‌ای"
+msgstr ""
+
+#: patterns/browse-categories.php:24
+msgid "شنیدن پیوسته برای هر لحظه."
+msgstr ""
+
+#: assets/editor-blocks.js:441
+msgid "شکل تصویر"
 msgstr ""
 
 #: patterns/home-hero.php:13
-msgid "Your sound, beautifully organized"
+msgid "صدای شما، به‌زیبایی سازمان‌یافته"
 msgstr ""
 
 #: patterns/footer-widget-columns.php:20
-msgid "Your sound, beautifully organized. Edit this footer in Appearance → Editor → Template Parts → Footer widgets — no code needed."
+msgid "صدای شما، به‌زیبایی سازمان‌یافته. این پابرگ را از نمایش → ویرایشگر → بخش‌های قالب → ابزارک‌های پابرگ ویرایش کنید؛ بدون نیاز به کدنویسی."
 msgstr ""
 
-#: assets/editor-blocks.js:572
-msgid "e.g. #cccccc"
+#: assets/editor-blocks.js:82
+msgid "صعودی"
+msgstr ""
+
+#: theme.json
+msgid "صفحه سرمقاله موسیقی"
+msgstr ""
+
+#: theme.json
+msgid "صفحه فرود (بدون سربرگ/پابرگ)"
+msgstr ""
+
+#: /patterns/music-home-layout.php
+msgid "صفحه کامل سرمقاله موسیقی"
+msgstr ""
+
+#: functions.php:1915
+msgid "صفحهبندی اسلایدر"
+msgstr ""
+
+#: functions.php:1266
+msgid "صفحه‌بندی اسلایدر"
+msgstr ""
+
+#: theme.json
+msgid "ظریف"
 msgstr ""
 
 #: assets/editor-blocks.js:552
-msgid "e.g. #ffffff"
+msgid "عرض ستون کناری (پیکسل)"
 msgstr ""
 
-#: assets/editor-blocks.js:137
-msgid "e.g. 12, 45, 78"
+#: /patterns/newsletter-signup.php
+msgid "عضویت در خبرنامه"
 msgstr ""
 
-#: assets/editor-blocks.js:122
-msgid "e.g. album, single, podcast_show"
+#: patterns/music-service-callout.php:21
+msgid "عضویت‌ها، انتشارهای اختصاصی، دانلودها یا یک فهرست پخش منتخب را با این فراخوان قابل ویرایش برجسته کنید."
 msgstr ""
 
-#: assets/editor-blocks.js:110
-msgid "e.g. pop, lo-fi, hip-hop"
+#: assets/editor-blocks.js:450
+msgid "عمودی"
 msgstr ""
 
-#: functions.php:1047 functions.php:1477
-msgid "views"
+#: assets/editor-blocks.js:66 assets/editor-blocks.js:184 assets/editor-blocks.js:314 assets/editor-blocks.js:372
+msgid "عنوان"
+msgstr ""
+
+#: /patterns/section-heading.php
+msgid "عنوان بخش"
+msgstr ""
+
+#: patterns/section-heading.php:18
+msgid "عنوان بخش اینجا قرار می‌گیرد"
+msgstr ""
+
+#: assets/editor-blocks.js:566
+msgid "عنوان بخش معرفی"
+msgstr ""
+
+#: /patterns/catalog-heading.php
+msgid "عنوان بخش کاتالوگ"
+msgstr ""
+
+#: patterns/sidebar-content.php:18
+msgid "عنوان صفحه"
+msgstr ""
+
+#: assets/editor-blocks.js:33
+msgid "غیرفعال"
+msgstr ""
+
+#: functions.php:428
+msgid "فاصله کم"
+msgstr ""
+
+#: assets/editor-blocks.js:691
+msgid "فاصلهٔ تعویض اسلایدها (میلی‌ثانیه)"
+msgstr ""
+
+#: assets/editor-blocks.js:245
+msgid "فاصلهٔ پخش خودکار (میلی‌ثانیه)"
+msgstr ""
+
+#: functions.php:350
+msgid "فراخوان اقدام MusicWave"
+msgstr ""
+
+#: /patterns/music-service-callout.php
+msgid "فراخوان سرویس موسیقی"
+msgstr ""
+
+#: theme.json
+msgid "فروشگاه با نوار کناری"
+msgstr ""
+
+#: patterns/hero-centered.php:16
+msgid "فروشگاهی با حال‌وهوای اتاق صفحه‌های موسیقی"
+msgstr ""
+
+#: assets/editor-blocks.js:32
+msgid "فعال"
+msgstr ""
+
+#: assets/editor-blocks.js:242
+msgid "فلش‌های پیمایش"
+msgstr ""
+
+#: assets/editor-blocks.js:415
+msgid "فهرست جمع‌وجور"
+msgstr ""
+
+#: /patterns/release-chart.php
+msgid "فهرست نمودار انتشارها"
+msgstr ""
+
+#: /blocks/release-shelf/block.json
+msgid "فهرست پخش"
+msgstr ""
+
+#: patterns/footer-widget-columns.php:29
+msgid "فهرست‌های پخش"
+msgstr ""
+
+#: functions.php:1403
+msgid "فهرست‌های پخش اجتماعی"
+msgstr ""
+
+#: assets/editor-blocks.js:331
+msgid "فهرست‌های پخش برای نمایش"
+msgstr ""
+
+#: assets/editor-blocks.js:298 functions.php:864 theme.json
+msgid "فهرست‌های پخش عمومی"
+msgstr ""
+
+#: assets/editor-blocks.js:381
+msgid "فیلتر جست‌وجوی فهرست پخش"
+msgstr ""
+
+#: assets/editor-blocks.js:89
+msgid "فیلتر طبقه‌بندی"
+msgstr ""
+
+#: /blocks/theme-text/block.json
+msgid "قالب"
+msgstr ""
+
+#: functions.php:1604
+msgid "قبلی"
+msgstr ""
+
+#: functions.php:1065
+msgid "قدرت‌گرفته از MusicWave."
+msgstr ""
+
+#: patterns/home-hero.php:15
+msgid "قطعه بعدی موردعلاقه‌تان را پیدا کنید."
+msgstr ""
+
+#: /blocks/theme-text/block.json theme.json
+msgid "متن"
+msgstr ""
+
+#: assets/editor-blocks.js:496
+msgid "متن بخش منتخب"
+msgstr ""
+
+#: /blocks/theme-text/block.json
+msgid "متن ترجمه‌شده برای قالب‌های MusicWave. کلید، رشتهٔ متناسب با زبان را انتخاب می‌کند."
+msgstr ""
+
+#: /blocks/theme-text/block.json
+msgid "متن قالب MusicWave"
+msgstr ""
+
+#: theme.json
+msgid "متن کم‌رنگ"
+msgstr ""
+
+#: theme.json
+msgid "متوسط"
+msgstr ""
+
+#: assets/editor-blocks.js:591
+msgid "مثلاً #cccccc"
+msgstr ""
+
+#: assets/editor-blocks.js:571
+msgid "مثلاً #ffffff"
+msgstr ""
+
+#: assets/editor-blocks.js:128
+msgid "مثلاً album، single، podcast_show"
+msgstr ""
+
+#: assets/editor-blocks.js:116
+msgid "مثلاً pop، lo-fi، hip-hop"
+msgstr ""
+
+#: assets/editor-blocks.js:143
+msgid "مثلاً ۱۲، ۴۵، ۷۸"
+msgstr ""
+
+#: patterns/widget-rich-sidebar.php:31
+msgid "محبوب"
+msgstr ""
+
+#: /patterns/sidebar-content.php
+msgid "محتوا با نوار کناری"
+msgstr ""
+
+#: assets/editor-blocks.js:173
+msgid "محتوای اسلایدر"
+msgstr ""
+
+#: patterns/widget-rich-sidebar.php:18
+msgid "محتوای صفحه شما"
+msgstr ""
+
+#: assets/editor-blocks.js:282
+msgid "محتوای ویترین"
+msgstr ""
+
+#: assets/editor-blocks.js:444
+msgid "مربع"
+msgstr ""
+
+#: assets/editor-blocks.js:51
+msgid "مرتب‌سازی بر اساس"
+msgstr ""
+
+#: assets/editor-blocks.js:349
+msgid "مرتب‌سازی فهرست‌های پخش بر اساس"
+msgstr ""
+
+#: patterns/footer-widget-columns.php:27
+msgid "مرور"
+msgstr ""
+
+#: patterns/browse-categories.php:13
+msgid "مرور بر اساس حال‌وهوا و سبک"
+msgstr ""
+
+#: patterns/hero-centered.php:23
+msgid "مرور حال‌وهواها"
+msgstr ""
+
+#: /patterns/browse-categories.php
+msgid "مرور دسته‌بندی‌های موسیقی"
+msgstr ""
+
+#: /patterns/genre-mood-browse.php
+msgid "مرور سبک‌ها و حال‌وهواها"
+msgstr ""
+
+#: theme.json
+msgid "مرور موسیقی"
+msgstr ""
+
+#: patterns/cta-banner.php:23 patterns/widget-search.php:15
+msgid "مرور کاتالوگ"
+msgstr ""
+
+#: /patterns/account-hub.php
+msgid "مرکز حساب کاربری"
+msgstr ""
+
+#: functions.php:1171 functions.php:1535
+msgid "مشاهده همه"
+msgstr ""
+
+#: functions.php:1401
+msgid "مشاهدهٔ همهٔ فهرست‌های پخش"
+msgstr ""
+
+#: /patterns/hero-centered.php
+msgid "معرفی مرکزی"
+msgstr ""
+
+#: /patterns/home-hero.php
+msgid "معرفی کشف موسیقی"
+msgstr ""
+
+#: functions.php:1061
+msgid "ممکن است صفحه جابه‌جا شده باشد. کاتالوگ را جست‌وجو کنید."
+msgstr ""
+
+#: assets/editor-blocks.js:286
+msgid "منبع محتوا"
+msgstr ""
+
+#: functions.php:343 patterns/section-heading.php:16 /blocks/release-slider/block.json
+msgid "منتخب"
+msgstr ""
+
+#: patterns/catalog-heading.php:13
+msgid "منتخب برای شما"
+msgstr ""
+
+#: functions.php:1406
+msgid "منتخب شنوندگان"
+msgstr ""
+
+#: /blocks/release-shelf/block.json /blocks/release-slider/block.json
+msgid "موسیقی"
+msgstr ""
+
+#: patterns/hero-centered.php:18
+msgid "موسیقی با فضایی برای نفس کشیدن."
+msgstr ""
+
+#: patterns/browse-categories.php:18 patterns/footer-widget-columns.php:29
+msgid "موسیقی جدید"
+msgstr ""
+
+#: patterns/account-hub.php:15 patterns/user-dashboard.php:15
+msgid "موسیقی شما"
+msgstr ""
+
+#: functions.php:1059
+msgid "موسیقی‌ای پیدا نشد."
+msgstr ""
+
+#: assets/editor-blocks.js:111
+msgid "نامک عبارت"
+msgstr ""
+
+#: assets/editor-blocks.js:52
+msgid "نحوه مرتب‌سازی انتشارها پیش از نمایش."
+msgstr ""
+
+#: assets/editor-blocks.js:81
+msgid "نزولی"
+msgstr ""
+
+#: assets/editor-blocks.js:243
+msgid "نقاط صفحه‌بندی"
+msgstr ""
+
+#: assets/editor-blocks.js:235
+msgid "نمایش اسلایدر"
+msgstr ""
+
+#: /blocks/release-shelf/block.json
+msgid "نمایش انتشارها بهصورت شبکهای، ویترین افقی، فهرست جمعوجور، ویژهنامه سرمقاله یا اسلایدر هیرو. بین انتشارها و فهرستهای پخش عمومی جامعه جابهجا شوید. چیدمان، رنگها و فاصلهها در ویرایشگر سایت قابل ویرایش هستند."
+msgstr ""
+
+#: assets/editor-blocks.js:214 assets/editor-blocks.js:465
+msgid "نمایش تاریخ"
+msgstr ""
+
+#: assets/editor-blocks.js:459
+msgid "نمایش تصویر"
+msgstr ""
+
+#: assets/editor-blocks.js:221 assets/editor-blocks.js:545
+msgid "نمایش تعداد بازدید"
+msgstr ""
+
+#: assets/editor-blocks.js:538
+msgid "نمایش شماره رتبه"
+msgstr ""
+
+#: assets/editor-blocks.js:709
+msgid "نمایش فلش‌ها"
+msgstr ""
+
+#: assets/editor-blocks.js:719
+msgid "نمایش نقاط صفحهبندی"
+msgstr ""
+
+#: assets/editor-blocks.js:207 assets/editor-blocks.js:464
+msgid "نمایش هنرمند"
+msgstr ""
+
+#: assets/editor-blocks.js:467
+msgid "نمایش پیوند اقدام"
+msgstr ""
+
+#: assets/editor-blocks.js:466
+msgid "نمایش چکیده"
+msgstr ""
+
+#: assets/editor-blocks.js:200
+msgid "نمایش چکیده‌ها"
+msgstr ""
+
+#: assets/editor-blocks.js:462
+msgid "نمایش کنترل پخش"
+msgstr ""
+
+#: theme.json
+msgid "نمایشی"
+msgstr ""
+
+#: theme.json
+msgid "نمایشی ساین"
+msgstr ""
+
+#: theme.json
+msgid "نوار کناری"
+msgstr ""
+
+#: functions.php:478
+msgid "نوار کناری MusicWave"
+msgstr ""
+
+#: /patterns/widget-rich-sidebar.php
+msgid "نوار کناری ابزارک‌های کامل"
+msgstr ""
+
+#: theme.json
+msgid "نوار کناری فروشگاه"
+msgstr ""
+
+#: functions.php:496
+msgid "نوار کناری فروشگاه MusicWave"
+msgstr ""
+
+#: patterns/sidebar-content.php:20
+msgid "نوشتن را شروع کنید. در ویرایشگر سایت می‌توانید هر بلوکی را اینجا اضافه، جابه‌جا یا حذف کنید و نوار کناری را جداگانه از بخش‌های قالب → نوار کناری ویرایش کنید."
+msgstr ""
+
+#: assets/editor-blocks.js:101
+msgid "نوع انتشار"
+msgstr ""
+
+#: assets/editor-blocks.js:123
+msgid "نوع انتشار (نامک)"
+msgstr ""
+
+#: patterns/widget-rich-sidebar.php:24
+msgid "نکته برای خریداران: برای تغییر کلی ابزارک‌ها به ویرایشگر سایت → بخش‌های قالب → نوار کناری بروید، یا اتصال این بلوک ستون‌ها را جدا کنید تا نوار کناری فقط در همین صفحه ویرایش شود."
+msgstr ""
+
+#: patterns/newsletter-signup.php:22
+msgid "نکته: بلوک جست‌وجوی بالا را با بلوک Mailchimp، Jetpack یا HTML جایگزین کنید. رنگ‌ها از سبک‌های کلی پیروی می‌کنند."
+msgstr ""
+
+#: patterns/footer-widget-columns.php:46
+msgid "نکته: رنگ‌ها، فونت‌ها و فاصله‌ها را در سبک‌ها تغییر دهید؛ بدون نیاز به کدنویسی."
+msgstr ""
+
+#: patterns/footer-widget-columns.php:41
+msgid "هر بلوکی را اینجا بکشید و رها کنید؛ جست‌وجو، خبرنامه، انتشارهای جدید، دسته‌بندی‌ها، ابزارک قدیمی یا HTML سفارشی، همه به‌سادگی کار می‌کنند."
+msgstr ""
+
+#: patterns/footer-widget-columns.php:39
+msgid "همراه بمانید"
+msgstr ""
+
+#: patterns/user-dashboard.php:18
+msgid "همه چیزهایی که دارید، آماده پخش است."
+msgstr ""
+
+#: assets/editor-blocks.js:96 patterns/footer-widget-columns.php:29
+msgid "همهٔ انتشارها"
+msgstr ""
+
+#: assets/editor-blocks.js:97
+msgid "هنرمند"
+msgstr ""
+
+#: patterns/footer-widget-columns.php:29
+msgid "هنرمندان"
+msgstr ""
+
+#: /patterns/popular-artists.php
+msgid "هنرمندان محبوب"
+msgstr ""
+
+#: /blocks/release-shelf/block.json
+msgid "هیرو"
+msgstr ""
+
+#: functions.php:1014
+msgid "هیچ سفارشی‌سازی ذخیره‌شده‌ای پیدا نشد. وردپرس در حال حاضر از فایل‌های قالب بسته استفاده می‌کند."
+msgstr ""
+
+#: patterns/hero-centered.php:22
+msgid "ورود به کاتالوگ"
+msgstr ""
+
+#: /blocks/release-shelf/block.json
+msgid "ویترین"
+msgstr ""
+
+#: assets/editor-blocks.js:411
+msgid "ویترین افقی"
+msgstr ""
+
+#: /patterns/horizontal-release-shelf.php
+msgid "ویترین افقی انتشارها"
+msgstr ""
+
+#: /blocks/release-shelf/block.json
+msgid "ویترین انتشارهای MusicWave"
+msgstr ""
+
+#: /patterns/new-releases-shelf.php
+msgid "ویترین انتشارهای جدید"
+msgstr ""
+
+#: /patterns/curated-release-shelf.php
+msgid "ویترین انتشارهای منتخب"
+msgstr ""
+
+#: /patterns/artist-release-shelf.php
+msgid "ویترین انتشارهای هنرمند"
+msgstr ""
+
+#: assets/editor-blocks.js:287
+msgid "ویترین را بین انتشارهای کاتالوگ و فهرست‌های پخش عمومی جامعه جابه‌جا کنید."
+msgstr ""
+
+#: assets/editor-blocks.js:90
+msgid "ویترین یا اسلایدر را به یک طبقه‌بندی محدود کنید، یا روی «همهٔ انتشارها» بگذارید."
+msgstr ""
+
+#: functions.php:345
+msgid "ویترین‌های MusicWave"
+msgstr ""
+
+#: assets/editor-blocks.js:419
+msgid "ویژهنامه سرمقاله"
+msgstr ""
+
+#: assets/editor-blocks.js:480
+msgid "ویژه‌نامه سرمقاله"
+msgstr ""
+
+#: /patterns/editorial-feature.php
+msgid "ویژه‌نامه موسیقی سرمقاله‌ای"
+msgstr ""
+
+#: theme.json
+msgid "پابرگ"
+msgstr ""
+
+#: theme.json
+msgid "پابرگ (ساده)"
+msgstr ""
+
+#: functions.php:347
+msgid "پابرگ‌های MusicWave"
+msgstr ""
+
+#: assets/editor-blocks.js:236
+msgid "پخش خودکار"
+msgstr ""
+
+#: assets/editor-blocks.js:681
+msgid "پخش خودکار اسلایدها"
+msgstr ""
+
+#: functions.php:1476
+#, php-format
+msgid "پخش همه قطعه‌های %s"
+msgstr ""
+
+#: theme.json
+msgid "پخش‌کننده شناور"
+msgstr ""
+
+#: assets/editor-blocks.js:69
+msgid "پربازدیدترین"
+msgstr ""
+
+#: assets/editor-blocks.js:47
+msgid "پرس‌وجو و فیلتر"
+msgstr ""
+
+#: assets/editor-blocks.js:345
+msgid "پرس‌وجوی فهرست پخش"
+msgstr ""
+
+#: assets/editor-blocks.js:618
+msgid "پرشدگی یکدست"
+msgstr ""
+
+#: assets/editor-blocks.js:635
+msgid "پس‌زمینه دکمه (هگز)"
+msgstr ""
+
+#: patterns/footer-widget-columns.php:33
+msgid "پشتیبانی"
+msgstr ""
+
+#: assets/editor-blocks.js:733
+msgid "پیوند بخش"
+msgstr ""
+
+#: assets/editor-blocks.js:737
+msgid "پیوند مشاهده همه"
+msgstr ""
+
+#: /blocks/release-slider/block.json
+msgid "چرخان"
+msgstr ""
+
+#: functions.php:448
+msgid "چک‌لیست"
+msgstr ""
+
+#: assets/editor-blocks.js:403
+msgid "چیدمان"
+msgstr ""
+
+#: assets/editor-blocks.js:399
+msgid "چیدمان و تصویر"
+msgstr ""
+
+#: /blocks/release-shelf/block.json
+msgid "کاتالوگ"
+msgstr ""
+
+#: patterns/cta-banner.php:19
+msgid "کاتالوگ خود را مدیریت کنید، انتشارها را به‌اشتراک بگذارید و با اطمینان بفروشید؛ همه‌چیز از رابط بصری قابل ویرایش است."
+msgstr ""
+
+#: theme.json
+msgid "کارت"
+msgstr ""
+
+#: functions.php:418
+msgid "کارت سطحی"
+msgstr ""
+
+#: functions.php:349
+msgid "کارت‌های MusicWave"
+msgstr ""
+
+#: patterns/music-service-callout.php:18
+msgid "کتابخانه‌ای مطابق سلیقه خود بسازید."
+msgstr ""
+
+#: patterns/home-hero.php:18
+msgid "کشف موسیقی"
+msgstr ""
+
+#: theme.json
+msgid "کوچک"
+msgstr ""
+
+#: functions.php:408
+msgid "کپسولی (MusicWave)"
+msgstr ""
+
+#: theme.json
+msgid "گرادیان تأکیدی"
+msgstr ""
+
+#: functions.php:438
+msgid "گرد"
+msgstr ""
+
+#: functions.php:244
+#, php-format
+msgid "گروه اسلاید %1$d از %2$d"
 msgstr ""
 

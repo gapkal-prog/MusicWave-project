@@ -1,19 +1,38 @@
 {
   "$schema": "https://schemas.wp.org/trunk/block.json",
   "apiVersion": 3,
-  "name": "musicwave/theme-toggle",
-  "title": "MusicWave display preference",
-  "category": "theme",
-  "description": "Light / dark / system display preference toggle.",
+  "name": "music-wave/theme-toggle",
+  "title": "ترجیح نمایش MusicWave",
+  "category": "music-wave",
+  "description": "تغییر ترجیح نمایش بین حالت روشن، تیره و سیستم.",
   "textdomain": "musicwave",
   "icon": "visibility",
+  "keywords": [
+    "استفاده از پوسته روشن",
+    "استفاده از پوسته تیره",
+    "استفاده از پوسته سیستم"
+  ],
   "attributes": {},
   "supports": {
     "inserter": false,
     "interactivity": true,
-    "color": { "background": true, "text": true },
-    "spacing": { "margin": true, "padding": true },
-    "border": { "color": true, "radius": true, "style": true, "width": true },
+    "color": {
+      "background": true,
+      "text": true
+    },
+    "spacing": {
+      "margin": true,
+      "padding": true
+    },
+    "border": {
+      "color": true,
+      "radius": true,
+      "style": true,
+      "width": true
+    },
     "shadow": true
+  },
+  "example": {
+    "attributes": {}
   }
 }

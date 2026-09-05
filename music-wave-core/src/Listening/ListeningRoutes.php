@@ -77,7 +77,7 @@ final class ListeningRoutes {
 			return true;
 		}
 
-		return new WP_Error( 'mw_authentication_required', __( 'Sign in to use listening features.', 'music-wave-core' ), array( 'status' => 401 ) );
+		return new WP_Error( 'mw_authentication_required', __( 'برای استفاده از ویژگی‌های گوش‌دادن وارد سیستم شوید.', 'music-wave-core' ), array( 'status' => 401 ) );
 	}
 
 	/** @return WP_REST_Response|WP_Error */
@@ -87,7 +87,7 @@ final class ListeningRoutes {
 		// form-encoded "false" string may silently flip the decision.
 		$raw = $request->get_param( 'consent' );
 		if ( null === $raw ) {
-			return new WP_Error( 'mw_consent_flag_required', __( 'The consent flag is required.', 'music-wave-core' ), array( 'status' => 400 ) );
+			return new WP_Error( 'mw_consent_flag_required', __( 'پرچم رضایت الزامی است.', 'music-wave-core' ), array( 'status' => 400 ) );
 		}
 		$consent = function_exists( 'rest_sanitize_boolean' ) ? rest_sanitize_boolean( $raw ) : filter_var( $raw, FILTER_VALIDATE_BOOLEAN );
 		$this->repository->set_consent( get_current_user_id(), (bool) $consent );
@@ -103,10 +103,10 @@ final class ListeningRoutes {
 		$position   = absint( $request->get_param( 'position' ) );
 
 		if ( ! $this->repository->has_consent( $user_id ) ) {
-			return new WP_Error( 'mw_listening_consent_required', __( 'Enable listening history in your account to save playback progress.', 'music-wave-core' ), array( 'status' => 403 ) );
+			return new WP_Error( 'mw_listening_consent_required', __( 'برای ذخیره پیشرفت پخش، سابقهٔ گوش‌دادن را در حساب خود فعال کنید.', 'music-wave-core' ), array( 'status' => 403 ) );
 		}
 		if ( ! $this->repository->record( $user_id, $release_id, $event, $position ) ) {
-			return new WP_Error( 'mw_listening_unavailable', __( 'Playback progress could not be saved.', 'music-wave-core' ), array( 'status' => 400 ) );
+			return new WP_Error( 'mw_listening_unavailable', __( 'پیشرفت پخش ذخیره نشد.', 'music-wave-core' ), array( 'status' => 400 ) );
 		}
 
 		return new WP_REST_Response( array( 'saved' => true ), 200 );
@@ -144,10 +144,10 @@ final class ListeningRoutes {
 	public function save_queue( WP_REST_Request $request ) {
 		$queue = $request->get_param( 'queue' );
 		if ( ! is_array( $queue ) ) {
-			return new WP_Error( 'mw_queue_invalid', __( 'The playback queue payload must be an object.', 'music-wave-core' ), array( 'status' => 400 ) );
+			return new WP_Error( 'mw_queue_invalid', __( 'محموله صف پخش باید یک شی باشد.', 'music-wave-core' ), array( 'status' => 400 ) );
 		}
 		if ( ! $this->repository->save_queue( get_current_user_id(), $queue ) ) {
-			return new WP_Error( 'mw_queue_unavailable', __( 'The playback queue could not be saved.', 'music-wave-core' ), array( 'status' => 400 ) );
+			return new WP_Error( 'mw_queue_unavailable', __( 'صف پخش ذخیره نشد.', 'music-wave-core' ), array( 'status' => 400 ) );
 		}
 
 		return new WP_REST_Response( $this->repository->queue( get_current_user_id() ), 200 );

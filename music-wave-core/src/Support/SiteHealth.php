@@ -31,23 +31,23 @@ final class SiteHealth {
 		}
 
 		$tests['direct']['music_wave_schema']            = array(
-			'label' => __( 'MusicWave database schema is current', 'music-wave-core' ),
+			'label' => __( 'طرح پایگاه داده MusicWave فعلی است', 'music-wave-core' ),
 			'test'  => array( $this, 'test_schema' ),
 		);
 		$tests['direct']['music_wave_permalinks']        = array(
-			'label' => __( 'MusicWave uses pretty permalinks', 'music-wave-core' ),
+			'label' => __( 'MusicWave از پیوندهای ثابت زیبا استفاده می‌کند', 'music-wave-core' ),
 			'test'  => array( $this, 'test_permalinks' ),
 		);
 		$tests['direct']['music_wave_download_provider'] = array(
-			'label' => __( 'MusicWave protected delivery is configured', 'music-wave-core' ),
+			'label' => __( 'تحویل حفاظت‌شدهٔ MusicWave پیکربندی‌شده است', 'music-wave-core' ),
 			'test'  => array( $this, 'test_download_provider' ),
 		);
 		$tests['direct']['music_wave_structured_data']   = array(
-			'label' => __( 'MusicWave structured data avoids duplicate SEO schema', 'music-wave-core' ),
+			'label' => __( 'داده‌های ساختاریافتهٔ MusicWave از طرح‌وارهٔ سئوی تکراری جلوگیری می‌کند', 'music-wave-core' ),
 			'test'  => array( $this, 'test_structured_data' ),
 		);
 		$tests['direct']['music_wave_provider_health']   = array(
-			'label' => __( 'MusicWave integration providers are healthy', 'music-wave-core' ),
+			'label' => __( 'ارائه دهندگان ادغام MusicWave سالم هستند', 'music-wave-core' ),
 			'test'  => array( $this, 'test_provider_health' ),
 		);
 
@@ -84,12 +84,12 @@ final class SiteHealth {
 		$healthy = array() === $broken;
 
 		return $this->result(
-			$healthy ? __( 'MusicWave integration providers are healthy', 'music-wave-core' ) : __( 'A MusicWave integration provider reports a problem', 'music-wave-core' ),
+			$healthy ? __( 'ارائه دهندگان ادغام MusicWave سالم هستند', 'music-wave-core' ) : __( 'یک ارائه‌دهنده یکپارچه سازی MusicWave یک مشکل را گزارش می‌کند', 'music-wave-core' ),
 			$healthy ? 'good' : 'critical',
 			$healthy
-				? __( 'No membership, metadata, or delivery provider reported a failure.', 'music-wave-core' )
+				? __( 'هیچ عضویت، فراداده، یا ارائه‌دهنده تحویلی مشکلی را گزارش نکرد.', 'music-wave-core' )
 				/* translators: %s: comma-separated list of failing providers. */
-				: sprintf( __( 'Failing providers: %s. Provider outages and bad credentials are reported here instead of being silently treated as “no results”.', 'music-wave-core' ), implode( ', ', $broken ) ),
+				: sprintf( __( 'ارائه دهندگان ناموفق: %s. قطعی ارائه‌دهنده و اعتبارنامه‌های بد در اینجا گزارش می‌شوند به‌جای اینکه در سکوت به‌عنوان «بدون نتیجه» تلقی شوند.', 'music-wave-core' ), implode( ', ', $broken ) ),
 			'music_wave_provider_health'
 		);
 	}
@@ -102,9 +102,9 @@ final class SiteHealth {
 		$ready   = version_compare( $version, MigrationRunner::LATEST_VERSION, '>=' );
 
 		return $this->result(
-			$ready ? __( 'MusicWave database schema is current', 'music-wave-core' ) : __( 'MusicWave database schema needs an update', 'music-wave-core' ),
+			$ready ? __( 'طرح پایگاه داده MusicWave فعلی است', 'music-wave-core' ) : __( 'طرح پایگاه داده MusicWave نیاز به به‌روز رسانی دارد', 'music-wave-core' ),
 			$ready ? 'good' : 'critical',
-			$ready ? __( 'MusicWave content metadata is ready for the installed plugin version.', 'music-wave-core' ) : __( 'Visit the MusicWave setup page as an administrator to run the pending schema migration.', 'music-wave-core' ),
+			$ready ? __( 'فراداده محتوای MusicWave برای نسخهٔ نصب‌شدهٔ افزونه آماده است.', 'music-wave-core' ) : __( 'برای اجرای انتقال طرح‌وارهٔ معلق، به‌عنوان مدیر از صفحهٔ راه‌اندازی MusicWave دیدن کنید.', 'music-wave-core' ),
 			'music_wave_schema'
 		);
 	}
@@ -116,9 +116,9 @@ final class SiteHealth {
 		$ready = '' !== (string) get_option( 'permalink_structure', '' );
 
 		return $this->result(
-			$ready ? __( 'MusicWave pretty permalinks are enabled', 'music-wave-core' ) : __( 'MusicWave needs pretty permalinks', 'music-wave-core' ),
+			$ready ? __( 'پیوندهای دائمی‌زیبا MusicWave فعال هستند', 'music-wave-core' ) : __( 'MusicWave به پیوندهای ثابت زیبا نیاز دارد', 'music-wave-core' ),
 			$ready ? 'good' : 'recommended',
-			$ready ? __( 'Release, artist, and taxonomy archives can use readable canonical URLs.', 'music-wave-core' ) : __( 'Save any non-default permalink structure to support predictable catalog and artist URLs.', 'music-wave-core' ),
+			$ready ? __( 'بایگانی‌های انتشار، هنرمند و طبقه‌بندی می‌توانند از URL‌های متعارف قابل خواندن استفاده کنند.', 'music-wave-core' ) : __( 'برای پشتیبانی از کاتالوگ قابل پیش‌بینی و هنرمندان URL، هر ساختار پیوند ثابت غیر پیش‌فرض را ذخیره کنید.', 'music-wave-core' ),
 			'music_wave_permalinks'
 		);
 	}
@@ -130,9 +130,9 @@ final class SiteHealth {
 		$ready = has_filter( 'music_wave_download_provider' );
 
 		return $this->result(
-			$ready ? __( 'MusicWave protected delivery provider is available', 'music-wave-core' ) : __( 'MusicWave protected delivery provider is optional but unavailable', 'music-wave-core' ),
+			$ready ? __( 'ارائه‌دهنده تحویل حفاظت‌شده MusicWave در دسترس است', 'music-wave-core' ) : __( 'ارائه‌دهنده تحویل حفاظت‌شده MusicWave اختیاری است اما در دسترس نیست', 'music-wave-core' ),
 			$ready ? 'good' : 'recommended',
-			$ready ? __( 'A provider can stream opaque protected assets after access checks pass.', 'music-wave-core' ) : __( 'Activate MusicWave VIP before assigning protected download assets to releases.', 'music-wave-core' ),
+			$ready ? __( 'ارائه‌دهنده می‌تواند دارایی‌های حفاظت‌شده غیرشفاف را پس از تصویب بررسی‌های دسترسی، پخش کند.', 'music-wave-core' ) : __( 'پیش از اختصاص دارایی‌های دانلود حفاظت‌شده به انتشارها، MusicWave VIP را فعال کنید.', 'music-wave-core' ),
 			'music_wave_download_provider'
 		);
 	}
@@ -144,9 +144,9 @@ final class SiteHealth {
 		$has_competitor = defined( 'WPSEO_VERSION' ) || defined( 'RANK_MATH_VERSION' ) || defined( 'SEOPRESS_VERSION' ) || defined( 'AIOSEO_VERSION' );
 
 		return $this->result(
-			$has_competitor ? __( 'MusicWave structured data is protected from duplicates', 'music-wave-core' ) : __( 'MusicWave public structured data is available', 'music-wave-core' ),
+			$has_competitor ? __( 'داده‌های ساختاریافتهٔ MusicWave از موارد تکراری محافظت می‌کند', 'music-wave-core' ) : __( 'داده‌های ساختاریافتهٔ عمومی MusicWave موجود است', 'music-wave-core' ),
 			'good',
-			$has_competitor ? __( 'A recognized SEO plugin is active, so MusicWave JSON-LD stays disabled by default.', 'music-wave-core' ) : __( 'MusicWave can emit MusicRecording, MusicAlbum, and Podcast schema from public catalog fields.', 'music-wave-core' ),
+			$has_competitor ? __( 'یک افزونهٔ SEO شناخته‌شده فعال است، بنابراین MusicWave JSON-LD به‌طور پیش‌فرض غیرفعال می‌ماند.', 'music-wave-core' ) : __( 'MusicWave می‌تواند ضبط موسیقی، آلبوم موسیقی و طرح‌وارهٔ پادکست را از فیلدهای کاتالوگ عمومی منتشر کند.', 'music-wave-core' ),
 			'music_wave_structured_data'
 		);
 	}
@@ -163,7 +163,7 @@ final class SiteHealth {
 				'color' => 'blue',
 			),
 			'description' => '<p>' . esc_html( $description ) . '</p>',
-			'actions'     => '<p><a href="' . esc_url( admin_url( 'edit.php?post_type=mw_release&page=music-wave-setup' ) ) . '">' . esc_html__( 'Open MusicWave setup', 'music-wave-core' ) . '</a></p>',
+			'actions'     => '<p><a href="' . esc_url( admin_url( 'edit.php?post_type=mw_release&page=music-wave-setup' ) ) . '">' . esc_html__( 'راه‌اندازی MusicWave را باز کنید', 'music-wave-core' ) . '</a></p>',
 			'test'        => $test,
 		);
 	}

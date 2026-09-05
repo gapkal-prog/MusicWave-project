@@ -1,38 +1,97 @@
 {
-	"apiVersion": 3,
-	"name": "music-wave/term-hero",
-	"title": "Term hero",
-	"category": "music-wave",
-	"description": "Archive header for artist, genre, mood, and label pages: cover banner or compact row with name, description, release count, and follow.",
-	"keywords": [ "hero", "header", "artist", "genre", "archive", "banner" ],
-	"textdomain": "music-wave-core",
-	"icon": "format-image",
-	"attributes": {
-		"taxonomy": { "type": "string", "default": "" },
-		"termId": { "type": "integer", "default": 0 },
-		"layout": { "type": "string", "default": "banner" },
-		"size": { "type": "string", "default": "medium" },
-		"imageShape": { "type": "string", "default": "rounded" },
-		"showImage": { "type": "boolean", "default": true },
-		"showEyebrow": { "type": "boolean", "default": true },
-		"showName": { "type": "boolean", "default": true },
-		"showDescription": { "type": "boolean", "default": true },
-		"showCount": { "type": "boolean", "default": true },
-		"showFollowButton": { "type": "boolean", "default": true },
-		"descriptionLength": { "type": "integer", "default": 40 },
-		"accentColor": { "type": "string", "default": "" }
-	},
-	"supports": {
-		"anchor": true,
-		"align": [ "wide", "full" ],
-		"border": { "radius": true },
-		"color": { "background": true, "link": true, "text": true },
-		"spacing": { "margin": true, "padding": true }
-	},
-	"example": {
-		"attributes": {
-			"layout": "banner",
-			"size": "tall"
-		}
-	}
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "music-wave/term-hero",
+  "title": "معرفی اصطلاح",
+  "category": "music-wave",
+  "description": "سربرگ بایگانی برای صفحات هنرمند، ژانر، حال‌وهوا و برچسب؛ با بنر جلد یا ردیف فشرده شامل نام، توضیحات، تعداد انتشار و گزینهٔ دنبال‌کردن.",
+  "keywords": [
+    "معرفی",
+    "سربرگ",
+    "هنرمند",
+    "ژانر",
+    "آرشیو",
+    "بنر"
+  ],
+  "textdomain": "music-wave-core",
+  "icon": "format-image",
+  "attributes": {
+    "taxonomy": {
+      "type": "string",
+      "default": ""
+    },
+    "termId": {
+      "type": "integer",
+      "default": 0
+    },
+    "layout": {
+      "type": "string",
+      "default": "banner"
+    },
+    "size": {
+      "type": "string",
+      "default": "medium"
+    },
+    "imageShape": {
+      "type": "string",
+      "default": "rounded"
+    },
+    "showImage": {
+      "type": "boolean",
+      "default": true
+    },
+    "showEyebrow": {
+      "type": "boolean",
+      "default": true
+    },
+    "showName": {
+      "type": "boolean",
+      "default": true
+    },
+    "showDescription": {
+      "type": "boolean",
+      "default": true
+    },
+    "showCount": {
+      "type": "boolean",
+      "default": true
+    },
+    "showFollowButton": {
+      "type": "boolean",
+      "default": true
+    },
+    "descriptionLength": {
+      "type": "integer",
+      "default": 40
+    },
+    "accentColor": {
+      "type": "string",
+      "default": ""
+    }
+  },
+  "supports": {
+    "anchor": true,
+    "align": [
+      "wide",
+      "full"
+    ],
+    "border": {
+      "radius": true
+    },
+    "color": {
+      "background": true,
+      "link": true,
+      "text": true
+    },
+    "spacing": {
+      "margin": true,
+      "padding": true
+    }
+  },
+  "example": {
+    "attributes": {
+      "layout": "banner",
+      "size": "tall"
+    }
+  }
 }

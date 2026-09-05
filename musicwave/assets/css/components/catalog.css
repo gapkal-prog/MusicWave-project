@@ -1,10 +1,14 @@
 .mw-hero {
 	position: relative;
 	overflow: hidden;
+	/*
+	 * SonicStream hero: a soft accent wash bleeding out of the top corner,
+	 * dissolving into the canvas — the album/artist page signature.
+	 */
 	background:
-		radial-gradient(circle at 15% 20%, color-mix(in srgb, var(--mw-color-accent) 38%, transparent), transparent 45%),
-		radial-gradient(circle at 85% 90%, color-mix(in srgb, var(--mw-color-accent) 16%, transparent), transparent 50%),
-		linear-gradient(145deg, color-mix(in srgb, var(--mw-color-accent) 22%, var(--mw-color-surface-raised)), var(--mw-color-surface));
+		radial-gradient(circle at 15% 20%, color-mix(in srgb, var(--mw-color-accent) 35%, transparent), transparent 48%),
+		radial-gradient(circle at 85% 85%, color-mix(in srgb, var(--mw-color-accent) 14%, transparent), transparent 52%),
+		var(--mw-color-canvas);
 }
 
 .mw-hero::after {
@@ -20,20 +24,36 @@
 	z-index: 1;
 }
 
+/* -------------------------------------------------------------------------
+ * Release hero — full-bleed, cover-tinted, SonicStream faithful
+ * Breaks out of the constrained page column to span the viewport width.
+ * Background is derived from the cover dominant color at runtime (hero.js);
+ * the static fallback is the accent wash. Mobile stacks to centered layout.
+ * ------------------------------------------------------------------------- */
 .mw-release-hero {
 	position: relative;
+	margin-inline: calc(50% - 50vw);
+	margin-block: calc(var(--wp--preset--spacing--30, 1.5rem) * -1) var(--wp--preset--spacing--40, 2.5rem);
+	padding: clamp(1.5rem, 4vw, 3rem) clamp(1rem, 4vw, 2.5rem) clamp(1.25rem, 3vw, 2.25rem);
+	--mw-hero-cover: var(--mw-color-accent, #1db954);
+	border-radius: var(--mw-radius-lg, 1.5rem);
+	background:
+		radial-gradient(ellipse 90% 70% at 22% 18%, color-mix(in srgb, var(--mw-hero-cover) 34%, transparent), transparent 62%),
+		radial-gradient(ellipse 70% 50% at 88% 88%, color-mix(in srgb, var(--mw-hero-cover) 18%, transparent), transparent 60%),
+		linear-gradient(180deg, color-mix(in srgb, var(--mw-hero-cover) 22%, var(--mw-color-canvas)) 0%, var(--mw-color-canvas) 72%);
 	overflow: hidden;
+	isolation: isolate;
 }
 
 .mw-release-hero::before {
 	position: absolute;
-	inset: -35% 40% auto -20%;
-	width: 20rem;
-	height: 20rem;
-	background: color-mix(in srgb, var(--mw-color-accent) 20%, transparent);
+	inset: -40% 32% auto -12%;
+	width: min(28rem, 60vw);
+	height: min(28rem, 60vw);
+	background: color-mix(in srgb, var(--mw-hero-cover) 20%, transparent);
 	border-radius: 50%;
 	content: "";
-	filter: blur(2rem);
+	filter: blur(2.8rem);
 	pointer-events: none;
 }
 
@@ -42,12 +62,434 @@
 	z-index: 1;
 }
 
-.mw-release-hero .wp-block-post-title {
-	margin-block: 0.35rem 0.75rem;
+.mw-release-hero__inner {
+	gap: clamp(1.25rem, 3vw, 1.75rem);
+	max-width: var(--wp--style--global--wide-size, 1440px);
+	margin-inline: auto;
 }
 
-.mw-release-hero .wp-block-post-featured-image {
+.mw-release-hero__cover .wp-block-post-featured-image {
 	margin: 0;
+	border-radius: var(--mw-radius-lg, 1rem);
+	overflow: hidden;
+	box-shadow: 0 1.5rem 3.5rem rgb(0 0 0 / 45%);
+}
+
+.mw-release-hero__cover img {
+	display: block;
+}
+
+.mw-release-hero__kicker {
+	margin: 0 0 0.5rem;
+	color: color-mix(in srgb, var(--mw-color-text) 62%, transparent);
+	font-size: 0.75rem;
+	font-weight: 700;
+	letter-spacing: 0.1em;
+	text-transform: uppercase;
+}
+
+.mw-release-hero__info .wp-block-post-title {
+	margin: 0 0 0.75rem;
+	font-family: var(--wp--preset--font-family--display, 'Syne', sans-serif);
+	font-size: clamp(2.25rem, 6vw, 4.25rem);
+	font-weight: 800;
+	letter-spacing: -0.02em;
+	line-height: 1;
+	overflow-wrap: anywhere;
+}
+
+/* The hero meta line borrows the muted chip tone of the reference design. */
+.mw-release-hero__info .mw-release-meta {
+	margin: 0;
+	padding: 0;
+	background: transparent;
+	border: 0;
+	box-shadow: none;
+}
+
+.mw-release-hero__info .mw-release-meta__facts--inline {
+	column-gap: 0.75rem;
+	color: color-mix(in srgb, var(--mw-color-text) 64%, transparent);
+	font-size: 0.875rem;
+}
+
+.mw-release-hero__info .mw-release-meta__facts--inline dt {
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	overflow: hidden;
+	clip-path: inset(50%);
+}
+
+/* Dot separators between inline hero facts, like the reference meta line. */
+.mw-release-hero__info .mw-release-meta__facts--inline .mw-release-meta__item + .mw-release-meta__item::before {
+	content: "•";
+	margin-inline-end: 0.75rem;
+	color: color-mix(in srgb, var(--mw-color-text) 40%, transparent);
+}
+
+/* Linked artist/genre terms in the hero line: quiet white that underlines
+ * on interaction, matching the reference album header. */
+.mw-release-hero__info .mw-release-meta__facts--inline dd a {
+	color: var(--mw-color-text);
+	font-weight: 600;
+	text-decoration: none;
+}
+
+.mw-release-hero__info .mw-release-meta__facts--inline dd a:hover,
+.mw-release-hero__info .mw-release-meta__facts--inline dd a:focus-visible {
+	text-decoration: underline;
+	text-underline-offset: 0.18em;
+}
+
+/* Linked taxonomy chips — one shared SonicStream quiet-pill look for the
+ * hero meta line and the standalone release-meta panel. */
+.mw-release-hero__info .mw-release-meta--panel {
+	gap: 0.75rem;
+	margin-block-start: 1rem;
+}
+
+.mw-release-hero__info .mw-release-meta__chips,
+.mw-release-meta--panel .mw-release-meta__chips {
+	gap: 0.4rem;
+}
+
+.mw-release-hero__info .mw-release-meta__chip,
+.mw-release-meta--panel .mw-release-meta__chip {
+	padding: 0.25rem 0.75rem;
+	color: color-mix(in srgb, var(--mw-color-text) 84%, transparent);
+	font-size: 0.75rem;
+	font-weight: 650;
+	background: color-mix(in srgb, var(--mw-color-text) 10%, transparent);
+	border-color: transparent;
+}
+
+.mw-release-hero__info a.mw-release-meta__chip:hover,
+.mw-release-hero__info a.mw-release-meta__chip:focus-visible,
+.mw-release-meta--panel a.mw-release-meta__chip:hover,
+.mw-release-meta--panel a.mw-release-meta__chip:focus-visible {
+	color: var(--mw-color-text);
+	background: color-mix(in srgb, var(--mw-color-accent) 22%, transparent);
+	transform: none;
+}
+
+.mw-release-hero__info .mw-release-meta__chip--artist,
+.mw-release-meta--panel .mw-release-meta__chip--artist {
+	color: var(--mw-color-text);
+	background: color-mix(in srgb, var(--mw-color-accent) 18%, transparent);
+}
+
+/* -------------------------------------------------------------------------
+ * Release action bar — the SonicStream primary row under the hero:
+ * hero play trigger + quiet secondary chips.
+ * ------------------------------------------------------------------------- */
+.mw-release-actions {
+	align-items: center;
+	gap: clamp(1rem, 2.5vw, 1.25rem);
+	margin-block: 0 var(--wp--preset--spacing--40, 2.5rem);
+}
+
+.mw-release-actions .mw-preview-player {
+	margin: 0;
+	padding: 0;
+	background: transparent;
+	border: 0;
+	box-shadow: none;
+}
+
+.mw-release-actions .mw-preview-button {
+	min-height: 0;
+	width: 3.5rem;
+	height: 3.5rem;
+	padding: 0;
+	font-size: 1.05rem;
+	box-shadow: 0 12px 32px color-mix(in srgb, var(--mw-color-accent) 40%, rgb(0 0 0 / 30%));
+}
+
+.mw-release-actions .mw-preview-button:hover,
+.mw-release-actions .mw-preview-button[aria-pressed="true"] {
+	scale: 1.06;
+}
+
+/* Queue-driven play fallback (releases without a public preview URL) shares
+ * the exact primary disc of the preview button. */
+.mw-release-actions .mw-preview-player .mw-card-play {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 3.5rem;
+	height: 3.5rem;
+	padding: 0;
+	font-size: 1.05rem;
+	color: var(--mw-color-on-accent, #000);
+	background: var(--mw-color-accent, #1db954);
+	border: 0;
+	border-radius: 50%;
+	box-shadow: 0 12px 32px color-mix(in srgb, var(--mw-color-accent) 40%, rgb(0 0 0 / 30%));
+	transition: scale 180ms var(--mw-ease-out), filter 180ms ease;
+}
+
+.mw-release-actions .mw-preview-player .mw-card-play:hover {
+	scale: 1.06;
+	filter: brightness(1.05);
+}
+
+.mw-release-actions .mw-preview-player .mw-card-play[aria-pressed="true"] {
+	scale: 1.06;
+}
+
+.mw-release-actions .mw-preview-player .mw-card-play:focus-visible {
+	outline: 3px solid color-mix(in srgb, var(--mw-color-accent) 45%, transparent);
+	outline-offset: 2px;
+}
+
+.mw-release-actions .mw-preview-button .mw-preview-button__icon {
+	font-size: 1em;
+}
+
+.mw-release-actions .mw-preview-button > span:not([class]) {
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	overflow: hidden;
+	clip-path: inset(50%);
+}
+
+/* Single flat row of action buttons. */
+.mw-release-actions {
+  display: flex;
+  align-items: center;
+  gap: clamp(1rem, 2.5vw, 1.25rem);
+  flex-wrap: wrap;
+}
+
+/* Like (heart) button: icon-only, aligned with the play trigger. */
+.mw-release-actions .mw-library-button-wrap {
+	margin: 0;
+}
+
+.mw-release-actions .mw-library-button--heart {
+	width: 3rem;
+	height: 3rem;
+	color: var(--mw-color-text-muted);
+	transition: color 180ms ease, scale 180ms var(--mw-ease-out);
+}
+
+.mw-release-actions .mw-library-button--heart:hover {
+	color: var(--mw-color-heart);
+}
+
+.mw-release-actions .mw-library-button--heart[aria-pressed="true"] {
+	color: var(--mw-color-heart);
+}
+
+/* Add-to-playlist trigger: quiet outlined disc like the reference's secondary
+ * buttons; the label stays for assistive tech only. The popover panel keeps
+ * its playlists.css styling. */
+.mw-release-actions .mw-playlist-picker {
+	flex-direction: row;
+	align-items: center;
+	gap: 0;
+}
+
+.mw-release-actions .mw-playlist-picker__trigger {
+	min-height: 0;
+	width: 3rem;
+	height: 3rem;
+	justify-content: center;
+	padding: 0;
+	color: var(--mw-color-text-muted);
+	font-size: 0;
+	background: transparent;
+	border-radius: 50%;
+	box-shadow: none;
+}
+
+.mw-release-actions .mw-playlist-picker__trigger:hover,
+.mw-release-actions .mw-playlist-picker__trigger[aria-expanded="true"] {
+	color: var(--mw-color-text);
+	transform: none;
+	filter: none;
+	box-shadow: none;
+}
+
+.mw-release-actions .mw-playlist-picker__trigger:focus-visible,
+.mw-release-actions .mw-library-button--heart:focus-visible {
+	outline: 3px solid color-mix(in srgb, var(--mw-color-accent) 45%, transparent);
+	outline-offset: 2px;
+}
+
+.mw-release-actions .mw-playlist-picker__trigger-icon {
+	width: 1.25rem;
+	height: 1.25rem;
+	background: transparent;
+	font-size: 1rem;
+}
+
+.mw-release-actions .mw-playlist-picker__trigger-count {
+	display: none;
+}
+
+.mw-release-actions .mw-playlist-picker__trigger > span:not(.mw-playlist-picker__trigger-icon) {
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	overflow: hidden;
+	clip-path: inset(50%);
+}
+
+
+/* Share + Shuffle: same quiet icon-only disc as the playlist trigger so the bar stays uniform. */
+.mw-release-actions .mw-share-button-wrap,
+.mw-release-actions .mw-shuffle-button-wrap {
+  margin: 0;
+}
+
+.mw-release-actions .mw-share-button,
+.mw-release-actions .mw-shuffle-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 3rem;
+  height: 3rem;
+  padding: 0;
+  color: var(--mw-color-text-muted);
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: color 180ms ease, border-color 180ms ease, background-color 180ms ease, transform 180ms var(--mw-ease-out);
+}
+
+.mw-release-actions .mw-share-button:hover,
+.mw-release-actions .mw-shuffle-button:hover {
+  color: var(--mw-color-text);
+  background: color-mix(in srgb, var(--mw-color-text) 7%, transparent);
+  border-color: color-mix(in srgb, var(--mw-color-text) 14%, transparent);
+}
+
+.mw-release-actions .mw-share-button:focus-visible,
+.mw-release-actions .mw-shuffle-button:focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--mw-color-accent) 45%, transparent);
+  outline-offset: 2px;
+}
+
+.mw-release-actions .mw-share-button:active,
+.mw-release-actions .mw-shuffle-button:active {
+  transform: scale(0.96);
+}
+
+.mw-release-actions .mw-share-button__icon,
+.mw-release-actions .mw-shuffle-button__icon {
+  display: grid;
+  place-items: center;
+  line-height: 1;
+}
+
+.mw-release-actions .mw-share-button__icon svg,
+.mw-release-actions .mw-shuffle-button__icon svg {
+  width: 1.15rem;
+  height: 1.15rem;
+}
+
+.mw-release-actions .mw-share-button__label,
+.mw-release-actions .mw-shuffle-button__label,
+.mw-release-actions .mw-share-button__status {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* Visible share feedback bubble: uses the status live region without breaking the disc layout. */
+.mw-release-actions .mw-share-button__status:not([hidden]) {
+  position: absolute;
+  inset-block-start: calc(100% + 0.5rem);
+  inset-inline-start: 50%;
+  transform: translateX(-50%);
+  width: max-content;
+  max-width: min(18rem, 92vw);
+  padding: 0.4rem 0.7rem;
+  color: var(--mw-color-text);
+  font-size: 0.8rem;
+  white-space: nowrap;
+  background: var(--mw-color-surface-raised);
+  border: 1px solid var(--mw-color-border);
+  border-radius: 999px;
+  box-shadow: var(--mw-shadow-floating, 0 16px 40px rgba(0,0,0,0.22));
+  clip-path: none;
+  overflow: visible;
+  height: auto;
+  z-index: 5;
+}
+
+.mw-release-actions .mw-shuffle-button.is-loading,
+.mw-release-actions .mw-share-button[aria-busy="true"] {
+  opacity: 0.7;
+  pointer-events: none;
+}
+
+/* Playlist trigger refinement: playlist+ icon + consistent disc treatment. */
+.mw-release-actions .mw-playlist-picker__trigger-icon svg {
+  width: 1.15rem;
+  height: 1.15rem;
+}
+
+.mw-release-actions .mw-playlist-picker__trigger:hover,
+.mw-release-actions .mw-playlist-picker__trigger[aria-expanded="true"] {
+  background: color-mix(in srgb, var(--mw-color-text) 7%, transparent);
+  border-color: color-mix(in srgb, var(--mw-color-text) 14%, transparent);
+}
+
+.mw-release-actions .mw-playlist-picker__trigger {
+  border: 1px solid transparent;
+}
+
+
+/* Guest sign-in link reuses the outlined pill so the call to action survives. */
+.mw-release-actions .mw-playlist-picker--guest .mw-playlist-picker__guest-cta,
+.mw-release-actions .mw-library-button--guest {
+	display: inline-flex;
+	align-items: center;
+	min-height: 3rem;
+	padding: 0 1.25rem;
+	font-weight: 700;
+	background: transparent;
+	border: 1px solid color-mix(in srgb, var(--mw-color-text) 30%, transparent);
+	border-radius: 999px;
+}
+
+.mw-release-actions .mw-playlist-picker--guest .mw-playlist-picker__guest-cta:hover,
+.mw-release-actions .mw-library-button--guest:hover {
+	color: var(--mw-color-text);
+	border-color: color-mix(in srgb, var(--mw-color-text) 60%, transparent);
+	background: color-mix(in srgb, var(--mw-color-text) 10%, transparent);
+}
+
+@media (max-width: 48rem) {
+	.mw-release-hero {
+		padding: clamp(1.25rem, 5vw, 1.75rem) clamp(1rem, 4vw, 1.25rem) clamp(1rem, 3vw, 1.5rem);
+	}
+	.mw-release-hero__inner.is-stacked-on-mobile {
+		flex-direction: column;
+		align-items: center;
+		text-align: center;
+	}
+	.mw-release-hero__inner.is-stacked-on-mobile .mw-release-hero__info {
+		text-align: center;
+	}
+	.mw-release-hero__cover {
+		max-width: 14rem;
+		width: 72%;
+	}
+	.mw-release-hero__cover .wp-block-column {
+		flex-basis: 100% !important;
+	}
+	.mw-release-hero__info .wp-block-post-title {
+		font-size: clamp(1.75rem, 8vw, 2.5rem);
+	}
 }
 
 .mw-release-card {
@@ -57,6 +499,9 @@
 	gap: var(--wp--preset--spacing--20);
 	height: 100%;
 	padding: var(--wp--preset--spacing--30);
+	background: var(--mw-color-surface);
+	border: 1px solid var(--mw-color-border);
+	border-radius: var(--mw-radius-md);
 	transition: transform 220ms var(--mw-ease-out), border-color 220ms ease, background-color 220ms ease, box-shadow 220ms ease;
 }
 
@@ -64,7 +509,7 @@
 	background: var(--mw-color-surface-raised);
 	border-color: color-mix(in srgb, var(--mw-color-accent) 60%, var(--mw-color-border));
 	box-shadow: var(--mw-shadow-card);
-	transform: translateY(-4px);
+	transform: translateY(-.25rem);
 }
 
 .mw-release-card .wp-block-post-featured-image {
@@ -103,31 +548,76 @@
 /* Search page                                                        */
 /* ------------------------------------------------------------------ */
 
+/* -------------------------------------------------------------------------
+ * Search hero — SonicStream pattern: display-size query title with a
+ * large quiet search pill right beneath, no boxed panel behind it.
+ * ------------------------------------------------------------------------- */
 .mw-search-hero {
-	margin-bottom: var(--wp--preset--spacing--40);
+	display: grid;
+	gap: clamp(0.75rem, 2vw, 1.25rem);
+	justify-items: start;
+	margin-block: 0 var(--wp--preset--spacing--40);
+}
+
+.mw-search-hero .wp-block-query-title {
+	margin: 0;
+	font-family: var(--wp--preset--font-family--display, 'Syne', sans-serif);
+	font-size: clamp(1.75rem, 4vw, 2.75rem);
+	font-weight: 800;
+	letter-spacing: -0.02em;
 }
 
 .mw-search-hero .wp-block-search {
-	max-width: 38rem;
-	margin-block: var(--wp--preset--spacing--20);
+	width: min(38rem, 100%);
+	margin: 0;
 }
 
 .mw-search-hero .wp-block-search__inside-wrapper {
 	flex-wrap: nowrap;
+	background: var(--mw-color-surface-raised);
+	border: 1px solid transparent;
+	border-radius: 999px;
+	transition: border-color var(--mw-speed-fast, 150ms) ease, box-shadow var(--mw-speed-fast, 150ms) ease;
 }
 
+.mw-search-hero .wp-block-search__inside-wrapper:focus-within {
+	border-color: color-mix(in srgb, var(--mw-color-accent) 55%, transparent);
+	box-shadow: 0 0 0 3px color-mix(in srgb, var(--mw-color-accent) 25%, transparent);
+}
+
+.mw-site-header .wp-block-search__inside-wrapper {
+	min-block-size: 2.75rem;
+	box-sizing: border-box;
+	background: color-mix(in srgb, var(--mw-color-surface) 86%, transparent);
+	border: 1px solid var(--mw-color-border);
+	border-radius: 999px;
+}
+.mw-site-header .wp-block-search__button {
+	min-inline-size: 2.6rem;
+	margin: 0;
+	padding: 0;
+	border-radius: 50%;
+}
+.mw-site-header .wp-block-search__input {
+	min-inline-size: 7rem;
+	padding: 0.35rem;
+	color: var(--mw-color-text);
+	background: transparent;
+	border: 0;
+	outline: 0;
+}
 .mw-search-hero .wp-block-search__input {
 	min-height: 3rem;
 	flex: 1 1 auto;
-	border-color: var(--mw-color-border);
-	border-start-end-radius: 0;
-	border-end-end-radius: 0;
+	color: var(--mw-color-text);
+	background: transparent;
+	border: 0;
+	border-radius: 999px 0 0 999px;
+	outline: 0;
 }
 
-.mw-search-hero .wp-block-search__button {
-	min-height: 3rem;
-	padding-inline: 1.25rem;
-	white-space: nowrap;
+.mw-search-hero .wp-block-search__input::placeholder {
+	color: var(--mw-color-text-muted);
 }
 
 .mw-search-hero .wp-block-query-title {
@@ -164,15 +654,7 @@
 	width: min(24rem, 100%);
 }
 
-@media (max-width: 40rem) {
-	.mw-release-hero {
-		padding: var(--wp--preset--spacing--30) !important;
-	}
 
-	.mw-search-hero {
-		padding: var(--wp--preset--spacing--30) !important;
-	}
-}
 
 .mw-release-meta {
 	display: grid;
@@ -314,11 +796,234 @@ a.mw-release-meta__chip:focus-visible {
 	text-underline-offset: 3px;
 }
 
-.mw-release-taxonomies {
-	color: var(--mw-color-text-muted);
-	font-size: 0.875rem;
+/* -------------------------------------------------------------------------
+ * Archive and search card system
+ * ------------------------------------------------------------------------- */
+.mw-release-card {
+	min-width: 0;
+	padding: 0;
+	gap: 0;
+	background: var(--mw-color-surface);
+	border: 1px solid var(--mw-color-border);
+	border-radius: var(--mw-radius-lg);
+	overflow: hidden;
 }
 
-.mw-release-taxonomies a {
-	font-weight: 650;
+.mw-release-card__media {
+	position: relative;
+	aspect-ratio: 1;
+	min-width: 0;
+	overflow: hidden;
+	background:
+		radial-gradient(circle at 22% 18%, color-mix(in srgb, var(--mw-color-accent) 38%, transparent), transparent 55%),
+		linear-gradient(145deg, var(--mw-color-surface-raised), var(--mw-color-surface));
+}
+
+.mw-release-card__media::after {
+	content: "♫";
+	position: absolute;
+	inset: 0;
+	display: grid;
+	place-items: center;
+	color: color-mix(in srgb, var(--mw-color-text) 72%, transparent);
+	font-size: clamp(2rem, 8vw, 4.5rem);
+	font-weight: 800;
+	pointer-events: none;
+}
+
+.mw-release-card__media .wp-block-post-featured-image {
+	position: relative;
+	z-index: 1;
+	width: 100%;
+	height: 100%;
+	margin: 0;
+}
+
+.mw-release-card__media .wp-block-post-featured-image a,
+.mw-release-card__media .wp-block-post-featured-image img {
+	display: block;
+	width: 100%;
+	height: 100%;
+}
+
+.mw-release-card__media .wp-block-post-featured-image img {
+	object-fit: cover;
+	transition: transform 360ms var(--mw-ease-out), filter 220ms ease;
+}
+
+.mw-release-card:hover .mw-release-card__media img,
+.mw-release-card:focus-within .mw-release-card__media img {
+	transform: scale(1.045);
+}
+
+.mw-release-card__body {
+	display: flex;
+	flex: 1 1 auto;
+	flex-direction: column;
+	align-items: stretch;
+	gap: var(--wp--preset--spacing--20);
+	min-width: 0;
+	padding: var(--wp--preset--spacing--30);
+}
+
+.mw-release-card__body > * {
+	max-width: 100%;
+}
+
+.mw-release-card__body .wp-block-post-title {
+	margin: 0;
+	line-height: 1.3;
+}
+
+.mw-release-card__body .wp-block-post-title a {
+	display: -webkit-box;
+	overflow: hidden;
+	color: inherit;
+	text-decoration: none;
+	-webkit-box-orient: vertical;
+	-webkit-line-clamp: 2;
+}
+
+.mw-release-card__body .mw-release-meta--compact {
+	width: 100%;
+	margin: auto 0 0;
+	padding: 0;
+	background: transparent;
+	border: 0;
+	box-shadow: none;
+}
+
+.mw-release-card .wp-block-post-excerpt {
+	margin: 0;
+	color: var(--mw-color-text-muted);
+	font-size: 0.875rem;
+	line-height: 1.65;
+}
+
+.mw-release-card .wp-block-post-excerpt__more-link {
+	font-weight: 700;
+	text-decoration-thickness: 0.08em;
+	text-underline-offset: 0.2em;
+}
+
+.mw-catalog-pagination {
+	align-items: center;
+	margin-block-start: var(--wp--preset--spacing--40);
+	padding-block-start: var(--wp--preset--spacing--30);
+	border-block-start: 1px solid var(--mw-color-border);
+}
+
+.mw-catalog-pagination a,
+.mw-catalog-pagination .page-numbers {
+	min-height: 2.5rem;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	padding-inline: 0.8rem;
+	border-radius: 0.5rem;
+}
+
+.mw-catalog-pagination a:hover,
+.mw-catalog-pagination a:focus-visible {
+	color: var(--mw-color-accent-strong);
+	background: color-mix(in srgb, var(--mw-color-accent) 10%, transparent);
+}
+
+.mw-catalog-empty {
+	margin-block-start: var(--wp--preset--spacing--40);
+	padding: clamp(2rem, 7vw, 5rem) var(--wp--preset--spacing--30);
+	text-align: center;
+	background: var(--mw-color-surface);
+	border: 1px dashed var(--mw-color-border);
+	border-radius: var(--mw-radius-lg);
+}
+
+.mw-catalog-empty > * {
+	max-width: 38rem;
+	margin-inline: auto;
+}
+
+.mw-catalog-empty > :first-child {
+	margin-block-start: 0;
+}
+
+.mw-catalog-empty > :last-child {
+	margin-block-end: 0;
+}
+
+/* Artist toolbar: the SonicStream "Discography" section header row. */
+.mw-artist-toolbar {
+	margin-block: 0 var(--wp--preset--spacing--20);
+	color: var(--mw-color-text-muted);
+}
+
+.mw-artist-toolbar__title {
+	margin: 0;
+	font-family: var(--wp--preset--font-family--display, 'Syne', sans-serif);
+	font-size: clamp(1.25rem, 3vw, 1.75rem);
+	font-weight: 800;
+	letter-spacing: -0.02em;
+}
+
+.mw-artist-toolbar p {
+	margin-block: 0;
+}
+
+@media (max-width: 42rem) {
+	.mw-release-card__body {
+		padding: var(--wp--preset--spacing--20);
+	}
+
+	.mw-catalog-pagination {
+		justify-content: center;
+		gap: 0.5rem;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.mw-release-card,
+	.mw-release-card__media img {
+		transition: none;
+	}
+}
+
+.mw-release-card__overlay {
+	position: absolute;
+	z-index: 2;
+	inset: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: var(--wp--preset--spacing--20);
+	background: linear-gradient(180deg, rgb(0 0 0 / 8%), rgb(0 0 0 / 48%));
+	opacity: 0;
+	pointer-events: none;
+	transition: opacity 180ms ease;
+}
+
+.mw-release-card__media:hover .mw-release-card__overlay,
+.mw-release-card__media:focus-within .mw-release-card__overlay,
+.mw-release-card__overlay:focus-within {
+	opacity: 1;
+	pointer-events: auto;
+}
+
+.mw-release-card__overlay .mw-preview-button {
+	box-shadow: 0 0.75rem 1.75rem rgb(0 0 0 / 32%);
+}
+
+@media (hover: none) {
+	.mw-release-card__overlay {
+		opacity: 1;
+		background: linear-gradient(180deg, transparent 54%, rgb(0 0 0 / 42%));
+		pointer-events: auto;
+		align-items: flex-end;
+		justify-content: flex-start;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.mw-release-card__overlay {
+		transition: none;
+	}
 }

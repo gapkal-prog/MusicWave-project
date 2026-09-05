@@ -135,10 +135,10 @@ final class ReleaseArchiveQuery {
 	 */
 	public static function sort_options(): array {
 		return array(
-			'latest'     => __( 'Newest first', 'music-wave-core' ),
-			'oldest'     => __( 'Oldest first', 'music-wave-core' ),
-			'title_asc'  => __( 'Title: A to Z', 'music-wave-core' ),
-			'title_desc' => __( 'Title: Z to A', 'music-wave-core' ),
+			'latest'     => __( 'جدیدترین اول', 'music-wave-core' ),
+			'oldest'     => __( 'قدیمی‌ترین اول', 'music-wave-core' ),
+			'title_asc'  => __( 'عنوان: A تا Z', 'music-wave-core' ),
+			'title_desc' => __( 'عنوان: Z تا A', 'music-wave-core' ),
 		);
 	}
 

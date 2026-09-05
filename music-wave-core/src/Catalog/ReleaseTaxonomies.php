@@ -20,32 +20,32 @@ final class ReleaseTaxonomies {
 	public function definitions(): array {
 		return array(
 			'mw_artist'       => array(
-				'singular'     => __( 'Artist', 'music-wave-core' ),
-				'plural'       => __( 'Artists', 'music-wave-core' ),
+				'singular'     => __( 'هنرمند', 'music-wave-core' ),
+				'plural'       => __( 'هنرمندان', 'music-wave-core' ),
 				'hierarchical' => false,
 				'slug'         => 'artist',
 			),
 			'mw_genre'        => array(
-				'singular'     => __( 'Genre', 'music-wave-core' ),
-				'plural'       => __( 'Genres', 'music-wave-core' ),
+				'singular'     => __( 'سبک', 'music-wave-core' ),
+				'plural'       => __( 'سبک‌ها', 'music-wave-core' ),
 				'hierarchical' => true,
 				'slug'         => 'genre',
 			),
 			'mw_mood'         => array(
-				'singular'     => __( 'Mood', 'music-wave-core' ),
-				'plural'       => __( 'Moods', 'music-wave-core' ),
+				'singular'     => __( 'حال‌وهوا', 'music-wave-core' ),
+				'plural'       => __( 'حال‌وهواها', 'music-wave-core' ),
 				'hierarchical' => false,
 				'slug'         => 'mood',
 			),
 			'mw_label'        => array(
-				'singular'     => __( 'Label', 'music-wave-core' ),
-				'plural'       => __( 'Labels', 'music-wave-core' ),
+				'singular'     => __( 'برچسب', 'music-wave-core' ),
+				'plural'       => __( 'برچسب‌ها', 'music-wave-core' ),
 				'hierarchical' => false,
 				'slug'         => 'label',
 			),
 			'mw_release_type' => array(
-				'singular'     => __( 'Release type', 'music-wave-core' ),
-				'plural'       => __( 'Release types', 'music-wave-core' ),
+				'singular'     => __( 'نوع انتشار', 'music-wave-core' ),
+				'plural'       => __( 'انواع انتشار', 'music-wave-core' ),
 				'hierarchical' => true,
 				'slug'         => 'release-type',
 			),
@@ -66,10 +66,10 @@ final class ReleaseTaxonomies {
 					'labels'            => array(
 						'name'          => $definition['plural'],
 						'singular_name' => $definition['singular'],
-						'search_items'  => sprintf( /* translators: %s: taxonomy plural name. */ __( 'Search %s', 'music-wave-core' ), $definition['plural'] ),
-						'all_items'     => sprintf( /* translators: %s: taxonomy plural name. */ __( 'All %s', 'music-wave-core' ), $definition['plural'] ),
-						'edit_item'     => sprintf( /* translators: %s: taxonomy singular name. */ __( 'Edit %s', 'music-wave-core' ), $definition['singular'] ),
-						'add_new_item'  => sprintf( /* translators: %s: taxonomy singular name. */ __( 'Add new %s', 'music-wave-core' ), $definition['singular'] ),
+						'search_items'  => sprintf( /* translators: %s: taxonomy plural name. */ __( '%s را جست‌وجو', 'music-wave-core' ), $definition['plural'] ),
+						'all_items'     => sprintf( /* translators: %s: taxonomy plural name. */ __( 'همه %s', 'music-wave-core' ), $definition['plural'] ),
+						'edit_item'     => sprintf( /* translators: %s: taxonomy singular name. */ __( 'ویرایش %s', 'music-wave-core' ), $definition['singular'] ),
+						'add_new_item'  => sprintf( /* translators: %s: taxonomy singular name. */ __( 'اضافه کردن %s جدید', 'music-wave-core' ), $definition['singular'] ),
 					),
 					'public'            => true,
 					'hierarchical'      => $definition['hierarchical'],
@@ -95,14 +95,14 @@ final class ReleaseTaxonomies {
 		}
 
 		$types = array(
-			'track'           => __( 'Track', 'music-wave-core' ),
-			'single'          => __( 'Single', 'music-wave-core' ),
+			'track'           => __( 'قطعه', 'music-wave-core' ),
+			'single'          => __( 'مجرد', 'music-wave-core' ),
 			'ep'              => __( 'EP', 'music-wave-core' ),
-			'album'           => __( 'Album', 'music-wave-core' ),
-			'mix'             => __( 'Mix', 'music-wave-core' ),
-			'playlist'        => __( 'Playlist', 'music-wave-core' ),
-			'podcast_show'    => __( 'Podcast show', 'music-wave-core' ),
-			'podcast_episode' => __( 'Podcast episode', 'music-wave-core' ),
+			'album'           => __( 'آلبوم', 'music-wave-core' ),
+			'mix'             => __( 'میکس', 'music-wave-core' ),
+			'playlist'        => __( 'فهرست پخش', 'music-wave-core' ),
+			'podcast_show'    => __( 'نمایش پادکست', 'music-wave-core' ),
+			'podcast_episode' => __( 'قسمت پادکست', 'music-wave-core' ),
 		);
 
 		foreach ( $types as $slug => $name ) {

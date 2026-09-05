@@ -51,22 +51,22 @@ final class CollectionRestPolicy {
 			return $prepared_post;
 		}
 		if ( ! is_array( $items ) ) {
-			return new WP_Error( 'mw_invalid_collection_items', __( 'Collection items must be an array.', 'music-wave-core' ), array( 'status' => 400 ) );
+			return new WP_Error( 'mw_invalid_collection_items', __( 'اقلام مجموعه باید یک آرایه باشند.', 'music-wave-core' ), array( 'status' => 400 ) );
 		}
 
 		$post_id = is_object( $prepared_post ) && isset( $prepared_post->ID ) ? absint( $prepared_post->ID ) : absint( $request->get_param( 'id' ) );
 		if ( $post_id > 0 ) {
 			if ( ! current_user_can( 'edit_post', $post_id ) ) {
-				return new WP_Error( 'mw_forbidden_collection', __( 'You cannot edit this collection.', 'music-wave-core' ), array( 'status' => 403 ) );
+				return new WP_Error( 'mw_forbidden_collection', __( 'شما نمی‌توانید این مجموعه را ویرایش کنید.', 'music-wave-core' ), array( 'status' => 403 ) );
 			}
 		} elseif ( ! current_user_can( 'edit_mw_releases' ) ) {
-			return new WP_Error( 'mw_forbidden_collection', __( 'You cannot create a collection.', 'music-wave-core' ), array( 'status' => 403 ) );
+			return new WP_Error( 'mw_forbidden_collection', __( 'شما نمی‌توانید یک مجموعه ایجاد کنید.', 'music-wave-core' ), array( 'status' => 403 ) );
 		}
 
 		foreach ( $items as $item ) {
 			$child_id = is_array( $item ) && isset( $item['release_id'] ) && is_scalar( $item['release_id'] ) ? absint( $item['release_id'] ) : 0;
 			if ( $child_id < 1 || ReleasePostType::KEY !== get_post_type( $child_id ) || ! current_user_can( 'edit_post', $child_id ) ) {
-				return new WP_Error( 'mw_forbidden_collection_item', __( 'You cannot reference one of the selected releases.', 'music-wave-core' ), array( 'status' => 403 ) );
+				return new WP_Error( 'mw_forbidden_collection_item', __( 'شما نمی‌توانید به یکی از انتشارهای انتخاب‌شده ارجاع دهید.', 'music-wave-core' ), array( 'status' => 403 ) );
 			}
 		}
 
@@ -123,7 +123,7 @@ final class CollectionRestPolicy {
 					'status'              => 400,
 					'release_id'          => $post_id,
 					'relations_discarded' => true,
-					'detail'              => __( 'The release was saved but the submitted collection items were rejected and the previous relations were restored.', 'music-wave-core' ),
+					'detail'              => __( 'انتشار ذخیره شد اما موارد مجموعه ارسال شده رد شد و روابط قبلی بازیابی شد.', 'music-wave-core' ),
 				)
 			);
 		}

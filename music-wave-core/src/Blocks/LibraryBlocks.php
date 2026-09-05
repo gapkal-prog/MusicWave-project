@@ -185,11 +185,11 @@ final class LibraryBlocks {
 		}
 
 		$user_id = get_current_user_id();
-		$heading = BlockSupport::text_attribute( $attributes, 'heading', __( 'My music library', 'music-wave-core' ) );
-		$intro   = BlockSupport::text_attribute( $attributes, 'intro', __( 'Every song, album, podcast, and artist you save appears here. Add items with the “Add to library” button on any release or artist page.', 'music-wave-core' ) );
+		$heading = BlockSupport::text_attribute( $attributes, 'heading', __( 'کتابخانه موسیقی من', 'music-wave-core' ) );
+		$intro   = BlockSupport::text_attribute( $attributes, 'intro', __( 'هر آهنگ، آلبوم، پادکست و هنرمندی که ذخیره می‌کنید در اینجا نشان داده می‌شود. موارد را با دکمه "افزودن به کتابخانه" در هر صفحه انتشار یا هنرمند اضافه کنید.', 'music-wave-core' ) );
 
 		if ( $user_id < 1 ) {
-			return '<section ' . BlockSupport::wrapper_attributes( 'mw-music-library mw-music-library--guest' ) . '><div class="mw-music-library__guest"><span class="mw-music-library__eyebrow">' . esc_html__( 'Your collection', 'music-wave-core' ) . '</span><h2>' . esc_html( $heading ) . '</h2><p>' . esc_html__( 'Sign in to build your personal library: save songs, albums, podcasts, and follow your favorite artists.', 'music-wave-core' ) . '</p><a class="wp-element-button" href="' . esc_url( wp_login_url( home_url( '/' ) ) ) . '">' . esc_html__( 'Sign in', 'music-wave-core' ) . '</a></div></section>';
+			return '<section ' . BlockSupport::wrapper_attributes( 'mw-music-library mw-music-library--guest' ) . '><div class="mw-music-library__guest"><span class="mw-music-library__eyebrow">' . esc_html__( 'مجموعه شما', 'music-wave-core' ) . '</span><h2>' . esc_html( $heading ) . '</h2><p>' . esc_html__( 'برای ایجاد کتابخانه شخصی خود وارد سیستم شوید: آهنگ‌ها، آلبوم‌ها، پادکست‌ها را ذخیره کنید و هنرمندان موردعلاقهٔ خود را دنبال کنید.', 'music-wave-core' ) . '</p><a class="wp-element-button" href="' . esc_url( wp_login_url( home_url( '/' ) ) ) . '">' . esc_html__( 'وارد شوید', 'music-wave-core' ) . '</a></div></section>';
 		}
 
 		$filter  = $this->active_filter();
@@ -220,8 +220,8 @@ final class LibraryBlocks {
 			$attributes,
 			'emptyMessage',
 			LibraryCatalog::FILTER_ALL === $filter
-			? __( 'Your library is empty. Open any release or artist page and use the “Add to library” button to save it here.', 'music-wave-core' )
-			: __( 'Nothing saved in this collection yet.', 'music-wave-core' )
+			? __( 'کتابخانه شما خالی است هر صفحه انتشار یا هنرمندی را باز کنید و از دکمه "افزودن به کتابخانه" برای ذخیره آن در اینجا استفاده کنید.', 'music-wave-core' )
+			: __( 'هنوز چیزی در این مجموعه ذخیره نشده است.', 'music-wave-core' )
 		);
 
 		$body = '';
@@ -315,7 +315,7 @@ final class LibraryBlocks {
 		$remove = '';
 		if ( ! isset( $attributes['showRemove'] ) || false !== $attributes['showRemove'] ) {
 			/* translators: %s: library item title. */
-			$remove_label = sprintf( __( 'Remove %s from library', 'music-wave-core' ), $title );
+			$remove_label = sprintf( __( '%s را از کتابخانه حذف کنید', 'music-wave-core' ), $title );
 			$remove       = '<button type="button" class="mw-library-remove" data-mw-library-type="' . esc_attr( $type ) . '" data-mw-library-id="' . esc_attr( (string) $item_id ) . '" aria-label="' . esc_attr( $remove_label ) . '" title="' . esc_attr( $remove_label ) . '">&times;</button>';
 		}
 
@@ -369,7 +369,7 @@ final class LibraryBlocks {
 			return '';
 		}
 
-		return '<nav class="mw-music-library__tabs" aria-label="' . esc_attr__( 'Library filters', 'music-wave-core' ) . '">' . implode( '', $tabs ) . '</nav>';
+		return '<nav class="mw-music-library__tabs" aria-label="' . esc_attr__( 'فیلترهای کتابخانه', 'music-wave-core' ) . '">' . implode( '', $tabs ) . '</nav>';
 	}
 
 	/**
@@ -396,16 +396,16 @@ final class LibraryBlocks {
 
 		$links = array();
 		if ( $page > 1 ) {
-			$links[] = '<a class="mw-music-library__page-link mw-music-library__page-link--previous" href="' . esc_url( $this->page_url( $filter, $page - 1 ) ) . '">' . esc_html__( 'Newer items', 'music-wave-core' ) . '</a>';
+			$links[] = '<a class="mw-music-library__page-link mw-music-library__page-link--previous" href="' . esc_url( $this->page_url( $filter, $page - 1 ) ) . '">' . esc_html__( 'موارد جدیدتر', 'music-wave-core' ) . '</a>';
 		}
 		if ( $has_more ) {
-			$links[] = '<a class="mw-music-library__page-link mw-music-library__page-link--next" href="' . esc_url( $this->page_url( $filter, $page + 1 ) ) . '">' . esc_html__( 'Older items', 'music-wave-core' ) . '</a>';
+			$links[] = '<a class="mw-music-library__page-link mw-music-library__page-link--next" href="' . esc_url( $this->page_url( $filter, $page + 1 ) ) . '">' . esc_html__( 'اقلام قدیمی', 'music-wave-core' ) . '</a>';
 		}
 
 		/* translators: %d: current library page number. */
-		$status = sprintf( __( 'Library page %d', 'music-wave-core' ), $page );
+		$status = sprintf( __( 'صفحه کتابخانه %d', 'music-wave-core' ), $page );
 
-		return '<nav class="mw-music-library__pagination" aria-label="' . esc_attr__( 'Library pages', 'music-wave-core' ) . '"><span class="mw-music-library__page-status">' . esc_html( $status ) . '</span>' . implode( '', $links ) . '</nav>';
+		return '<nav class="mw-music-library__pagination" aria-label="' . esc_attr__( 'صفحات کتابخانه', 'music-wave-core' ) . '"><span class="mw-music-library__page-status">' . esc_html( $status ) . '</span>' . implode( '', $links ) . '</nav>';
 	}
 
 	/**

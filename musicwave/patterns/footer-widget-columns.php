@@ -1,6 +1,6 @@
 <?php
 /**
- * Title: Footer widget columns
+ * Title: ستون‌های ابزارک پابرگ
  * Slug: musicwave/footer-widget-columns
  * Categories: musicwave, musicwave-widgets, musicwave-footers
  * Keywords: footer, widgets, columns, navigation, newsletter
@@ -17,33 +17,33 @@
 <div class="wp-block-group"><!-- wp:site-logo {"width":48} /-->
 <!-- wp:site-title {"level":0,"fontSize":"large"} /-->
 <!-- wp:paragraph {"className":"mw-muted","fontSize":"small"} -->
-<p class="mw-muted has-small-font-size"><?php echo esc_html__( 'Your sound, beautifully organized. Edit this footer in Appearance → Editor → Template Parts → Footer widgets — no code needed.', 'musicwave' ); ?></p>
+<p class="mw-muted has-small-font-size"><?php echo esc_html__( 'صدای شما، به‌زیبایی سازمان‌یافته. این پابرگ را از نمایش → ویرایشگر → بخش‌های قالب → ابزارک‌های پابرگ ویرایش کنید؛ بدون نیاز به کدنویسی.', 'musicwave' ); ?></p>
 <!-- /wp:paragraph --><!-- wp:social-links {"iconColor":"text","iconColorValue":"#f7f8fb","size":"has-normal-icon-size","className":"is-style-logos-only"} -->
 <ul class="wp-block-social-links has-normal-icon-size has-icon-color is-style-logos-only"><!-- wp:social-link {"url":"#","service":"instagram"} /--><!-- wp:social-link {"url":"#","service":"spotify"} /--><!-- wp:social-link {"url":"#","service":"youtube"} /--></ul>
 <!-- /wp:social-links --></div>
 <!-- /wp:group --></div>
 <!-- /wp:column --><!-- wp:column -->
 <div class="wp-block-column"><!-- wp:heading {"level":3,"fontSize":"medium"} -->
-<h3 class="wp-block-heading has-medium-font-size"><?php echo esc_html__( 'Browse', 'musicwave' ); ?></h3>
+<h3 class="wp-block-heading has-medium-font-size"><?php echo esc_html__( 'مرور', 'musicwave' ); ?></h3>
 <!-- /wp:heading --><!-- wp:list -->
-<ul class="wp-block-list"><li><a href="#"><?php echo esc_html__( 'All releases', 'musicwave' ); ?></a></li><li><a href="#"><?php echo esc_html__( 'New music', 'musicwave' ); ?></a></li><li><a href="#"><?php echo esc_html__( 'Playlists', 'musicwave' ); ?></a></li><li><a href="#"><?php echo esc_html__( 'Artists', 'musicwave' ); ?></a></li><li><a href="#"><?php echo esc_html__( 'Genres & moods', 'musicwave' ); ?></a></li></ul>
+<ul class="wp-block-list"><li><a href="#"><?php echo esc_html__( 'همهٔ انتشارها', 'musicwave' ); ?></a></li><li><a href="#"><?php echo esc_html__( 'موسیقی جدید', 'musicwave' ); ?></a></li><li><a href="#"><?php echo esc_html__( 'فهرست‌های پخش', 'musicwave' ); ?></a></li><li><a href="#"><?php echo esc_html__( 'هنرمندان', 'musicwave' ); ?></a></li><li><a href="#"><?php echo esc_html__( 'سبک‌ها و حال‌وهواها', 'musicwave' ); ?></a></li></ul>
 <!-- /wp:list --></div>
 <!-- /wp:column --><!-- wp:column -->
 <div class="wp-block-column"><!-- wp:heading {"level":3,"fontSize":"medium"} -->
-<h3 class="wp-block-heading has-medium-font-size"><?php echo esc_html__( 'Support', 'musicwave' ); ?></h3>
+<h3 class="wp-block-heading has-medium-font-size"><?php echo esc_html__( 'پشتیبانی', 'musicwave' ); ?></h3>
 <!-- /wp:heading --><!-- wp:list -->
-<ul class="wp-block-list"><li><a href="#"><?php echo esc_html__( 'My account', 'musicwave' ); ?></a></li><li><a href="#"><?php echo esc_html__( 'Cart & checkout', 'musicwave' ); ?></a></li><li><a href="#"><?php echo esc_html__( 'Help & FAQs', 'musicwave' ); ?></a></li><li><a href="#"><?php echo esc_html__( 'Contact', 'musicwave' ); ?></a></li></ul>
+<ul class="wp-block-list"><li><a href="#"><?php echo esc_html__( 'حساب کاربری من', 'musicwave' ); ?></a></li><li><a href="#"><?php echo esc_html__( 'سبد خرید و تسویه‌حساب', 'musicwave' ); ?></a></li><li><a href="#"><?php echo esc_html__( 'راهنما و پرسش‌های متداول', 'musicwave' ); ?></a></li><li><a href="#"><?php echo esc_html__( 'تماس', 'musicwave' ); ?></a></li></ul>
 <!-- /wp:list --></div>
 <!-- /wp:column --><!-- wp:column -->
 <div class="wp-block-column"><!-- wp:heading {"level":3,"fontSize":"medium"} -->
-<h3 class="wp-block-heading has-medium-font-size"><?php echo esc_html__( 'Stay tuned', 'musicwave' ); ?></h3>
+<h3 class="wp-block-heading has-medium-font-size"><?php echo esc_html__( 'همراه بمانید', 'musicwave' ); ?></h3>
 <!-- /wp:heading --><!-- wp:paragraph {"fontSize":"small"} -->
-<p class="has-small-font-size"><?php echo esc_html__( 'Drag any block here — search, newsletter, recent releases, categories, legacy widget, or custom HTML — it just works.', 'musicwave' ); ?></p>
-<!-- /wp:paragraph --><!-- wp:search {"label":"Search","showLabel":false,"placeholder":"Search releases","buttonText":"Search"} /-->
+<p class="has-small-font-size"><?php echo esc_html__( 'هر بلوکی را اینجا بکشید و رها کنید؛ جست‌وجو، خبرنامه، انتشارهای جدید، دسته‌بندی‌ها، ابزارک قدیمی یا HTML سفارشی، همه به‌سادگی کار می‌کنند.', 'musicwave' ); ?></p>
+<!-- /wp:paragraph --><!-- wp:search {"label":"جست‌وجو","showLabel":false,"placeholder":"جست‌وجوی انتشارها","buttonText":"جست‌وجو"} /-->
 <!-- wp:separator {"opacity":"css","className":"is-style-wide"} -->
 <hr class="wp-block-separator has-css-opacity is-style-wide"/>
 <!-- /wp:separator --><!-- wp:paragraph {"className":"mw-muted","fontSize":"small"} -->
-<p class="mw-muted has-small-font-size"><?php echo esc_html__( 'Tip: change colors, fonts, and spacing in Styles → no code required.', 'musicwave' ); ?></p>
+<p class="mw-muted has-small-font-size"><?php echo esc_html__( 'نکته: رنگ‌ها، فونت‌ها و فاصله‌ها را در سبک‌ها تغییر دهید؛ بدون نیاز به کدنویسی.', 'musicwave' ); ?></p>
 <!-- /wp:paragraph --></div>
 <!-- /wp:column --></div>
 <!-- /wp:columns --></div>

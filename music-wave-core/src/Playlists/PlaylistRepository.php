@@ -562,7 +562,7 @@ final class PlaylistRepository {
 		if ( $user && isset( $user->user_login ) && is_string( $user->user_login ) ) {
 			return $user->user_login;
 		}
-		return __( 'MusicWave listener', 'music-wave-core' );
+		return __( 'شنونده MusicWave', 'music-wave-core' );
 	}
 
 	private function sanitize_title( string $title ): string {

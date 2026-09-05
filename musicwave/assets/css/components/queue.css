@@ -65,7 +65,7 @@
 }
 
 .mw-playback-queue__empty {
-	color: var(--mw-color-muted, #9ca3af);
+	color: var(--mw-color-text-muted, #a0a0a0);
 	margin: 0;
 }
 
@@ -88,7 +88,7 @@
 }
 
 .mw-playback-queue__position {
-	color: var(--mw-color-muted, #9ca3af);
+	color: var(--mw-color-text-muted, #a0a0a0);
 	font-size: .875rem;
 	font-weight: 700;
 	min-inline-size: 1.4em;
@@ -145,7 +145,7 @@
 }
 
 .mw-playback-queue__artist {
-	color: var(--mw-color-muted, #9ca3af);
+	color: var(--mw-color-text-muted, #a0a0a0);
 	font-size: .8125rem;
 	overflow: hidden;
 	text-overflow: ellipsis;
@@ -226,7 +226,7 @@
 }
 
 .mw-playback-queue__guest-text {
-	color: var(--mw-color-muted, #9ca3af);
+	color: var(--mw-color-text-muted, #a0a0a0);
 	margin: .25rem 0 0;
 }
 

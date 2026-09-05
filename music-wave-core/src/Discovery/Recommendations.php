@@ -92,10 +92,10 @@ final class Recommendations {
 	 */
 	public function explanation( string $reason ): string {
 		if ( self::REASON_RECENT_GENRE === $reason ) {
-			return __( 'Because of genres you listened to recently.', 'music-wave-core' );
+			return __( 'به دلیل ژانرهایی که اخیراً گوش داده‌اید.', 'music-wave-core' );
 		}
 
-		return __( 'New in the catalog.', 'music-wave-core' );
+		return __( 'جدید در کاتالوگ', 'music-wave-core' );
 	}
 
 	/** @return array<string, int|string> */

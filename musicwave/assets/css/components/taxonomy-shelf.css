@@ -98,7 +98,7 @@
 
 /* ---- Empty state ---- */
 .mw-terms-shelf__empty {
-	color: var(--mw-color-muted, #9ca3af);
+	color: var(--mw-color-text-muted, #a0a0a0);
 	margin: 0;
 }
 

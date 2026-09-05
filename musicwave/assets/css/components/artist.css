@@ -7,7 +7,7 @@
 .mw-artist-profile {
 	margin: var(--wp--preset--spacing--30) 0 var(--wp--preset--spacing--40);
 	padding: var(--wp--preset--spacing--30);
-	--artist-accent: var(--mw-artist-accent, var(--wp--preset--color--accent, #fa2d48));
+	--artist-accent: var(--mw-artist-accent, var(--mw-color-accent, #1db954));
 }
 
 .mw-artist-profile__image {
@@ -198,5 +198,30 @@
 
 	.mw-artist-profile--list .mw-artist-profile__image {
 		max-width: 13rem;
+	}
+}
+
+/* -------------------------------------------------------------------------
+ * Artist archive composition
+ * ------------------------------------------------------------------------- */
+.mw-artist-page .mw-term-hero {
+	margin-block-end: var(--wp--preset--spacing--30);
+}
+
+.mw-artist-page .mw-catalog-results {
+	margin-block-end: var(--wp--preset--spacing--20);
+}
+
+.mw-artist-page .mw-catalog-filters {
+	margin-block-start: 0;
+}
+
+.mw-artist-empty {
+	margin-block-start: var(--wp--preset--spacing--30);
+}
+
+@media (max-width: 42rem) {
+	.mw-artist-page .mw-term-hero--banner .mw-term-hero__content {
+		padding: var(--wp--preset--spacing--30);
 	}
 }

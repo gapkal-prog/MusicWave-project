@@ -133,7 +133,7 @@ final class ArtistProfileBlock {
 
 		$cta_label = isset( $attributes['ctaLabel'] ) && '' !== (string) $attributes['ctaLabel']
 			? sanitize_text_field( (string) $attributes['ctaLabel'] )
-			: __( 'Official artist page', 'music-wave-core' );
+			: __( 'صفحه رسمی هنرمند', 'music-wave-core' );
 
 		$accent = isset( $attributes['accentColor'] ) ? sanitize_hex_color( (string) $attributes['accentColor'] ) : '';
 		$accent = is_string( $accent ) ? $accent : '';
@@ -184,7 +184,7 @@ final class ArtistProfileBlock {
 				? '<p class="mw-artist-profile__count">' . esc_html(
 					sprintf(
 						/* translators: %s: number of published releases. */
-						_n( '%s release', '%s releases', $count, 'music-wave-core' ),
+						_n( 'انتشار %s', 'انتشار %s', $count, 'music-wave-core' ),
 						number_format_i18n( $count )
 					)
 				) . '</p>'
@@ -242,13 +242,13 @@ final class ArtistProfileBlock {
 	 * Count published releases assigned to an artist term.
 	 */
 	private function release_count( int $term_id ): int {
-		$release_ids = get_posts(
+		$query = new \WP_Query(
 			array(
 				'post_type'              => ReleasePostType::KEY,
 				'post_status'            => 'publish',
-				'posts_per_page'         => -1,
+				'posts_per_page'         => 1,
 				'fields'                 => 'ids',
-				'no_found_rows'          => true,
+				'no_found_rows'          => false,
 				'update_post_meta_cache' => false,
 				'update_post_term_cache' => false,
 				'tax_query'              => array(
@@ -261,7 +261,10 @@ final class ArtistProfileBlock {
 			)
 		);
 
-		return is_array( $release_ids ) ? count( $release_ids ) : 0;
+		$count = (int) $query->found_posts;
+		wp_reset_postdata();
+
+		return max( 0, $count );
 	}
 
 	/**
@@ -296,10 +299,10 @@ final class ArtistProfileBlock {
 	 * @return string
 	 */
 	private function render_editor_placeholder( array $attributes ): string {
-		$label = __( 'Artist profile', 'music-wave-core' );
+		$label = __( 'مشخصات هنرمند', 'music-wave-core' );
 		$help  = isset( $attributes['termId'] ) && absint( $attributes['termId'] ) > 0
-			? __( 'The selected artist was not found or has no public profile content yet. Add an artist term ID in the block sidebar.', 'music-wave-core' )
-			: __( 'No artist selected yet. Enter an artist term ID in the block sidebar to pin an artist, or preview this block on an artist archive page.', 'music-wave-core' );
+			? __( 'هنرمند انتخاب‌شده پیدا نشد یا هنوز محتوای نمایهٔ عمومی ندارد. شناسهٔ اصطلاح هنرمند را در نوار کناری بلوک اضافه کنید.', 'music-wave-core' )
+			: __( 'هنوز هنرمندی انتخاب نشده است. برای سنجاق‌کردن یک هنرمند، عبارت هنرمند ID را در نوار کناری بلوک وارد کنید، یا این بلوک را در صفحهٔ آرشیو هنرمند پیش‌نمایش کنید.', 'music-wave-core' );
 
 		return '<div class="mw-artist-profile mw-artist-profile--placeholder" style="border:1px dashed currentColor;border-radius:12px;padding:2.5rem 1.5rem;text-align:center;opacity:.8;">'
 			. '<span class="dashicons dashicons-format-audio" aria-hidden="true" style="font-size:2rem;width:2rem;height:2rem;"></span>'

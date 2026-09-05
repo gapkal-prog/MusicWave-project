@@ -95,9 +95,9 @@ Deliver a secure, accessible, scalable, internationalized WordPress music platfo
 
 | Package | Current version | Responsibility | Runtime dependencies |
 |---|---:|---|---|
-| `music-wave-core` | `0.9.0` | Domain model, application services, WordPress adapters, REST, blocks, playback, library, Woo integration, metadata, SEO | WordPress 6.6+; WooCommerce optional |
-| `music-wave-vip` | `0.3.3` | Membership adapters, protected asset management, local delivery, remote signed redirects | Core required; provider configuration |
-| `musicwave` | `0.5.0` | Block theme, templates, patterns, styles, presentation blocks, slider and theme preference | Core strongly expected; Woo optional |
+| `music-wave-core` | `0.11.2` | Domain model, application services, WordPress adapters, REST, blocks, playback, library, Woo integration, metadata, SEO | WordPress 6.6+; WooCommerce optional |
+| `music-wave-vip` | `0.5.0` | Membership adapters, protected asset management, local delivery, remote signed redirects | Core required; provider configuration |
+| `musicwave` | `0.7.4` | Block theme, templates, patterns, styles, presentation blocks, slider and theme preference | Core strongly expected; Woo optional |
 | Root tooling | `0.9.0` in `package.json` | PHP/JS quality, tests, packaging, POT generation | PHP 7.4 declared; Node 20+; Composer/npm dev packages |
 
 Core and the theme declare WordPress 6.6+, PHP 7.4+, and testing through WordPress 6.8. `composer.lock` uses WordPress stubs newer than that claim, so the compatibility statement is not currently proven by CI.
@@ -876,7 +876,7 @@ Exit gate:
 
 - Deliverable 1 (native navigation default): the SPA-style persistent body swap is now opt-in (`persistent_navigation` setting / `music_wave_persistent_navigation` filter, default off) because it cannot safely reconcile every WordPress/WooCommerce page lifecycle; native navigation is the default behavior.
 - Deliverable 3 (block.json authority): the editor-side re-registration no longer discards server schema — attributes, supports, context, titles, and apiVersion from `block.json` stay authoritative and the hand-rolled config only supplies the editing experience.
-- Deliverable 4 (conditional assets, partial): the theme slider script is registered-only and enqueues at `musicwave/release-slider` render time, so slider-free routes ship no slider bytes.
+- Deliverable 4 (conditional assets, partial): the theme slider script is registered-only and enqueues at `music-wave/release-slider` render time, so slider-free routes ship no slider bytes.
 - Deliverable 5 (library pagination): new `LibraryCatalog::paged_summaries()` with accessible previous/next links preserving the active filter (`mw-library-page` query arg); items beyond the render cap are now reachable. Regression-tested.
 - Deliverable 6 (partial — route announcements): opt-in soft navigation now announces the new title through a polite live region and moves focus to the `main` landmark.
 - Deliverable 7 (partial — RTL + POT): remaining directional CSS converted to logical properties (only symmetric inset pairs remain, which are RTL-safe); all three POT files regenerated to include Stage 0–4 strings.

@@ -37,7 +37,7 @@ final class ReleaseMetaBox {
 	}
 
 	public function register(): void {
-		add_meta_box( 'music-wave-release-details', __( 'MusicWave release details', 'music-wave-core' ), array( $this, 'render' ), ReleasePostType::KEY, 'normal', 'high' );
+		add_meta_box( 'music-wave-release-details', __( 'جزئیات انتشار MusicWave', 'music-wave-core' ), array( $this, 'render' ), ReleasePostType::KEY, 'normal', 'high' );
 	}
 
 	public function enqueue_assets(): void {
@@ -64,7 +64,7 @@ final class ReleaseMetaBox {
 	public function render( WP_Post $post ): void {
 		wp_nonce_field( self::NONCE_ACTION, self::NONCE_NAME );
 		echo '<div class="mw-admin-fields">';
-		echo '<p class="description">' . esc_html__( 'Catalog data is independent from WooCommerce. Products only sell or grant access to this release.', 'music-wave-core' ) . '</p>';
+		echo '<p class="description">' . esc_html__( 'اطلاعات کاتالوگ مستقل از WooCommerce است. محصولات فقط این انتشار را می‌فروشند یا اجازهٔ دسترسی به آن را می‌دهند.', 'music-wave-core' ) . '</p>';
 
 		foreach ( $this->schema->admin_fields() as $definition ) {
 			if ( in_array( $definition->admin()['type'] ?? '', array( 'protected_asset', 'protected_assets' ), true ) ) {
@@ -84,7 +84,7 @@ final class ReleaseMetaBox {
 				echo '<div id="music-wave-collection-manager" data-release-id="' . esc_attr( (string) $post->ID ) . '" data-role="' . esc_attr( $role ) . '"></div>';
 			}
 		} else {
-			echo '<p class="description">' . esc_html__( 'Save this release once to add protected files and collection items.', 'music-wave-core' ) . '</p>';
+			echo '<p class="description">' . esc_html__( 'این انتشار را یک بار ذخیره کنید تا فایل‌ها و موارد مجموعه حفاظت‌شده را اضافه کنید.', 'music-wave-core' ) . '</p>';
 		}
 
 		echo '</div>';
@@ -129,12 +129,12 @@ final class ReleaseMetaBox {
 		$has_membership    = is_array( $membership_levels ) && ! empty( $membership_levels );
 
 		if ( 'purchase' === $mode && empty( $product_ids ) ) {
-			$this->restrict( $post_id, __( 'MusicWave changed access to Restricted because purchase access requires a mapped product.', 'music-wave-core' ) );
+			$this->restrict( $post_id, __( 'MusicWave دسترسی را به «محدودشده» تغییر داد، چون دسترسی خرید به محصول نگاشت‌شده نیاز دارد.', 'music-wave-core' ) );
 		} elseif ( 'membership' === $mode && ! $has_membership ) {
-			$this->restrict( $post_id, __( 'MusicWave changed access to Restricted because membership access requires a membership level.', 'music-wave-core' ) );
+			$this->restrict( $post_id, __( 'MusicWave دسترسی را به محدود تغییر داد زیرا دسترسی عضویت به سطح عضویت نیاز دارد.', 'music-wave-core' ) );
 		} elseif ( 'purchase_or_membership' === $mode ) {
 			if ( empty( $product_ids ) && ! $has_membership ) {
-				$this->restrict( $post_id, __( 'MusicWave changed access to Restricted because no purchase product or membership level was configured.', 'music-wave-core' ) );
+				$this->restrict( $post_id, __( 'MusicWave به‌دلیل آن‌که هیچ محصول خرید یا سطح عضویتی پیکربندی‌نشده بود، دسترسی را محدود کرد.', 'music-wave-core' ) );
 			} elseif ( empty( $product_ids ) ) {
 				$this->repository->update( $post_id, 'mw_access_mode', 'membership' );
 			} elseif ( ! $has_membership ) {
@@ -194,7 +194,7 @@ final class ReleaseMetaBox {
 	 */
 	private function render_protected_asset( string $key, $value ): void {
 		echo '<input class="widefat" type="text" id="' . esc_attr( $key ) . '" name="' . esc_attr( $key ) . '" value="' . esc_attr( is_scalar( $value ) ? (string) $value : '' ) . '" autocomplete="off">';
-		echo '<span class="description">' . esc_html__( 'Store a provider asset identifier such as local:album/track.zip, never a public download URL.', 'music-wave-core' ) . '</span>';
+		echo '<span class="description">' . esc_html__( 'شناسهٔ دارایی ارائه‌دهنده مانند local:album/track.zip را ذخیره کنید؛ هرگز نشانی دانلود عمومی ذخیره نکنید.', 'music-wave-core' ) . '</span>';
 	}
 
 	/**
@@ -215,7 +215,7 @@ final class ReleaseMetaBox {
 		}
 
 		echo '<textarea class="widefat" rows="5" id="' . esc_attr( $key ) . '" name="' . esc_attr( $key ) . '">' . esc_textarea( implode( "\n", $lines ) ) . '</textarea>';
-		echo '<span class="description">' . esc_html__( 'One quality per line: quality-key | customer label | opaque provider asset ID. Example: mp3-320 | MP3 320 kbps | local:downloads/track-320.mp3', 'music-wave-core' ) . '</span>';
+		echo '<span class="description">' . esc_html__( 'در هر خط یک کیفیت: quality-key | برچسب مشتری | شناسهٔ opaque دارایی ارائه‌دهنده. نمونه: mp3-320 | MP3 320 kbps | local:downloads/track-320.mp3', 'music-wave-core' ) . '</span>';
 	}
 
 	/**
@@ -248,12 +248,12 @@ final class ReleaseMetaBox {
 	/** @param array<int, int> $selected_ids */
 	private function render_products( string $key, array $selected_ids ): void {
 		if ( ! post_type_exists( 'product' ) ) {
-			echo '<span class="description">' . esc_html__( 'Activate WooCommerce to map products.', 'music-wave-core' ) . '</span>';
+			echo '<span class="description">' . esc_html__( 'WooCommerce را برای نگاشت محصولات فعال کنید.', 'music-wave-core' ) . '</span>';
 			return;
 		}
 
 		echo '<input type="hidden" name="' . esc_attr( $key ) . '[]" value="0">';
-		echo '<select class="wc-product-search widefat" id="' . esc_attr( $key ) . '" name="' . esc_attr( $key ) . '[]" multiple="multiple" data-action="woocommerce_json_search_products" data-placeholder="' . esc_attr__( 'Search for a product…', 'music-wave-core' ) . '">';
+		echo '<select class="wc-product-search widefat" id="' . esc_attr( $key ) . '" name="' . esc_attr( $key ) . '[]" multiple="multiple" data-action="woocommerce_json_search_products" data-placeholder="' . esc_attr__( 'جست‌وجوی محصول…', 'music-wave-core' ) . '">';
 		foreach ( $selected_ids as $product_id ) {
 			if ( 'product' !== get_post_type( $product_id ) ) {
 				continue;

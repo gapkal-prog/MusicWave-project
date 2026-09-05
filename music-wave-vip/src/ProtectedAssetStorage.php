@@ -94,7 +94,7 @@ final class ProtectedAssetStorage {
 
 		$exists      = false !== $candidate && is_dir( $candidate );
 		$readable    = $exists && is_readable( $candidate );
-		$writable    = $exists && is_writable( $candidate );
+		$writable    = $exists && wp_is_writable( $candidate );
 		$outside_web = $exists && ! $this->is_web_reachable( (string) $candidate );
 		$deny_files  = $exists && file_exists( $candidate . DIRECTORY_SEPARATOR . '.htaccess' );
 
@@ -325,13 +325,13 @@ final class ProtectedAssetStorage {
 	 */
 	public function upload( array $file ) {
 		$root = $this->root();
-		if ( false === $root || ! is_writable( $root ) ) {
-			return new WP_Error( 'mw_protected_asset_root', __( 'The protected asset directory is unavailable or not writable.', 'music-wave-vip' ), array( 'status' => 500 ) );
+		if ( false === $root || ! wp_is_writable( $root ) ) {
+			return new WP_Error( 'mw_protected_asset_root', __( 'پوشهٔ asset حفاظت‌شده در دسترس نیست یا قابل نوشتن نیست.', 'music-wave-vip' ), array( 'status' => 500 ) );
 		}
 
 		$error = isset( $file['error'] ) ? (int) $file['error'] : UPLOAD_ERR_NO_FILE;
 		if ( UPLOAD_ERR_OK !== $error || empty( $file['tmp_name'] ) || ! is_string( $file['tmp_name'] ) || ! is_uploaded_file( $file['tmp_name'] ) ) {
-			return new WP_Error( 'mw_protected_asset_upload', __( 'The protected asset upload was invalid.', 'music-wave-vip' ), array( 'status' => 400 ) );
+			return new WP_Error( 'mw_protected_asset_upload', __( 'بارگذاری asset حفاظت‌شده معتبر نیست.', 'music-wave-vip' ), array( 'status' => 400 ) );
 		}
 
 		$original_name = isset( $file['name'] ) && is_string( $file['name'] ) ? sanitize_file_name( $file['name'] ) : '';
@@ -340,7 +340,7 @@ final class ProtectedAssetStorage {
 		$size          = isset( $file['size'] ) ? (int) $file['size'] : 0;
 
 		if ( '' === $original_name || ! in_array( $extension, $allowed, true ) || $size < 1 || $size > wp_max_upload_size() ) {
-			return new WP_Error( 'mw_protected_asset_type', __( 'The asset type or size is not allowed.', 'music-wave-vip' ), array( 'status' => 400 ) );
+			return new WP_Error( 'mw_protected_asset_type', __( 'نوع یا اندازهٔ asset مجاز نیست.', 'music-wave-vip' ), array( 'status' => 400 ) );
 		}
 
 		// MIME hardening: verify actual file content via finfo, not just extension.
@@ -363,20 +363,20 @@ final class ProtectedAssetStorage {
 				if ( isset( $allowed_mimes[ $extension ] ) && '' !== $mime && ! in_array( $mime, $allowed_mimes[ $extension ], true ) && 0 !== strpos( $mime, 'audio/' ) && 'application/octet-stream' !== $mime ) {
 					// Strict for ZIP, permissive for audio (some hosts report generic types).
 					if ( 'zip' === $extension ) {
-						return new WP_Error( 'mw_protected_asset_mime', __( 'The file content does not match its extension.', 'music-wave-vip' ), array( 'status' => 400 ) );
+						return new WP_Error( 'mw_protected_asset_mime', __( 'محتوای فایل با پسوند آن مطابقت ندارد.', 'music-wave-vip' ), array( 'status' => 400 ) );
 					}
 				}
 			}
 		}
 		// Reject files with double extensions or null bytes.
 		if ( false !== strpos( $original_name, "\0" ) || preg_match( '/\.(php|phtml|phar|exe|sh)\./i', $original_name ) ) {
-			return new WP_Error( 'mw_protected_asset_type', __( 'The file name is not allowed.', 'music-wave-vip' ), array( 'status' => 400 ) );
+			return new WP_Error( 'mw_protected_asset_type', __( 'نام فایل مجاز نیست.', 'music-wave-vip' ), array( 'status' => 400 ) );
 		}
 
 		$filename    = wp_unique_filename( $root, $original_name );
 		$destination = $root . DIRECTORY_SEPARATOR . $filename;
 		if ( ! move_uploaded_file( $file['tmp_name'], $destination ) ) {
-			return new WP_Error( 'mw_protected_asset_move', __( 'The protected asset could not be stored.', 'music-wave-vip' ), array( 'status' => 500 ) );
+			return new WP_Error( 'mw_protected_asset_move', __( 'asset حفاظت‌شده ذخیره نشد.', 'music-wave-vip' ), array( 'status' => 500 ) );
 		}
 		// Post-move MIME re-check to prevent race / tmp spoof.
 		if ( function_exists( 'finfo_open' ) && 'zip' === $extension ) {
@@ -386,7 +386,7 @@ final class ProtectedAssetStorage {
 				finfo_close( $finfo );
 				if ( is_string( $dest_mime ) && 0 === stripos( $dest_mime, 'text/' ) ) {
 					unlink( $destination ); // phpcs:ignore WordPress.WP.AlternativeFunctions.unlink_unlink
-					return new WP_Error( 'mw_protected_asset_mime', __( 'The file content is not a valid ZIP archive.', 'music-wave-vip' ), array( 'status' => 400 ) );
+					return new WP_Error( 'mw_protected_asset_mime', __( 'محتوای فایل یک بایگانی ZIP معتبر نیست.', 'music-wave-vip' ), array( 'status' => 400 ) );
 				}
 			}
 		}
@@ -406,7 +406,7 @@ final class ProtectedAssetStorage {
 	 */
 	public function import_attachment( int $attachment_id ) {
 		if ( $attachment_id < 1 || 'attachment' !== get_post_type( $attachment_id ) ) {
-			return new WP_Error( 'mw_protected_asset_attachment', __( 'Choose a valid Media Library file.', 'music-wave-vip' ), array( 'status' => 400 ) );
+			return new WP_Error( 'mw_protected_asset_attachment', __( 'یک فایل معتبر از رسانه‌ها انتخاب کنید.', 'music-wave-vip' ), array( 'status' => 400 ) );
 		}
 
 		$source       = get_attached_file( $attachment_id );
@@ -414,25 +414,25 @@ final class ProtectedAssetStorage {
 		$uploads      = wp_get_upload_dir();
 		$uploads_root = isset( $uploads['basedir'] ) && is_string( $uploads['basedir'] ) ? realpath( $uploads['basedir'] ) : false;
 		if ( false === $source || false === $uploads_root || ! $this->is_within( $source, $uploads_root ) || ! is_file( $source ) || ! is_readable( $source ) ) {
-			return new WP_Error( 'mw_protected_asset_attachment_file', __( 'The selected Media Library file is unavailable.', 'music-wave-vip' ), array( 'status' => 404 ) );
+			return new WP_Error( 'mw_protected_asset_attachment_file', __( 'فایل انتخاب‌شده از رسانه‌ها در دسترس نیست.', 'music-wave-vip' ), array( 'status' => 404 ) );
 		}
 
 		$root = $this->root();
-		if ( false === $root || ! is_writable( $root ) ) {
-			return new WP_Error( 'mw_protected_asset_root', __( 'The protected asset directory is unavailable or not writable.', 'music-wave-vip' ), array( 'status' => 500 ) );
+		if ( false === $root || ! wp_is_writable( $root ) ) {
+			return new WP_Error( 'mw_protected_asset_root', __( 'پوشهٔ asset حفاظت‌شده در دسترس نیست یا قابل نوشتن نیست.', 'music-wave-vip' ), array( 'status' => 500 ) );
 		}
 
 		$filename  = sanitize_file_name( basename( $source ) );
 		$extension = strtolower( pathinfo( $filename, PATHINFO_EXTENSION ) );
 		$size      = filesize( $source );
 		if ( '' === $filename || ! in_array( $extension, $this->allowed_extensions(), true ) || false === $size || $size < 1 || $size > wp_max_upload_size() ) {
-			return new WP_Error( 'mw_protected_asset_type', __( 'The asset type or size is not allowed.', 'music-wave-vip' ), array( 'status' => 400 ) );
+			return new WP_Error( 'mw_protected_asset_type', __( 'نوع یا اندازهٔ asset مجاز نیست.', 'music-wave-vip' ), array( 'status' => 400 ) );
 		}
 
 		$filename    = wp_unique_filename( $root, $filename );
 		$destination = $root . DIRECTORY_SEPARATOR . $filename;
 		if ( ! copy( $source, $destination ) ) {
-			return new WP_Error( 'mw_protected_asset_copy', __( 'The Media Library file could not be copied to protected storage.', 'music-wave-vip' ), array( 'status' => 500 ) );
+			return new WP_Error( 'mw_protected_asset_copy', __( 'فایل رسانه‌ها در ذخیره‌سازی حفاظت‌شده کپی نشد.', 'music-wave-vip' ), array( 'status' => 500 ) );
 		}
 
 		$opaque = $this->registry->register( $filename, $destination );

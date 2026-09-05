@@ -14,11 +14,14 @@ Run:
 
 ```bash
 composer make-pot
+composer make-script-json
 ```
 
-The command regenerates every POT from the current PHP and JavaScript source without adding a runtime dependency. Review and commit changed POT files with the matching code change. Translation files are distribution assets and are included in release archives.
+`make-pot` regenerates every POT from the current PHP and JavaScript source without adding a runtime dependency. `make-script-json` converts the shipped `en_US` PO catalog into JED 1.x JSON files named with the MD5 of each script path relative to the theme/plugin root. Review and commit changed POT/PO/MO/JSON files with the matching code change. Translation files are distribution assets and are included in release archives.
 
-Theme default copy is rendered through presentation-only `musicwave/theme-text` and `musicwave/theme-toggle` blocks, so default template headings, empty states, and accessibility labels can be translated without placing domain logic in templates. Merchant-edited template content remains ordinary WordPress content and is intentionally not overwritten.
+MusicWave uses Persian as the source language. The source strings in the Theme are Persian; `musicwave-en_US.po/.mo` and the hash-addressed JSON files provide the English product copy through WordPress localization. Core and VIP follow the same independent-domain workflow; their source conversion and English catalogs are tracked in [`translation-inventory-fa.md`](translation-inventory-fa.md).
+
+Theme default copy is rendered through presentation-only `music-wave/theme-text` and `music-wave/theme-toggle` blocks (with hidden `musicwave/*` compatibility aliases), so default template headings, empty states, and accessibility labels can be translated without placing domain logic in templates. Merchant-edited template content remains ordinary WordPress content and is intentionally not overwritten.
 
 ## Persian and RTL QA
 

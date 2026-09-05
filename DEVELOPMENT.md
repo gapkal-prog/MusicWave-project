@@ -67,6 +67,7 @@ The theme and plugin front-end are aligned with the SonicStream design reference
 - Genre/browse tiles: reference gradient spectrum (nth-child defaults, editor backgrounds win) plus lift-on-hover.
 - Catalog filters: RTL-aware shimmer sweep while `[data-mw-busy]` is set (reduced-motion safe).
 - Membership/commerce: upsell gradient frame, plan-card lift, pill-shaped WC form fields with accent primary buttons.
+- Secure download actions: two structural variants — the standalone panel card and a new `--inline` group embedded in collection track rows. The inline group is smaller markup rather than CSS-hidden content (no screen-reader clipping): the quality selector carries an `aria-label`, and its live status surfaces as a floating notice anchored to the group.
 
 All motion respects `prefers-reduced-motion`; RTL uses logical properties throughout.
 

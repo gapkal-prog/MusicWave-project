@@ -337,9 +337,9 @@ final class MetadataTaxonomyMapper {
 	 * @param bool               $table_row Whether the edit-table layout is required.
 	 */
 	private function render_field( array $aliases, bool $table_row ): void {
-		$label       = '<label for="mw_metadata_aliases">' . esc_html__( 'Metadata aliases', 'music-wave-core' ) . '</label>';
+		$label       = '<label for="mw_metadata_aliases">' . esc_html__( 'نام مستعار فراداده', 'music-wave-core' ) . '</label>';
 		$control     = '<textarea id="mw_metadata_aliases" name="mw_metadata_aliases" rows="3" class="large-text">' . esc_textarea( implode( "\n", $aliases ) ) . '</textarea>';
-		$description = '<p class="description">' . esc_html__( 'One provider-facing or previous name per line. These aliases let auto-fill match this term after its visible name is translated or changed.', 'music-wave-core' ) . '</p>';
+		$description = '<p class="description">' . esc_html__( 'یک نام ارائه‌دهنده یا نام قبلی در هر خط. این نام‌های مستعار اجازه می‌دهند که تکمیل خودکار با این عبارت پس از ترجمه یا تغییر نام قابل مشاهده آن مطابقت داشته باشد.', 'music-wave-core' ) . '</p>';
 		if ( $table_row ) {
 			echo '<tr class="form-field"><th scope="row">' . $label . '</th><td>' . $control . $description . '</td></tr>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 			return;

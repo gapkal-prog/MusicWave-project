@@ -237,7 +237,7 @@ final class MetadataLookupRoutes {
 	 */
 	public function search( \WP_REST_Request $request ) {
 		if ( $this->rate_limited() ) {
-			return new \WP_Error( 'mw_metadata_rate_limited', __( 'Metadata lookup is rate limited. Try again in a minute.', 'music-wave-core' ), array( 'status' => 429 ) );
+			return new \WP_Error( 'mw_metadata_rate_limited', __( 'سرعت جست‌وجوی فراداده محدود است. یک دقیقه دیگر دوباره امتحان کنید.', 'music-wave-core' ), array( 'status' => 429 ) );
 		}
 
 		$query = MetadataQuery::from_strings(
@@ -266,7 +266,7 @@ final class MetadataLookupRoutes {
 			return new \WP_REST_Response(
 				array(
 					'success' => false,
-					'message' => __( 'Metadata lookup is rate limited. Try again in a minute.', 'music-wave-core' ),
+					'message' => __( 'سرعت جست‌وجوی فراداده محدود است. یک دقیقه دیگر دوباره امتحان کنید.', 'music-wave-core' ),
 				),
 				429
 			);
@@ -278,7 +278,7 @@ final class MetadataLookupRoutes {
 			return new \WP_REST_Response(
 				array(
 					'success' => false,
-					'message' => __( 'You cannot edit this release.', 'music-wave-core' ),
+					'message' => __( 'شما نمی‌توانید این انتشار را ویرایش کنید.', 'music-wave-core' ),
 				),
 				403
 			);
@@ -334,7 +334,7 @@ final class MetadataLookupRoutes {
 				true
 			);
 			if ( is_wp_error( $updated ) ) {
-				$warnings[]      = __( 'The release title or description could not be updated.', 'music-wave-core' );
+				$warnings[]      = __( 'عنوان انتشار یا توضیحات به‌روزرسانی نشد.', 'music-wave-core' );
 				$content_applied = false;
 				$excerpt_applied = false;
 			}
@@ -358,16 +358,16 @@ final class MetadataLookupRoutes {
 			}
 		}
 		if ( ! empty( $result->artists ) && empty( $artist_term_ids ) ) {
-			$warnings[] = __( 'The artists could not be connected to this release.', 'music-wave-core' );
+			$warnings[] = __( 'هنرمندان را نمی‌توان به این انتشار متصل کرد.', 'music-wave-core' );
 		}
 		if ( ! empty( $result->genres ) && empty( $genre_term_ids ) ) {
-			$warnings[] = __( 'The genres could not be connected to this release.', 'music-wave-core' );
+			$warnings[] = __( 'ژانرها را نمی‌توان به این انتشار متصل کرد.', 'music-wave-core' );
 		}
 		if ( ! empty( $result->labels ) && empty( $label_term_ids ) ) {
-			$warnings[] = __( 'The labels could not be connected to this release.', 'music-wave-core' );
+			$warnings[] = __( 'برچسب‌ها را نمی‌توان به این انتشار وصل کرد.', 'music-wave-core' );
 		}
 		if ( ! empty( $result->moods ) && empty( $mood_term_ids ) ) {
-			$warnings[] = __( 'The moods could not be connected to this release.', 'music-wave-core' );
+			$warnings[] = __( 'حال‌وهواها را نمی‌توان به این انتشار متصل کرد.', 'music-wave-core' );
 		}
 
 		$date = $result->date_for_meta();
@@ -411,16 +411,16 @@ final class MetadataLookupRoutes {
 				$warnings[] = is_wp_error( $imported )
 					? sprintf(
 						/* translators: %s: cover import error */
-						__( 'The metadata was saved, but the cover could not be imported: %s', 'music-wave-core' ),
+						__( 'فراداده ذخیره شد، اما وارد کردن جلد ممکن نبود: %s', 'music-wave-core' ),
 						$imported->get_error_message()
 					)
-					: __( 'The metadata was saved, but the cover could not be imported.', 'music-wave-core' );
+					: __( 'فراداده ذخیره شد، اما وارد کردن جلد ممکن نبود.', 'music-wave-core' );
 			}
 		}
 
 		$message = empty( $warnings )
-			? __( 'Metadata applied to this release.', 'music-wave-core' )
-			: __( 'Metadata applied with some warnings.', 'music-wave-core' );
+			? __( 'فراداده برای این انتشار اعمال شد.', 'music-wave-core' )
+			: __( 'فراداده با برخی هشدارها اعمال شد.', 'music-wave-core' );
 
 		return new \WP_REST_Response(
 			array(

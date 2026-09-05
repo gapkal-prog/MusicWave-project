@@ -44,7 +44,7 @@ final class MetadataResolver {
 			return array(
 				'success' => false,
 				'code'    => 'invalid_query',
-				'message' => __( 'Enter a track title or artist name to search.', 'music-wave-core' ),
+				'message' => __( 'عنوان قطعه یا نام هنرمند را برای جست‌وجو وارد کنید.', 'music-wave-core' ),
 				'results' => array(),
 			);
 		}
@@ -105,7 +105,7 @@ final class MetadataResolver {
 			'cached'   => false,
 			'code'     => 'no_results',
 			'attempts' => $attempts,
-			'message'  => __( 'No matches found. Try a different title or artist spelling.', 'music-wave-core' ),
+			'message'  => __( 'هیچ منطبقی یافت نشد. عنوان یا املای هنرمند دیگری را امتحان کنید.', 'music-wave-core' ),
 			'results'  => array(),
 		);
 	}
@@ -148,7 +148,7 @@ final class MetadataResolver {
 	public function import_cover( string $url, string $title = '', int $post_id = 0 ) {
 		$url = (string) esc_url_raw( $url, array( 'https' ) );
 		if ( '' === $url ) {
-			return new \WP_Error( 'invalid_cover', __( 'The cover URL is invalid.', 'music-wave-core' ) );
+			return new \WP_Error( 'invalid_cover', __( 'جلد URL نامعتبر است.', 'music-wave-core' ) );
 		}
 
 		/**
@@ -177,14 +177,14 @@ final class MetadataResolver {
 		$bytes = filesize( $tmp );
 		if ( false === $bytes || $bytes < 1 || ( isset( $budgets['max_bytes'] ) && $bytes > (int) $budgets['max_bytes'] ) ) {
 			@unlink( $tmp ); // phpcs:ignore WordPress.WP.AlternativeFunctions.unlink_unlink, WordPress.PHP.NoSilencedErrors.Discouraged -- best-effort temp cleanup.
-			return new \WP_Error( 'cover_too_large', __( 'The downloaded cover exceeds the configured size budget.', 'music-wave-core' ) );
+			return new \WP_Error( 'cover_too_large', __( 'اندازهٔ جلد دانلودشده از حد تعیین‌شده بیشتر است.', 'music-wave-core' ) );
 		}
 
 		$dimensions = @getimagesize( $tmp ); // phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged -- probing untrusted bytes; failures handled below.
 		$max_pixels = isset( $budgets['max_pixels'] ) ? (int) $budgets['max_pixels'] : 5000;
 		if ( ! is_array( $dimensions ) || ! isset( $dimensions[0], $dimensions[1] ) || $dimensions[0] < 1 || $dimensions[1] < 1 || $dimensions[0] > $max_pixels || $dimensions[1] > $max_pixels ) {
 			@unlink( $tmp ); // phpcs:ignore WordPress.WP.AlternativeFunctions.unlink_unlink, WordPress.PHP.NoSilencedErrors.Discouraged -- best-effort temp cleanup.
-			return new \WP_Error( 'invalid_cover_dimensions', __( 'The downloaded cover is not a decodable image within the configured pixel budget.', 'music-wave-core' ) );
+			return new \WP_Error( 'invalid_cover_dimensions', __( 'جلد دانلودشده تصویری قابل رمزگشایی در محدودهٔ پیکسلی تعیین‌شده نیست.', 'music-wave-core' ) );
 		}
 
 		$mime       = function_exists( 'wp_get_image_mime' ) ? wp_get_image_mime( $tmp ) : false;
@@ -197,10 +197,10 @@ final class MetadataResolver {
 		);
 		if ( ! is_string( $mime ) || ! isset( $extensions[ $mime ] ) ) {
 			@unlink( $tmp ); // phpcs:ignore WordPress.WP.AlternativeFunctions.unlink_unlink, WordPress.PHP.NoSilencedErrors.Discouraged -- best-effort temp cleanup.
-			return new \WP_Error( 'invalid_cover_type', __( 'The downloaded cover is not a supported image.', 'music-wave-core' ) );
+			return new \WP_Error( 'invalid_cover_type', __( 'جلد دانلود شده یک تصویر پشتیبانی نمی‌شود.', 'music-wave-core' ) );
 		}
 
-		$title    = '' !== $title ? $title : __( 'Imported cover', 'music-wave-core' );
+		$title    = '' !== $title ? $title : __( 'جلد وارداتی', 'music-wave-core' );
 		$basename = 'music-cover-' . substr( md5( $url ), 0, 12 ) . '.' . $extensions[ $mime ];
 		$file     = array(
 			'name'     => sanitize_file_name( $basename ),
@@ -246,8 +246,8 @@ final class MetadataResolver {
 	private function provider_label( string $name ): string {
 		$labels = array(
 			'spotify'     => __( 'Spotify', 'music-wave-core' ),
-			'discogs'     => __( 'Discogs', 'music-wave-core' ),
-			'musicbrainz' => __( 'MusicBrainz + Cover Art Archive', 'music-wave-core' ),
+			'discogs'     => __( 'دیسکاگ', 'music-wave-core' ),
+			'musicbrainz' => __( 'MusicBrainz + آرشیو Cover Art', 'music-wave-core' ),
 		);
 
 		return isset( $labels[ $name ] ) ? $labels[ $name ] : $name;
@@ -278,50 +278,50 @@ final class MetadataResolver {
 		}
 
 		$type      = isset( $release_types[0] ) ? sanitize_key( (string) $release_types[0] ) : 'track';
-		$artist    = '' !== $result->artist ? $result->artist : __( 'Unknown artist', 'music-wave-core' );
+		$artist    = '' !== $result->artist ? $result->artist : __( 'هنرمند ناشناس', 'music-wave-core' );
 		$templates = array(
-			'track'           => /* translators: 1: release title, 2: artist name. */ __( '%1$s is a track by %2$s.', 'music-wave-core' ),
-			'single'          => /* translators: 1: release title, 2: artist name. */ __( '%1$s is a single by %2$s.', 'music-wave-core' ),
-			'ep'              => /* translators: 1: release title, 2: artist name. */ __( '%1$s is an EP by %2$s.', 'music-wave-core' ),
-			'album'           => /* translators: 1: release title, 2: artist name. */ __( '%1$s is an album by %2$s.', 'music-wave-core' ),
-			'mix'             => /* translators: 1: release title, 2: artist name. */ __( '%1$s is a mix by %2$s.', 'music-wave-core' ),
-			'playlist'        => /* translators: 1: release title, 2: artist name. */ __( '%1$s is a playlist curated by %2$s.', 'music-wave-core' ),
-			'podcast_show'    => /* translators: 1: release title, 2: artist name. */ __( '%1$s is a podcast show from %2$s.', 'music-wave-core' ),
-			'podcast_episode' => /* translators: 1: release title, 2: artist name. */ __( '%1$s is a podcast episode from %2$s.', 'music-wave-core' ),
+			'track'           => /* translators: 1: release title, 2: artist name. */ __( '%1$s قطعه‌ای از %2$s است.', 'music-wave-core' ),
+			'single'          => /* translators: 1: release title, 2: artist name. */ __( '%1$s تک آهنگی از %2$s است.', 'music-wave-core' ),
+			'ep'              => /* translators: 1: release title, 2: artist name. */ __( '%1$s یک EP توسط %2$s است.', 'music-wave-core' ),
+			'album'           => /* translators: 1: release title, 2: artist name. */ __( '%1$s آلبومی از %2$s است.', 'music-wave-core' ),
+			'mix'             => /* translators: 1: release title, 2: artist name. */ __( '%1$s ترکیبی از %2$s است.', 'music-wave-core' ),
+			'playlist'        => /* translators: 1: release title, 2: artist name. */ __( '%1$s یک فهرست پخش است که توسط %2$s تنظیم شده است.', 'music-wave-core' ),
+			'podcast_show'    => /* translators: 1: release title, 2: artist name. */ __( '%1$s یک نمایش پادکست از %2$s است.', 'music-wave-core' ),
+			'podcast_episode' => /* translators: 1: release title, 2: artist name. */ __( '%1$s یک قسمت پادکست از %2$s است.', 'music-wave-core' ),
 		);
 		$parts     = array( sprintf( isset( $templates[ $type ] ) ? $templates[ $type ] : $templates['track'], $result->title, $artist ) );
 		if ( '' !== $result->album && $result->album !== $result->title ) {
 			$parts[] = sprintf(
 				/* translators: %s: album title */
-				__( 'It appears on the album %s.', 'music-wave-core' ),
+				__( 'در آلبوم %s ظاهر می‌شود.', 'music-wave-core' ),
 				$result->album
 			);
 		}
 		if ( '' !== $result->year ) {
 			$parts[] = sprintf(
 				/* translators: %s: four-digit release year */
-				__( 'Release year: %s.', 'music-wave-core' ),
+				__( 'سال انتشار: %s.', 'music-wave-core' ),
 				$result->year
 			);
 		}
 		if ( ! empty( $result->genres ) ) {
 			$parts[] = sprintf(
 				/* translators: %s: comma-separated genres */
-				__( 'Genres: %s.', 'music-wave-core' ),
+				__( 'ژانرها: %s.', 'music-wave-core' ),
 				implode( ', ', array_column( $result->genres, 'name' ) )
 			);
 		}
 		if ( ! empty( $result->labels ) ) {
 			$parts[] = sprintf(
 				/* translators: %s: comma-separated record labels */
-				__( 'Labels: %s.', 'music-wave-core' ),
+				__( 'برچسب‌ها: %s.', 'music-wave-core' ),
 				implode( ', ', array_column( $result->labels, 'name' ) )
 			);
 		}
 		if ( ! empty( $result->moods ) ) {
 			$parts[] = sprintf(
 				/* translators: %s: comma-separated moods */
-				__( 'Moods: %s.', 'music-wave-core' ),
+				__( 'حال‌وهواها: %s.', 'music-wave-core' ),
 				implode( ', ', array_column( $result->moods, 'name' ) )
 			);
 		}
