@@ -3,6 +3,12 @@
   "version": 3,
   "title": "Studio",
   "settings": {
+    "custom": {
+      "scheme": {
+        "light": { "canvas": "#f8f6f1", "surface": "#ffffff", "surfaceRaised": "#efebe2", "text": "#171512", "muted": "#625d54", "accent": "#a16207", "accentStrong": "#854d0e", "editorial": "#be123c", "onAccent": "#ffffff" },
+        "dark": { "canvas": "#101112", "surface": "#191b1e", "surfaceRaised": "#24272c", "text": "#f3f1ed", "muted": "#b7b6b1", "accent": "#e2ad2e", "accentStrong": "#ffe08a", "editorial": "#ff4d6d", "onAccent": "#1a1400" }
+      }
+    },
     "color": {
       "palette": [
         { "slug": "canvas", "name": "Canvas", "color": "#101112" },

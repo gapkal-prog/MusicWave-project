@@ -4,13 +4,17 @@ Tags: music, catalog, releases, woocommerce, downloads
 Requires at least: 6.6
 Tested up to: 6.8
 Requires PHP: 7.4
-Stable tag: 0.11.2
+Stable tag: 0.11.3
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
 MusicWave Core provides catalog data, release relationships, WooCommerce mapping, customer music library, access decisions, secure-download contracts, onboarding, and diagnostics for the MusicWave theme.
 
 == Changelog ==
+
+= 0.11.3 =
+* Improvement: the persistent preview player renders inline SVG controls, a separate duration read-out, a mute button, and state attributes (`data-state`, `data-mw-volume`) so the theme can style playing, paused, loading and muted states without text glyph swaps.
+* Improvement: the seek bar announces "elapsed / total" through `aria-valuetext`; buffering shows a spinner while the toggle stays usable; `html.mw-has-player` flags an active player for layout offsets.
 
 = 0.11.2 =
 * Maintenance: normalized the editor asset formatting so the JavaScript quality gate passes cleanly.

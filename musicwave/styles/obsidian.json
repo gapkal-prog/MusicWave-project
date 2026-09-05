@@ -3,6 +3,12 @@
   "version": 3,
   "title": "Obsidian",
   "settings": {
+    "custom": {
+      "scheme": {
+        "light": { "canvas": "#f6f5fb", "surface": "#ffffff", "surfaceRaised": "#ebe9f6", "text": "#14121f", "muted": "#5a5670", "accent": "#6d28d9", "accentStrong": "#5b21b6", "editorial": "#b91c1c", "onAccent": "#ffffff" },
+        "dark": { "canvas": "#07070a", "surface": "#12131a", "surfaceRaised": "#1c1e2b", "text": "#e8eaf2", "muted": "#9aa0b8", "accent": "#7c3aed", "accentStrong": "#a78bfa", "editorial": "#ef4444", "onAccent": "#ffffff" }
+      }
+    },
     "color": {
       "palette": [
         { "slug": "canvas", "name": "Canvas", "color": "#07070a" },

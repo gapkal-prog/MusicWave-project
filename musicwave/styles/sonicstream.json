@@ -3,6 +3,12 @@
   "version": 3,
   "title": "SonicStream",
   "settings": {
+    "custom": {
+      "scheme": {
+        "light": { "canvas": "#f7f7f8", "surface": "#ffffff", "surfaceRaised": "#eef0f2", "text": "#0f1115", "muted": "#5b6170", "accent": "#15803d", "accentStrong": "#166534", "editorial": "#be123c", "onAccent": "#ffffff" },
+        "dark": { "canvas": "#0a0a0a", "surface": "#181818", "surfaceRaised": "#282828", "text": "#ffffff", "muted": "#a7a7a7", "accent": "#1db954", "accentStrong": "#1ed760", "editorial": "#fa2d48", "onAccent": "#000000" }
+      }
+    },
     "color": {
       "palette": [
         { "slug": "canvas", "name": "Canvas", "color": "#0a0a0a" },

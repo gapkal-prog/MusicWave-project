@@ -79,20 +79,45 @@
 	width: 100%;
 }
 
+/* -------------------------------------------------------------------------
+ * Global player bar
+ *
+ * Markup: music-wave-core/src/Blocks/PreviewPlayer.php::render_global_player()
+ * State:  music-wave-core/assets/preview-player.js
+ *
+ *   html.mw-has-player                — a track is loaded; reserves space
+ *   .mw-global-player[data-mw-state]  — "playing" | "paused"
+ *   .mw-global-player[data-mw-volume] — "audible" | "muted"
+ *   .__toggle[data-state]             — "paused" | "playing" | "loading"
+ *
+ * Layout: one bar with three zones (track / centre / tools). The centre zone
+ * stacks transport buttons above the timeline on wide screens; on phones the
+ * timeline becomes a hairline across the top of the bar and the bar docks to
+ * the bottom edge.
+ * ---------------------------------------------------------------------- */
+
+:root {
+	--mw-player-bar-height: 5.5rem;
+	--mw-player-control: 2.75rem;
+}
+
+/*
+ * Space reserved below the page while a track is loaded (consumed by
+ * layout.css). preview-player.js overwrites this with the measured footprint
+ * as an inline style on <html>; the values here are the no-script estimate.
+ */
+html.mw-has-player {
+	--mw-player-offset: calc(var(--mw-player-bar-height) + 1.5rem + env(safe-area-inset-bottom, 0px));
+}
+
 .mw-global-player {
 	position: fixed;
-	right: max(1rem, env(safe-area-inset-right));
-	bottom: max(1rem, env(safe-area-inset-bottom));
-	left: max(1rem, env(safe-area-inset-left));
+	inset-inline: 0;
+	inset-block-end: max(1rem, env(safe-area-inset-bottom));
 	z-index: 100;
-	display: grid;
-	grid-template-columns: minmax(11rem, 1fr) auto minmax(7rem, 14rem) auto auto auto;
-	grid-template-rows: auto auto;
-	gap: var(--wp--preset--spacing--20);
-	align-items: center;
-	max-width: 72rem;
+	box-sizing: border-box;
+	inline-size: min(72rem, calc(100% - 2 * max(1rem, env(safe-area-inset-left, 0px))));
 	margin-inline: auto;
-	padding: 0.6rem 1rem 0.8rem;
 	color: var(--mw-color-text);
 	background: color-mix(in srgb, var(--mw-color-surface) 82%, transparent);
 	border: 1px solid var(--mw-color-border);
@@ -100,25 +125,79 @@
 	box-shadow: var(--mw-shadow-floating);
 	backdrop-filter: blur(22px) saturate(1.4);
 	-webkit-backdrop-filter: blur(22px) saturate(1.4);
+	animation: mw-player-in var(--mw-speed-normal, 300ms) var(--mw-ease-out);
 }
 
 .mw-global-player[hidden] {
 	display: none;
 }
 
+@keyframes mw-player-in {
+	from {
+		opacity: 0;
+		transform: translateY(0.75rem);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+.mw-global-player__bar {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) minmax(0, 2fr) minmax(0, 1fr);
+	gap: var(--wp--preset--spacing--20, 0.75rem);
+	align-items: center;
+	min-block-size: var(--mw-player-bar-height);
+	box-sizing: border-box;
+	padding: 0.6rem 1rem;
+}
+
+/* Icons: every control carries inline SVGs that inherit currentColor. */
+.mw-global-player__icon {
+	display: block;
+	inline-size: 1.35rem;
+	block-size: 1.35rem;
+	fill: currentColor;
+	pointer-events: none;
+}
+
+/* --- Track ------------------------------------------------------------- */
+
 .mw-global-player__track {
 	display: grid;
 	grid-template-columns: 3rem minmax(0, 1fr);
 	gap: 0.75rem;
 	align-items: center;
-	min-width: 0;
+	min-inline-size: 0;
+}
+
+.mw-global-player__art,
+.mw-global-player__art-fallback {
+	grid-area: 1 / 1;
+	inline-size: 3rem;
+	block-size: 3rem;
+	border-radius: var(--mw-radius-sm);
 }
 
 .mw-global-player__art {
-	width: 3rem;
-	height: 3rem;
 	object-fit: cover;
-	border-radius: var(--mw-radius-sm);
+	background: var(--mw-color-surface-raised);
+}
+
+.mw-global-player__art-fallback {
+	display: grid;
+	place-items: center;
+	color: var(--mw-color-text-muted);
+	background: var(--mw-color-surface-raised);
+}
+
+.mw-global-player__art:not([hidden]) + .mw-global-player__art-fallback {
+	display: none;
+}
+
+.mw-global-player__meta {
+	min-inline-size: 0;
 }
 
 .mw-global-player__track strong,
@@ -129,81 +208,206 @@
 	white-space: nowrap;
 }
 
-.mw-global-player__track span {
-	margin-top: 0.15rem;
+.mw-global-player__title {
+	font-size: 0.95rem;
+	line-height: 1.3;
+}
+
+.mw-global-player__artist {
+	margin-block-start: 0.15rem;
 	color: var(--mw-color-text-muted);
-	font-size: 0.875rem;
+	font-size: 0.85rem;
+}
+
+/* --- Centre: transport + timeline --------------------------------------- */
+
+.mw-global-player__center {
+	display: flex;
+	flex-direction: column;
+	gap: 0.35rem;
+	align-items: center;
+	min-inline-size: 0;
 }
 
 .mw-global-player__controls {
 	display: flex;
-	gap: 0.25rem;
+	gap: 0.5rem;
+	align-items: center;
+	justify-content: center;
 }
 
 .mw-global-player button {
 	display: inline-grid;
-	width: 2.5rem;
-	height: 2.5rem;
+	flex: 0 0 auto;
+	inline-size: var(--mw-player-control);
+	block-size: var(--mw-player-control);
 	padding: 0;
 	place-items: center;
 	color: var(--mw-color-text-muted);
 	background: transparent;
 	border: 1px solid transparent;
 	border-radius: 50%;
+	font: inherit;
+	line-height: 1;
 	cursor: pointer;
-	transition: color var(--mw-speed-fast, 150ms) var(--mw-ease-snap, ease), background-color var(--mw-speed-fast, 150ms) ease, scale var(--mw-speed-fast, 150ms) var(--mw-ease-snap, ease);
+	transition:
+		color var(--mw-speed-fast, 150ms) var(--mw-ease-snap, ease),
+		background-color var(--mw-speed-fast, 150ms) ease,
+		scale var(--mw-speed-fast, 150ms) var(--mw-ease-snap, ease);
 }
 
-.mw-global-player button:hover:not(:disabled) {
+.mw-global-player button:hover:not(:disabled),
+.mw-global-player button:focus-visible {
 	color: var(--mw-color-text);
+	background: color-mix(in srgb, var(--mw-color-text) 8%, transparent);
+}
+
+.mw-global-player button:focus-visible {
+	outline: 2px solid var(--mw-color-accent);
+	outline-offset: 2px;
 }
 
 .mw-global-player button:disabled {
-	opacity: 0.45;
+	opacity: 0.4;
 	cursor: not-allowed;
 }
 
 /*
  * SonicStream transport: the play/pause trigger is a solid light disc with
- * the signature green glow that scales on hover; secondary controls stay
- * quiet until pointed at.
+ * the signature glow that scales on hover; secondary controls stay quiet
+ * until pointed at.
  */
 .mw-global-player__toggle {
-	width: 2.25rem;
-	height: 2.25rem;
+	position: relative;
+	inline-size: 3rem;
+	block-size: 3rem;
 	color: var(--mw-color-canvas);
 	background: var(--mw-color-text);
 	box-shadow: 0 0.375rem 1rem color-mix(in srgb, var(--mw-color-canvas) 55%, transparent);
 }
 
-.mw-global-player__toggle:hover:not(:disabled) {
+.mw-global-player__toggle:hover:not(:disabled),
+.mw-global-player__toggle:focus-visible {
 	color: var(--mw-color-canvas);
 	background: var(--mw-color-text);
 	scale: 1.06;
 }
 
-.mw-global-player__toggle[aria-pressed="true"] {
-	background: var(--mw-color-accent);
+.mw-global-player[data-mw-state="playing"] .mw-global-player__toggle {
 	color: var(--mw-color-on-accent);
+	background: var(--mw-color-accent);
 	box-shadow: 0 0.5rem 1.5rem color-mix(in srgb, var(--mw-color-accent) 45%, rgb(0 0 0 / 30%));
 }
 
-.mw-global-player__progress {
-	grid-column: 1 / -1;
-	grid-row: 2;
-	min-width: 0;
+.mw-global-player[data-mw-state="playing"] .mw-global-player__toggle:hover:not(:disabled),
+.mw-global-player[data-mw-state="playing"] .mw-global-player__toggle:focus-visible {
+	background: var(--mw-color-accent-strong);
 }
 
-.mw-global-player__progress input {
-	width: 100%;
+.mw-global-player__toggle .mw-global-player__icon {
+	grid-area: 1 / 1;
+	inline-size: 1.5rem;
+	block-size: 1.5rem;
+	opacity: 0;
+	transform: scale(0.7);
+	transition: opacity var(--mw-speed-fast, 150ms) ease, transform var(--mw-speed-fast, 150ms) var(--mw-ease-snap, ease);
+}
+
+.mw-global-player__toggle:not([data-state]) .mw-global-player__icon--play,
+.mw-global-player__toggle[data-state="paused"] .mw-global-player__icon--play,
+.mw-global-player__toggle[data-state="playing"] .mw-global-player__icon--pause,
+.mw-global-player__toggle[data-state="loading"] .mw-global-player__icon--spinner {
+	opacity: 1;
+	transform: none;
+}
+
+/*
+ * Optical centring: a right-pointing triangle reads centred when nudged
+ * slightly to the right. Transport icons follow the direction of time and are
+ * deliberately not mirrored in RTL, so the offset is physical on purpose.
+ */
+.mw-global-player__toggle .mw-global-player__icon--play {
+	margin-left: 0.15rem;
+}
+
+.mw-global-player__toggle[data-state="loading"] {
+	cursor: progress;
+}
+
+.mw-global-player__toggle[data-state="loading"] .mw-global-player__icon--spinner {
+	animation: mw-player-spin 900ms linear infinite;
+}
+
+@keyframes mw-player-spin {
+	to {
+		transform: rotate(360deg);
+	}
+}
+
+/*
+ * Timeline: elapsed / seek bar / total. Time is numeric and the native range
+ * fills from the left, so the whole strip is LTR in every locale — elapsed
+ * always sits at the filled end of the bar.
+ */
+.mw-global-player__timeline {
+	display: grid;
+	grid-template-columns: auto minmax(0, 1fr) auto;
+	gap: 0.6rem;
+	align-items: center;
+	inline-size: 100%;
+	max-inline-size: 34rem;
+	direction: ltr;
+}
+
+.mw-global-player__time,
+.mw-global-player__duration {
+	min-inline-size: 2.6em;
+	color: var(--mw-color-text-muted);
+	font-size: 0.75rem;
+	font-variant-numeric: tabular-nums;
+	white-space: nowrap;
+}
+
+.mw-global-player__time {
+	text-align: end;
+}
+
+.mw-global-player__duration {
+	text-align: start;
+}
+
+.mw-global-player__progress {
+	display: block;
+	min-inline-size: 0;
+	/* Generous hit area around the 6px track for touch. */
+	padding-block: 0.6rem;
+	cursor: pointer;
+}
+
+.mw-global-player__progress input,
+.mw-global-player__volume {
+	display: block;
+	inline-size: 100%;
+	block-size: 1rem;
+	margin: 0;
+	background: transparent;
+	appearance: none;
 	accent-color: var(--mw-color-accent);
+	cursor: pointer;
+}
+
+.mw-global-player__progress input:focus-visible,
+.mw-global-player__volume:focus-visible {
+	outline: 2px solid var(--mw-color-accent);
+	outline-offset: 4px;
+	border-radius: 999px;
 }
 
 /* SonicStream seek bar: the filled portion carries the green-to-green
  * gradient (--mw-progress is synced from preview-player.js) and a 12px
- * white thumb surfaces only while the visitor points at or focuses it. */
+ * white thumb surfaces while the visitor points at, touches, or focuses it. */
 .mw-global-player__progress input::-webkit-slider-runnable-track {
-	height: 0.375rem;
+	block-size: 0.375rem;
 	border-radius: 999px;
 	background: linear-gradient(
 		to right,
@@ -214,93 +418,185 @@
 }
 
 .mw-global-player__progress input::-webkit-slider-thumb {
-	width: 0.75rem;
-	height: 0.75rem;
-	margin-block-start: calc((0.375rem - 0.75rem) / 2);
+	inline-size: 0.875rem;
+	block-size: 0.875rem;
+	margin-block-start: calc((0.375rem - 0.875rem) / 2);
 	appearance: none;
 	background: var(--mw-color-text);
 	border: 0;
 	border-radius: 50%;
 	box-shadow: 0 0.125rem 0.5rem rgb(0 0 0 / 55%);
-	cursor: pointer;
 	opacity: 0;
 	transform: scale(0.6);
 	transition: opacity var(--mw-speed-fast, 150ms) ease, transform var(--mw-speed-fast, 150ms) var(--mw-ease-snap, ease);
 }
 
 .mw-global-player__progress:hover input::-webkit-slider-thumb,
-.mw-global-player__progress input:focus-visible::-webkit-slider-thumb {
+.mw-global-player__progress input:focus-visible::-webkit-slider-thumb,
+.mw-global-player__progress input:active::-webkit-slider-thumb {
 	opacity: 1;
 	transform: scale(1);
 }
 
 .mw-global-player__progress input::-moz-range-track {
-	height: 0.375rem;
+	block-size: 0.375rem;
 	border-radius: 999px;
 	background: color-mix(in srgb, var(--mw-color-text) 18%, transparent);
 }
 
 .mw-global-player__progress input::-moz-range-progress {
-	height: 0.375rem;
+	block-size: 0.375rem;
 	border-radius: 999px;
 	background: var(--mw-gradient-progress, linear-gradient(90deg, var(--mw-color-accent), var(--mw-color-accent-strong)));
 }
 
 .mw-global-player__progress input::-moz-range-thumb {
-	width: 0.75rem;
-	height: 0.75rem;
+	inline-size: 0.875rem;
+	block-size: 0.875rem;
 	background: var(--mw-color-text);
 	border: 0;
 	border-radius: 50%;
 	box-shadow: 0 0.125rem 0.5rem rgb(0 0 0 / 55%);
-	cursor: pointer;
 	opacity: 0;
-	transition: opacity var(--mw-speed-fast, 150ms) ease, transform var(--mw-speed-fast, 150ms) var(--mw-ease-snap, ease);
+	transition: opacity var(--mw-speed-fast, 150ms) ease;
 }
 
 .mw-global-player__progress:hover input::-moz-range-thumb,
-.mw-global-player__progress input:focus-visible::-moz-range-thumb {
+.mw-global-player__progress input:focus-visible::-moz-range-thumb,
+.mw-global-player__progress input:active::-moz-range-thumb {
 	opacity: 1;
 }
 
-.mw-global-player__time {
-	color: var(--mw-color-text-muted);
-	font-size: 0.8125rem;
-	font-variant-numeric: tabular-nums;
-	white-space: nowrap;
+/* Touch devices have no hover: keep the thumb visible so the bar reads as draggable. */
+@media (hover: none) {
+	.mw-global-player__progress input::-webkit-slider-thumb {
+		opacity: 1;
+		transform: scale(1);
+	}
+
+	.mw-global-player__progress input::-moz-range-thumb {
+		opacity: 1;
+	}
 }
 
-.mw-global-player__close {
-	font-size: 1.25rem;
+/* --- Tools: queue, volume, close --------------------------------------- */
+
+.mw-global-player__tools {
+	display: flex;
+	gap: 0.25rem;
+	align-items: center;
+	justify-content: flex-end;
+	min-inline-size: 0;
+}
+
+/* `display` on the buttons and links above would otherwise defeat the hidden attribute. */
+.mw-global-player [hidden] {
+	display: none;
+}
+
+.mw-global-player__queue-toggle[aria-expanded="true"] {
+	color: var(--mw-color-accent-strong);
+	background: color-mix(in srgb, var(--mw-color-accent) 14%, transparent);
+}
+
+.mw-global-player__volume-group {
+	display: flex;
+	gap: 0.25rem;
+	align-items: center;
+}
+
+.mw-global-player__mute .mw-global-player__icon {
+	grid-area: 1 / 1;
+}
+
+.mw-global-player__mute .mw-global-player__icon--volume-off,
+.mw-global-player[data-mw-volume="muted"] .mw-global-player__mute .mw-global-player__icon--volume {
+	display: none;
+}
+
+.mw-global-player[data-mw-volume="muted"] .mw-global-player__mute .mw-global-player__icon--volume-off {
+	display: block;
+}
+
+.mw-global-player[data-mw-volume="muted"] .mw-global-player__mute {
+	color: var(--mw-color-danger, #f87171);
 }
 
 .mw-global-player__volume {
-	width: 5rem;
-	min-width: 0;
-	accent-color: var(--mw-color-accent);
+	inline-size: 5.5rem;
+	min-inline-size: 0;
+	transition: inline-size var(--mw-speed-normal, 300ms) var(--mw-ease-out);
 }
 
 .mw-global-player__volume::-webkit-slider-runnable-track {
-	height: 0.25rem;
+	block-size: 0.25rem;
 	border-radius: 999px;
-	background: color-mix(in srgb, var(--mw-color-text) 18%, transparent);
+	background: linear-gradient(
+		to right,
+		var(--mw-color-text) var(--mw-volume, 100%),
+		color-mix(in srgb, var(--mw-color-text) 18%, transparent) var(--mw-volume, 100%)
+	);
+}
+
+.mw-global-player__volume::-webkit-slider-thumb {
+	inline-size: 0.75rem;
+	block-size: 0.75rem;
+	margin-block-start: calc((0.25rem - 0.75rem) / 2);
+	appearance: none;
+	background: var(--mw-color-text);
+	border: 0;
+	border-radius: 50%;
 }
 
 .mw-global-player__volume:hover::-webkit-slider-runnable-track,
 .mw-global-player__volume:focus-visible::-webkit-slider-runnable-track {
+	background: linear-gradient(
+		to right,
+		var(--mw-color-accent) var(--mw-volume, 100%),
+		color-mix(in srgb, var(--mw-color-text) 18%, transparent) var(--mw-volume, 100%)
+	);
+}
+
+.mw-global-player__volume::-moz-range-track {
+	block-size: 0.25rem;
+	border-radius: 999px;
+	background: color-mix(in srgb, var(--mw-color-text) 18%, transparent);
+}
+
+.mw-global-player__volume::-moz-range-progress {
+	block-size: 0.25rem;
+	border-radius: 999px;
+	background: var(--mw-color-text);
+}
+
+.mw-global-player__volume:hover::-moz-range-progress,
+.mw-global-player__volume:focus-visible::-moz-range-progress {
 	background: var(--mw-color-accent);
 }
 
-/* Queue panel floating above the player bar. */
+.mw-global-player__volume::-moz-range-thumb {
+	inline-size: 0.75rem;
+	block-size: 0.75rem;
+	background: var(--mw-color-text);
+	border: 0;
+	border-radius: 50%;
+}
+
+/* Native sliders fill from the start edge; the gradient stops assume LTR. */
+.mw-global-player__volume {
+	direction: ltr;
+}
+
+/* --- Queue panel floating above the bar --------------------------------- */
+
 .mw-global-player__queue {
 	position: absolute;
-	right: 0;
-	bottom: calc(100% + 0.5rem);
-	left: 0;
+	inset-inline: 0;
+	inset-block-end: calc(100% + 0.5rem);
 	z-index: 1;
 	display: flex;
 	flex-direction: column;
-	max-height: min(22rem, 60vh);
+	max-block-size: min(22rem, 60vh);
 	overflow: hidden auto;
 	color: var(--mw-color-text);
 	background: var(--mw-color-surface);
@@ -309,17 +605,13 @@
 	box-shadow: var(--mw-shadow-floating);
 }
 
-.mw-global-player__queue[hidden] {
-	display: none;
-}
-
 .mw-global-player__queue-header {
 	position: sticky;
-	top: 0;
+	inset-block-start: 0;
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
-	padding: 0.65rem 0.9rem;
+	padding: 0.5rem 0.65rem 0.5rem 0.9rem;
 	background: var(--mw-color-surface-raised);
 	border-block-end: 1px solid var(--mw-color-border);
 }
@@ -329,10 +621,10 @@
 	font-size: 0.9375rem;
 }
 
-.mw-global-player__queue-close {
-	width: 2rem !important;
-	height: 2rem !important;
-	font-size: 1rem;
+.mw-global-player__queue-close,
+.mw-global-player__notice-close {
+	inline-size: 2.25rem;
+	block-size: 2.25rem;
 }
 
 .mw-global-player__queue-list {
@@ -343,24 +635,27 @@
 	scrollbar-color: color-mix(in srgb, var(--mw-color-text) 25%, transparent) transparent;
 }
 
-.mw-global-player__queue-item {
+.mw-global-player .mw-global-player__queue-item {
 	display: grid;
 	grid-template-columns: 1.5rem minmax(0, 1fr) auto;
 	gap: 0.75rem;
 	align-items: center;
-	width: 100%;
+	inline-size: 100%;
+	block-size: auto;
+	min-block-size: 2.75rem;
 	padding: 0.45rem 0.65rem;
+	color: inherit;
 	text-align: start;
 	white-space: nowrap;
 	border-radius: var(--mw-radius-sm);
 	transition: background-color 140ms ease;
 }
 
-.mw-global-player__queue-item:hover {
+.mw-global-player .mw-global-player__queue-item:hover {
 	background: color-mix(in srgb, var(--mw-color-accent) 12%, transparent);
 }
 
-.mw-global-player__queue-item[aria-current="true"] {
+.mw-global-player .mw-global-player__queue-item[aria-current="true"] {
 	color: var(--mw-color-on-accent);
 	background: var(--mw-color-accent);
 }
@@ -396,17 +691,17 @@
 	border-radius: 999px;
 }
 
-/* Upsell / preview notice floating above the player bar. */
+/* --- Upsell / preview notice floating above the bar --------------------- */
+
 .mw-global-player__notice {
 	position: absolute;
-	right: 0;
-	bottom: calc(100% + 0.5rem);
-	left: 0;
+	inset-inline: 0;
+	inset-block-end: calc(100% + 0.5rem);
 	display: flex;
 	flex-wrap: wrap;
 	gap: 0.5rem;
 	align-items: center;
-	padding: 0.7rem 0.9rem;
+	padding: 0.6rem 0.65rem 0.6rem 0.9rem;
 	color: var(--mw-color-text);
 	background: var(--mw-color-surface);
 	border: 1px solid var(--mw-color-border);
@@ -415,17 +710,13 @@
 	box-shadow: var(--mw-shadow-floating);
 }
 
-.mw-global-player__notice[hidden] {
-	display: none;
-}
-
 .mw-global-player__notice-message {
 	flex: 1 1 14rem;
 	font-size: 0.9rem;
 }
 
 .mw-global-player__notice-cta {
-	min-height: 2.25rem;
+	min-block-size: 2.25rem;
 	padding: 0.4rem 1rem;
 	font-size: 0.875rem;
 }
@@ -437,10 +728,200 @@
 }
 
 .mw-global-player__notice-close {
-	width: 2rem !important;
-	height: 2rem !important;
 	margin-inline-start: auto;
-	font-size: 1rem;
+}
+
+/* --- Responsive --------------------------------------------------------- */
+
+@media (max-width: 64rem) {
+	.mw-global-player__bar {
+		grid-template-columns: minmax(0, 1fr) auto auto;
+		grid-template-areas:
+			"track controls tools"
+			"timeline timeline timeline";
+		row-gap: 0.25rem;
+	}
+
+	.mw-global-player__track {
+		grid-area: track;
+	}
+
+	.mw-global-player__center {
+		display: contents;
+	}
+
+	.mw-global-player__controls {
+		grid-area: controls;
+	}
+
+	.mw-global-player__timeline {
+		grid-area: timeline;
+		max-inline-size: none;
+	}
+
+	.mw-global-player__tools {
+		grid-area: tools;
+	}
+
+	/* Volume slider collapses to the mute button; the OS rocker owns level on tablets. */
+	.mw-global-player__volume {
+		display: none;
+	}
+}
+
+@media (max-width: 48rem) {
+	html.mw-has-player {
+		--mw-player-offset: calc(6.5rem + env(safe-area-inset-bottom, 0px));
+	}
+
+	/* Dock: full-width card flush with the bottom edge, safe-area aware. */
+	.mw-global-player {
+		inset-inline: 0;
+		inset-block-end: 0;
+		inline-size: 100%;
+		border-inline: 0;
+		border-block-end: 0;
+		border-radius: var(--mw-radius-lg) var(--mw-radius-lg) 0 0;
+		padding-inline: env(safe-area-inset-left, 0px) env(safe-area-inset-right, 0px);
+		padding-block-end: env(safe-area-inset-bottom, 0px);
+	}
+
+	.mw-global-player__bar {
+		grid-template-columns: minmax(0, 1fr) auto auto;
+		grid-template-areas:
+			"timeline timeline timeline"
+			"track controls tools";
+		gap: 0.25rem 0.35rem;
+		min-block-size: 0;
+		padding: 0.25rem 0.75rem 0.6rem;
+	}
+
+	/* The seek bar runs full width across the top of the bar; elapsed and
+	 * total sit beneath its two ends. */
+	.mw-global-player__timeline {
+		grid-template-columns: auto minmax(0, 1fr) auto;
+		grid-template-areas:
+			"bar bar bar"
+			"time . duration";
+		gap: 0 0.25rem;
+	}
+
+	.mw-global-player__progress {
+		grid-area: bar;
+		padding-block: 0.25rem;
+	}
+
+	.mw-global-player__progress input::-webkit-slider-runnable-track {
+		block-size: 0.25rem;
+	}
+
+	.mw-global-player__progress input::-moz-range-track,
+	.mw-global-player__progress input::-moz-range-progress {
+		block-size: 0.25rem;
+	}
+
+	.mw-global-player__time {
+		grid-area: time;
+	}
+
+	.mw-global-player__duration {
+		grid-area: duration;
+	}
+
+	.mw-global-player__art,
+	.mw-global-player__art-fallback {
+		inline-size: 2.5rem;
+		block-size: 2.5rem;
+	}
+
+	.mw-global-player__track {
+		grid-template-columns: 2.5rem minmax(0, 1fr);
+		gap: 0.6rem;
+	}
+
+	.mw-global-player__title {
+		font-size: 0.9rem;
+	}
+
+	.mw-global-player__artist {
+		font-size: 0.8rem;
+	}
+
+	.mw-global-player__controls {
+		grid-area: controls;
+		gap: 0.15rem;
+	}
+
+	/* Tools shrink to queue + close; the OS rocker owns volume on phones. */
+	.mw-global-player__tools {
+		gap: 0;
+	}
+
+	.mw-global-player__volume-group {
+		display: none;
+	}
+
+	.mw-global-player__toggle {
+		inline-size: 2.75rem;
+		block-size: 2.75rem;
+	}
+
+	.mw-global-player__queue,
+	.mw-global-player__notice {
+		inset-inline: 0.5rem;
+		inset-block-end: calc(100% + 0.35rem);
+	}
+}
+
+/* Narrow phones: drop the previous button (swipe-back is rare; keyboard and queue still reach it). */
+@media (max-width: 24rem) {
+	.mw-global-player__previous {
+		display: none;
+	}
+
+	.mw-global-player__controls {
+		gap: 0;
+	}
+
+	:root {
+		--mw-player-control: 2.5rem;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.mw-global-player,
+	.mw-global-player button,
+	.mw-global-player__toggle .mw-global-player__icon,
+	.mw-global-player__progress input::-webkit-slider-thumb,
+	.mw-global-player__progress input::-moz-range-thumb,
+	.mw-global-player__volume {
+		animation: none;
+		transition: none;
+	}
+
+	.mw-global-player__toggle:hover:not(:disabled) {
+		scale: 1;
+	}
+
+	.mw-global-player__toggle[data-state="loading"] .mw-global-player__icon--spinner {
+		animation: mw-player-spin 1.6s steps(8) infinite;
+	}
+}
+
+@media (forced-colors: active) {
+	.mw-global-player {
+		border: 1px solid CanvasText;
+	}
+
+	.mw-global-player button {
+		border-color: ButtonText;
+	}
+
+	.mw-global-player__toggle {
+		forced-color-adjust: none;
+		color: ButtonFace;
+		background: ButtonText;
+	}
 }
 
 /* Shared artwork play triggers on release cards. */
@@ -503,34 +984,5 @@
 	.mw-equalizer i {
 		animation: none;
 		transform: scaleY(0.65);
-	}
-}
-
-@media (max-width: 64rem) {
-	.mw-global-player__volume {
-		display: none;
-	}
-}
-
-@media (max-width: 52rem) {
-	.mw-global-player {
-		grid-template-columns: minmax(0, 1fr) auto auto;
-	}
-
-	/* Progress keeps its full-width second row on small screens. */
-	.mw-global-player__progress {
-		grid-column: 1 / -1;
-		grid-row: 2;
-	}
-
-	.mw-global-player__time {
-		display: none;
-	}
-}
-
-@media (max-width: 32rem) {
-	.mw-global-player__previous,
-	.mw-global-player__next {
-		display: none !important;
 	}
 }

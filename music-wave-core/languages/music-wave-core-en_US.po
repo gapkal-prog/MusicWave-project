@@ -1111,6 +1111,12 @@ msgstr "Close queue"
 msgid "بستن پخش‌کننده"
 msgstr "Close player"
 
+msgid "باصدا"
+msgstr "Unmute"
+
+msgid "بی‌صدا"
+msgstr "Mute"
+
 msgid "بسته نرم افزاری ZIP"
 msgstr "ZIP bundle"
 

@@ -3,6 +3,7 @@
 
 	var storageKey = 'musicwave-theme';
 	var themes = [ 'system', 'light', 'dark' ];
+	var readyAttribute = 'data-mw-theme-ready';
 
 	function savedTheme() {
 		try {
@@ -32,46 +33,77 @@
 		} catch ( error ) {}
 	}
 
-	var themeIcons = { system: '◐', light: '☼', dark: '◒' };
+	function labels() {
+		return window.musicwaveThemePreference &&
+			window.musicwaveThemePreference.labels
+			? window.musicwaveThemePreference.labels
+			: {};
+	}
 
 	function updateButton( button, theme ) {
-		var labels =
-			window.musicwaveThemePreference &&
-			window.musicwaveThemePreference.labels
-				? window.musicwaveThemePreference.labels
-				: {};
+		var text = labels()[ theme ] || theme;
+		// The button ships three inline SVG icons; theme-toggle.css reveals the
+		// one matching data-mw-theme-value. Legacy markup (a single glyph) is
+		// left untouched so the control keeps working without the icons.
 		button.setAttribute( 'data-mw-theme-value', theme );
-		button.setAttribute( 'aria-label', labels[ theme ] || theme );
-		button.setAttribute( 'title', labels[ theme ] || theme );
-		button.textContent = themeIcons[ theme ] || themeIcons.system;
+		button.setAttribute( 'aria-label', text );
+		button.setAttribute( 'title', text );
 	}
 
 	function nextTheme( theme ) {
 		return themes[ ( themes.indexOf( theme ) + 1 ) % themes.length ];
 	}
 
-	function initialize( button ) {
-		var theme = savedTheme();
-		applyTheme( theme );
-		updateButton( button, theme );
-		button.addEventListener( 'click', function () {
-			theme = nextTheme( theme );
-			storeTheme( theme );
-			applyTheme( theme );
+	function allButtons() {
+		return Array.prototype.slice.call(
+			document.querySelectorAll( '.mw-theme-toggle' )
+		);
+	}
+
+	function syncButtons( theme ) {
+		allButtons().forEach( function ( button ) {
 			updateButton( button, theme );
 		} );
 	}
 
-	function initializeAll() {
-		var button = document.querySelector( '.mw-theme-toggle' );
-		if ( button && ! button.getAttribute( 'data-mw-theme-ready' ) ) {
-			button.setAttribute( 'data-mw-theme-ready', '1' );
-			initialize( button );
-		}
+	function initialize( button ) {
+		button.addEventListener( 'click', function () {
+			var theme = nextTheme( savedTheme() );
+			storeTheme( theme );
+			applyTheme( theme );
+			// Header, footer, and sidebar toggles share one preference; keep
+			// every instance (including ones added later) in sync.
+			syncButtons( theme );
+		} );
 	}
+
+	function initializeAll() {
+		var theme = savedTheme();
+		applyTheme( theme );
+		allButtons().forEach( function ( button ) {
+			updateButton( button, theme );
+			if ( ! button.getAttribute( readyAttribute ) ) {
+				button.setAttribute( readyAttribute, '1' );
+				initialize( button );
+			}
+		} );
+	}
+
+	// Another tab changed the preference: mirror it without a reload.
+	window.addEventListener( 'storage', function ( event ) {
+		if ( event.key === storageKey || null === event.key ) {
+			var theme = savedTheme();
+			applyTheme( theme );
+			syncButtons( theme );
+		}
+	} );
 
 	// Swapped-in pages from the persistent player navigation reuse the same
 	// initialization path through the `mw-page-rendered` event.
-	document.addEventListener( 'DOMContentLoaded', initializeAll );
+	if ( 'loading' === document.readyState ) {
+		document.addEventListener( 'DOMContentLoaded', initializeAll );
+	} else {
+		initializeAll();
+	}
 	document.addEventListener( 'mw-page-rendered', initializeAll );
 } )();

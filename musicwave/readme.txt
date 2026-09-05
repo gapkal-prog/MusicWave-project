@@ -4,13 +4,22 @@ Tags: block-theme, music, woocommerce, rtl, accessibility
 Requires at least: 6.6
 Tested up to: 6.8
 Requires PHP: 7.4
-Stable tag: 0.7.4
+Stable tag: 0.8.0
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
 MusicWave is a block theme for music catalogs and stores. It uses MusicWave Core for catalog data and supports WooCommerce plus MusicWave VIP protected downloads.
 
 == Changelog ==
+
+= 0.8.0 =
+* New: light mode now remaps the theme.json colour presets (dark text on light surfaces) instead of deriving colours; every style variation declares its light and dark palette in `settings.custom.scheme`.
+* New: the header search is a 44px icon button that expands on demand (core `button-only` Search block).
+* New: theme preference toggle uses three inline SVG icons and keeps every instance (header, footer, sidebar) in sync.
+* Fix: one header breakpoint (64rem) for all four header parts; the hamburger overlay is complete, scrollable, admin-bar aware, and no longer disappears between 600px and 767px.
+* Fix: sticky headers keep their z-index and admin-bar offset above core's position support; anchors respect `scroll-padding-top`.
+* Fix: the global preview player is fully responsive (three-zone bar, docked layout on phones), uses SVG icons, shows elapsed/total time on every viewport, exposes `aria-valuetext`, gains a mute control, and reserves bottom space via `html.mw-has-player`.
+* Fix: footer social icons follow the palette presets; corrected a malformed selector in playlists.css.
 
 = 0.7.4 =
 * Fix: registered the public playlists, cart, and checkout templates in the Site Editor.

@@ -306,6 +306,88 @@ function musicwave_preload_theme_preference(): void {
 add_action( 'wp_head', 'musicwave_preload_theme_preference', 0 );
 
 /**
+ * Resolve the native colour scheme of the active global styles.
+ *
+ * Style variations such as Cassette and Sunrise ship a light palette while the
+ * default palette is dark. tokens.css needs to know which one is active so the
+ * visitor's light/dark preference remaps presets only when it differs from the
+ * palette the merchant is editing in the Site Editor.
+ *
+ * @return string Either "light" or "dark".
+ */
+function musicwave_native_color_scheme(): string {
+	$canvas = '';
+	if ( function_exists( 'wp_get_global_settings' ) ) {
+		$settings = wp_get_global_settings( array( 'color', 'palette' ) );
+		$palettes = is_array( $settings ) ? $settings : array();
+		foreach ( array( 'custom', 'theme' ) as $origin ) {
+			if ( empty( $palettes[ $origin ] ) || ! is_array( $palettes[ $origin ] ) ) {
+				continue;
+			}
+			foreach ( $palettes[ $origin ] as $color ) {
+				if ( isset( $color['slug'], $color['color'] ) && 'canvas' === $color['slug'] && is_string( $color['color'] ) ) {
+					$canvas = $color['color'];
+					break 2;
+				}
+			}
+		}
+	}
+
+	$scheme = musicwave_is_light_color( $canvas ) ? 'light' : 'dark';
+
+	/**
+	 * Filter the native colour scheme reported to the stylesheet.
+	 *
+	 * @param string $scheme Either "light" or "dark".
+	 * @param string $canvas Resolved canvas colour from the active palette.
+	 */
+	$filtered = apply_filters( 'musicwave_native_color_scheme', $scheme, $canvas );
+
+	return 'light' === $filtered ? 'light' : 'dark';
+}
+
+/**
+ * Decide whether a hex colour reads as light (WCAG relative luminance > 0.5).
+ *
+ * Non-hex values (gradients, CSS functions) are treated as dark because the
+ * default palette is dark.
+ *
+ * @param string $hex Colour in #rgb, #rrggbb, or #rrggbbaa notation.
+ * @return bool
+ */
+function musicwave_is_light_color( string $hex ): bool {
+	$hex = ltrim( trim( $hex ), '#' );
+	if ( 3 === strlen( $hex ) || 4 === strlen( $hex ) ) {
+		$hex = $hex[0] . $hex[0] . $hex[1] . $hex[1] . $hex[2] . $hex[2];
+	}
+	// ctype is optional on some hosts; a pattern keeps the check dependency-free.
+	if ( ! preg_match( '/^[0-9a-f]{6}/i', $hex ) ) {
+		return false;
+	}
+
+	$channels = array();
+	foreach ( array( 0, 2, 4 ) as $offset ) {
+		$value = hexdec( substr( $hex, $offset, 2 ) ) / 255;
+		$channels[] = $value <= 0.03928 ? $value / 12.92 : pow( ( $value + 0.055 ) / 1.055, 2.4 );
+	}
+
+	$luminance = 0.2126 * $channels[0] + 0.7152 * $channels[1] + 0.0722 * $channels[2];
+
+	return $luminance > 0.5;
+}
+
+/**
+ * Expose the native colour scheme on <html> for tokens.css.
+ *
+ * @param string $output Language attributes markup.
+ * @return string
+ */
+function musicwave_language_attributes( string $output ): string {
+	return trim( $output . ' data-mw-scheme="' . esc_attr( musicwave_native_color_scheme() ) . '"' );
+}
+add_filter( 'language_attributes', 'musicwave_language_attributes' );
+
+/**
  * Warm the connection to the font CDN before stylesheets resolve.
  *
  * @param array<int|string, mixed> $urls          Resource hint URLs.
@@ -1978,5 +2060,11 @@ add_action( 'template_redirect', 'musicwave_track_release_view' );
 function musicwave_render_theme_toggle(): string {
 	$label = __( 'استفاده از پوسته سیستم', 'musicwave' );
 
-	return '<button class="mw-theme-toggle" type="button" aria-label="' . esc_attr( $label ) . '" title="' . esc_attr( $label ) . '">◐</button>';
+	// One SVG per preference; theme-toggle.css reveals the icon that matches
+	// data-mw-theme-value so theme-preference.js only swaps an attribute.
+	$icons = '<svg class="mw-theme-toggle__icon mw-theme-toggle__icon--system" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false"><path fill="currentColor" d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20Zm0 2v16a8 8 0 0 1 0-16Z"/></svg>'
+		. '<svg class="mw-theme-toggle__icon mw-theme-toggle__icon--light" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false"><path fill="currentColor" d="M12 7a5 5 0 1 0 0 10 5 5 0 0 0 0-10Zm0-6a1 1 0 0 1 1 1v2a1 1 0 1 1-2 0V2a1 1 0 0 1 1-1Zm0 19a1 1 0 0 1 1 1v2a1 1 0 1 1-2 0v-2a1 1 0 0 1 1-1ZM1 12a1 1 0 0 1 1-1h2a1 1 0 1 1 0 2H2a1 1 0 0 1-1-1Zm19 0a1 1 0 0 1 1-1h2a1 1 0 1 1 0 2h-2a1 1 0 0 1-1-1ZM4.22 4.22a1 1 0 0 1 1.42 0l1.41 1.41a1 1 0 0 1-1.41 1.42L4.22 5.64a1 1 0 0 1 0-1.42Zm12.73 12.73a1 1 0 0 1 1.41 0l1.42 1.41a1 1 0 0 1-1.42 1.42l-1.41-1.42a1 1 0 0 1 0-1.41Zm2.83-12.73a1 1 0 0 1 0 1.42l-1.42 1.41a1 1 0 1 1-1.41-1.41l1.41-1.42a1 1 0 0 1 1.42 0ZM7.05 16.95a1 1 0 0 1 0 1.41l-1.41 1.42a1 1 0 0 1-1.42-1.42l1.42-1.41a1 1 0 0 1 1.41 0Z"/></svg>'
+		. '<svg class="mw-theme-toggle__icon mw-theme-toggle__icon--dark" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false"><path fill="currentColor" d="M21.64 13.4A9 9 0 0 1 10.6 2.36a1 1 0 0 0-1.2-1.3A11 11 0 1 0 22.94 14.6a1 1 0 0 0-1.3-1.2ZM12 21a9 9 0 0 1-3.87-17.13A11 11 0 0 0 20.13 15.87 9 9 0 0 1 12 21Z"/></svg>';
+
+	return '<button class="mw-theme-toggle" type="button" data-mw-theme-value="system" aria-label="' . esc_attr( $label ) . '" title="' . esc_attr( $label ) . '">' . $icons . '</button>';
 }

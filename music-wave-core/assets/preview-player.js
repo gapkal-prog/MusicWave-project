@@ -142,7 +142,9 @@
 			'.mw-global-player__progress input'
 		);
 		var time = player.querySelector( '.mw-global-player__time' );
+		var duration = player.querySelector( '.mw-global-player__duration' );
 		var volume = player.querySelector( 'input.mw-global-player__volume' );
+		var mute = player.querySelector( '.mw-global-player__mute' );
 		var queueToggle = player.querySelector(
 			'.mw-global-player__queue-toggle'
 		);
@@ -193,9 +195,90 @@
 			return audio.paused ? '▶' : '❚❚';
 		}
 
+		// The play/pause button ships one SVG per state (play, pause,
+		// spinner); the stylesheet reveals the icon named by data-state.
+		// Legacy markup without icons keeps the text glyph so the control
+		// never renders empty.
+		var buffering = false;
+
+		function renderToggle() {
+			var waiting = busy || buffering;
+			var state = waiting
+				? 'loading'
+				: audio.paused
+				? 'paused'
+				: 'playing';
+			toggle.setAttribute( 'data-state', state );
+			toggle.setAttribute( 'aria-busy', busy ? 'true' : 'false' );
+			if ( ! toggle.querySelector( 'svg' ) ) {
+				toggle.textContent = waiting ? '…' : playGlyph();
+			}
+		}
+
 		function setLoading( loading ) {
 			busy = loading;
-			toggle.textContent = loading ? '…' : playGlyph();
+			renderToggle();
+		}
+
+		// Elapsed / total, mirrored into aria-valuetext so the range input
+		// announces "0:42 / 3:10" instead of a bare percentage. The total is
+		// the full stream length (the preview limit is explained by the
+		// upsell notice, not by shortening the timeline).
+		function renderTime() {
+			var total = audio.duration || 0;
+			var elapsed = formatTime( audio.currentTime );
+			var length = total ? formatTime( total ) : '';
+			if ( duration ) {
+				time.textContent = elapsed;
+				duration.textContent = length || '–:––';
+			} else {
+				time.textContent = elapsed + ( length ? ' / ' + length : '' );
+			}
+			progress.setAttribute(
+				'aria-valuetext',
+				length ? elapsed + ' / ' + length : elapsed
+			);
+		}
+
+		// layout.css keeps page content and sticky rails clear of the bar by
+		// reading --mw-player-offset from <html>. The stylesheet ships a rem
+		// estimate; measuring the rendered footprint (height plus the gap to
+		// the viewport edge) covers zoom, font size, and the docked phone
+		// layout. Transforms from the entrance animation do not affect
+		// offsetHeight or the computed inset, so this is safe mid-animation.
+		function measureFootprint() {
+			var root = document.documentElement;
+			if ( player.hidden ) {
+				root.style.removeProperty( '--mw-player-offset' );
+				return;
+			}
+			var inset =
+				parseFloat( window.getComputedStyle( player ).bottom ) || 0;
+			var covered = player.offsetHeight + inset;
+			if ( covered > 0 ) {
+				root.style.setProperty(
+					'--mw-player-offset',
+					Math.ceil( covered ) + 'px'
+				);
+			}
+		}
+
+		function setPresence( active ) {
+			document.documentElement.classList.toggle(
+				'mw-has-player',
+				active
+			);
+			if ( window.requestAnimationFrame ) {
+				window.requestAnimationFrame( measureFootprint );
+			} else {
+				measureFootprint();
+			}
+		}
+
+		if ( 'ResizeObserver' in window ) {
+			new window.ResizeObserver( measureFootprint ).observe( player );
+		} else {
+			window.addEventListener( 'resize', measureFootprint );
 		}
 
 		function updateButtons() {
@@ -486,9 +569,8 @@
 				audio.paused ? 'paused' : 'playing'
 			);
 			player.hidden = false;
-			if ( ! busy ) {
-				toggle.textContent = playGlyph();
-			}
+			setPresence( true );
+			renderToggle();
 			toggle.setAttribute(
 				'aria-label',
 				audio.paused
@@ -786,19 +868,49 @@
 			queueMeta = null;
 			player.hidden = true;
 			player.removeAttribute( 'data-mw-state' );
+			setPresence( false );
 			setQueueOpen( false );
 			hideNotice();
 			clearState();
 			updateButtons();
 		} );
 		var VOLUME_KEY = 'mw-player-volume';
+		var lastAudibleVolume = 1;
+
+		function renderVolume() {
+			var level = audio.muted || 0 === audio.volume ? 'muted' : 'audible';
+			player.setAttribute( 'data-mw-volume', level );
+			if ( volume ) {
+				volume.style.setProperty(
+					'--mw-volume',
+					Math.round( ( audio.muted ? 0 : audio.volume ) * 100 ) + '%'
+				);
+			}
+			if ( mute ) {
+				mute.setAttribute(
+					'aria-pressed',
+					'muted' === level ? 'true' : 'false'
+				);
+				mute.setAttribute(
+					'aria-label',
+					'muted' === level
+						? labels.unmute || 'باصدا'
+						: labels.mute || 'بی‌صدا'
+				);
+			}
+		}
 
 		function applyVolume( raw ) {
 			var value = Math.min( 1, Math.max( 0, parseFloat( raw ) || 0 ) );
 			audio.volume = value;
+			if ( value > 0 ) {
+				lastAudibleVolume = value;
+				audio.muted = false;
+			}
 			if ( volume ) {
 				volume.value = String( Math.round( value * 100 ) );
 			}
+			renderVolume();
 
 			return value;
 		}
@@ -817,6 +929,21 @@
 				}
 			} catch ( e ) {}
 		}
+		if ( mute ) {
+			mute.addEventListener( 'click', function () {
+				if ( audio.muted || 0 === audio.volume ) {
+					audio.muted = false;
+					if ( 0 === audio.volume ) {
+						applyVolume( lastAudibleVolume || 1 );
+					}
+				} else {
+					audio.muted = true;
+				}
+				renderVolume();
+			} );
+		}
+		audio.addEventListener( 'volumechange', renderVolume );
+		renderVolume();
 
 		/* -------------------------------------------------------------- *
 		 * Session persistence — the Spotify/Apple Music behavior.         *
@@ -957,11 +1084,7 @@
 							'--mw-progress',
 							progress.value + '%'
 						);
-						time.textContent =
-							formatTime( audio.currentTime ) +
-							( audio.duration
-								? ' / ' + formatTime( audio.duration )
-								: '' );
+						renderTime();
 						if ( shouldResume ) {
 							audio.play().catch( function () {
 								// Autoplay blocked after reload: stay paused
@@ -1007,6 +1130,20 @@
 		restoreSession();
 		audio.addEventListener( 'play', render );
 		audio.addEventListener( 'pause', render );
+		// Network stalls surface as the spinner without blocking the toggle,
+		// so a visitor can still pause a stream that is buffering.
+		audio.addEventListener( 'waiting', function () {
+			buffering = true;
+			renderToggle();
+		} );
+		[ 'playing', 'canplay', 'pause', 'emptied', 'error' ].forEach(
+			function ( name ) {
+				audio.addEventListener( name, function () {
+					buffering = false;
+					renderToggle();
+				} );
+			}
+		);
 		audio.addEventListener( 'ended', function () {
 			if ( current < queue.length - 1 ) {
 				select( current + 1, true );
@@ -1027,7 +1164,7 @@
 			render();
 		} );
 		audio.addEventListener( 'timeupdate', function () {
-			var duration = audio.duration || 0;
+			var total = audio.duration || 0;
 			var track = currentTrack();
 			if (
 				track &&
@@ -1048,21 +1185,22 @@
 				render();
 				return;
 			}
-			progress.value = duration
-				? String( ( audio.currentTime / duration ) * 100 )
+			progress.value = total
+				? String( ( audio.currentTime / total ) * 100 )
 				: '0';
 			// Feeds the webkit slider gradient stop in the theme stylesheet.
 			progress.style.setProperty( '--mw-progress', progress.value + '%' );
-			time.textContent =
-				formatTime( audio.currentTime ) +
-				( duration ? ' / ' + formatTime( duration ) : '' );
+			renderTime();
 		} );
+		audio.addEventListener( 'loadedmetadata', renderTime );
+		audio.addEventListener( 'durationchange', renderTime );
 		progress.addEventListener( 'input', function () {
 			progress.style.setProperty( '--mw-progress', progress.value + '%' );
 			if ( audio.duration ) {
 				audio.currentTime =
 					( parseFloat( progress.value ) / 100 ) * audio.duration;
 			}
+			renderTime();
 		} );
 
 		playerController = {
@@ -1118,7 +1256,13 @@
 				return Boolean( currentTrack() );
 			},
 			seekBy,
-			sync: updateButtons,
+			sync() {
+				// Soft navigation swaps <body>; the presence flag lives on
+				// <html> so it survives, but re-assert it in case the
+				// incoming page reset the element.
+				setPresence( Boolean( currentTrack() ) );
+				updateButtons();
+			},
 		};
 		// Expose for playlists.js progressive enhancement.
 		window._mwPreviewController = playerController;

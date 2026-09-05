@@ -18,7 +18,7 @@
 <!-- wp:site-title {"level":0,"fontSize":"large"} /-->
 <!-- wp:paragraph {"className":"mw-muted","fontSize":"small"} -->
 <p class="mw-muted has-small-font-size"><?php echo esc_html__( 'صدای شما، به‌زیبایی سازمان‌یافته. این پابرگ را از نمایش → ویرایشگر → بخش‌های قالب → ابزارک‌های پابرگ ویرایش کنید؛ بدون نیاز به کدنویسی.', 'musicwave' ); ?></p>
-<!-- /wp:paragraph --><!-- wp:social-links {"iconColor":"text","iconColorValue":"#f7f8fb","size":"has-normal-icon-size","className":"is-style-logos-only"} -->
+<!-- /wp:paragraph --><!-- wp:social-links {"iconColor":"text","iconColorValue":"var(--wp--preset--color--text)","size":"has-normal-icon-size","className":"is-style-logos-only"} -->
 <ul class="wp-block-social-links has-normal-icon-size has-icon-color is-style-logos-only"><!-- wp:social-link {"url":"#","service":"instagram"} /--><!-- wp:social-link {"url":"#","service":"spotify"} /--><!-- wp:social-link {"url":"#","service":"youtube"} /--></ul>
 <!-- /wp:social-links --></div>
 <!-- /wp:group --></div>

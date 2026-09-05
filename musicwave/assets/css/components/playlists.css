@@ -1172,7 +1172,7 @@
 	border-radius: 12px;
 }
 
-.mw-public-playlists__toolbar input[type=""search""] {
+.mw-public-playlists__toolbar input[type="search"] {
 	flex: 1 1 14rem;
 	min-height: 2.4rem;
 	padding-inline: 0.75rem;

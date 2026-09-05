@@ -7,6 +7,15 @@
 
 .wp-site-blocks {
 	min-height: 100vh;
+	/* Keep the last content above the global player bar while a track is loaded. */
+	padding-block-end: var(--mw-player-offset, 0px);
+}
+
+/* Layout is inline-safe: the sticky header, overlays, and fixed player never
+ * create a horizontal scrollbar on narrow devices. */
+html,
+body {
+	overflow-x: clip;
 }
 
 /* App shell — sidebar + main.
@@ -45,8 +54,13 @@
 
 .mw-sidebar {
 	position: sticky;
-	top: 6.25rem;
+	/* Sits below the admin bar and, when enabled, the sticky header. */
+	top: calc(var(--mw-sticky-offset, 0px) + var(--wp--preset--spacing--30, 1.5rem));
+	max-block-size: calc(100dvh - var(--mw-sticky-offset, 0px) - var(--mw-player-offset, 0px) - var(--wp--preset--spacing--30, 1.5rem) * 2);
 	display: grid;
+	align-content: start;
+	overflow-y: auto;
+	overscroll-behavior: contain;
 	gap: var(--wp--preset--spacing--30);
 	padding: var(--wp--preset--spacing--20);
 	background: color-mix(in srgb, var(--mw-color-surface) 72%, transparent);

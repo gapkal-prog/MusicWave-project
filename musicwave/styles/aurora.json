@@ -3,6 +3,12 @@
   "version": 3,
   "title": "Aurora",
   "settings": {
+    "custom": {
+      "scheme": {
+        "light": { "canvas": "#f3f6fc", "surface": "#ffffff", "surfaceRaised": "#e6ecf8", "text": "#0f1630", "muted": "#4f5b7a", "accent": "#0f766e", "accentStrong": "#115e59", "editorial": "#be123c", "onAccent": "#ffffff" },
+        "dark": { "canvas": "#0c1020", "surface": "#151b33", "surfaceRaised": "#202a4b", "text": "#eef3ff", "muted": "#aebbd8", "accent": "#28d7bd", "accentStrong": "#7cf4df", "editorial": "#ff4d6d", "onAccent": "#04201b" }
+      }
+    },
     "color": {
       "palette": [
         { "slug": "canvas", "name": "Canvas", "color": "#0c1020" },

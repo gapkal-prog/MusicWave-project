@@ -95,9 +95,9 @@ Deliver a secure, accessible, scalable, internationalized WordPress music platfo
 
 | Package | Current version | Responsibility | Runtime dependencies |
 |---|---:|---|---|
-| `music-wave-core` | `0.11.2` | Domain model, application services, WordPress adapters, REST, blocks, playback, library, Woo integration, metadata, SEO | WordPress 6.6+; WooCommerce optional |
+| `music-wave-core` | `0.11.3` | Domain model, application services, WordPress adapters, REST, blocks, playback, library, Woo integration, metadata, SEO | WordPress 6.6+; WooCommerce optional |
 | `music-wave-vip` | `0.5.0` | Membership adapters, protected asset management, local delivery, remote signed redirects | Core required; provider configuration |
-| `musicwave` | `0.7.4` | Block theme, templates, patterns, styles, presentation blocks, slider and theme preference | Core strongly expected; Woo optional |
+| `musicwave` | `0.8.0` | Block theme, templates, patterns, styles, presentation blocks, slider and theme preference | Core strongly expected; Woo optional |
 | Root tooling | `0.9.0` in `package.json` | PHP/JS quality, tests, packaging, POT generation | PHP 7.4 declared; Node 20+; Composer/npm dev packages |
 
 Core and the theme declare WordPress 6.6+, PHP 7.4+, and testing through WordPress 6.8. `composer.lock` uses WordPress stubs newer than that claim, so the compatibility statement is not currently proven by CI.

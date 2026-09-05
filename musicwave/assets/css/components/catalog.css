@@ -585,27 +585,7 @@
 	box-shadow: 0 0 0 3px color-mix(in srgb, var(--mw-color-accent) 25%, transparent);
 }
 
-.mw-site-header .wp-block-search__inside-wrapper {
-	min-block-size: 2.75rem;
-	box-sizing: border-box;
-	background: color-mix(in srgb, var(--mw-color-surface) 86%, transparent);
-	border: 1px solid var(--mw-color-border);
-	border-radius: 999px;
-}
-.mw-site-header .wp-block-search__button {
-	min-inline-size: 2.6rem;
-	margin: 0;
-	padding: 0;
-	border-radius: 50%;
-}
-.mw-site-header .wp-block-search__input {
-	min-inline-size: 7rem;
-	padding: 0.35rem;
-	color: var(--mw-color-text);
-	background: transparent;
-	border: 0;
-	outline: 0;
-}
+/* Header search chrome lives in components/navigation.css (.mw-header-search). */
 .mw-search-hero .wp-block-search__input {
 	min-height: 3rem;
 	flex: 1 1 auto;
