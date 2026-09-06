@@ -4,13 +4,19 @@ Tags: block-theme, music, woocommerce, rtl, accessibility
 Requires at least: 6.6
 Tested up to: 6.8
 Requires PHP: 7.4
-Stable tag: 0.8.0
+Stable tag: 0.8.1
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
 MusicWave is a block theme for music catalogs and stores. It uses MusicWave Core for catalog data and supports WooCommerce plus MusicWave VIP protected downloads.
 
 == Changelog ==
+
+= 0.8.1 =
+* Feature: comments section on the single release template (listener discussion with threaded replies, pagination, and a styled form) via the new `comments.css` module; light and dark palettes covered.
+* Improvement: single release page on phones and tablets — the hero no longer bleeds past the viewport, the action bar centers with comfortable tap targets, and the track list renders as a two-line card (title + artist, duration and actions on one row) with a tablet column layout in between.
+* Fix: horizontal shelf arrows (`.mw-release-shelf__nav-button`) work in right-to-left layouts; the slider handler measures rows in direction-aware logical pixels, advances by whole visible cards, hides arrows on rows that do not overflow, keeps enabled arrows visible on touch devices, and mirrors SVG chevrons in RTL. Community playlist shelves get the same arrows.
+* Design: playlist artwork (`.mw-playlists__art-grid`) is now a fanned cover stack — covers layered like record sleeves that spread on hover/focus — across the account list, the public playlists block (square, landscape, portrait, circle) and client-rendered cards.
 
 = 0.8.0 =
 * New: light mode now remaps the theme.json colour presets (dark text on light surfaces) instead of deriving colours; every style variation declares its light and dark palette in `settings.custom.scheme`.

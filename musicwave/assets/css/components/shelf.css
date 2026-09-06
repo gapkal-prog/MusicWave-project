@@ -240,9 +240,11 @@
 
 /*
  * SonicStream scroll shelf: floating prev/next arrows anchored to the
- * section edges, vertically centered over the card row. They dim at the
- * row edges (the slider handler toggles disabled) and stay hidden for
- * keyboards-unfriendly sizes through focusability rather than display.
+ * section edges, vertically centered over the card row. The slider handler
+ * (slider.js) measures the row in logical (direction-aware) pixels and
+ * toggles `disabled` at the edges plus `.mw-release-shelf--scrollable` when
+ * the row actually overflows; arrows fade in on hover/focus for pointer
+ * devices and stay visible on touch devices while enabled.
  */
 .mw-release-shelf--scroll {
 	position: relative;
@@ -259,13 +261,13 @@
 	display: inline-grid;
 	inline-size: 2.75rem;
 	block-size: 2.75rem;
+	padding: 0;
 	place-items: center;
 	color: var(--mw-color-text);
 	background: var(--mw-color-surface-raised);
 	border: 1px solid var(--mw-color-border);
 	border-radius: 50%;
 	box-shadow: var(--mw-shadow-card);
-	font-size: 1.5rem;
 	line-height: 1;
 	cursor: pointer;
 	opacity: 0;
@@ -276,11 +278,22 @@
 		scale var(--mw-speed-fast, 150ms) var(--mw-ease-snap, ease);
 }
 
-.mw-release-shelf__nav-button:first-child {
+.mw-release-shelf__nav-button svg {
+	display: block;
+	inline-size: 1.25rem;
+	block-size: 1.25rem;
+}
+
+/* Chevrons point along the reading direction. */
+html[dir="rtl"] .mw-release-shelf__nav-button svg {
+	transform: scaleX(-1);
+}
+
+.mw-release-shelf__nav-button[data-mw-shelf-previous] {
 	inset-inline-start: -0.5rem;
 }
 
-.mw-release-shelf__nav-button:last-child {
+.mw-release-shelf__nav-button[data-mw-shelf-next] {
 	inset-inline-end: -0.5rem;
 }
 
@@ -305,8 +318,8 @@
 }
 
 @media (hover: none) {
-	/* Touch devices: keep the arrows visible without a hover state. */
-	.mw-release-shelf__nav-button {
+	/* Touch devices: enabled arrows stay visible without a hover state. */
+	.mw-release-shelf--scrollable .mw-release-shelf__nav-button:not([disabled]) {
 		opacity: 1;
 	}
 }
@@ -314,6 +327,16 @@
 @media (max-width: 34rem) {
 	.mw-release-shelf__nav-button {
 		display: none;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.mw-release-shelf__nav-button {
+		transition: none;
+	}
+
+	.mw-release-shelf__nav-button:hover:not(:disabled) {
+		scale: 1;
 	}
 }
 
@@ -602,37 +625,44 @@
 	color: var(--mw-color-accent-strong, #1ed760);
 }
 
-.mw-release-shelf__playlist-grid {
-	display: grid;
-	grid-template-columns: repeat(2, 1fr);
-	grid-template-rows: repeat(2, 1fr);
+/*
+ * Playlist artwork uses the shared fanned cover stack from playlists.css
+ * (`.mw-playlists__art-grid`); the shelf only un-clips its art frame so the
+ * tilted sleeves can extend past the square and keeps the shape modifiers.
+ */
+.mw-release-shelf__art--playlist {
+	overflow: visible;
+	background: transparent;
+	box-shadow: none;
+	container-type: inline-size;
+}
+
+.mw-release-shelf__art--playlist .mw-playlists__art-grid {
+	position: absolute;
+	inset: 0;
 	block-size: 100%;
-	inline-size: 100%;
-	gap: 2px;
-	background: var(--mw-color-surface, #151922);
+	aspect-ratio: auto;
 }
 
-.mw-release-shelf__art-cell {
-	overflow: hidden;
-	background: var(--mw-color-surface-raised);
+/* The fan animates whole sleeves; skip the flat-cover zoom on their images. */
+.mw-release-shelf__art--playlist:is(:hover, :focus-visible) .mw-release-shelf__image {
+	transform: none;
 }
 
-.mw-release-shelf__art-cell img {
-	block-size: 100%;
-	inline-size: 100%;
-	object-fit: cover;
+/* Shape modifiers must land on the stack itself: the stack declares its own
+ * fan defaults, so values set on the link would lose to them. */
+.mw-release-shelf__art--playlist.mw-release-shelf__art--circle .mw-playlists__art-grid {
+	--mw-fan-radius: 50%;
+	--mw-fan-tilt: 0deg;
 }
 
-.mw-release-shelf__art-cell--fallback {
-	display: grid;
-	place-items: center;
-	color: var(--mw-color-on-accent, #fff);
-	background: var(--mw-color-accent, #1db954);
-	font-weight: 800;
+.mw-release-shelf__art--playlist.mw-release-shelf__art--landscape .mw-playlists__art-grid {
+	--mw-fan-spread: 11%;
+	--mw-fan-inset: 8% 16%;
 }
 
-.mw-release-shelf__art-cell--empty {
-	background: color-mix(in srgb, var(--mw-color-surface) 85%, var(--mw-color-surface-raised));
+.mw-release-shelf__art--playlist.mw-release-shelf__art--portrait .mw-playlists__art-grid {
+	--mw-fan-inset: 14% 10%;
 }
 
 .mw-release-shelf__item--playlist .mw-release-shelf__body h3 {

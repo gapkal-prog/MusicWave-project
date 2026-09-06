@@ -468,9 +468,32 @@
 	background: color-mix(in srgb, var(--mw-color-text) 10%, transparent);
 }
 
+/* Tablet (48–64rem): keep the two-column hero but rebalance the cover so
+ * the title never squeezes into a narrow strip beside a wide square. */
+@media (min-width: 48rem) and (max-width: 64rem) {
+	.mw-release-hero__inner.is-stacked-on-mobile .mw-release-hero__cover {
+		flex-basis: 30% !important;
+		max-width: 18rem;
+	}
+	.mw-release-hero__inner.is-stacked-on-mobile .mw-release-hero__info {
+		flex-basis: 70% !important;
+	}
+	.mw-release-hero__info .wp-block-post-title {
+		font-size: clamp(2rem, 5vw, 3rem);
+	}
+}
+
 @media (max-width: 48rem) {
+	/* Full-bleed only on wide canvases; on phones the hero hugs the page
+	 * padding so nothing can exceed the viewport width, and the corner
+	 * radius follows the page edges. */
 	.mw-release-hero {
+		margin-inline: calc(var(--wp--style--root--padding-left, 1rem) * -1) calc(var(--wp--style--root--padding-right, 1rem) * -1);
 		padding: clamp(1.25rem, 5vw, 1.75rem) clamp(1rem, 4vw, 1.25rem) clamp(1rem, 3vw, 1.5rem);
+		border-radius: 0 0 var(--mw-radius-lg, 1.5rem) var(--mw-radius-lg, 1.5rem);
+	}
+	.mw-release-hero__inner {
+		gap: 1rem;
 	}
 	.mw-release-hero__inner.is-stacked-on-mobile {
 		flex-direction: column;
@@ -484,11 +507,49 @@
 		max-width: 14rem;
 		width: 72%;
 	}
-	.mw-release-hero__cover .wp-block-column {
+	.mw-release-hero__cover .wp-block-column,
+	.mw-release-hero__inner.is-stacked-on-mobile > .wp-block-column {
 		flex-basis: 100% !important;
 	}
 	.mw-release-hero__info .wp-block-post-title {
 		font-size: clamp(1.75rem, 8vw, 2.5rem);
+	}
+	.mw-release-hero__info .mw-release-meta__facts--inline {
+		justify-content: center;
+	}
+	.mw-release-hero__info .mw-release-meta__chips {
+		justify-content: center;
+	}
+
+	/* Action bar: primary play stays first, secondary discs wrap in a
+	 * centered row with comfortable 44px targets. */
+	.mw-release-actions {
+		justify-content: center;
+		gap: 0.75rem 0.85rem;
+		margin-block-end: var(--wp--preset--spacing--30, 1.5rem);
+	}
+	.mw-release-actions .mw-preview-button,
+	.mw-release-actions .mw-preview-player .mw-card-play {
+		width: 3.25rem;
+		height: 3.25rem;
+	}
+	.mw-release-actions .mw-library-button--heart,
+	.mw-release-actions .mw-playlist-picker__trigger,
+	.mw-release-actions .mw-share-button,
+	.mw-release-actions .mw-shuffle-button {
+		width: 2.75rem;
+		height: 2.75rem;
+	}
+	.mw-release-actions .mw-playlist-picker--guest .mw-playlist-picker__guest-cta,
+	.mw-release-actions .mw-library-button--guest {
+		min-height: 2.75rem;
+		padding-inline: 1rem;
+		font-size: 0.875rem;
+	}
+	.mw-release-actions .mw-share-button__status:not([hidden]) {
+		inset-inline-start: auto;
+		inset-inline-end: 0;
+		transform: none;
 	}
 }
 

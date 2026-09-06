@@ -58,6 +58,7 @@ inventory of public extension points, their stability level, and the deprecation
 | `music_wave_catalog_discovery_ttl` | filter | Cache lifetime for autocomplete/facet payloads (default 300s). |
 | `music_wave_discovery_rate_limit` / `music_wave_discovery_rate_window` | filter | Public discovery rate limit per actor and window (default 60/60s). |
 | `music_wave_dashboard_panels` | filter | Add/remove account dashboard panels (key => icon/label/description/content). |
+| `music_wave_release_permalink_bases` | filter | Map of release-type slug => URL base used for single release permalinks (defaults: album, ep, mix, playlist, podcast_show=>podcast, podcast_episode=>episode, single/track=>track). Order defines priority for multi-type releases; bases are sanitized to slugs, invalid entries dropped, and a base may be shared by several types. Changing the map requires a rewrite flush (re-save permalinks). |
 | `music_wave_release_json_ld` | filter | Adjust public JSON-LD; must not add private assets, entitlements, or user data. |
 | `music_wave_json_ld_enabled` | filter | Toggle Core JSON-LD output. |
 | `music_wave_cover_import_budgets` | filter | Cover import timeout/byte/pixel budgets. |

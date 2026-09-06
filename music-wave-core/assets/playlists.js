@@ -491,6 +491,54 @@
 				.replace( /'/g, '&#39;' );
 		}
 
+		/**
+		 * Cover stack markup matching PlaylistBlocks::playlist_covers_markup():
+		 * up to four cells (image / title initial / empty pad) or the empty
+		 * sleeve with a note glyph, so client-rendered cards share the
+		 * theme's fanned-artwork styling with server-rendered ones.
+		 *
+		 * @param {Array}  covers Cover descriptors ({ title, image }).
+		 * @param {string} title  Playlist title (fallback initial source).
+		 * @return {string} HTML string.
+		 */
+		function buildCoverStack( covers, title ) {
+			var cells = '';
+			var count = 0;
+
+			covers.slice( 0, 4 ).forEach( function ( cover ) {
+				var image =
+					cover && typeof cover.image === 'string' ? cover.image : '';
+				var label =
+					cover && typeof cover.title === 'string' && cover.title
+						? cover.title
+						: title;
+				var initial = label ? Array.from( label )[ 0 ] : '♫';
+
+				count += 1;
+				if ( /^https?:\/\//i.test( image ) ) {
+					cells +=
+						'<span class="mw-playlists__art-cell"><img src="' +
+						escapeHtml( image ) +
+						'" alt="" loading="lazy" decoding="async"></span>';
+				} else {
+					cells +=
+						'<span class="mw-playlists__art-cell mw-playlists__art-cell--fallback"><span aria-hidden="true">' +
+						escapeHtml( initial ) +
+						'</span></span>';
+				}
+			} );
+
+			if ( 0 === count ) {
+				return '<div class="mw-playlists__art-grid mw-playlists__art-grid--empty"><span class="mw-playlists__art-placeholder" aria-hidden="true">♫</span></div>';
+			}
+			for ( ; count < 4; count += 1 ) {
+				cells +=
+					'<span class="mw-playlists__art-cell mw-playlists__art-cell--empty" aria-hidden="true"></span>';
+			}
+
+			return '<div class="mw-playlists__art-grid">' + cells + '</div>';
+		}
+
 		function buildPublicCard( playlist ) {
 			var pid = parseInt( playlist.id, 10 ) || 0;
 			var title = playlist.title || '';
@@ -500,9 +548,10 @@
 				? new Date( playlist.updated_at * 1000 ).toLocaleDateString()
 				: '';
 			var panelId = 'mw-public-playlist-panel-' + pid;
-			// Placeholder art grid — real covers require per-playlist items; use fallback.
-			var artMarkup =
-				'<div class="mw-public-playlists__art-grid mw-public-playlists__art-grid--empty"><span class="mw-public-playlists__art-placeholder" aria-hidden="true">♫</span></div>';
+			var artMarkup = buildCoverStack(
+				Array.isArray( playlist.covers ) ? playlist.covers : [],
+				title
+			);
 			var shapeClass =
 				cardOptions.imageShape && cardOptions.imageShape !== 'square'
 					? ' mw-public-playlists__art--' + cardOptions.imageShape

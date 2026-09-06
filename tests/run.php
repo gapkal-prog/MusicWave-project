@@ -41,6 +41,8 @@ $GLOBALS['mw_test_synth_terms']   = array();
 $GLOBALS['mw_test_orders']        = array();
 $GLOBALS['mw_test_filters']       = array();
 $GLOBALS['mw_test_titles']        = array();
+$GLOBALS['mw_test_thumbnails']    = array();
+$GLOBALS['mw_test_rewrite_flushes'] = array();
 
 final class WP_Post {
 	/** @var int */
@@ -49,9 +51,13 @@ final class WP_Post {
 	/** @var string */
 	public $post_type;
 
-	public function __construct( int $post_id, string $post_type ) {
+	/** @var string */
+	public $post_name = '';
+
+	public function __construct( int $post_id, string $post_type, string $post_name = '' ) {
 		$this->ID        = $post_id;
 		$this->post_type = $post_type;
+		$this->post_name = $post_name;
 	}
 }
 
@@ -76,6 +82,9 @@ final class WP_Term {
 
 	/** @var string Archive description stored on the term row. */
 	public $description = '';
+
+	/** @var int Parent term ID for hierarchical taxonomies. */
+	public $parent = 0;
 
 	public function __construct( int $term_id, string $taxonomy, string $name, string $slug ) {
 		$this->term_id  = $term_id;
@@ -122,7 +131,11 @@ final class WP_REST_Response {
 	}
 }
 
-final class WP_REST_Request {
+/**
+ * Mirrors the WordPress request object closely enough for route handlers:
+ * `get_param()` plus ArrayAccess (`$request['key']`), which core supports.
+ */
+final class WP_REST_Request implements ArrayAccess {
 	/** @var array<string, mixed> */
 	private $params;
 
@@ -134,6 +147,36 @@ final class WP_REST_Request {
 	/** @return mixed */
 	public function get_param( string $key ) {
 		return isset( $this->params[ $key ] ) ? $this->params[ $key ] : null;
+	}
+
+	/** @param mixed $offset Parameter name. */
+	#[\ReturnTypeWillChange]
+	public function offsetExists( $offset ): bool {
+		return isset( $this->params[ $offset ] );
+	}
+
+	/**
+	 * @param mixed $offset Parameter name.
+	 * @return mixed
+	 */
+	#[\ReturnTypeWillChange]
+	public function offsetGet( $offset ) {
+		return isset( $this->params[ $offset ] ) ? $this->params[ $offset ] : null;
+	}
+
+	/**
+	 * @param mixed $offset Parameter name.
+	 * @param mixed $value  Parameter value.
+	 */
+	#[\ReturnTypeWillChange]
+	public function offsetSet( $offset, $value ): void {
+		$this->params[ $offset ] = $value;
+	}
+
+	/** @param mixed $offset Parameter name. */
+	#[\ReturnTypeWillChange]
+	public function offsetUnset( $offset ): void {
+		unset( $this->params[ $offset ] );
 	}
 }
 
@@ -505,8 +548,26 @@ function get_post_modified_time( string $format = 'U', bool $gmt = false, $post_
 }
 
 function get_the_post_thumbnail_url( int $post_id, $size = 'post-thumbnail' ) {
-	unset( $post_id, $size );
+	unset( $size );
+	if ( isset( $GLOBALS['mw_test_thumbnails'][ $post_id ] ) ) {
+		return $GLOBALS['mw_test_thumbnails'][ $post_id ];
+	}
+
 	return false;
+}
+
+/**
+ * @param mixed $output    Unused.
+ * @param mixed $post_type Unused.
+ * @return WP_Post|null
+ */
+function get_page_by_path( string $path, $output = null, $post_type = 'page' ) {
+	unset( $output, $post_type );
+	if ( isset( $GLOBALS['mw_test_pages_by_path'][ $path ] ) ) {
+		return $GLOBALS['mw_test_pages_by_path'][ $path ];
+	}
+
+	return null;
 }
 
 function get_the_excerpt( int $post_id ): string {
@@ -547,6 +608,26 @@ function get_post( $post = null ) {
 
 function untrailingslashit( string $value ): string {
 	return rtrim( $value, '/\\' );
+}
+
+function user_trailingslashit( string $value, string $type_of_url = '' ): string {
+	unset( $type_of_url );
+	return untrailingslashit( $value ) . '/';
+}
+
+function get_the_terms( int $post_id, string $taxonomy ) {
+	if ( isset( $GLOBALS['mw_test_term_objects'][ $post_id ][ $taxonomy ] ) ) {
+		return $GLOBALS['mw_test_term_objects'][ $post_id ][ $taxonomy ];
+	}
+	$slugs = wp_get_post_terms( $post_id, $taxonomy );
+	if ( array() === $slugs ) {
+		return false;
+	}
+	$terms = array();
+	foreach ( $slugs as $index => $slug ) {
+		$terms[] = new WP_Term( 700 + $index, $taxonomy, (string) $slug, (string) $slug );
+	}
+	return $terms;
 }
 
 function add_query_arg( array $args, string $url ): string {
@@ -748,6 +829,10 @@ function update_option( string $key, $value, $autoload = null ): bool {
 	unset( $autoload );
 	$GLOBALS['mw_test_options'][ $key ] = $value;
 	return true;
+}
+
+function flush_rewrite_rules( bool $hard = true ): void {
+	$GLOBALS['mw_test_rewrite_flushes'][] = $hard;
 }
 
 function delete_option( string $key ): bool {
@@ -1575,6 +1660,86 @@ $mw_secondary_search->mw_test_archive_types  = array( 'mw_release' );
 ( new ManaCore\MusicWave\Core\Catalog\ReleaseArchiveQuery() )->scope_archive_search( $mw_secondary_search );
 mw_assert_same( true, $mw_secondary_search->is_search, 'Secondary queries must never be adjusted by the catalog scoping.' );
 
+// --- Release-type permalinks: URL bases follow the release type (PROJECT_PLAN.md Stage 4 UX) ---
+
+final class TestRewrite {
+	/** @var array<string, string> */
+	public $structs = array();
+
+	public function get_extra_permastruct( string $name ) {
+		return isset( $this->structs[ $name ] ) ? $this->structs[ $name ] : false;
+	}
+}
+
+$mw_permalinks = new ManaCore\MusicWave\Core\Catalog\ReleasePermalinks();
+mw_assert_same( 'album', $mw_permalinks->base_for_types( array( 'album' ) ), 'Albums must live under /album/.' );
+mw_assert_same( 'track', $mw_permalinks->base_for_types( array( 'single' ) ), 'Singles must share the /track/ base with tracks.' );
+mw_assert_same( 'track', $mw_permalinks->base_for_types( array( 'track' ) ), 'Tracks must live under /track/.' );
+mw_assert_same( 'album', $mw_permalinks->base_for_types( array( 'track', 'album' ) ), 'Collections must win over track types when a release carries both.' );
+mw_assert_same( 'podcast', $mw_permalinks->base_for_types( array( 'podcast_show' ) ), 'Podcast shows must live under /podcast/.' );
+mw_assert_same( 'episode', $mw_permalinks->base_for_types( array( 'podcast_episode' ) ), 'Podcast episodes must live under /episode/.' );
+mw_assert_same( 'music', $mw_permalinks->base_for_types( array() ), 'Untyped releases must keep the legacy /music/ base.' );
+mw_assert_same( 'music', $mw_permalinks->base_for_types( array( 'unknown-type' ) ), 'Unknown release types must keep the legacy /music/ base.' );
+mw_assert_same( 'album', $mw_permalinks->base_for( 1 ), 'The base must resolve from the release-type terms of a release.' );
+mw_assert_same( 'track', $mw_permalinks->base_for( 2 ), 'Track releases must resolve to the /track/ base.' );
+mw_assert_same( 'music', $mw_permalinks->base_for( 4 ), 'Releases without release-type terms must resolve to the legacy base.' );
+mw_assert_same( false, in_array( 'music', $mw_permalinks->extra_bases(), true ), 'The post type base must not be re-registered as an extra permastruct.' );
+mw_assert_same( array( 'album', 'ep', 'mix', 'playlist', 'podcast', 'episode', 'track' ), $mw_permalinks->extra_bases(), 'Every distinct mapped base must get its own permastruct exactly once.' );
+mw_assert_same( 'mw_release_base_podcast', ManaCore\MusicWave\Core\Catalog\ReleasePermalinks::permastruct_name( 'podcast' ), 'Permastruct names must be derived from the base.' );
+mw_assert_same( 'music/album', ManaCore\MusicWave\Core\Catalog\ReleasePermalinks::sanitize_base( '/Music/Album/' ), 'Multi-segment bases must be lower-cased and trimmed.' );
+mw_assert_same( '', ManaCore\MusicWave\Core\Catalog\ReleasePermalinks::sanitize_base( 'bad base!' ), 'Bases with unsafe characters must be rejected.' );
+mw_assert_same( '', ManaCore\MusicWave\Core\Catalog\ReleasePermalinks::sanitize_base( 'a//b' ), 'Bases with empty segments must be rejected.' );
+
+$GLOBALS['mw_test_filters']['music_wave_release_permalink_bases'] = array(
+	'album'   => 'Records/',
+	'track'   => 'bad base!',
+	''        => 'ignored',
+	'podcast' => '',
+);
+$mw_filtered_permalinks = new ManaCore\MusicWave\Core\Catalog\ReleasePermalinks();
+mw_assert_same( array( 'album' => 'records' ), $mw_filtered_permalinks->bases(), 'Filtered bases must be sanitized and invalid entries dropped.' );
+mw_assert_same( 'music', $mw_filtered_permalinks->base_for_types( array( 'track' ) ), 'Types dropped by the filter must fall back to the legacy base.' );
+unset( $GLOBALS['mw_test_filters']['music_wave_release_permalink_bases'] );
+
+// Rewrite rules regenerate themselves once per base map, so the first request
+// after an update resolves the new bases without a manual permalink re-save.
+$GLOBALS['mw_test_rewrite_flushes'] = array();
+unset( $GLOBALS['mw_test_options'][ ManaCore\MusicWave\Core\Catalog\ReleasePermalinks::OPTION_RULES_SIGNATURE ] );
+$mw_permalinks->maybe_flush_rewrite_rules();
+mw_assert_same( array( false ), $GLOBALS['mw_test_rewrite_flushes'], 'An unknown base map must trigger exactly one soft rewrite flush.' );
+mw_assert_same( $mw_permalinks->rules_signature(), (string) get_option( ManaCore\MusicWave\Core\Catalog\ReleasePermalinks::OPTION_RULES_SIGNATURE ), 'The flushed base map must be remembered.' );
+$mw_permalinks->maybe_flush_rewrite_rules();
+mw_assert_same( 1, count( $GLOBALS['mw_test_rewrite_flushes'] ), 'An unchanged base map must not flush again.' );
+$GLOBALS['mw_test_filters']['music_wave_release_permalink_bases'] = array( 'album' => 'records' );
+( new ManaCore\MusicWave\Core\Catalog\ReleasePermalinks() )->maybe_flush_rewrite_rules();
+mw_assert_same( 2, count( $GLOBALS['mw_test_rewrite_flushes'] ), 'Changing the base map through the filter must flush once more.' );
+unset( $GLOBALS['mw_test_filters']['music_wave_release_permalink_bases'] );
+mw_assert_same( $mw_permalinks->rules_signature(), ( new ManaCore\MusicWave\Core\Catalog\ReleasePermalinks() )->rules_signature(), 'Signatures must be deterministic for the same map.' );
+
+$GLOBALS['wp_rewrite']          = new TestRewrite();
+$GLOBALS['wp_rewrite']->structs = array( 'mw_release_base_album' => '/album/%mw_release%', 'mw_release_base_track' => '/track/%mw_release%' );
+$mw_album_post                  = new WP_Post( 1, 'mw_release', 'night-signals' );
+$mw_track_post                  = new WP_Post( 2, 'mw_release', 'midnight-drive' );
+$mw_untyped_post                = new WP_Post( 4, 'mw_release', 'untitled' );
+mw_assert_same( 'https://example.test/album/night-signals/', $mw_permalinks->filter_post_type_link( 'https://example.test/music/night-signals/', $mw_album_post, false ), 'Album permalinks must swap the post type base for /album/.' );
+mw_assert_same( 'https://example.test/track/%mw_release%/', $mw_permalinks->filter_post_type_link( 'https://example.test/music/%mw_release%/', $mw_track_post, true ), 'Sample permalinks must keep the post name token for the editor slug UI.' );
+mw_assert_same( 'https://example.test/music/untitled/', $mw_permalinks->filter_post_type_link( 'https://example.test/music/untitled/', $mw_untyped_post, false ), 'Untyped releases must keep their legacy permalink.' );
+mw_assert_same( 'https://example.test/?mw_release=night-signals', $mw_permalinks->filter_post_type_link( 'https://example.test/?mw_release=night-signals', $mw_album_post, false ), 'Plain permalinks must never be rewritten.' );
+mw_assert_same( 'https://example.test/music/night-signals/', $mw_permalinks->filter_post_type_link( 'https://example.test/music/night-signals/', new WP_Post( 10, 'product', 'night-signals' ), false ), 'Only release permalinks may be rewritten.' );
+$GLOBALS['wp_rewrite']->structs = array();
+mw_assert_same( 'https://example.test/music/night-signals/', $mw_permalinks->filter_post_type_link( 'https://example.test/music/night-signals/', $mw_album_post, false ), 'Permalinks must stay untouched until the permastruct is registered.' );
+unset( $GLOBALS['wp_rewrite'] );
+
+mw_assert_same( 'https://example.test/album/night-signals/', ManaCore\MusicWave\Core\Catalog\ReleasePermalinks::redirect_target( '/music/night-signals/', 'https://example.test/album/night-signals/', 'night-signals' ), 'Legacy /music/ requests must redirect to the typed permalink.' );
+mw_assert_same( 'https://example.test/album/night-signals/2/?utm=x', ManaCore\MusicWave\Core\Catalog\ReleasePermalinks::redirect_target( '/music/night-signals/2/?utm=x', 'https://example.test/album/night-signals/', 'night-signals' ), 'Redirects must keep sub-routes and the query string.' );
+mw_assert_same( 'https://example.test/album/night-signals/comment-page-2/', ManaCore\MusicWave\Core\Catalog\ReleasePermalinks::redirect_target( '/track/night-signals/comment-page-2', 'https://example.test/album/night-signals/', 'night-signals' ), 'Stale typed bases must redirect after a release changes type.' );
+mw_assert_same( null, ManaCore\MusicWave\Core\Catalog\ReleasePermalinks::redirect_target( '/album/night-signals/', 'https://example.test/album/night-signals/', 'night-signals' ), 'Canonical requests must not redirect.' );
+mw_assert_same( null, ManaCore\MusicWave\Core\Catalog\ReleasePermalinks::redirect_target( '/album/night-signals/2/', 'https://example.test/album/night-signals/', 'night-signals' ), 'Canonical paginated requests must not redirect.' );
+mw_assert_same( null, ManaCore\MusicWave\Core\Catalog\ReleasePermalinks::redirect_target( '/music/night-signals/', 'https://example.test/?mw_release=night-signals', 'night-signals' ), 'Plain permalinks must never trigger a redirect.' );
+mw_assert_same( null, ManaCore\MusicWave\Core\Catalog\ReleasePermalinks::redirect_target( '/music/other-release/', 'https://example.test/album/night-signals/', 'night-signals' ), 'Requests that do not contain the release slug must be left to WordPress.' );
+mw_assert_same( 'https://example.test/album/%D8%A2%D9%84%D8%A8%D9%88%D9%85/', ManaCore\MusicWave\Core\Catalog\ReleasePermalinks::redirect_target( '/music/%d8%a2%d9%84%d8%a8%d9%88%d9%85/', 'https://example.test/album/%D8%A2%D9%84%D8%A8%D9%88%D9%85/', '%d8%a2%d9%84%d8%a8%d9%88%d9%85' ), 'Percent-encoded non-ASCII slugs must match regardless of hex case.' );
+
+
 $GLOBALS['mw_test_types'][2] = 'mw_release';
 $GLOBALS['mw_test_types'][3] = 'mw_release';
 $relation_repository         = new ManaCore\MusicWave\Core\Infrastructure\WordPressReleaseRepository( $schema );
@@ -2034,6 +2199,51 @@ $public_playlist_id = $playlists->create( 7, 'Editorial picks', 'public' );
 $playlists->add_item( 7, $public_playlist_id, 2 );
 mw_assert_same( true, $playlists->can_view( $playlists->find( $public_playlist_id ), 0 ), 'Public playlists must be readable by anyone.' );
 mw_assert_same( 1, (int) $playlists->view( $public_playlist_id, 0 )['count'], 'Public playlist views must list published items.' );
+
+// The community listing ships cover previews for the theme's fanned artwork
+// stack: published items only (a draft the owner may read must not leak its
+// cover to anonymous callers), thumbnail URL when present, empty otherwise.
+$playlists->add_item( 7, $public_playlist_id, 3 );
+$playlists->add_item( 7, $public_playlist_id, 4 );
+$GLOBALS['mw_test_capabilities'] = array( 'read_post' );
+mw_assert_same( true, $playlists->add_item( 7, $public_playlist_id, 9 ), 'The owner may keep an unpublished release in a public playlist.' );
+$GLOBALS['mw_test_capabilities']  = array();
+$GLOBALS['mw_test_thumbnails'][2] = 'https://cdn.example.test/covers/2.jpg';
+$GLOBALS['mw_test_titles'][3]     = 'Night Drive';
+$GLOBALS['mw_test_current_user']  = 0;
+$public_listing                   = ( new ManaCore\MusicWave\Core\Playlists\PlaylistRoutes( $playlists ) )->public_index( new WP_REST_Request( array( 'per_page' => 12 ) ) );
+$public_listing_data              = $public_listing->get_data();
+$public_listing_card              = null;
+foreach ( $public_listing_data['items'] as $public_listing_item ) {
+	if ( (int) $public_listing_item['id'] === $public_playlist_id ) {
+		$public_listing_card = $public_listing_item;
+	}
+}
+mw_assert_same( true, is_array( $public_listing_card ), 'The public playlists listing must include public playlists.' );
+mw_assert_same( false, array_key_exists( 'share_token', (array) $public_listing_card ), 'The public listing must never expose share tokens.' );
+mw_assert_same(
+	array(
+		array(
+			'title' => 'Release 2',
+			'image' => 'https://cdn.example.test/covers/2.jpg',
+		),
+		array(
+			'title' => 'Night Drive',
+			'image' => '',
+		),
+		array(
+			'title' => 'Release 4',
+			'image' => '',
+		),
+	),
+	$public_listing_card['covers'],
+	'Public playlist cards must carry cover previews for published items only, with thumbnail URLs when available.'
+);
+mw_assert_same( 3, (int) $public_listing_card['count'], 'Public card counts must match the publicly visible items.' );
+unset( $GLOBALS['mw_test_thumbnails'][2], $GLOBALS['mw_test_titles'][3] );
+$playlists->remove_item( 7, $public_playlist_id, 3 );
+$playlists->remove_item( 7, $public_playlist_id, 4 );
+$playlists->remove_item( 7, $public_playlist_id, 9 );
 
 mw_assert_same( 2, count( $playlists->export( 7 ) ), 'Playlists must be exportable for privacy requests.' );
 $playlists->handle_deleted_post( 2 );

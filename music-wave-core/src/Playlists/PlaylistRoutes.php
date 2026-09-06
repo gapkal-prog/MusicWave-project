@@ -436,6 +436,7 @@ final class PlaylistRoutes {
 				'updated_at' => isset( $playlist['updated_at'] ) ? (int) $playlist['updated_at'] : 0,
 				'visibility' => 'public',
 				'url'        => $this->public_playlist_url( $pid ),
+				'covers'     => $this->public_covers( $pid, $viewer_id ),
 			);
 		}
 
@@ -455,6 +456,32 @@ final class PlaylistRoutes {
 		}
 
 		return $response;
+	}
+
+	/**
+	 * Cover previews for a public playlist card: the first four readable
+	 * items as `{ title, image }` pairs. Only published releases are
+	 * visible to non-owners (items_for_viewer), so no unpublished artwork
+	 * leaks; `image` is empty when a release has no thumbnail, letting the
+	 * client fall back to the title initial.
+	 *
+	 * @return array<int, array{title: string, image: string}>
+	 */
+	private function public_covers( int $playlist_id, int $viewer_id ): array {
+		$covers = array();
+		foreach ( array_slice( $this->repository->items_for_viewer( $playlist_id, $viewer_id ), 0, 4 ) as $item ) {
+			$release_id = isset( $item['release_id'] ) ? (int) $item['release_id'] : 0;
+			if ( $release_id < 1 ) {
+				continue;
+			}
+			$image    = function_exists( 'get_the_post_thumbnail_url' ) ? get_the_post_thumbnail_url( $release_id, 'thumbnail' ) : '';
+			$covers[] = array(
+				'title' => (string) get_the_title( $release_id ),
+				'image' => is_string( $image ) ? $image : '',
+			);
+		}
+
+		return $covers;
 	}
 
 	private function public_playlist_url( int $playlist_id ): string {

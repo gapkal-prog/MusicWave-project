@@ -4,13 +4,19 @@ Tags: music, catalog, releases, woocommerce, downloads
 Requires at least: 6.6
 Tested up to: 6.8
 Requires PHP: 7.4
-Stable tag: 0.11.3
+Stable tag: 0.12.0
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
 MusicWave Core provides catalog data, release relationships, WooCommerce mapping, customer music library, access decisions, secure-download contracts, onboarding, and diagnostics for the MusicWave theme.
 
 == Changelog ==
+
+= 0.12.0 =
+* Feature: release permalinks now follow the release type. Albums live under `/album/`, tracks and singles under `/track/`, EPs under `/ep/`, mixes under `/mix/`, playlists under `/playlist/`, podcast shows under `/podcast/` and episodes under `/episode/`; releases without a mapped type keep `/music/`. The map is filterable through `music_wave_release_permalink_bases`, every base registers a full WordPress permastruct (pagination, comment pages, feeds, embeds, endpoints), and legacy or stale `/music/<slug>/` links are redirected permanently to the canonical URL.
+* Rewrite rules regenerate themselves once per permalink base map (`music_wave_release_permalink_rules` option), so existing installs resolve the new URLs on the first request after the update without re-saving permalinks. No database schema change (schema stays 0.11.0).
+* Feature: releases support comments; the theme's single release template renders a styled discussion section (threaded replies, pagination, comment form).
+* Improvement: `GET /music-wave/v1/playlists/public` returns `covers` (up to four published cover thumbnails) so client-rendered community playlist cards show real artwork; the client-side card builder now emits the same cover-stack markup as the server.
 
 = 0.11.3 =
 * Improvement: the persistent preview player renders inline SVG controls, a separate duration read-out, a mute button, and state attributes (`data-state`, `data-mw-volume`) so the theme can style playing, paused, loading and muted states without text glyph swaps.

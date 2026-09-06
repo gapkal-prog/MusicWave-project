@@ -1,12 +1,45 @@
 # MusicWave data dictionary
 
-Schema version: `0.8.0`
+Schema version: `0.11.0`
 
 ## Post type
 
 | Key | Purpose | REST | Public |
 |---|---|---:|---:|
 | `mw_release` | Canonical track, single, EP, album, mix, playlist, or podcast release | Yes | Yes |
+
+### Permalinks (Core 0.12.0)
+
+Single release URLs follow the primary `mw_release_type` term (ancestors are
+consulted for child terms). The post type's own `/music/%mw_release%`
+permastruct stays registered as the fallback and as the archive base
+(`/music/`); every mapped base registers its own permastruct, so pagination,
+comment pages, feeds, embeds and rewrite endpoints work under all of them.
+Stale bases (for example an old `/music/<slug>/` link, or an album whose type
+changed) are redirected with a permanent redirect to the canonical URL by
+`ReleasePermalinks`, preserving sub-routes and query strings; feeds, embeds,
+previews and non-GET requests are left alone.
+
+| Release type | URL base |
+|---|---|
+| `album` | `/album/<slug>/` |
+| `ep` | `/ep/<slug>/` |
+| `mix` | `/mix/<slug>/` |
+| `playlist` | `/playlist/<slug>/` |
+| `single`, `track` | `/track/<slug>/` |
+| `podcast_show` | `/podcast/<slug>/` |
+| `podcast_episode` | `/episode/<slug>/` |
+| no mapped type | `/music/<slug>/` |
+
+When a release carries several mapped types the first match in the order
+above wins (collections beat their tracks). Sites can adjust the map through
+the `music_wave_release_permalink_bases` filter; bases are sanitized to
+lowercase slugs and invalid entries are dropped. `ReleasePermalinks` stores a
+fingerprint of the active map in the `music_wave_release_permalink_rules`
+option and soft-flushes the rewrite rules on `wp_loaded` whenever the
+fingerprint changes, so existing installs (and sites that change the map
+through the filter) pick the new structures up on the next request without a
+manual permalink re-save. No database schema change is involved.
 
 ## Taxonomies
 

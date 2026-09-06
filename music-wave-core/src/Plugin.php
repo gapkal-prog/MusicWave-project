@@ -37,6 +37,7 @@ use ManaCore\MusicWave\Core\Catalog\ReleaseVisibility;
 use ManaCore\MusicWave\Core\Catalog\ArtistTermMeta;
 use ManaCore\MusicWave\Core\Catalog\DemoContentImporter;
 use ManaCore\MusicWave\Core\Catalog\ReleaseArchiveQuery;
+use ManaCore\MusicWave\Core\Catalog\ReleasePermalinks;
 use ManaCore\MusicWave\Core\Catalog\ReleaseDefaults;
 use ManaCore\MusicWave\Core\Commerce\ProductMapper;
 use ManaCore\MusicWave\Core\Commerce\PurchaseChecker;
@@ -194,7 +195,8 @@ final class Plugin {
 				new CollectionRestPolicy( $releases ),
 				new ArtistTermMeta(),
 				new ReleaseArchiveQuery(),
-				new ReleaseDefaults( $releases )
+				new ReleaseDefaults( $releases ),
+				new ReleasePermalinks()
 			)
 		);
 		$registry->add( new Admin( new ReleaseMetaBox( $schema, $releases, $mapper ), new EditorAssets(), new ReleaseReadiness( $releases ), new CollectionCandidateRoutes(), new SettingsPage( new BulkAccessManager( $releases ), $playlists, $listening_repository ) ) );
