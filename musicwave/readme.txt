@@ -20,6 +20,7 @@ MusicWave is a block theme for music catalogs and stores. It uses MusicWave Core
 * Fix: sticky headers keep their z-index and admin-bar offset above core's position support; anchors respect `scroll-padding-top`.
 * Fix: the global preview player is fully responsive (three-zone bar, docked layout on phones), uses SVG icons, shows elapsed/total time on every viewport, exposes `aria-valuetext`, gains a mute control, and reserves bottom space via `html.mw-has-player`.
 * Fix: footer social icons follow the palette presets; corrected a malformed selector in playlists.css.
+* Fix: the feature shelf's side-list view counts use the scheme-aware muted token instead of a fixed white, so they stay readable in light mode; the release hero tint re-runs after soft navigations.
 
 = 0.7.4 =
 * Fix: registered the public playlists, cart, and checkout templates in the Site Editor.

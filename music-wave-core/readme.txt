@@ -15,6 +15,9 @@ MusicWave Core provides catalog data, release relationships, WooCommerce mapping
 = 0.11.3 =
 * Improvement: the persistent preview player renders inline SVG controls, a separate duration read-out, a mute button, and state attributes (`data-state`, `data-mw-volume`) so the theme can style playing, paused, loading and muted states without text glyph swaps.
 * Improvement: the seek bar announces "elapsed / total" through `aria-valuetext`; buffering shows a spinner while the toggle stays usable; `html.mw-has-player` flags an active player for layout offsets.
+* Fix: persistent navigation now keeps the already-hydrated site header (hamburger overlay, expanding search) alive across soft page swaps and only refreshes its current-item markers, so the mobile menu keeps working after the first in-place navigation; pages with other Interactivity API regions (lightbox images, enhanced query pagination) fall back to a native load instead of arriving inert.
+* Fix: soft navigations merge the incoming page's block-support and per-block stylesheets before painting, execute newly required scripts in dependency order before `mw-page-rendered`, sync `lang`/`dir`/`data-mw-scheme` on `<html>`, and tag history entries with the Interactivity API session id so browser back/forward no longer forces a reload.
+* Maintenance: the JavaScript lint gate (`npm run lint:js`) passes again across both packages.
 
 = 0.11.2 =
 * Maintenance: normalized the editor asset formatting so the JavaScript quality gate passes cleanly.

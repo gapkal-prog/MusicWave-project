@@ -573,7 +573,9 @@
 .mw-feature__side-views {
 	display: block;
 	font-size: 0.75rem;
-	color: rgba(255, 255, 255, 0.5);
+	/* The side list sits on the page canvas, not on the hero scrim, so it
+	 * follows the scheme-aware muted token instead of a fixed white. */
+	color: var(--mw-color-text-muted, rgba(255, 255, 255, 0.5));
 	margin-block-start: 0.2rem;
 }
 
