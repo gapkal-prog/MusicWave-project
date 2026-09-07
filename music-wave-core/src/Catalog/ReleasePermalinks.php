@@ -263,7 +263,7 @@ final class ReleasePermalinks {
 		}
 
 		$signature = $this->rules_signature();
-		if ( $signature === (string) get_option( self::OPTION_RULES_SIGNATURE, '' ) ) {
+		if ( (string) get_option( self::OPTION_RULES_SIGNATURE, '' ) === $signature ) {
 			return;
 		}
 

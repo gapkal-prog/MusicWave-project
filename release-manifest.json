@@ -2,11 +2,11 @@
   "$schema_note": "Single source of truth for MusicWave package versions and compatibility ranges. Update in the same change that bumps any package version or the data schema (PROJECT_PLAN.md, Stage 0).",
   "product": "MusicWave",
   "manifest_version": "1.0.0",
-  "updated": "2026-09-06",
+  "updated": "2026-09-07",
   "license": "GPL-2.0-or-later",
   "packages": {
     "music-wave-core": {
-      "version": "0.12.0",
+      "version": "0.13.0",
       "type": "wordpress-plugin",
       "schema_version": "0.11.0",
       "requires": {
@@ -21,7 +21,7 @@
       }
     },
     "music-wave-vip": {
-      "version": "0.5.0",
+      "version": "0.5.1",
       "type": "wordpress-plugin",
       "requires": {
         "wordpress": ">=6.6",
@@ -36,7 +36,7 @@
       }
     },
     "musicwave": {
-      "version": "0.8.1",
+      "version": "0.8.2",
       "type": "wordpress-theme",
       "requires": {
         "wordpress": ">=6.6",

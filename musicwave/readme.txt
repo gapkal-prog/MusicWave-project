@@ -4,13 +4,17 @@ Tags: block-theme, music, woocommerce, rtl, accessibility
 Requires at least: 6.6
 Tested up to: 6.8
 Requires PHP: 7.4
-Stable tag: 0.8.1
+Stable tag: 0.8.2
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
 MusicWave is a block theme for music catalogs and stores. It uses MusicWave Core for catalog data and supports WooCommerce plus MusicWave VIP protected downloads.
 
 == Changelog ==
+
+= 0.8.2 =
+* New page template "درخواست آهنگ و همکاری" (`page-requests`) composed of the Core request form block plus an FAQ, and a `musicwave/request-cta` pattern for promoting song requests and collaborations on any page. The template is repaired automatically on existing installs like the other custom templates.
+* The request form needs MusicWave Core 0.13.0 or newer; without Core the block outputs nothing on the front end and the editor shows the standard missing-block notice.
 
 = 0.8.1 =
 * Feature: comments section on the single release template (listener discussion with threaded replies, pagination, and a styled form) via the new `comments.css` module; light and dark palettes covered.

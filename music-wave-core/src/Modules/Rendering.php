@@ -1601,6 +1601,64 @@ final class Rendering implements Module {
 				'usesContext' => array( 'postId', 'postType' ),
 				'supports'    => $supports,
 			),
+			array(
+				'name'        => 'music-wave/request-form',
+				'title'       => __( 'فرم درخواست آهنگ و همکاری', 'music-wave-core' ),
+				'description' => __( 'فرم عمومی سفارش آهنگ اختصاصی و پیشنهاد همکاری؛ درخواست‌ها در بخش «درخواست‌ها و همکاری» مدیریت می‌شوند.', 'music-wave-core' ),
+				'icon'        => 'email-alt',
+				'keywords'    => array( __( 'درخواست', 'music-wave-core' ), __( 'همکاری', 'music-wave-core' ), __( 'سفارش آهنگ', 'music-wave-core' ) ),
+				'attributes'  => array(
+					'eyebrow'        => array(
+						'type'    => 'string',
+						'default' => '',
+					),
+					'heading'        => array(
+						'type'    => 'string',
+						'default' => '',
+					),
+					'intro'          => array(
+						'type'    => 'string',
+						'default' => '',
+					),
+					'showHeading'    => array(
+						'type'    => 'boolean',
+						'default' => true,
+					),
+					'showSteps'      => array(
+						'type'    => 'boolean',
+						'default' => true,
+					),
+					'showHighlights' => array(
+						'type'    => 'boolean',
+						'default' => true,
+					),
+					'showBudget'     => array(
+						'type'    => 'boolean',
+						'default' => true,
+					),
+					'showDeadline'   => array(
+						'type'    => 'boolean',
+						'default' => true,
+					),
+					'showPhone'      => array(
+						'type'    => 'boolean',
+						'default' => true,
+					),
+					'showLinks'      => array(
+						'type'    => 'boolean',
+						'default' => true,
+					),
+					'submitLabel'    => array(
+						'type'    => 'string',
+						'default' => '',
+					),
+					'layout'         => array(
+						'type'    => 'string',
+						'default' => 'split',
+					),
+				),
+				'supports'    => $supports,
+			),
 		);
 
 		// Enrich the hand-rolled editor registry with block.json metadata that

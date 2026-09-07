@@ -84,7 +84,7 @@ final class DatabaseReplayStore implements ReplayStore {
 		if ( null !== $this->table_available ) {
 			return $this->table_available;
 		}
-		if ( ! isset( $wpdb ) || ! is_object( $wpdb ) || ! method_exists( $wpdb, 'get_var' ) ) {
+		if ( ! $wpdb instanceof \wpdb ) {
 			$this->table_available = false;
 			return false;
 		}

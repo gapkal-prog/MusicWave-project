@@ -78,8 +78,8 @@ final class ShuffleButtonBlock {
 				$handle,
 				'musicWaveReleaseActions',
 				array(
-					'copied'     => __( 'پیوند کپی شد', 'music-wave-core' ),
-					'copyFailed' => __( 'کپی انجام نشد. پیوند را به صورت دستی کپی کنید.', 'music-wave-core' ),
+					'copied'      => __( 'پیوند کپی شد', 'music-wave-core' ),
+					'copyFailed'  => __( 'کپی انجام نشد. پیوند را به صورت دستی کپی کنید.', 'music-wave-core' ),
 					'shareFailed' => __( 'اشتراک‌گذاری انجام نشد.', 'music-wave-core' ),
 				)
 			);

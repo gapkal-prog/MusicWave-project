@@ -1065,8 +1065,8 @@ final class ReleaseBlocks {
 
 			$label .= '<span class="mw-collection-list__title-block"><span class="mw-collection-list__title">' . esc_html( $title ) . '</span></span>';
 
-		$explicit = sanitize_text_field( (string) $this->repository->get( $child_id, 'mw_explicit' ) );
-		$is_explicit = '1' === $explicit || 'yes' === strtolower( $explicit );
+		$explicit      = sanitize_text_field( (string) $this->repository->get( $child_id, 'mw_explicit' ) );
+		$is_explicit   = '1' === $explicit || 'yes' === strtolower( $explicit );
 		$explicit_html = $is_explicit ? '<span class="mw-collection-list__explicit" aria-label="' . esc_attr__( 'محتوای صریح', 'music-wave-core' ) . '">E</span>' : '';
 
 		$main_link = is_string( $link ) && '' !== $link
@@ -1074,7 +1074,7 @@ final class ReleaseBlocks {
 			: '<span class="mw-collection-list__link">' . $label . $explicit_html . '</span>';
 
 		$artist_links = $this->collection_artist_links( $child_id );
-		$artist_html = '' !== $artist_links ? '<span class="mw-collection-list__artist">' . $artist_links . '</span>' : '<span class="mw-collection-list__artist" aria-hidden="true">—</span>';
+		$artist_html  = '' !== $artist_links ? '<span class="mw-collection-list__artist">' . $artist_links . '</span>' : '<span class="mw-collection-list__artist" aria-hidden="true">—</span>';
 
 		$duration_html = '';
 		if ( $options['show_duration'] ) {
@@ -1087,7 +1087,7 @@ final class ReleaseBlocks {
 		}
 
 		$quality_hint = '';
-		$assets = $this->repository->get( $child_id, 'mw_download_assets' );
+		$assets       = $this->repository->get( $child_id, 'mw_download_assets' );
 		if ( is_array( $assets ) ) {
 			foreach ( $assets as $a ) {
 				if ( is_array( $a ) && ! empty( $a['label'] ) ) {
@@ -1100,7 +1100,7 @@ final class ReleaseBlocks {
 			? '<span class="mw-collection-list__quality" aria-hidden="true">' . esc_html( $quality_hint ) . '</span>'
 			: '<span class="mw-collection-list__quality" aria-hidden="true">—</span>';
 
-		$main = '<div class="mw-collection-list__main">' . $main_link . $artist_html . $duration_html . $quality_html . '</div>';
+		$main    = '<div class="mw-collection-list__main">' . $main_link . $artist_html . $duration_html . $quality_html . '</div>';
 		$actions = '';
 		if ( $options['show_preview'] ) {
 			$actions .= $this->collection_preview_button( $child_id );
@@ -1496,8 +1496,9 @@ final class ReleaseBlocks {
 
 		/* translators: %s: release title. */
 		$label = sprintf( __( 'پخش %s', 'music-wave-core' ), get_the_title( $release_id ) );
+		$icon  = BlockSupport::bool_attribute( $attributes, 'showIcon', true ) ? '<span class="mw-card-play__icon" aria-hidden="true">&#9654;</span>' : '<span class="screen-reader-text">' . esc_html( $label ) . '</span>';
 
-		return '<section ' . BlockSupport::wrapper_attributes( 'mw-preview-player' ) . '><h2 class="screen-reader-text">' . esc_html__( 'پخش انتشار', 'music-wave-core' ) . '</h2><button class="mw-card-play mw-release-actions__play" type="button" data-mw-release-id="' . esc_attr( (string) $release_id ) . '" aria-label="' . esc_attr( $label ) . '" aria-pressed="false"><span class="mw-card-play__icon" aria-hidden="true">&#9654;</span></button></section>';
+		return '<section ' . BlockSupport::wrapper_attributes( 'mw-preview-player' ) . '><h2 class="screen-reader-text">' . esc_html__( 'پخش انتشار', 'music-wave-core' ) . '</h2><button class="mw-card-play mw-release-actions__play" type="button" data-mw-release-id="' . esc_attr( (string) $release_id ) . '" aria-label="' . esc_attr( $label ) . '" aria-pressed="false">' . $icon . '</button></section>';
 	}
 
 	/**
@@ -1598,7 +1599,7 @@ final class ReleaseBlocks {
 		$badge     = $protected ? '<span class="mw-download-action__security-badge">' . esc_html__( 'VIP حفاظت‌شده', 'music-wave-core' ) . '</span>' : '';
 		$security  = '<p class="mw-download-action__security"><svg class="mw-download-action__security-icon" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg><span>' . esc_html( $message ) . '</span>' . $badge . '</p>';
 
-		$panel_extra = count( $files ) === 1 ? ' mw-download-action--single' : '';
+		$panel_extra  = count( $files ) === 1 ? ' mw-download-action--single' : '';
 		$panel_extra .= ' mw-download-action--unified';
 		$unified_head = '<div class="mw-download-action__table-header" aria-hidden="true"><span>' . esc_html__( 'فایل', 'music-wave-core' ) . '</span><span>' . esc_html__( 'کیفیت', 'music-wave-core' ) . '</span><span>' . esc_html__( 'اقدام', 'music-wave-core' ) . '</span></div>';
 		return '<aside ' . BlockSupport::wrapper_attributes( 'mw-download-action mw-download-action--panel' . $panel_extra ) . '>' . $heading . $unified_head . $this->download_file_rows( $release_id, $files, $options ) . '<audio class="mw-secure-audio" preload="metadata" hidden></audio><span class="mw-download-status" role="status" aria-live="polite"></span>' . $security . '</aside>';
@@ -2069,11 +2070,11 @@ final class ReleaseBlocks {
 			}
 
 			$row_class = 'mw-download-file-row' . ( $show_quality ? '' : ' mw-download-file-row--no-quality' );
-			$icon = '<span class="mw-download-file-row__icon" aria-hidden="true">♫</span>';
-				if ( 'mp3' === strtolower( (string) ($file['qualities'][0]['key'] ?? '') ) || ! empty( $file['qualities'][0]['streamable'] ) ) {
-					$icon = '<span class="mw-download-file-row__icon mw-download-file-row__icon--wave" aria-hidden="true"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M3 12h2.5l2-6 3 12 2.5-8H21"/></svg></span>';
-				}
-				$rows[]    = '<div class="' . esc_attr( $row_class ) . '" role="listitem"><div class="mw-download-file-row__title">' . $icon . '<strong>' . esc_html( (string) $file['label'] ) . '</strong></div>' . $quality_select . '<div class="mw-download-file-row__actions">' . $play . '<button class="wp-element-button mw-download-button" type="button" aria-label="' . esc_attr( $download_label ) . '" data-release-id="' . esc_attr( (string) $release_id ) . '"' . $default_quality . '><span class="mw-download-button__icon" aria-hidden="true">⤓</span></button></div></div>';
+			$icon      = '<span class="mw-download-file-row__icon" aria-hidden="true">♫</span>';
+			if ( 'mp3' === strtolower( (string) ( $file['qualities'][0]['key'] ?? '' ) ) || ! empty( $file['qualities'][0]['streamable'] ) ) {
+				$icon = '<span class="mw-download-file-row__icon mw-download-file-row__icon--wave" aria-hidden="true"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M3 12h2.5l2-6 3 12 2.5-8H21"/></svg></span>';
+			}
+			$rows[] = '<div class="' . esc_attr( $row_class ) . '" role="listitem"><div class="mw-download-file-row__title">' . $icon . '<strong>' . esc_html( (string) $file['label'] ) . '</strong></div>' . $quality_select . '<div class="mw-download-file-row__actions">' . $play . '<button class="wp-element-button mw-download-button" type="button" aria-label="' . esc_attr( $download_label ) . '" data-release-id="' . esc_attr( (string) $release_id ) . '"' . $default_quality . '><span class="mw-download-button__icon" aria-hidden="true">⤓</span></button></div></div>';
 		}
 
 		return empty( $rows ) ? '' : '<div class="mw-download-file-list" role="list">' . implode( '', $rows ) . '</div>';

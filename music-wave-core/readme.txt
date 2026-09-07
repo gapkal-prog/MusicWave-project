@@ -4,13 +4,18 @@ Tags: music, catalog, releases, woocommerce, downloads
 Requires at least: 6.6
 Tested up to: 6.8
 Requires PHP: 7.4
-Stable tag: 0.12.0
+Stable tag: 0.13.0
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
 MusicWave Core provides catalog data, release relationships, WooCommerce mapping, customer music library, access decisions, secure-download contracts, onboarding, and diagnostics for the MusicWave theme.
 
 == Changelog ==
+
+= 0.13.0 =
+* Fix: site search now finds Persian and Arabic-script content regardless of the keyboard used. Every search word is expanded into its equivalent spellings (Arabic vs Persian ye/kaf, zero-width non-joiner vs space, Persian/Arabic/Latin digits, diacritics, kashida, heh variants) at the SQL layer, artist/genre/mood/label/type term names and descriptive release metadata (album, catalog number, ISRC, credits) are matched through bounded sub-queries, and the header autocomplete applies the same normalization. Latin-only phrases keep core behaviour. Filters: `music_wave_script_aware_search`, `music_wave_search_taxonomies`, `music_wave_search_meta_keys`; query vars `mw_script_search`, `mw_search_taxonomies`, `mw_search_meta_keys`.
+* Feature: custom song request and collaboration module. New `music-wave/request-form` block (progressive, works without JavaScript, honeypot + timing + per-actor rate limit, field-level validation, post/redirect/get with a random token instead of personal data in the URL, receipt email with a `MW-YYYY-000000` reference) and a full management screen under MusicWave → Requests & collaboration (pinned above MusicWave VIP): unread badge, statistics, status tabs, type/role/priority/search filters, bulk actions, detail view with email replies and canned templates, internal notes, accept/decline/archive, field editing, manual entry, settings (recipients, Reply-To, receipts, signature, rate limit, enabled request types, custom success notice), contextual help, privacy exporter/eraser. Requests are a private `mw_request` post type with registered statuses; no database schema change (schema stays 0.11.0). Filters: `music_wave_manage_request_caps`, `music_wave_request_message`, `music_wave_request_reply_templates`; actions `music_wave_request_created`, `music_wave_request_status_changed`.
+* Note: request data is kept when the plugin is uninstalled (no uninstall routine exists); use the privacy eraser or delete requests from the management screen before removing the plugin if required.
 
 = 0.12.0 =
 * Feature: release permalinks now follow the release type. Albums live under `/album/`, tracks and singles under `/track/`, EPs under `/ep/`, mixes under `/mix/`, playlists under `/playlist/`, podcast shows under `/podcast/` and episodes under `/episode/`; releases without a mapped type keep `/music/`. The map is filterable through `music_wave_release_permalink_bases`, every base registers a full WordPress permastruct (pagination, comment pages, feeds, embeds, endpoints), and legacy or stale `/music/<slug>/` links are redirected permanently to the canonical URL.

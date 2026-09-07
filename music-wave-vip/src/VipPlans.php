@@ -827,7 +827,7 @@ final class VipPlans {
 			}
 
 			global $wpdb;
-			if ( isset( $wpdb ) && is_object( $wpdb ) && method_exists( $wpdb, 'get_col' ) ) {
+			if ( $wpdb instanceof \wpdb ) {
 				// phpcs:ignore WordPress.DB.DirectDatabaseQuery
 				$meta_users = $wpdb->get_col(
 					$wpdb->prepare(

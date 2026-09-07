@@ -263,7 +263,7 @@ final class ListeningRepository {
 		if ( null !== $this->table_available ) {
 			return $this->table_available;
 		}
-		if ( ! isset( $wpdb ) || ! is_object( $wpdb ) || ! method_exists( $wpdb, 'get_var' ) ) {
+		if ( ! $wpdb instanceof \wpdb ) {
 			$this->table_available = false;
 			return false;
 		}
@@ -271,7 +271,7 @@ final class ListeningRepository {
 		$table = $wpdb->prefix . self::TABLE;
 		// Underscores are LIKE wildcards; escape them so the existence probe
 		// matches the exact table name only.
-		$like                  = method_exists( $wpdb, 'esc_like' ) ? $wpdb->esc_like( $table ) : $table;
+		$like                  = $wpdb->esc_like( $table );
 		$this->table_available = $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $like ) ) === $table; // phpcs:ignore WordPress.DB.DirectDatabaseQuery
 
 		return $this->table_available;

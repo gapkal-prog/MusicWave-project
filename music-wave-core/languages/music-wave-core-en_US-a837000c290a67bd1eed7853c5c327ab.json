@@ -1035,6 +1035,12 @@
             "بستن پخش‌کننده": [
                 "Close player"
             ],
+            "باصدا": [
+                "Unmute"
+            ],
+            "بی‌صدا": [
+                "Mute"
+            ],
             "بسته نرم افزاری ZIP": [
                 "ZIP bundle"
             ],
@@ -3975,6 +3981,839 @@
             ],
             "post type singular name\u0004انتشار": [
                 "Release"
+            ],
+            "%1$s از %2$s": [
+                "%1$s of %2$s"
+            ],
+            "%1$s از %2$s نویسه": [
+                "%1$s of %2$s characters"
+            ],
+            "%1$s — درخواست شما ثبت شد (%2$s)": [
+                "%1$s — your request has been received (%2$s)"
+            ],
+            "%1$s — پاسخ به درخواست شما: %2$s": [
+                "%1$s — reply to your request: %2$s"
+            ],
+            "%s درخواست جدید": [
+                "%s new request",
+                "%s new requests"
+            ],
+            "%s مورد": [
+                "%s item",
+                "%s items"
+            ],
+            "collaboration": [
+                "collaboration"
+            ],
+            "request": [
+                "request"
+            ],
+            "share": [
+                "share"
+            ],
+            "shuffle": [
+                "shuffle"
+            ],
+            "آهنگ اختصاصی": [
+                "Custom song"
+            ],
+            "آهنگ اختصاصی می‌خواهید یا ایدهٔ همکاری دارید؟": [
+                "Need a custom song or have a collaboration idea?"
+            ],
+            "اجرا": [
+                "Performance"
+            ],
+            "اجرا و رویداد": [
+                "Performance & events"
+            ],
+            "اختیاری؛ هر پیوند در یک خط (حداکثر ۵).": [
+                "Optional; one link per line (up to 5)."
+            ],
+            "ارسال خیلی سریع انجام شد. لطفاً چند لحظه صبر کنید و دوباره ارسال کنید.": [
+                "That was submitted too quickly. Please wait a moment and try again."
+            ],
+            "ارسال درخواست": [
+                "Send request"
+            ],
+            "ارسال پاسخ": [
+                "Send reply"
+            ],
+            "از اعتماد شما سپاسگزاریم. متأسفانه در حال حاضر امکان پذیرش این درخواست را نداریم، اما خوشحال می‌شویم در آینده دوباره با ما در تماس باشید.": [
+                "Thank you for your trust. Unfortunately we are unable to take on this request at the moment, but we would be glad to hear from you again in the future."
+            ],
+            "استاندارد": [
+                "Standard"
+            ],
+            "اشتراک‌گذاری": [
+                "Share"
+            ],
+            "اشتراک‌گذاری %s": [
+                "Share %s"
+            ],
+            "اشتراک‌گذاری انتشار": [
+                "Share release"
+            ],
+            "اشتراک‌گذاری انجام نشد.": [
+                "Sharing failed."
+            ],
+            "اطلاعات تماس شما فقط برای پاسخ به همین درخواست استفاده می‌شود.": [
+                "Your contact details are used only to answer this request."
+            ],
+            "اطلاعات درخواست ذخیره شد.": [
+                "Request details saved."
+            ],
+            "اعلان‌ها و ایمیل": [
+                "Notifications & email"
+            ],
+            "اقتصادی": [
+                "Starter"
+            ],
+            "اقدام": [
+                "Action"
+            ],
+            "اقدامات دانلود": [
+                "Download actions"
+            ],
+            "امضای ایمیل‌ها": [
+                "Email signature"
+            ],
+            "انتخاب": [
+                "Select"
+            ],
+            "انتخاب همه": [
+                "Select all"
+            ],
+            "انتخاب کیفیت برای %s": [
+                "Choose a quality for %s"
+            ],
+            "انتشار فعلی یا مجموعه را به صورت تصادفی پخش می‌کند.": [
+                "Plays the current release or collection in random order."
+            ],
+            "انواع درخواست فعال": [
+                "Enabled request types"
+            ],
+            "اولویت درخواست به‌روزرسانی شد.": [
+                "Request priority updated."
+            ],
+            "ایمیل": [
+                "Email"
+            ],
+            "ایمیل ارسال نشد": [
+                "Email not sent"
+            ],
+            "ایمیل تأیید با شمارهٔ پیگیری دریافت می‌کنید.": [
+                "You will receive a confirmation email with a reference number."
+            ],
+            "ایمیل تأیید برای درخواست‌کننده": [
+                "Confirmation email to the requester"
+            ],
+            "ایمیل:": [
+                "Email:"
+            ],
+            "این درخواست پیدا نشد یا حذف شده است.": [
+                "This request could not be found or has been deleted."
+            ],
+            "با احترام، تیم %s": [
+                "Kind regards, the %s team"
+            ],
+            "با غیرفعال کردن، فرم عمومی پیام «در حال حاضر درخواست جدیدی پذیرفته نمی‌شود» را نشان می‌دهد.": [
+                "When disabled, the public form shows “New requests are not being accepted at the moment.”"
+            ],
+            "بازهٔ محدودیت (ثانیه)": [
+                "Rate-limit window (seconds)"
+            ],
+            "بازگشت به فهرست درخواست‌ها": [
+                "Back to the request list"
+            ],
+            "بایگانی": [
+                "Archive"
+            ],
+            "برای اجرا روی موارد انتخاب‌شده دوباره کلیک کنید": [
+                "Click again to apply to the selected items"
+            ],
+            "برای استفاده از برچسب پیش‌فرض ترجمه‌شده خالی بگذارید.": [
+                "Leave empty to use the default translated label."
+            ],
+            "برای استفاده از متن‌های پیش‌فرض ترجمه‌شده خالی بگذارید.": [
+                "Leave empty to use the default translated texts."
+            ],
+            "برای اینکه بتوانیم پیشنهاد دقیقی بدهیم، لطفاً چند نکته را برایمان روشن کنید: سبک و حال‌وهوای مورد نظر، مدت زمان تقریبی، نمونه‌های الهام‌بخش و مهلت نهایی.": [
+                "So that we can make a precise proposal, please clarify a few points for us: the style and mood you have in mind, the approximate duration, reference examples, and your final deadline."
+            ],
+            "برای ثبت درخواست باید با ذخیرهٔ اطلاعات تماس خود موافقت کنید.": [
+                "To submit a request you need to agree to the storage of your contact details."
+            ],
+            "برای حذف دائمی دوباره کلیک کنید": [
+                "Click again to delete permanently"
+            ],
+            "برای درخواست‌هایی که تلفنی، حضوری یا از شبکه‌های اجتماعی رسیده‌اند. ایمیل تأیید برای درخواست‌کننده فرستاده نمی‌شود.": [
+                "For requests received by phone, in person, or through social media. No confirmation email is sent to the requester."
+            ],
+            "برخی فیلدها معتبر نیستند؛ نام، ایمیل، عنوان و توضیحات (حداقل ۲۰ نویسه) الزامی‌اند.": [
+                "Some fields are invalid; name, email, subject, and description (at least 20 characters) are required."
+            ],
+            "برداشتن نشان فوری": [
+                "Remove urgent flag"
+            ],
+            "برند / آژانس تبلیغاتی": [
+                "Brand / advertising agency"
+            ],
+            "برچسب دکمهٔ ارسال": [
+                "Submit button label"
+            ],
+            "بلافاصله پس از ثبت، شمارهٔ پیگیری و خلاصهٔ درخواست ایمیل می‌شود.": [
+                "Right after submission, a reference number and a summary of the request are emailed to you."
+            ],
+            "به‌روزرسانی انجام نشد.": [
+                "The update could not be completed."
+            ],
+            "به‌صورت دستی توسط مدیر ثبت شد.": [
+                "Entered manually by a manager."
+            ],
+            "بودجه": [
+                "Budget"
+            ],
+            "بودجه:": [
+                "Budget:"
+            ],
+            "بودجهٔ تقریبی": [
+                "Approximate budget"
+            ],
+            "تاریخ مورد نظر را به شکل سال-ماه-روز وارد کنید.": [
+                "Enter the requested date as year-month-day."
+            ],
+            "تاریخ مورد نظر نمی‌تواند در گذشته باشد.": [
+                "The requested date cannot be in the past."
+            ],
+            "تبلیغات و برند": [
+                "Advertising & brands"
+            ],
+            "تبلیغات و رویداد": [
+                "Advertising & events"
+            ],
+            "ترانه، ملودی و تنظیم برای شما یا برندتان؛ از ایده تا مسترینگ.": [
+                "Lyrics, melody, and arrangement for you or your brand — from idea to mastering."
+            ],
+            "تعداد فرم‌هایی که یک بازدیدکننده می‌تواند در بازهٔ زیر بفرستد.": [
+                "How many forms one visitor may submit within the window below."
+            ],
+            "تغییر وضعیت به «%s»": [
+                "Change status to “%s”"
+            ],
+            "تلفن": [
+                "Phone"
+            ],
+            "تماس": [
+                "Contact"
+            ],
+            "تنظیمات اعلان و فرم": [
+                "Notification & form settings"
+            ],
+            "تنظیمات ذخیره شد.": [
+                "Settings saved."
+            ],
+            "تهیه‌کننده / آهنگساز": [
+                "Producer / composer"
+            ],
+            "توضیحات": [
+                "Description"
+            ],
+            "توضیحات را کامل‌تر بنویسید (حداقل %d نویسه) تا بتوانیم دقیق‌تر پاسخ دهیم.": [
+                "Please describe your request in more detail (at least %d characters) so we can answer precisely."
+            ],
+            "توضیحات نباید بیش از %d نویسه باشد.": [
+                "The description may not exceed %d characters."
+            ],
+            "تیم ما بررسی می‌کند و با پیشنهاد و زمان‌بندی پاسخ می‌دهد.": [
+                "Our team reviews it and replies with a proposal and a timeline."
+            ],
+            "ثبت درخواست": [
+                "Submit request"
+            ],
+            "ثبت درخواست دستی": [
+                "Enter a request manually"
+            ],
+            "ثبت درخواست دیگر": [
+                "Submit another request"
+            ],
+            "ثبت دستی": [
+                "Manual entry"
+            ],
+            "جدید": [
+                "New"
+            ],
+            "جست‌وجو در درخواست‌ها": [
+                "Search requests"
+            ],
+            "حداقل %s نویسه بنویسید": [
+                "Write at least %s characters"
+            ],
+            "حداکثر ارسال هر بازدیدکننده": [
+                "Maximum submissions per visitor"
+            ],
+            "حذف دائمی": [
+                "Delete permanently"
+            ],
+            "حذف دائمی برگشت‌ناپذیر است؛ برای نگهداری بدون نمایش، بایگانی کنید.": [
+                "Permanent deletion cannot be undone; archive instead to keep a request out of sight."
+            ],
+            "حذف درخواست": [
+                "Delete request"
+            ],
+            "حرفه‌ای": [
+                "Premium"
+            ],
+            "خالی = «با احترام، تیم [نام سایت]».": [
+                "Empty = “Kind regards, the [site name] team”."
+            ],
+            "خالی بگذارید تا پیام پیش‌فرض نمایش داده شود.": [
+                "Leave empty to show the default message."
+            ],
+            "خلاصهٔ پیام شما:": [
+                "Summary of your message:"
+            ],
+            "خواننده": [
+                "Singer"
+            ],
+            "خواننده‌ها، تهیه‌کننده‌ها، برندها و حتی شنونده‌ها می‌توانند از همین‌جا درخواست بدهند. فرم را پر کنید؛ ما آن را می‌خوانیم و با پیشنهاد و زمان‌بندی پاسخ می‌دهیم.": [
+                "Singers, producers, brands, and even listeners can send a request right here. Fill in the form; we read every one and reply with a proposal and a timeline."
+            ],
+            "خوشحالیم که اعلام کنیم می‌توانیم این همکاری را انجام دهیم. در ادامه جزئیات قرارداد، مراحل کار و زمان‌بندی را با هم نهایی می‌کنیم.": [
+                "We are happy to let you know that we can take on this collaboration. Next we will finalize the agreement details, the work stages, and the schedule together."
+            ],
+            "در حال بررسی": [
+                "In review"
+            ],
+            "در حال حاضر درخواست جدیدی پذیرفته نمی‌شود.": [
+                "New requests are not being accepted at the moment."
+            ],
+            "در مدت کوتاهی چند درخواست فرستاده‌اید. لطفاً کمی بعد دوباره تلاش کنید.": [
+                "You have sent several requests in a short time. Please try again a little later."
+            ],
+            "درخواست": [
+                "Request"
+            ],
+            "درخواست آهنگ سفارشی و پیشنهاد همکاری که از فرم عمومی سایت ثبت می‌شود.": [
+                "Custom song requests and collaboration proposals submitted through the public site form."
+            ],
+            "درخواست بدون عنوان": [
+                "Untitled request"
+            ],
+            "درخواست برای همیشه حذف شد.": [
+                "The request was permanently deleted."
+            ],
+            "درخواست ثبت شد.": [
+                "Request saved."
+            ],
+            "درخواست جدید: %1$s از %2$s": [
+                "New request: %1$s from %2$s"
+            ],
+            "درخواست شما با موفقیت ثبت شد و تیم ما آن را بررسی می‌کند. معمولاً ظرف چند روز کاری از همین نشانی ایمیل با شما تماس می‌گیریم.": [
+                "Your request has been received and our team is reviewing it. We usually get back to you at this email address within a few business days."
+            ],
+            "درخواست شما ثبت شد. یک ایمیل تأیید برایتان فرستادیم و به‌زودی پاسخ می‌دهیم.": [
+                "Your request has been received. We have sent you a confirmation email and will reply soon."
+            ],
+            "درخواست شما را با دقت خواندیم و در حال بررسی جزئیات آن هستیم. طی چند روز آینده پیشنهاد و زمان‌بندی دقیق را برایتان می‌فرستیم.": [
+                "We have read your request carefully and are reviewing the details. Within the next few days we will send you a precise proposal and schedule."
+            ],
+            "درخواست شما رسید": [
+                "We received your request"
+            ],
+            "درخواست پیدا نشد.": [
+                "Request not found."
+            ],
+            "درخواست، اطلاعات تماس و کل سابقه برای همیشه حذف می‌شود. برای نگهداری بدون نمایش، به‌جای حذف «بایگانی» کنید.": [
+                "The request, its contact details, and the whole history will be deleted forever. To keep it out of sight instead, choose “Archive”."
+            ],
+            "درخواست‌ها و همکاری": [
+                "Requests & collaboration"
+            ],
+            "درخواست‌های آهنگ اختصاصی، پیشنهادهای همکاری و تبلیغات که از فرم عمومی سایت می‌رسند. از همین‌جا پاسخ دهید، وضعیت را پیش ببرید و سابقه را نگه دارید.": [
+                "Custom song requests, collaboration proposals, and advertising inquiries that arrive through the public site form. Reply from here, move the status forward, and keep the history."
+            ],
+            "درخواست‌های آهنگ و همکاری": [
+                "Song & collaboration requests"
+            ],
+            "درخواست‌های همکاری": [
+                "Collaboration requests"
+            ],
+            "درخواست‌های همکاری MusicWave": [
+                "MusicWave collaboration requests"
+            ],
+            "درخواست‌کننده": [
+                "Requester"
+            ],
+            "دریافت شد": [
+                "Received"
+            ],
+            "دو ستونه (معرفی + فرم)": [
+                "Two columns (intro + form)"
+            ],
+            "دکمه اشتراک‌گذاری انتشار را در نوار اقدام انتشار نمایش می‌دهد.": [
+                "Shows the release share button in the release action bar."
+            ],
+            "دکمه اشتراک‌گذاری بومی برای انتشار فعلی با Web Share API و بازگشت کپی پیوند.": [
+                "Native share button for the current release using the Web Share API with a copy-link fallback."
+            ],
+            "دکمه پخش تصادفی مجموعه یا انتشار فعلی را نمایش می‌دهد.": [
+                "Shows the shuffle button for the current collection or release."
+            ],
+            "ذخیرهٔ تغییرات": [
+                "Save changes"
+            ],
+            "ذخیرهٔ تنظیمات": [
+                "Save settings"
+            ],
+            "ذخیرهٔ درخواست ممکن نشد. لطفاً بعداً دوباره تلاش کنید.": [
+                "The request could not be saved. Please try again later."
+            ],
+            "ذخیرهٔ یادداشت": [
+                "Save note"
+            ],
+            "رد درخواست": [
+                "Decline request"
+            ],
+            "رد شده": [
+                "Declined"
+            ],
+            "روی‌هم‌چیده": [
+                "Stacked"
+            ],
+            "زمان": [
+                "Time"
+            ],
+            "زمان مورد نظر": [
+                "Requested date"
+            ],
+            "زمان مورد نظر (سال-ماه-روز)": [
+                "Requested date (year-month-day)"
+            ],
+            "زمان مورد نظر:": [
+                "Requested date:"
+            ],
+            "سابقه و گفت‌وگو": [
+                "History & conversation"
+            ],
+            "سازمانی / ویژه": [
+                "Enterprise / special"
+            ],
+            "سایر": [
+                "Other"
+            ],
+            "سبک و حال‌وهوا، مدت زمان، نمونه‌های الهام‌بخش، محل استفاده…": [
+                "Style and mood, duration, reference examples, where it will be used…"
+            ],
+            "سفارش آهنگ": [
+                "Song order"
+            ],
+            "سفارش آهنگ اختصاصی": [
+                "Custom song order"
+            ],
+            "سفارش و همکاری": [
+                "Orders & collaboration"
+            ],
+            "سلام %s،": [
+                "Hello %s,"
+            ],
+            "سیستم": [
+                "System"
+            ],
+            "شما اجازهٔ مدیریت درخواست‌ها را ندارید.": [
+                "You are not allowed to manage requests."
+            ],
+            "شما که هستید؟": [
+                "Who are you?"
+            ],
+            "شمارهٔ تماس": [
+                "Phone number"
+            ],
+            "شمارهٔ تماس (اختیاری)": [
+                "Phone number (optional)"
+            ],
+            "شمارهٔ تماس معتبر نیست.": [
+                "The phone number is not valid."
+            ],
+            "شمارهٔ پیگیری: %s": [
+                "Reference number: %s"
+            ],
+            "شنونده و علاقه‌مند": [
+                "Listener & fan"
+            ],
+            "صفحهٔ بعد": [
+                "Next page"
+            ],
+            "صفحهٔ قبل": [
+                "Previous page"
+            ],
+            "عادی": [
+                "Normal"
+            ],
+            "عدم امکان": [
+                "Not possible"
+            ],
+            "علامت‌گذاری به‌عنوان فوری": [
+                "Mark as urgent"
+            ],
+            "عملیات ناشناخته بود.": [
+                "Unknown action."
+            ],
+            "عملیات گروهی": [
+                "Bulk actions"
+            ],
+            "عملیات گروهی انجام شد.": [
+                "Bulk action completed."
+            ],
+            "عنوان درخواست": [
+                "Request subject"
+            ],
+            "فایل": [
+                "File"
+            ],
+            "فرم درخواست آهنگ و همکاری": [
+                "Song & collaboration request form"
+            ],
+            "فرم درخواست آهنگ و همکاری در سایت نمایش داده می‌شود؛ درخواست‌ها را از منوی MusicWave → درخواست‌ها و همکاری مدیریت کنید.": [
+                "The song & collaboration request form is shown on the site; manage requests from MusicWave → Requests & collaboration."
+            ],
+            "فرم را پر کنید؛ کمتر از دو دقیقه طول می‌کشد.": [
+                "Fill in the form; it takes less than two minutes."
+            ],
+            "فرم عمومی": [
+                "Public form"
+            ],
+            "فرم عمومی سفارش آهنگ اختصاصی و پیشنهاد همکاری برای خواننده‌ها، برندها و مخاطبان؛ بدون نیاز به جاوااسکریپت کار می‌کند و درخواست‌ها در بخش «درخواست‌ها و همکاری» مدیریت می‌شوند.": [
+                "Public form for custom song orders and collaboration proposals from singers, brands, and audiences; works without JavaScript, and requests are managed under “Requests & collaboration”."
+            ],
+            "فرم عمومی سفارش آهنگ اختصاصی و پیشنهاد همکاری؛ درخواست‌ها در بخش «درخواست‌ها و همکاری» مدیریت می‌شوند.": [
+                "Public form for custom song orders and collaboration proposals; requests are managed under “Requests & collaboration”."
+            ],
+            "فرم منقضی شده بود. لطفاً دوباره تلاش کنید.": [
+                "The form had expired. Please try again."
+            ],
+            "فقط برای تیم شما؛ برای درخواست‌کننده ارسال نمی‌شود.": [
+                "For your team only; not sent to the requester."
+            ],
+            "فوری": [
+                "Urgent"
+            ],
+            "فوری: درخواست را در فهرست برجسته می‌کند و با فیلتر اولویت پیدا می‌شود.": [
+                "Urgent: highlights the request in the list and makes it findable with the priority filter."
+            ],
+            "فیلدهای فرم": [
+                "Form fields"
+            ],
+            "فیچرینگ، تولید مشترک، ریمیکس یا اجرای زنده با هنرمندان ما.": [
+                "Featuring, co-production, remixes, or live performances with our artists."
+            ],
+            "لطفاً موارد مشخص‌شده را اصلاح کنید و دوباره ارسال کنید.": [
+                "Please correct the highlighted fields and submit again."
+            ],
+            "متن اضافی ایمیل تأیید": [
+                "Extra text for the confirmation email"
+            ],
+            "متن پاسخ": [
+                "Reply text"
+            ],
+            "متن پاسخ خالی است.": [
+                "The reply text is empty."
+            ],
+            "متن یادداشت": [
+                "Note text"
+            ],
+            "متن یادداشت خالی است.": [
+                "The note text is empty."
+            ],
+            "متن‌های آماده:": [
+                "Canned replies:"
+            ],
+            "مثلاً زمان معمول پاسخ‌گویی یا راه‌های تماس دیگر.": [
+                "For example the usual response time or other ways to get in touch."
+            ],
+            "مثلاً: قطعهٔ پاپ برای تیزر تبلیغاتی": [
+                "e.g. a pop track for an advertising teaser"
+            ],
+            "مدیر": [
+                "Manager"
+            ],
+            "مدیریت درخواست:": [
+                "Manage request:"
+            ],
+            "مشاهده و پاسخ": [
+                "View & reply"
+            ],
+            "مشخص نشده": [
+                "Not specified"
+            ],
+            "مهلت: %s": [
+                "Deadline: %s"
+            ],
+            "موافقم که نام و راه تماس من برای پاسخ به این درخواست ذخیره شود.": [
+                "I agree that my name and contact details are stored to answer this request."
+            ],
+            "موسیقی تبلیغاتی، جینگل، ساند‌برندینگ و برنامهٔ رویدادها.": [
+                "Advertising music, jingles, sound branding, and event programming."
+            ],
+            "موضوع ایمیل (اختیاری)": [
+                "Email subject (optional)"
+            ],
+            "موضوع دیگر": [
+                "Something else"
+            ],
+            "موضوع:": [
+                "Subject:"
+            ],
+            "موضوع: %s": [
+                "Subject: %s"
+            ],
+            "نام": [
+                "Name"
+            ],
+            "نام بیش از حد طولانی است.": [
+                "The name is too long."
+            ],
+            "نام خود را وارد کنید (حداقل ۲ نویسه).": [
+                "Enter your name (at least 2 characters)."
+            ],
+            "نام و نام خانوادگی": [
+                "Full name"
+            ],
+            "نام:": [
+                "Name:"
+            ],
+            "نام، ایمیل یا عنوان…": [
+                "Name, email, or subject…"
+            ],
+            "نام، ایمیل، عنوان و توضیحات همیشه الزامی‌اند. درخواست‌ها در «MusicWave → درخواست‌ها و همکاری» مدیریت می‌شوند.": [
+                "Name, email, subject, and description are always required. Requests are managed under “MusicWave → Requests & collaboration”."
+            ],
+            "نشانی پاسخ (Reply-To)": [
+                "Reply-To address"
+            ],
+            "نشانی‌ها را با ویرگول یا خط جدید جدا کنید. خالی = ایمیل مدیر سایت.": [
+                "Separate addresses with commas or new lines. Empty = the site admin email."
+            ],
+            "نقش": [
+                "Role"
+            ],
+            "نقش شما": [
+                "Your role"
+            ],
+            "نقش:": [
+                "Role:"
+            ],
+            "نمایش برچسب ناشر": [
+                "Show label badge"
+            ],
+            "نمایش جزئیات بیشتر": [
+                "Show more details"
+            ],
+            "نمایش خدمات": [
+                "Show services"
+            ],
+            "نمایش سربرگ": [
+                "Show header"
+            ],
+            "نمایش مراحل": [
+                "Show steps"
+            ],
+            "نمونه‌کار یا پیوندهای مرتبط": [
+                "Portfolio or related links"
+            ],
+            "نمونه‌کارها و پیوندها": [
+                "Portfolio & links"
+            ],
+            "نوع": [
+                "Type"
+            ],
+            "نوع درخواست": [
+                "Request type"
+            ],
+            "نوع درخواست: %s": [
+                "Request type: %s"
+            ],
+            "نیاز به جزئیات": [
+                "Details needed"
+            ],
+            "هر اولویتی": [
+                "Any priority"
+            ],
+            "هر درخواست از «جدید» شروع می‌شود. با ارسال پاسخ به «پاسخ داده شده» می‌رود و شما آن را به «پذیرفته شده»، «رد شده» یا «بایگانی» می‌برید.": [
+                "Every request starts as “New”. Sending a reply moves it to “Replied”, and you move it on to “Accepted”, “Declined”, or “Archived”."
+            ],
+            "هرچه دقیق‌تر بنویسید، پاسخ سریع‌تر و دقیق‌تری می‌گیرید.": [
+                "The more precise you are, the faster and more accurate our reply will be."
+            ],
+            "همهٔ انواع": [
+                "All types"
+            ],
+            "همهٔ نقش‌ها": [
+                "All roles"
+            ],
+            "همکاری": [
+                "Collaboration"
+            ],
+            "همکاری هنری": [
+                "Artistic collaboration"
+            ],
+            "همکاری پذیرفته‌شده": [
+                "Collaboration accepted"
+            ],
+            "هنوز درخواستی اینجا نیست": [
+                "No requests here yet"
+            ],
+            "هنوز مشخص نیست": [
+                "Not decided yet"
+            ],
+            "هنوز پاسخ یا یادداشتی ثبت نشده است.": [
+                "No replies or notes have been recorded yet."
+            ],
+            "هیچ موردی برای عملیات گروهی انتخاب نشده بود.": [
+                "No items were selected for the bulk action."
+            ],
+            "وب‌سایت": [
+                "Website"
+            ],
+            "وضعیت": [
+                "Status"
+            ],
+            "وضعیت از «%1$s» به «%2$s» تغییر کرد.": [
+                "Status changed from “%1$s” to “%2$s”."
+            ],
+            "وضعیت درخواست به‌روزرسانی شد.": [
+                "Request status updated."
+            ],
+            "وقتی بازدیدکننده‌ای فرم «درخواست آهنگ و همکاری» را پر کند، اینجا نمایش داده می‌شود. بلوک «فرم درخواست همکاری» را در هر برگه‌ای قرار دهید یا از الگوی آمادهٔ پوسته استفاده کنید.": [
+                "When a visitor fills in the “Song & collaboration request” form it will appear here. Place the “Collaboration request form” block on any page or use the theme's ready-made template."
+            ],
+            "وقتی درخواست‌کننده به ایمیل‌های شما پاسخ می‌دهد به این نشانی می‌رسد. خالی = ایمیل مدیر سایت.": [
+                "When a requester replies to your emails, the reply goes to this address. Empty = the site admin email."
+            ],
+            "ویرایش اطلاعات": [
+                "Edit details"
+            ],
+            "پاسخ ایمیلی": [
+                "Email reply"
+            ],
+            "پاسخ برای درخواست‌کننده ایمیل شد و در سابقه ثبت شد.": [
+                "The reply was emailed to the requester and recorded in the history."
+            ],
+            "پاسخ به %s ایمیل می‌شود و در سابقهٔ همین درخواست می‌ماند. با ارسال پاسخ، وضعیت «جدید» یا «در حال بررسی» به «پاسخ داده شده» می‌رود.": [
+                "The reply is emailed to %s and stays in this request's history. Sending a reply moves a “New” or “In review” request to “Replied”."
+            ],
+            "پاسخ به درخواست شما: %s": [
+                "Reply to your request: %s"
+            ],
+            "پاسخ به درخواست‌کننده": [
+                "Reply to the requester"
+            ],
+            "پاسخ داده شده": [
+                "Replied"
+            ],
+            "پاسخ در سابقه ثبت شد اما ارسال ایمیل ناموفق بود؛ تنظیمات ایمیل سایت را بررسی کنید.": [
+                "The reply was recorded in the history but the email could not be sent; check the site's email settings."
+            ],
+            "پاسخ: برای درخواست‌کننده ایمیل می‌شود و در سابقه می‌ماند.": [
+                "Reply: emailed to the requester and kept in the history."
+            ],
+            "پاک کردن فیلترها": [
+                "Clear filters"
+            ],
+            "پخش انتشار": [
+                "Play release"
+            ],
+            "پخش تصادفی": [
+                "Shuffle"
+            ],
+            "پخش تصادفی %s": [
+                "Shuffle %s"
+            ],
+            "پخش تصادفی صف پیش‌نمایش را به‌صورت تصادفی مرتب می‌کند.": [
+                "Shuffle reorders the preview queue randomly."
+            ],
+            "پذیرش درخواست": [
+                "Accept request"
+            ],
+            "پذیرش همکاری": [
+                "Accept collaboration"
+            ],
+            "پذیرفته شده": [
+                "Accepted"
+            ],
+            "پیام موفقیت سفارشی": [
+                "Custom success message"
+            ],
+            "پیش‌فرض ۳۶۰۰ ثانیه (یک ساعت).": [
+                "Default 3600 seconds (one hour)."
+            ],
+            "پیوند": [
+                "link"
+            ],
+            "پیوند کپی شد": [
+                "Link copied"
+            ],
+            "پیوندها": [
+                "Links"
+            ],
+            "پیوندها (هر خط یک نشانی)": [
+                "Links (one URL per line)"
+            ],
+            "پیوندهای نمونه‌کار": [
+                "Portfolio links"
+            ],
+            "چه چیزی می‌خواهید؟": [
+                "What do you need?"
+            ],
+            "چیدمان و ستون کناری": [
+                "Layout & side column"
+            ],
+            "کسب‌وکار / رویداد": [
+                "Business / event"
+            ],
+            "کل درخواست‌ها": [
+                "All requests"
+            ],
+            "کپی انجام نشد. پیوند را به صورت دستی کپی کنید.": [
+                "Copy failed. Please copy the link manually."
+            ],
+            "گردش کار": [
+                "Workflow"
+            ],
+            "گردش کار درخواست‌ها": [
+                "Request workflow"
+            ],
+            "گروه موسیقی": [
+                "Band"
+            ],
+            "گیرندگان اعلان درخواست جدید": [
+                "New-request notification recipients"
+            ],
+            "یادداشت داخلی": [
+                "Internal note"
+            ],
+            "یادداشت داخلی ذخیره شد.": [
+                "Internal note saved."
+            ],
+            "یادداشت داخلی: فقط تیم شما می‌بیند.": [
+                "Internal note: visible to your team only."
+            ],
+            "یک درخواست تازه ثبت شد (%s).": [
+                "A new request was submitted (%s)."
+            ],
+            "یک عنوان کوتاه برای درخواست بنویسید.": [
+                "Write a short subject for the request."
+            ],
+            "یک نشانی ایمیل معتبر وارد کنید تا بتوانیم پاسخ دهیم.": [
+                "Enter a valid email address so we can reply."
+            ],
+            "یکی از پیوندها معتبر نیست؛ فقط نشانی‌های http یا https پذیرفته می‌شوند.": [
+                "One of the links is not valid; only http or https URLs are accepted."
+            ],
+            "post type general name\u0004درخواست‌های همکاری": [
+                "Collaboration requests"
+            ],
+            "post type singular name\u0004درخواست": [
+                "Request"
             ]
         }
     }

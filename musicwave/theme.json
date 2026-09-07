@@ -490,6 +490,11 @@
       "postTypes": ["page"]
     },
     {
+      "name": "page-requests",
+      "title": "درخواست آهنگ و همکاری",
+      "postTypes": ["page"]
+    },
+    {
       "name": "page-cart",
       "title": "سبد خرید",
       "postTypes": ["page"]

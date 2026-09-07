@@ -4,7 +4,7 @@ Tags: music, membership, downloads, protected-files, woocommerce
 Requires at least: 6.6
 Tested up to: 6.8
 Requires PHP: 7.4
-Stable tag: 0.5.0
+Stable tag: 0.5.1
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -39,6 +39,10 @@ VIP plan products turn a standard WooCommerce product into a membership plan. Wh
 The provider stores opaque `local:` identifiers and streams files only after the Core access policy and signed one-time token are validated. Plan grants are stored in user meta keyed by order and re-evaluated on every decision; they never rely on a cached state.
 
 == Changelog ==
+
+= 0.5.1 =
+* Compatibility: the protected-asset uploader detects MIME types through a single helper that no longer calls `finfo_close()` (deprecated in PHP 8.5); behaviour is unchanged on PHP 7.4–8.4.
+* Maintenance: database access in the asset registry and plan sweeps now type-checks the global `$wpdb` object instead of probing individual methods, so static analysis covers every query. No functional change.
 
 = 0.5.0 =
 * Fix: saving the MusicWave Core integrations tab no longer resets the VIP module. The settings page marks its own full form, so unchecked-checkbox semantics only apply when the VIP form itself is submitted.

@@ -371,7 +371,7 @@ function musicwave_is_light_color( string $hex ): bool {
 
 	$channels = array();
 	foreach ( array( 0, 2, 4 ) as $offset ) {
-		$value = hexdec( substr( $hex, $offset, 2 ) ) / 255;
+		$value      = hexdec( substr( $hex, $offset, 2 ) ) / 255;
 		$channels[] = $value <= 0.03928 ? $value / 12.92 : pow( ( $value + 0.055 ) / 1.055, 2.4 );
 	}
 
@@ -833,6 +833,7 @@ function musicwave_repairable_template_slugs(): array {
 			'page-account',
 			'page-browse',
 			'page-playlists',
+			'page-requests',
 			'page-cart',
 			'page-checkout',
 			'page-music-home',
@@ -961,6 +962,7 @@ add_filter( 'get_block_templates', 'musicwave_alias_account_templates_in_query',
 function musicwave_template_titles(): array {
 	return array(
 		'page-playlists' => __( 'فهرست‌های پخش عمومی', 'musicwave' ),
+		'page-requests'  => __( 'درخواست آهنگ و همکاری', 'musicwave' ),
 	);
 }
 

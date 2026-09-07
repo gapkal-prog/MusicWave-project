@@ -2138,6 +2138,109 @@
 				},
 			],
 		},
+		'music-wave/request-form': {
+			groups: [
+				{
+					title: __( 'سربرگ', 'music-wave-core' ),
+					controls: [
+						[
+							'toggle',
+							'showHeading',
+							__( 'نمایش سربرگ', 'music-wave-core' ),
+							true,
+						],
+						[ 'text', 'eyebrow', __( 'ابرو', 'music-wave-core' ) ],
+						[
+							'text',
+							'heading',
+							__( 'عنوان بخش', 'music-wave-core' ),
+						],
+						[
+							'text',
+							'intro',
+							__( 'متن مقدمه', 'music-wave-core' ),
+						],
+					],
+					help: __(
+						'برای استفاده از متن‌های پیش‌فرض ترجمه‌شده خالی بگذارید.',
+						'music-wave-core'
+					),
+				},
+				{
+					title: __( 'چیدمان و ستون کناری', 'music-wave-core' ),
+					controls: [
+						[
+							'select',
+							'layout',
+							__( 'چیدمان', 'music-wave-core' ),
+							[
+								[
+									'split',
+									__(
+										'دو ستونه (معرفی + فرم)',
+										'music-wave-core'
+									),
+								],
+								[
+									'stacked',
+									__( 'روی‌هم‌چیده', 'music-wave-core' ),
+								],
+							],
+						],
+						[
+							'toggle',
+							'showHighlights',
+							__( 'نمایش خدمات', 'music-wave-core' ),
+							true,
+						],
+						[
+							'toggle',
+							'showSteps',
+							__( 'نمایش مراحل', 'music-wave-core' ),
+							true,
+						],
+					],
+				},
+				{
+					title: __( 'فیلدهای فرم', 'music-wave-core' ),
+					controls: [
+						[
+							'toggle',
+							'showBudget',
+							__( 'بودجهٔ تقریبی', 'music-wave-core' ),
+							true,
+						],
+						[
+							'toggle',
+							'showDeadline',
+							__( 'زمان مورد نظر', 'music-wave-core' ),
+							true,
+						],
+						[
+							'toggle',
+							'showPhone',
+							__( 'شمارهٔ تماس', 'music-wave-core' ),
+							true,
+						],
+						[
+							'toggle',
+							'showLinks',
+							__( 'پیوندهای نمونه‌کار', 'music-wave-core' ),
+							true,
+						],
+						[
+							'text',
+							'submitLabel',
+							__( 'برچسب دکمهٔ ارسال', 'music-wave-core' ),
+						],
+					],
+					help: __(
+						'نام، ایمیل، عنوان و توضیحات همیشه الزامی‌اند. درخواست‌ها در «MusicWave → درخواست‌ها و همکاری» مدیریت می‌شوند.',
+						'music-wave-core'
+					),
+				},
+			],
+		},
 		'music-wave/shuffle-button': {
 			releaseId: true,
 			textFields: [ [ 'label', __( 'برچسب دکمه', 'music-wave-core' ) ] ],
@@ -2586,6 +2689,10 @@
 	};
 
 	var emptyStateCopy = {
+		'music-wave/request-form': __(
+			'فرم درخواست آهنگ و همکاری در سایت نمایش داده می‌شود؛ درخواست‌ها را از منوی MusicWave → درخواست‌ها و همکاری مدیریت کنید.',
+			'music-wave-core'
+		),
 		'music-wave/release-meta': __(
 			'شماره کاتالوگ، تاریخ انتشار، مدت زمان، BPM، کلید، هنرمند یا ژانر را به انتشار انتخابی اضافه کنید.',
 			'music-wave-core'

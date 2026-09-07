@@ -140,7 +140,7 @@ final class ProtectedAssetRegistry {
 		if ( null !== $this->table_ready ) {
 			return $this->table_ready;
 		}
-		if ( ! isset( $wpdb ) || ! is_object( $wpdb ) || ! method_exists( $wpdb, 'get_var' ) ) {
+		if ( ! $wpdb instanceof \wpdb ) {
 			$this->table_ready = false;
 			return false;
 		}
@@ -164,7 +164,7 @@ final class ProtectedAssetRegistry {
 			require_once $upgrade_file;
 		}
 
-		$charset = method_exists( $wpdb, 'get_charset_collate' ) ? $wpdb->get_charset_collate() : '';
+		$charset = $wpdb->get_charset_collate();
 		dbDelta(
 			"CREATE TABLE {$table} (
 				asset_key char(32) NOT NULL,

@@ -75,9 +75,9 @@ final class ShareButtonBlock {
 			'music-wave-release-actions',
 			'musicWaveReleaseActions',
 			array(
-				'copied'       => __( 'پیوند کپی شد', 'music-wave-core' ),
-				'copyFailed'   => __( 'کپی انجام نشد. پیوند را به صورت دستی کپی کنید.', 'music-wave-core' ),
-				'shareFailed'  => __( 'اشتراک‌گذاری انجام نشد.', 'music-wave-core' ),
+				'copied'      => __( 'پیوند کپی شد', 'music-wave-core' ),
+				'copyFailed'  => __( 'کپی انجام نشد. پیوند را به صورت دستی کپی کنید.', 'music-wave-core' ),
+				'shareFailed' => __( 'اشتراک‌گذاری انجام نشد.', 'music-wave-core' ),
 			)
 		);
 		if ( function_exists( 'wp_set_script_translations' ) ) {
@@ -102,13 +102,13 @@ final class ShareButtonBlock {
 			return '';
 		}
 
-		$title = get_the_title( $release_id );
-		$title = is_string( $title ) && '' !== $title ? $title : __( 'انتشار', 'music-wave-core' );
-		$artists = wp_get_post_terms( $release_id, 'mw_artist', array( 'fields' => 'names' ) );
+		$title       = get_the_title( $release_id );
+		$title       = is_string( $title ) && '' !== $title ? $title : __( 'انتشار', 'music-wave-core' );
+		$artists     = wp_get_post_terms( $release_id, 'mw_artist', array( 'fields' => 'names' ) );
 		$artist_text = is_array( $artists ) && ! empty( $artists ) ? implode( '، ', $artists ) : '';
-		$share_text = '' !== $artist_text ? $title . ' — ' . $artist_text : $title;
-		$label = isset( $attributes['label'] ) && is_scalar( $attributes['label'] ) ? sanitize_text_field( (string) $attributes['label'] ) : '';
-		$label = '' !== $label ? $label : __( 'اشتراک‌گذاری', 'music-wave-core' );
+		$share_text  = '' !== $artist_text ? $title . ' — ' . $artist_text : $title;
+		$label       = isset( $attributes['label'] ) && is_scalar( $attributes['label'] ) ? sanitize_text_field( (string) $attributes['label'] ) : '';
+		$label       = '' !== $label ? $label : __( 'اشتراک‌گذاری', 'music-wave-core' );
 		/* translators: %s: release title. */
 		$aria_label = sprintf( __( 'اشتراک‌گذاری %s', 'music-wave-core' ), $title );
 

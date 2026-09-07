@@ -283,25 +283,25 @@ final class PreviewPlayer {
 	 * `currentColor`, so the theme recolours them with tokens alone.
 	 *
 	 * @param string $name  Icon key.
-	 * @param string $class Extra class names for the <svg> element.
+	 * @param string $extra_class Extra class names for the <svg> element.
 	 * @return string
 	 */
-	private function icon( string $name, string $class = '' ): string {
+	private function icon( string $name, string $extra_class = '' ): string {
 		$paths = array(
-			'play'        => '<path d="M8 5.14v13.72c0 .79.87 1.27 1.54.84l10.63-6.86a1 1 0 0 0 0-1.68L9.54 4.3C8.87 3.87 8 4.35 8 5.14Z"/>',
-			'pause'       => '<path d="M7 5a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1H8a1 1 0 0 1-1-1V5Zm6 0a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1h-2a1 1 0 0 1-1-1V5Z"/>',
-			'previous'    => '<path d="M6 5a1 1 0 0 1 1 1v12a1 1 0 1 1-2 0V6a1 1 0 0 1 1-1Zm12.53.21A1 1 0 0 1 20 6.06v11.88a1 1 0 0 1-1.53.85L9.2 12.85a1 1 0 0 1 0-1.7l9.27-5.94a1 1 0 0 1 .06 0Z"/>',
-			'next'        => '<path d="M18 5a1 1 0 0 1 1 1v12a1 1 0 1 1-2 0V6a1 1 0 0 1 1-1ZM5.47 5.21a1 1 0 0 1 1.06 0l9.27 5.94a1 1 0 0 1 0 1.7l-9.27 5.94A1 1 0 0 1 5 17.94V6.06a1 1 0 0 1 .47-.85Z"/>',
-			'queue'       => '<path d="M4 6a1 1 0 0 1 1-1h14a1 1 0 1 1 0 2H5a1 1 0 0 1-1-1Zm0 5a1 1 0 0 1 1-1h14a1 1 0 1 1 0 2H5a1 1 0 0 1-1-1Zm1 4a1 1 0 1 0 0 2h8a1 1 0 1 0 0-2H5Zm12.5-1a1 1 0 0 1 1 1v1.5H20a1 1 0 1 1 0 2h-1.5V20a1 1 0 1 1-2 0v-1.5H15a1 1 0 1 1 0-2h1.5V15a1 1 0 0 1 1-1Z"/>',
-			'close'       => '<path d="M6.22 6.22a1 1 0 0 1 1.41 0L12 10.59l4.36-4.37a1 1 0 1 1 1.42 1.42L13.41 12l4.37 4.36a1 1 0 0 1-1.42 1.42L12 13.41l-4.37 4.37a1 1 0 0 1-1.41-1.42L10.59 12 6.22 7.63a1 1 0 0 1 0-1.41Z"/>',
-			'volume'      => '<path d="M4 9.5A1.5 1.5 0 0 1 5.5 8H8l4.35-3.48A1 1 0 0 1 14 5.3v13.4a1 1 0 0 1-1.65.78L8 16H5.5A1.5 1.5 0 0 1 4 14.5v-5Zm12.7-1.03a1 1 0 0 1 1.4.13A5.98 5.98 0 0 1 19.5 12c0 1.3-.42 2.5-1.4 3.4a1 1 0 0 1-1.53-1.27c.62-.52.93-1.28.93-2.13 0-.85-.31-1.6-.93-2.13a1 1 0 0 1 .13-1.4Zm2.7-2.6a1 1 0 0 1 1.4.16A9.96 9.96 0 0 1 22.5 12a9.96 9.96 0 0 1-1.7 5.97 1 1 0 0 1-1.56-1.24A7.96 7.96 0 0 0 20.5 12c0-1.7-.5-3.28-1.26-4.73a1 1 0 0 1 .16-1.4Z"/>',
-			'volume-off'  => '<path d="M4 9.5A1.5 1.5 0 0 1 5.5 8H8l4.35-3.48A1 1 0 0 1 14 5.3v13.4a1 1 0 0 1-1.65.78L8 16H5.5A1.5 1.5 0 0 1 4 14.5v-5Zm12.3-.2a1 1 0 0 1 1.4 0L19 10.6l1.3-1.3a1 1 0 1 1 1.4 1.4L20.4 12l1.3 1.3a1 1 0 0 1-1.4 1.4L19 13.4l-1.3 1.3a1 1 0 0 1-1.4-1.4l1.3-1.3-1.3-1.3a1 1 0 0 1 0-1.4Z"/>',
-			'spinner'     => '<path d="M12 3a1 1 0 0 1 1 1v2.5a1 1 0 1 1-2 0V4a1 1 0 0 1 1-1Zm0 13.5a1 1 0 0 1 1 1V20a1 1 0 1 1-2 0v-2.5a1 1 0 0 1 1-1ZM3 12a1 1 0 0 1 1-1h2.5a1 1 0 1 1 0 2H4a1 1 0 0 1-1-1Zm13.5 0a1 1 0 0 1 1-1H20a1 1 0 1 1 0 2h-2.5a1 1 0 0 1-1-1ZM5.64 5.64a1 1 0 0 1 1.41 0l1.77 1.77a1 1 0 1 1-1.41 1.41L5.64 7.05a1 1 0 0 1 0-1.41Zm9.54 9.54a1 1 0 0 1 1.41 0l1.77 1.77a1 1 0 0 1-1.41 1.41l-1.77-1.77a1 1 0 0 1 0-1.41Zm3.18-9.54a1 1 0 0 1 0 1.41l-1.77 1.77a1 1 0 1 1-1.41-1.41l1.77-1.77a1 1 0 0 1 1.41 0ZM8.82 15.18a1 1 0 0 1 0 1.41l-1.77 1.77a1 1 0 0 1-1.41-1.41l1.77-1.77a1 1 0 0 1 1.41 0Z"/>',
+			'play'       => '<path d="M8 5.14v13.72c0 .79.87 1.27 1.54.84l10.63-6.86a1 1 0 0 0 0-1.68L9.54 4.3C8.87 3.87 8 4.35 8 5.14Z"/>',
+			'pause'      => '<path d="M7 5a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1H8a1 1 0 0 1-1-1V5Zm6 0a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1h-2a1 1 0 0 1-1-1V5Z"/>',
+			'previous'   => '<path d="M6 5a1 1 0 0 1 1 1v12a1 1 0 1 1-2 0V6a1 1 0 0 1 1-1Zm12.53.21A1 1 0 0 1 20 6.06v11.88a1 1 0 0 1-1.53.85L9.2 12.85a1 1 0 0 1 0-1.7l9.27-5.94a1 1 0 0 1 .06 0Z"/>',
+			'next'       => '<path d="M18 5a1 1 0 0 1 1 1v12a1 1 0 1 1-2 0V6a1 1 0 0 1 1-1ZM5.47 5.21a1 1 0 0 1 1.06 0l9.27 5.94a1 1 0 0 1 0 1.7l-9.27 5.94A1 1 0 0 1 5 17.94V6.06a1 1 0 0 1 .47-.85Z"/>',
+			'queue'      => '<path d="M4 6a1 1 0 0 1 1-1h14a1 1 0 1 1 0 2H5a1 1 0 0 1-1-1Zm0 5a1 1 0 0 1 1-1h14a1 1 0 1 1 0 2H5a1 1 0 0 1-1-1Zm1 4a1 1 0 1 0 0 2h8a1 1 0 1 0 0-2H5Zm12.5-1a1 1 0 0 1 1 1v1.5H20a1 1 0 1 1 0 2h-1.5V20a1 1 0 1 1-2 0v-1.5H15a1 1 0 1 1 0-2h1.5V15a1 1 0 0 1 1-1Z"/>',
+			'close'      => '<path d="M6.22 6.22a1 1 0 0 1 1.41 0L12 10.59l4.36-4.37a1 1 0 1 1 1.42 1.42L13.41 12l4.37 4.36a1 1 0 0 1-1.42 1.42L12 13.41l-4.37 4.37a1 1 0 0 1-1.41-1.42L10.59 12 6.22 7.63a1 1 0 0 1 0-1.41Z"/>',
+			'volume'     => '<path d="M4 9.5A1.5 1.5 0 0 1 5.5 8H8l4.35-3.48A1 1 0 0 1 14 5.3v13.4a1 1 0 0 1-1.65.78L8 16H5.5A1.5 1.5 0 0 1 4 14.5v-5Zm12.7-1.03a1 1 0 0 1 1.4.13A5.98 5.98 0 0 1 19.5 12c0 1.3-.42 2.5-1.4 3.4a1 1 0 0 1-1.53-1.27c.62-.52.93-1.28.93-2.13 0-.85-.31-1.6-.93-2.13a1 1 0 0 1 .13-1.4Zm2.7-2.6a1 1 0 0 1 1.4.16A9.96 9.96 0 0 1 22.5 12a9.96 9.96 0 0 1-1.7 5.97 1 1 0 0 1-1.56-1.24A7.96 7.96 0 0 0 20.5 12c0-1.7-.5-3.28-1.26-4.73a1 1 0 0 1 .16-1.4Z"/>',
+			'volume-off' => '<path d="M4 9.5A1.5 1.5 0 0 1 5.5 8H8l4.35-3.48A1 1 0 0 1 14 5.3v13.4a1 1 0 0 1-1.65.78L8 16H5.5A1.5 1.5 0 0 1 4 14.5v-5Zm12.3-.2a1 1 0 0 1 1.4 0L19 10.6l1.3-1.3a1 1 0 1 1 1.4 1.4L20.4 12l1.3 1.3a1 1 0 0 1-1.4 1.4L19 13.4l-1.3 1.3a1 1 0 0 1-1.4-1.4l1.3-1.3-1.3-1.3a1 1 0 0 1 0-1.4Z"/>',
+			'spinner'    => '<path d="M12 3a1 1 0 0 1 1 1v2.5a1 1 0 1 1-2 0V4a1 1 0 0 1 1-1Zm0 13.5a1 1 0 0 1 1 1V20a1 1 0 1 1-2 0v-2.5a1 1 0 0 1 1-1ZM3 12a1 1 0 0 1 1-1h2.5a1 1 0 1 1 0 2H4a1 1 0 0 1-1-1Zm13.5 0a1 1 0 0 1 1-1H20a1 1 0 1 1 0 2h-2.5a1 1 0 0 1-1-1ZM5.64 5.64a1 1 0 0 1 1.41 0l1.77 1.77a1 1 0 1 1-1.41 1.41L5.64 7.05a1 1 0 0 1 0-1.41Zm9.54 9.54a1 1 0 0 1 1.41 0l1.77 1.77a1 1 0 0 1-1.41 1.41l-1.77-1.77a1 1 0 0 1 0-1.41Zm3.18-9.54a1 1 0 0 1 0 1.41l-1.77 1.77a1 1 0 1 1-1.41-1.41l1.77-1.77a1 1 0 0 1 1.41 0ZM8.82 15.18a1 1 0 0 1 0 1.41l-1.77 1.77a1 1 0 0 1-1.41-1.41l1.77-1.77a1 1 0 0 1 1.41 0Z"/>',
 		);
 		if ( ! isset( $paths[ $name ] ) ) {
 			return '';
 		}
-		$classes = trim( 'mw-global-player__icon mw-global-player__icon--' . $name . ' ' . $class );
+		$classes = trim( 'mw-global-player__icon mw-global-player__icon--' . $name . ' ' . $extra_class );
 
 		return '<svg class="' . esc_attr( $classes ) . '" viewBox="0 0 24 24" width="24" height="24" fill="currentColor" aria-hidden="true" focusable="false">' . $paths[ $name ] . '</svg>';
 	}
@@ -358,10 +358,12 @@ final class PreviewPlayer {
 			. '<button type="button" class="mw-global-player__close" aria-label="' . esc_attr__( 'بستن پخش‌کننده', 'music-wave-core' ) . '">' . $this->icon( 'close' ) . '</button>'
 			. '</div>';
 
-		echo '<aside class="mw-global-player" data-mw-preview-player hidden aria-label="' . esc_attr__( 'پخش‌کننده پیش‌نمایش موسیقی', 'music-wave-core' ) . '">'
+		$markup = '<aside class="mw-global-player" data-mw-preview-player hidden aria-label="' . esc_attr__( 'پخش‌کننده پیش‌نمایش موسیقی', 'music-wave-core' ) . '">'
 			. $queue . $notice
 			. '<audio preload="metadata"></audio>'
 			. '<div class="mw-global-player__bar">' . $track . '<div class="mw-global-player__center">' . $controls . $timeline . '</div>' . $tools . '</div>'
-			. '</aside>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Assembled from escaped fragments and static SVG markup above.
+			. '</aside>';
+
+		echo $markup; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Assembled above from escaped fragments and static SVG markup.
 	}
 }

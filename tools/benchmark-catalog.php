@@ -15,10 +15,12 @@
  * `seed=<n>` creates n throwaway releases (plus terms, a 500-item library, and
  * a 500-item playlist) before measuring. `cleanup=1` deletes them afterwards.
  *
+ * `wp eval-file` evaluates this file inside a method (`eval( '?>' . $code )`),
+ * so a `declare(strict_types=1)` statement would be a fatal error here — the
+ * script relies on explicit casts instead.
+ *
  * @package ManaCore\MusicWave\Core
  */
-
-declare(strict_types=1);
 
 use ManaCore\MusicWave\Core\Catalog\ReleasePostType;
 use ManaCore\MusicWave\Core\Discovery\CatalogSearch;
