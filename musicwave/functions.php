@@ -113,6 +113,10 @@ function musicwave_style_modules(): array {
 			'file'         => 'assets/css/components/collections.css',
 			'dependencies' => array( 'musicwave-utilities' ),
 		),
+		'musicwave-comments'        => array(
+			'file'         => 'assets/css/components/comments.css',
+			'dependencies' => array( 'musicwave-utilities' ),
+		),
 		'musicwave-related'         => array(
 			'file'         => 'assets/css/components/related.css',
 			'dependencies' => array( 'musicwave-catalog', 'musicwave-player' ),
@@ -304,6 +308,88 @@ function musicwave_preload_theme_preference(): void {
 	echo "<script>(function(){try{var t=window.localStorage.getItem('musicwave-theme');if('light'===t||'dark'===t){document.documentElement.setAttribute('data-mw-theme',t);}}catch(e){}}());</script>\n";
 }
 add_action( 'wp_head', 'musicwave_preload_theme_preference', 0 );
+
+/**
+ * Resolve the native colour scheme of the active global styles.
+ *
+ * Style variations such as Cassette and Sunrise ship a light palette while the
+ * default palette is dark. tokens.css needs to know which one is active so the
+ * visitor's light/dark preference remaps presets only when it differs from the
+ * palette the merchant is editing in the Site Editor.
+ *
+ * @return string Either "light" or "dark".
+ */
+function musicwave_native_color_scheme(): string {
+	$canvas = '';
+	if ( function_exists( 'wp_get_global_settings' ) ) {
+		$settings = wp_get_global_settings( array( 'color', 'palette' ) );
+		$palettes = is_array( $settings ) ? $settings : array();
+		foreach ( array( 'custom', 'theme' ) as $origin ) {
+			if ( empty( $palettes[ $origin ] ) || ! is_array( $palettes[ $origin ] ) ) {
+				continue;
+			}
+			foreach ( $palettes[ $origin ] as $color ) {
+				if ( isset( $color['slug'], $color['color'] ) && 'canvas' === $color['slug'] && is_string( $color['color'] ) ) {
+					$canvas = $color['color'];
+					break 2;
+				}
+			}
+		}
+	}
+
+	$scheme = musicwave_is_light_color( $canvas ) ? 'light' : 'dark';
+
+	/**
+	 * Filter the native colour scheme reported to the stylesheet.
+	 *
+	 * @param string $scheme Either "light" or "dark".
+	 * @param string $canvas Resolved canvas colour from the active palette.
+	 */
+	$filtered = apply_filters( 'musicwave_native_color_scheme', $scheme, $canvas );
+
+	return 'light' === $filtered ? 'light' : 'dark';
+}
+
+/**
+ * Decide whether a hex colour reads as light (WCAG relative luminance > 0.5).
+ *
+ * Non-hex values (gradients, CSS functions) are treated as dark because the
+ * default palette is dark.
+ *
+ * @param string $hex Colour in #rgb, #rrggbb, or #rrggbbaa notation.
+ * @return bool
+ */
+function musicwave_is_light_color( string $hex ): bool {
+	$hex = ltrim( trim( $hex ), '#' );
+	if ( 3 === strlen( $hex ) || 4 === strlen( $hex ) ) {
+		$hex = $hex[0] . $hex[0] . $hex[1] . $hex[1] . $hex[2] . $hex[2];
+	}
+	// ctype is optional on some hosts; a pattern keeps the check dependency-free.
+	if ( ! preg_match( '/^[0-9a-f]{6}/i', $hex ) ) {
+		return false;
+	}
+
+	$channels = array();
+	foreach ( array( 0, 2, 4 ) as $offset ) {
+		$value      = hexdec( substr( $hex, $offset, 2 ) ) / 255;
+		$channels[] = $value <= 0.03928 ? $value / 12.92 : pow( ( $value + 0.055 ) / 1.055, 2.4 );
+	}
+
+	$luminance = 0.2126 * $channels[0] + 0.7152 * $channels[1] + 0.0722 * $channels[2];
+
+	return $luminance > 0.5;
+}
+
+/**
+ * Expose the native colour scheme on <html> for tokens.css.
+ *
+ * @param string $output Language attributes markup.
+ * @return string
+ */
+function musicwave_language_attributes( string $output ): string {
+	return trim( $output . ' data-mw-scheme="' . esc_attr( musicwave_native_color_scheme() ) . '"' );
+}
+add_filter( 'language_attributes', 'musicwave_language_attributes' );
 
 /**
  * Warm the connection to the font CDN before stylesheets resolve.
@@ -747,6 +833,7 @@ function musicwave_repairable_template_slugs(): array {
 			'page-account',
 			'page-browse',
 			'page-playlists',
+			'page-requests',
 			'page-cart',
 			'page-checkout',
 			'page-music-home',
@@ -875,6 +962,7 @@ add_filter( 'get_block_templates', 'musicwave_alias_account_templates_in_query',
 function musicwave_template_titles(): array {
 	return array(
 		'page-playlists' => __( 'فهرست‌های پخش عمومی', 'musicwave' ),
+		'page-requests'  => __( 'درخواست آهنگ و همکاری', 'musicwave' ),
 	);
 }
 
@@ -1454,8 +1542,10 @@ function musicwave_render_playlist_shelf( array $attributes ): string {
 			0,
 			4
 		);
+		// Same cover-stack markup as Core's PlaylistBlocks::playlist_covers_markup()
+		// so the fanned artwork styling in playlists.css covers both surfaces.
 		if ( array() === $ids ) {
-			$art_grid = '<span class="mw-release-shelf__placeholder" aria-hidden="true">♫</span>';
+			$art_grid = '<span class="mw-playlists__art-grid mw-playlists__art-grid--empty" aria-hidden="true"><span class="mw-playlists__art-placeholder">♫</span></span>';
 		} else {
 			$cells = '';
 			foreach ( $ids as $cell_idx => $rid ) {
@@ -1472,17 +1562,17 @@ function musicwave_render_playlist_shelf( array $attributes ): string {
 					)
 				);
 				if ( '' !== $thumb ) {
-					$cells .= '<span class="mw-release-shelf__art-cell">' . $thumb . '</span>';
+					$cells .= '<span class="mw-playlists__art-cell">' . $thumb . '</span>';
 				} else {
 					$init   = mb_substr( $ptitle, 0, 1 );
-					$cells .= '<span class="mw-release-shelf__art-cell mw-release-shelf__art-cell--fallback" aria-hidden="true">' . esc_html( $init ) . '</span>';
+					$cells .= '<span class="mw-playlists__art-cell mw-playlists__art-cell--fallback" aria-hidden="true"><span>' . esc_html( $init ) . '</span></span>';
 				}
 			}
 			// Pad to 4.
 			for ( $p = count( $ids ); $p < 4; $p++ ) {
-				$cells .= '<span class="mw-release-shelf__art-cell mw-release-shelf__art-cell--empty" aria-hidden="true"></span>';
+				$cells .= '<span class="mw-playlists__art-cell mw-playlists__art-cell--empty" aria-hidden="true"></span>';
 			}
-			$art_grid = '<span class="mw-release-shelf__playlist-grid">' . $cells . '</span>';
+			$art_grid = '<span class="mw-playlists__art-grid">' . $cells . '</span>';
 		}
 
 		// Play button uses the same global queue as releases: data-mw-playlist-play.
@@ -1497,8 +1587,37 @@ function musicwave_render_playlist_shelf( array $attributes ): string {
 	}
 
 	$header = musicwave_render_shelf_header( $eyebrow, $title, $description, $section_url, $section_link_label );
+	$nav    = musicwave_shelf_nav_markup( $layout );
 
-	return '<section ' . get_block_wrapper_attributes( array( 'class' => 'mw-release-shelf mw-release-shelf--' . $layout . ' mw-release-shelf--playlists mw-release-shelf--columns-' . $columns ) ) . '>' . $header . '<div class="mw-release-shelf__items">' . implode( '', $cards ) . '</div></section>';
+	return '<section ' . get_block_wrapper_attributes( array( 'class' => 'mw-release-shelf mw-release-shelf--' . $layout . ' mw-release-shelf--playlists mw-release-shelf--columns-' . $columns ) ) . '>' . $header . $nav . '<div class="mw-release-shelf__items" data-mw-shelf-viewport>' . implode( '', $cards ) . '</div></section>';
+}
+
+/**
+ * Floating previous/next arrows for horizontal (scroll) shelves.
+ *
+ * Returns an empty string for every other layout. The chevrons are inline
+ * SVG (like the hero slider) so the stylesheet can mirror them in RTL, and
+ * both buttons start disabled until the shared slider handler measures the
+ * row, which avoids a flash of active arrows on rows that do not overflow.
+ * The handler script is enqueued here so shelf-free routes ship no bytes.
+ *
+ * @param string $layout Resolved shelf layout key.
+ */
+function musicwave_shelf_nav_markup( string $layout ): string {
+	if ( 'scroll' !== $layout ) {
+		return '';
+	}
+	if ( function_exists( 'wp_enqueue_script' ) ) {
+		wp_enqueue_script( 'musicwave-slider' );
+	}
+
+	$chevron_previous = '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m15 18-6-6 6-6"/></svg>';
+	$chevron_next     = '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m9 18 6-6-6-6"/></svg>';
+
+	return '<div class="mw-release-shelf__nav">'
+		. '<button type="button" class="mw-release-shelf__nav-button" data-mw-shelf-previous aria-label="' . esc_attr__( 'قبلی', 'musicwave' ) . '" disabled>' . $chevron_previous . '</button>'
+		. '<button type="button" class="mw-release-shelf__nav-button" data-mw-shelf-next aria-label="' . esc_attr__( 'بعدی', 'musicwave' ) . '" disabled>' . $chevron_next . '</button>'
+		. '</div>';
 }
 
 /**
@@ -1513,13 +1632,6 @@ function musicwave_render_release_shelf( array $attributes ): string {
 	}
 	if ( ! post_type_exists( 'mw_release' ) ) {
 		return '';
-	}
-
-	// Horizontal shelves ship floating prev/next arrows, so they pull in the
-	// shared slider handler that drives the arrow scrolling.
-	$shelf_layout = isset( $attributes['layout'] ) ? sanitize_key( (string) $attributes['layout'] ) : 'grid';
-	if ( 'scroll' === $shelf_layout && function_exists( 'wp_enqueue_script' ) ) {
-		wp_enqueue_script( 'musicwave-slider' );
 	}
 
 	$items = isset( $attributes['itemsToShow'] ) ? absint( $attributes['itemsToShow'] ) : 8;
@@ -1608,16 +1720,7 @@ function musicwave_render_release_shelf( array $attributes ): string {
 
 	$header = musicwave_render_shelf_header( $eyebrow, $section_title, $description, $section_url, $section_link_label );
 
-	// SonicStream horizontal shelves carry floating prev/next arrows that
-	// scroll the row; the script is the shared slider handler and enqueues
-	// at render time like the hero slider does.
-	$nav = '';
-	if ( 'scroll' === $layout ) {
-		$nav = '<div class="mw-release-shelf__nav">'
-			. '<button type="button" class="mw-release-shelf__nav-button" data-mw-shelf-previous aria-label="' . esc_attr__( 'قبلی', 'musicwave' ) . '">&#8249;</button>'
-			. '<button type="button" class="mw-release-shelf__nav-button" data-mw-shelf-next aria-label="' . esc_attr__( 'بعدی', 'musicwave' ) . '">&#8250;</button>'
-			. '</div>';
-	}
+	$nav = musicwave_shelf_nav_markup( $layout );
 
 	return '<section ' . get_block_wrapper_attributes( array( 'class' => 'mw-release-shelf mw-release-shelf--' . $layout . ' mw-release-shelf--columns-' . $columns ) ) . '>' . $header . $nav . '<div class="mw-release-shelf__items" data-mw-shelf-viewport>' . implode( '', $cards ) . '</div></section>';
 }
@@ -1978,5 +2081,11 @@ add_action( 'template_redirect', 'musicwave_track_release_view' );
 function musicwave_render_theme_toggle(): string {
 	$label = __( 'استفاده از پوسته سیستم', 'musicwave' );
 
-	return '<button class="mw-theme-toggle" type="button" aria-label="' . esc_attr( $label ) . '" title="' . esc_attr( $label ) . '">◐</button>';
+	// One SVG per preference; theme-toggle.css reveals the icon that matches
+	// data-mw-theme-value so theme-preference.js only swaps an attribute.
+	$icons = '<svg class="mw-theme-toggle__icon mw-theme-toggle__icon--system" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false"><path fill="currentColor" d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20Zm0 2v16a8 8 0 0 1 0-16Z"/></svg>'
+		. '<svg class="mw-theme-toggle__icon mw-theme-toggle__icon--light" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false"><path fill="currentColor" d="M12 7a5 5 0 1 0 0 10 5 5 0 0 0 0-10Zm0-6a1 1 0 0 1 1 1v2a1 1 0 1 1-2 0V2a1 1 0 0 1 1-1Zm0 19a1 1 0 0 1 1 1v2a1 1 0 1 1-2 0v-2a1 1 0 0 1 1-1ZM1 12a1 1 0 0 1 1-1h2a1 1 0 1 1 0 2H2a1 1 0 0 1-1-1Zm19 0a1 1 0 0 1 1-1h2a1 1 0 1 1 0 2h-2a1 1 0 0 1-1-1ZM4.22 4.22a1 1 0 0 1 1.42 0l1.41 1.41a1 1 0 0 1-1.41 1.42L4.22 5.64a1 1 0 0 1 0-1.42Zm12.73 12.73a1 1 0 0 1 1.41 0l1.42 1.41a1 1 0 0 1-1.42 1.42l-1.41-1.42a1 1 0 0 1 0-1.41Zm2.83-12.73a1 1 0 0 1 0 1.42l-1.42 1.41a1 1 0 1 1-1.41-1.41l1.41-1.42a1 1 0 0 1 1.42 0ZM7.05 16.95a1 1 0 0 1 0 1.41l-1.41 1.42a1 1 0 0 1-1.42-1.42l1.42-1.41a1 1 0 0 1 1.41 0Z"/></svg>'
+		. '<svg class="mw-theme-toggle__icon mw-theme-toggle__icon--dark" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false"><path fill="currentColor" d="M21.64 13.4A9 9 0 0 1 10.6 2.36a1 1 0 0 0-1.2-1.3A11 11 0 1 0 22.94 14.6a1 1 0 0 0-1.3-1.2ZM12 21a9 9 0 0 1-3.87-17.13A11 11 0 0 0 20.13 15.87 9 9 0 0 1 12 21Z"/></svg>';
+
+	return '<button class="mw-theme-toggle" type="button" data-mw-theme-value="system" aria-label="' . esc_attr( $label ) . '" title="' . esc_attr( $label ) . '">' . $icons . '</button>';
 }

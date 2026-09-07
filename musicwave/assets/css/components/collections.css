@@ -101,20 +101,173 @@
 .mw-collection-list__disc-heading { margin: 0 0 0.3rem; font-size: 0.95rem; font-weight: 700; color: var(--mw-color-text-muted); letter-spacing: 0.04em; text-transform: uppercase; }
 .mw-collection-list__total { margin: var(--wp--preset--spacing--20) 0 0; padding-inline-start: 0.9rem; color: var(--mw-color-text-muted); font-size: 0.8125rem; font-variant-numeric: tabular-nums; }
 
-@media (max-width: 48rem) {
-  .mw-collection-list__item { align-items: flex-start; flex-direction: column; gap: 0.3rem; }
-  .mw-collection-list__main { flex-wrap: wrap; gap: 0.4rem 0.6rem; }
-  .mw-collection-list__link { width: 100%; }
-  .mw-collection-list__artist { flex: 1 1 100%; max-width: none; font-size: 0.78rem; padding-inline-start: calc(1.9rem + 0.85rem); /* align under title after position+artwork */ }
+/* Tablet (48–64rem): the table keeps its columns but the artist column
+ * flexes instead of holding a fixed 22%, and the quality column drops so
+ * titles keep room to breathe. */
+@media (min-width: 48rem) and (max-width: 64rem) {
+  .mw-collection-list__table-header .mw-collection-list__table-artist,
+  .mw-collection-list__artist { flex: 0 1 30%; max-width: 30%; }
+  .mw-collection-list__table-header .mw-collection-list__table-quality,
   .mw-collection-list__quality { display: none; }
-  .mw-collection-list__duration { flex: 0 0 auto; font-size: 0.78rem; }
-  .mw-collection-list__actions { justify-content: flex-start; opacity: 1; padding-inline-start: 0.9rem; padding-inline-end: 0; }
-  .mw-collection-list__actions .mw-preview-button,
+  .mw-collection-list__actions { padding-inline-end: 0.5rem; }
+}
+
+/* Phones (<48rem): each row becomes a two-line card.
+ *   [ # | artwork | title              | duration | actions ]
+ *   [               artist                                   ]
+ * Everything stays inside one flex row (no column stacking), so the
+ * actions sit on the same line as the title and the tap targets stay
+ * predictable. Actions are always visible on touch. */
+@media (max-width: 48rem) {
+  .mw-collection-list li { padding-block: 0.15rem; }
+  .mw-collection-list__item { align-items: flex-start; gap: 0.5rem; padding: 0.35rem 0.45rem; }
+  .mw-collection-list__main { flex-wrap: wrap; align-items: center; gap: 0.15rem 0.6rem; }
+  .mw-collection-list__link { flex: 1 1 0; min-width: 0; gap: 0.65rem; }
+  .mw-collection-list__title { white-space: normal; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; line-height: 1.3; }
+  .mw-collection-list__duration { flex: 0 0 auto; order: 2; align-self: center; font-size: 0.78rem; }
+  .mw-collection-list__artist {
+    order: 3;
+    flex: 1 1 100%;
+    max-width: none;
+    font-size: 0.78rem;
+    white-space: normal;
+    /* Align under the title: position column + gap, plus artwork when present. */
+    padding-inline-start: calc(1.9rem + 0.65rem);
+  }
+  .mw-collection-list__link:has(.mw-collection-list__artwork) + .mw-collection-list__artist { padding-inline-start: calc(1.9rem + 0.65rem + 2.5rem + 0.65rem); }
+  .mw-collection-list__quality { display: none; }
+  .mw-collection-list__actions {
+    flex: 0 0 auto;
+    flex-wrap: nowrap;
+    align-self: center;
+    justify-content: flex-end;
+    gap: 0.35rem;
+    padding-inline-end: 0;
+    opacity: 1;
+  }
+  .mw-collection-list__actions .mw-preview-button--compact { min-height: 2.5rem; min-width: 2.5rem; padding: 0.35rem 0.6rem; font-size: 0.8rem; }
+  .mw-collection-list__actions .mw-preview-button--compact > span:not(.mw-preview-button__icon) { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+  .mw-collection-list__actions .mw-preview-button--compact .mw-preview-button__icon { font-size: 1em; }
   .mw-collection-list__actions .mw-download-action .wp-element-button,
   .mw-collection-list__actions .mw-secure-play-button { min-height: 2.5rem; min-width: 2.5rem; }
+  .mw-collection-list__actions .mw-download-inline-list { flex-wrap: nowrap; gap: 0.35rem; }
+  .mw-collection-list__actions .mw-download-inline { gap: 0.35rem; }
+  .mw-collection-list__actions .mw-download-action--inline .mw-download-quality { width: 5.5rem; min-height: 2.5rem; font-size: 0.75rem; }
+  .mw-collection-list__actions .mw-download-action--inline .mw-download-status { inset-inline-end: 0; inset-block-start: calc(100% + 0.25rem); }
+  /* Row hover swaps are pointer affordances; keep the number on touch. */
+  .mw-collection-list li:hover .mw-collection-list__position-num,
+  .mw-collection-list li:focus-within .mw-collection-list__position-num { display: block; }
+  .mw-collection-list li:hover .mw-collection-list__position-play,
+  .mw-collection-list li:focus-within .mw-collection-list__position-play { display: none; }
+  .mw-collection-list li[data-mw-playing] .mw-collection-list__position-num { display: none; }
+  .mw-collection-list__total { padding-inline-start: 0.45rem; }
 }
 @media (max-width: 30rem) {
+  .mw-collection-list__item { gap: 0.35rem; padding-inline: 0.25rem; }
   .mw-collection-list__artwork { width: 2.15rem; height: 2.15rem; flex-basis: 2.15rem; }
   .mw-collection-list__position { width: 1.6rem; flex-basis: 1.6rem; font-size: 0.78rem; }
   .mw-collection-list__title { font-size: 0.875rem; }
+  .mw-collection-list__artist { padding-inline-start: calc(1.6rem + 0.65rem); }
+  .mw-collection-list__link:has(.mw-collection-list__artwork) + .mw-collection-list__artist { padding-inline-start: calc(1.6rem + 0.65rem + 2.15rem + 0.65rem); }
+  .mw-collection-list__actions .mw-download-action--inline .mw-download-quality { display: none; }
+  .mw-collection-list__actions .mw-download-action--inline .mw-download-inline:not(:first-child) { display: none; }
+}
+
+/* -------------------------------------------------------------------------
+ * Release credits — music-wave/release-credits
+ * Layouts: list (default), grid (auto-fill cards) and inline (chips).
+ * Grouped mode wraps role sections inside .mw-release-credits__groups.
+ * ------------------------------------------------------------------------- */
+.mw-release-credits {
+  margin: 0 0 var(--wp--preset--spacing--40);
+  padding: 0;
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+}
+
+.mw-release-credits__heading {
+  font-family: var(--wp--preset--font-family--display, 'Syne', sans-serif);
+  font-size: 1.45rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  margin: 0 0 0.85rem;
+}
+
+.mw-release-credits__list {
+  display: grid;
+  gap: 0.35rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.mw-release-credits__list li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.15rem 0.6rem;
+  padding: 0.45rem 0.9rem;
+  border-radius: var(--mw-radius-sm);
+  font-size: 0.9375rem;
+  line-height: 1.5;
+  transition: background-color var(--mw-speed-fast, 150ms) ease;
+}
+.mw-release-credits__list li:hover { background: var(--mw-color-surface-raised); }
+.mw-release-credits__list strong { font-weight: 600; color: var(--mw-color-text); }
+.mw-release-credits__role {
+  color: var(--mw-color-text-muted);
+  font-size: 0.8125rem;
+  font-weight: 500;
+}
+
+/* Grid layout: responsive card cells. */
+.mw-release-credits__list--grid {
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 13rem), 1fr));
+  gap: 0.6rem;
+}
+.mw-release-credits__list--grid li {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.2rem;
+  padding: 0.85rem 1rem;
+  background: var(--mw-color-surface);
+  border: 1px solid var(--mw-color-border);
+  border-radius: var(--mw-radius-md, 0.75rem);
+}
+.mw-release-credits__list--grid li:hover { background: var(--mw-color-surface-raised); }
+
+/* Inline layout: quiet chips that wrap naturally. */
+.mw-release-credits__list--inline {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+.mw-release-credits__list--inline li {
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.35rem 0.85rem;
+  background: var(--mw-color-surface-raised);
+  border-radius: 999px;
+  font-size: 0.875rem;
+}
+.mw-release-credits__list--inline .mw-release-credits__role::before {
+  content: "\00b7";
+  margin-inline-end: 0.4rem;
+  color: color-mix(in srgb, var(--mw-color-text) 40%, transparent);
+}
+
+/* Grouped by role. */
+.mw-release-credits__groups { display: grid; gap: var(--wp--preset--spacing--30); }
+.mw-release-credits__role-heading {
+  margin: 0 0 0.3rem;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: var(--mw-color-text-muted);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mw-collection-list li,
+  .mw-release-credits__list li { transition: none; }
 }

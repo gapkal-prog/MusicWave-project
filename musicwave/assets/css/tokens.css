@@ -1,5 +1,32 @@
+/**
+ * MusicWave design tokens.
+ *
+ * Colour flows in one direction:
+ *
+ *   theme.json palette (merchant-editable in the Site Editor)
+ *     → --wp--preset--color--*   emitted by WordPress on :root
+ *     → --mw-color-*             semantic tokens consumed by every component
+ *
+ * Light/dark switching remaps the *presets* instead of deriving colours with
+ * color-mix(), so core blocks (has-*-color classes, buttons, links, captions)
+ * and theme components change together and light mode gets genuinely dark
+ * text. Every style variation declares the palette of its opposite scheme in
+ * `settings.custom.scheme`; the native scheme always reads the live palette so
+ * Site Editor colour edits keep working.
+ *
+ *   data-mw-scheme  — native scheme of the active style ("dark" | "light"),
+ *                     printed on <html> by musicwave_language_attributes().
+ *                     Remaps match it positively, so the block editor canvas
+ *                     (which lacks the attribute) always previews the native
+ *                     palette a merchant is editing.
+ *   data-mw-theme   — the visitor's saved preference ("light" | "dark"),
+ *                     absent when following the operating system.
+ */
+
 :root {
 	color-scheme: dark light;
+
+	/* Live palette → semantic tokens. */
 	--mw-color-canvas: var(--wp--preset--color--canvas, #0a0a0a);
 	--mw-color-surface: var(--wp--preset--color--surface, #181818);
 	--mw-color-surface-raised: var(--wp--preset--color--surface-raised, #282828);
@@ -7,11 +34,12 @@
 	--mw-color-text-muted: var(--wp--preset--color--muted, #a0a0a0);
 	--mw-color-border: color-mix(in srgb, var(--mw-color-text) 20%, transparent);
 	--mw-color-border-strong: color-mix(in srgb, var(--mw-color-text) 32%, transparent);
+	--mw-color-border-subtle: color-mix(in srgb, var(--mw-color-text) 6%, transparent);
 	--mw-color-accent: var(--wp--preset--color--accent, #1db954);
 	--mw-color-accent-strong: var(--wp--preset--color--accent-strong, #1ed760);
 	/*
-	 * Text placed on the accent color. It follows the admin-chosen "On accent"
-	 * global style when available and otherwise derives a readable color from
+	 * Text placed on the accent colour. It follows the admin-chosen "On accent"
+	 * global style when available and otherwise derives a readable colour from
 	 * the accent itself, so changing the accent in the Site Editor updates
 	 * every component without code edits.
 	 */
@@ -23,10 +51,40 @@
 	--mw-color-heart: #ff2d55;
 	/* Semantic states referenced across components. */
 	--mw-color-danger: #f87171;
-	--mw-color-border-subtle: color-mix(in srgb, var(--mw-color-text) 6%, transparent);
 	--mw-color-surface-strong: color-mix(in srgb, var(--mw-color-surface-raised) 82%, black);
 	--mw-shadow-card: var(--wp--preset--shadow--card, 0 18px 50px rgb(0 0 0 / 24%));
 	--mw-shadow-floating: var(--wp--preset--shadow--floating, 0 24px 70px rgb(0 0 0 / 40%));
+
+	/*
+	 * Scheme sources. Variations supply these through theme.json
+	 * `settings.custom.scheme.{light,dark}`; the literals are the default
+	 * SonicStream pair used when a child theme strips the custom settings.
+	 * They never reference --wp--preset--color--* so the remap below cannot
+	 * create a custom-property cycle.
+	 */
+	--mw-scheme-light-canvas: var(--wp--custom--scheme--light--canvas, #f7f7f8);
+	--mw-scheme-light-surface: var(--wp--custom--scheme--light--surface, #ffffff);
+	--mw-scheme-light-surface-raised: var(--wp--custom--scheme--light--surface-raised, #eef0f2);
+	--mw-scheme-light-text: var(--wp--custom--scheme--light--text, #0f1115);
+	--mw-scheme-light-muted: var(--wp--custom--scheme--light--muted, #5b6170);
+	--mw-scheme-light-accent: var(--wp--custom--scheme--light--accent, #15803d);
+	--mw-scheme-light-accent-strong: var(--wp--custom--scheme--light--accent-strong, #166534);
+	--mw-scheme-light-editorial: var(--wp--custom--scheme--light--editorial, #be123c);
+	--mw-scheme-light-on-accent: var(--wp--custom--scheme--light--on-accent, #ffffff);
+	--mw-scheme-dark-canvas: var(--wp--custom--scheme--dark--canvas, #0a0a0a);
+	--mw-scheme-dark-surface: var(--wp--custom--scheme--dark--surface, #181818);
+	--mw-scheme-dark-surface-raised: var(--wp--custom--scheme--dark--surface-raised, #282828);
+	--mw-scheme-dark-text: var(--wp--custom--scheme--dark--text, #f7f8fb);
+	--mw-scheme-dark-muted: var(--wp--custom--scheme--dark--muted, #a0a0a0);
+	--mw-scheme-dark-accent: var(--wp--custom--scheme--dark--accent, #1db954);
+	--mw-scheme-dark-accent-strong: var(--wp--custom--scheme--dark--accent-strong, #1ed760);
+	--mw-scheme-dark-editorial: var(--wp--custom--scheme--dark--editorial, #fa2d48);
+	--mw-scheme-dark-on-accent: var(--wp--custom--scheme--dark--on-accent, #052e16);
+
+	/* Light-scheme semantics, applied by the state rules further down. */
+	--mw-light-shadow-card: 0 18px 50px rgb(20 24 35 / 10%);
+	--mw-light-shadow-floating: 0 24px 64px rgb(20 24 35 / 16%);
+
 	--mw-radius-sm: 0.5rem;
 	--mw-radius-md: 0.75rem;
 	--mw-radius-lg: 1rem;
@@ -48,8 +106,22 @@
 	--mw-space-md: clamp(1rem, 0.85rem + 0.6vw, 1.5rem);
 	--mw-space-lg: clamp(1.5rem, 1.2rem + 1vw, 2.5rem);
 	/*
+	 * Fixed chrome. --wp-admin--admin-bar--height is set on <html> by
+	 * admin-bar.css for logged-in visitors (32px, 46px below 782px). Below
+	 * 600px the admin bar is absolutely positioned and scrolls away, so
+	 * sticky elements use --mw-admin-bar-offset (0 there) while overlays that
+	 * cover the whole viewport keep reserving --mw-admin-bar-height.
+	 */
+	--mw-admin-bar-height: var(--wp-admin--admin-bar--height, 0px);
+	--mw-admin-bar-offset: var(--mw-admin-bar-height);
+	--mw-header-height: 4.25rem;
+	/* Distance sticky rails keep from the top; navigation.css adds the header when it is sticky. */
+	--mw-sticky-offset: var(--mw-admin-bar-offset);
+	/* Reserved by the global player while a track is loaded (see global-player.css). */
+	--mw-player-offset: 0px;
+	/*
 	 * Signature SonicStream gradients. The accent wash fades a page-level
-	 * hero from the accent color into the canvas; the progress bar keeps the
+	 * hero from the accent colour into the canvas; the progress bar keeps the
 	 * green-to-green glow of the reference player.
 	 */
 	--mw-gradient-hero: linear-gradient(
@@ -66,16 +138,37 @@
 	);
 }
 
+@media screen and (max-width: 600px) {
+	:root {
+		--mw-admin-bar-offset: 0px;
+	}
+}
+
+@media (max-width: 36rem) {
+	:root {
+		--mw-header-height: 3.75rem;
+	}
+}
+
+/* -------------------------------------------------------------------------
+ * Scheme states
+ *
+ * Effective scheme = saved preference, else operating-system preference,
+ * else the native scheme. Presets are remapped only when the effective
+ * scheme differs from the native one, so merchants who recolour the palette
+ * in the Site Editor still see their colours in the native scheme.
+ * ---------------------------------------------------------------------- */
+
+/* Light semantics (borders, shadows, danger) — every light state. */
+html[data-mw-scheme="light"],
 html[data-mw-theme="light"] {
 	color-scheme: light;
-	--mw-color-canvas: color-mix(in srgb, var(--wp--preset--color--canvas, #0a0a0a) 8%, white);
-	--mw-color-surface: color-mix(in srgb, var(--wp--preset--color--surface, #181818) 6%, white);
-	--mw-color-surface-raised: color-mix(in srgb, var(--wp--preset--color--surface-raised, #282828) 10%, white);
-	--mw-color-text: color-mix(in srgb, var(--wp--preset--color--text, #f7f8fb) 88%, black);
-	--mw-color-text-muted: color-mix(in srgb, var(--wp--preset--color--muted, #a0a0a0) 72%, black);
-	--mw-color-border: color-mix(in srgb, var(--mw-color-text) 12%, transparent);
-	--mw-color-border-strong: color-mix(in srgb, var(--mw-color-text) 20%, transparent);
-	--mw-shadow-card: 0 18px 50px rgb(20 24 35 / 10%);
+	--mw-color-danger: #b91c1c;
+	--mw-color-border: color-mix(in srgb, var(--mw-color-text) 14%, transparent);
+	--mw-color-border-strong: color-mix(in srgb, var(--mw-color-text) 24%, transparent);
+	--mw-color-surface-strong: color-mix(in srgb, var(--mw-color-surface-raised) 92%, black);
+	--mw-shadow-card: var(--mw-light-shadow-card);
+	--mw-shadow-floating: var(--mw-light-shadow-floating);
 	--mw-gradient-hero: linear-gradient(
 		180deg,
 		color-mix(in srgb, var(--mw-color-accent) 14%, transparent) 0%,
@@ -84,32 +177,106 @@ html[data-mw-theme="light"] {
 	);
 }
 
-html[data-mw-theme="dark"] {
-	color-scheme: dark;
-	--mw-color-canvas: color-mix(in srgb, var(--wp--preset--color--canvas, #0a0a0a) 64%, black);
-	--mw-color-surface: color-mix(in srgb, var(--wp--preset--color--surface, #181818) 72%, black);
-	--mw-color-surface-raised: color-mix(in srgb, var(--wp--preset--color--surface-raised, #282828) 82%, black);
-	--mw-color-text: color-mix(in srgb, var(--wp--preset--color--text, #f7f8fb) 88%, white);
-	--mw-color-text-muted: color-mix(in srgb, var(--wp--preset--color--muted, #a0a0a0) 88%, white);
-	--mw-color-border: color-mix(in srgb, var(--mw-color-text) 12%, transparent);
-	--mw-color-border-strong: color-mix(in srgb, var(--mw-color-text) 20%, transparent);
+/* Dark-native style shown in light mode. */
+html[data-mw-theme="light"][data-mw-scheme="dark"] {
+	--wp--preset--color--canvas: var(--mw-scheme-light-canvas);
+	--wp--preset--color--surface: var(--mw-scheme-light-surface);
+	--wp--preset--color--surface-raised: var(--mw-scheme-light-surface-raised);
+	--wp--preset--color--text: var(--mw-scheme-light-text);
+	--wp--preset--color--muted: var(--mw-scheme-light-muted);
+	--wp--preset--color--accent: var(--mw-scheme-light-accent);
+	--wp--preset--color--accent-strong: var(--mw-scheme-light-accent-strong);
+	--wp--preset--color--editorial: var(--mw-scheme-light-editorial);
+	--wp--preset--color--on-accent: var(--mw-scheme-light-on-accent);
 }
 
+/* Dark semantics — every dark state (also resets a light-native style). */
+html[data-mw-theme="dark"] {
+	color-scheme: dark;
+	--mw-color-danger: #f87171;
+	--mw-color-border: color-mix(in srgb, var(--mw-color-text) 20%, transparent);
+	--mw-color-border-strong: color-mix(in srgb, var(--mw-color-text) 32%, transparent);
+	--mw-color-surface-strong: color-mix(in srgb, var(--mw-color-surface-raised) 82%, black);
+	--mw-shadow-card: var(--wp--preset--shadow--card, 0 18px 50px rgb(0 0 0 / 24%));
+	--mw-shadow-floating: var(--wp--preset--shadow--floating, 0 24px 70px rgb(0 0 0 / 40%));
+	--mw-gradient-hero: linear-gradient(
+		180deg,
+		color-mix(in srgb, var(--mw-color-accent) 35%, transparent) 0%,
+		color-mix(in srgb, var(--mw-color-canvas) 95%, transparent) 40%,
+		var(--mw-color-canvas) 100%
+	);
+}
+
+/* Light-native style shown in dark mode. */
+html[data-mw-theme="dark"][data-mw-scheme="light"] {
+	--wp--preset--color--canvas: var(--mw-scheme-dark-canvas);
+	--wp--preset--color--surface: var(--mw-scheme-dark-surface);
+	--wp--preset--color--surface-raised: var(--mw-scheme-dark-surface-raised);
+	--wp--preset--color--text: var(--mw-scheme-dark-text);
+	--wp--preset--color--muted: var(--mw-scheme-dark-muted);
+	--wp--preset--color--accent: var(--mw-scheme-dark-accent);
+	--wp--preset--color--accent-strong: var(--mw-scheme-dark-accent-strong);
+	--wp--preset--color--editorial: var(--mw-scheme-dark-editorial);
+	--wp--preset--color--on-accent: var(--mw-scheme-dark-on-accent);
+}
+
+/* No saved preference: follow the operating system. */
 @media (prefers-color-scheme: light) {
 	html:not([data-mw-theme]) {
-		--mw-color-canvas: color-mix(in srgb, var(--wp--preset--color--canvas, #0a0a0a) 8%, white);
-		--mw-color-surface: color-mix(in srgb, var(--wp--preset--color--surface, #181818) 6%, white);
-		--mw-color-surface-raised: color-mix(in srgb, var(--wp--preset--color--surface-raised, #282828) 10%, white);
-		--mw-color-text: color-mix(in srgb, var(--wp--preset--color--text, #f7f8fb) 88%, black);
-		--mw-color-text-muted: color-mix(in srgb, var(--wp--preset--color--muted, #a0a0a0) 72%, black);
-		--mw-color-border: color-mix(in srgb, var(--mw-color-text) 12%, transparent);
-		--mw-color-border-strong: color-mix(in srgb, var(--mw-color-text) 20%, transparent);
-		--mw-shadow-card: 0 18px 50px rgb(20 24 35 / 10%);
+		color-scheme: light;
+		--mw-color-danger: #b91c1c;
+		--mw-color-border: color-mix(in srgb, var(--mw-color-text) 14%, transparent);
+		--mw-color-border-strong: color-mix(in srgb, var(--mw-color-text) 24%, transparent);
+		--mw-color-surface-strong: color-mix(in srgb, var(--mw-color-surface-raised) 92%, black);
+		--mw-shadow-card: var(--mw-light-shadow-card);
+		--mw-shadow-floating: var(--mw-light-shadow-floating);
 		--mw-gradient-hero: linear-gradient(
 			180deg,
 			color-mix(in srgb, var(--mw-color-accent) 14%, transparent) 0%,
 			color-mix(in srgb, var(--mw-color-canvas) 96%, transparent) 40%,
 			var(--mw-color-canvas) 100%
 		);
+	}
+
+	html:not([data-mw-theme])[data-mw-scheme="dark"] {
+		--wp--preset--color--canvas: var(--mw-scheme-light-canvas);
+		--wp--preset--color--surface: var(--mw-scheme-light-surface);
+		--wp--preset--color--surface-raised: var(--mw-scheme-light-surface-raised);
+		--wp--preset--color--text: var(--mw-scheme-light-text);
+		--wp--preset--color--muted: var(--mw-scheme-light-muted);
+		--wp--preset--color--accent: var(--mw-scheme-light-accent);
+		--wp--preset--color--accent-strong: var(--mw-scheme-light-accent-strong);
+		--wp--preset--color--editorial: var(--mw-scheme-light-editorial);
+		--wp--preset--color--on-accent: var(--mw-scheme-light-on-accent);
+	}
+}
+
+@media (prefers-color-scheme: dark) {
+	html:not([data-mw-theme]) {
+		color-scheme: dark;
+		--mw-color-danger: #f87171;
+		--mw-color-border: color-mix(in srgb, var(--mw-color-text) 20%, transparent);
+		--mw-color-border-strong: color-mix(in srgb, var(--mw-color-text) 32%, transparent);
+		--mw-color-surface-strong: color-mix(in srgb, var(--mw-color-surface-raised) 82%, black);
+		--mw-shadow-card: var(--wp--preset--shadow--card, 0 18px 50px rgb(0 0 0 / 24%));
+		--mw-shadow-floating: var(--wp--preset--shadow--floating, 0 24px 70px rgb(0 0 0 / 40%));
+		--mw-gradient-hero: linear-gradient(
+			180deg,
+			color-mix(in srgb, var(--mw-color-accent) 35%, transparent) 0%,
+			color-mix(in srgb, var(--mw-color-canvas) 95%, transparent) 40%,
+			var(--mw-color-canvas) 100%
+		);
+	}
+
+	html:not([data-mw-theme])[data-mw-scheme="light"] {
+		--wp--preset--color--canvas: var(--mw-scheme-dark-canvas);
+		--wp--preset--color--surface: var(--mw-scheme-dark-surface);
+		--wp--preset--color--surface-raised: var(--mw-scheme-dark-surface-raised);
+		--wp--preset--color--text: var(--mw-scheme-dark-text);
+		--wp--preset--color--muted: var(--mw-scheme-dark-muted);
+		--wp--preset--color--accent: var(--mw-scheme-dark-accent);
+		--wp--preset--color--accent-strong: var(--mw-scheme-dark-accent-strong);
+		--wp--preset--color--editorial: var(--mw-scheme-dark-editorial);
+		--wp--preset--color--on-accent: var(--mw-scheme-dark-on-accent);
 	}
 }

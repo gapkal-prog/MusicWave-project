@@ -41,6 +41,11 @@ $GLOBALS['mw_test_synth_terms']   = array();
 $GLOBALS['mw_test_orders']        = array();
 $GLOBALS['mw_test_filters']       = array();
 $GLOBALS['mw_test_titles']        = array();
+$GLOBALS['mw_test_thumbnails']    = array();
+$GLOBALS['mw_test_rewrite_flushes'] = array();
+$GLOBALS['mw_test_mail']            = array();
+$GLOBALS['mw_test_deleted']         = array();
+$GLOBALS['mw_test_styles']          = array();
 
 final class WP_Post {
 	/** @var int */
@@ -49,9 +54,13 @@ final class WP_Post {
 	/** @var string */
 	public $post_type;
 
-	public function __construct( int $post_id, string $post_type ) {
+	/** @var string */
+	public $post_name = '';
+
+	public function __construct( int $post_id, string $post_type, string $post_name = '' ) {
 		$this->ID        = $post_id;
 		$this->post_type = $post_type;
+		$this->post_name = $post_name;
 	}
 }
 
@@ -76,6 +85,9 @@ final class WP_Term {
 
 	/** @var string Archive description stored on the term row. */
 	public $description = '';
+
+	/** @var int Parent term ID for hierarchical taxonomies. */
+	public $parent = 0;
 
 	public function __construct( int $term_id, string $taxonomy, string $name, string $slug ) {
 		$this->term_id  = $term_id;
@@ -122,7 +134,11 @@ final class WP_REST_Response {
 	}
 }
 
-final class WP_REST_Request {
+/**
+ * Mirrors the WordPress request object closely enough for route handlers:
+ * `get_param()` plus ArrayAccess (`$request['key']`), which core supports.
+ */
+final class WP_REST_Request implements ArrayAccess {
 	/** @var array<string, mixed> */
 	private $params;
 
@@ -134,6 +150,36 @@ final class WP_REST_Request {
 	/** @return mixed */
 	public function get_param( string $key ) {
 		return isset( $this->params[ $key ] ) ? $this->params[ $key ] : null;
+	}
+
+	/** @param mixed $offset Parameter name. */
+	#[\ReturnTypeWillChange]
+	public function offsetExists( $offset ): bool {
+		return isset( $this->params[ $offset ] );
+	}
+
+	/**
+	 * @param mixed $offset Parameter name.
+	 * @return mixed
+	 */
+	#[\ReturnTypeWillChange]
+	public function offsetGet( $offset ) {
+		return isset( $this->params[ $offset ] ) ? $this->params[ $offset ] : null;
+	}
+
+	/**
+	 * @param mixed $offset Parameter name.
+	 * @param mixed $value  Parameter value.
+	 */
+	#[\ReturnTypeWillChange]
+	public function offsetSet( $offset, $value ): void {
+		$this->params[ $offset ] = $value;
+	}
+
+	/** @param mixed $offset Parameter name. */
+	#[\ReturnTypeWillChange]
+	public function offsetUnset( $offset ): void {
+		unset( $this->params[ $offset ] );
 	}
 }
 
@@ -147,6 +193,64 @@ final class WP_Query {
 	/** @var array<int, string> */
 	public $mw_test_archive_types = array();
 
+	/** @var array<string, mixed> */
+	public $query_vars = array();
+
+	/** @var array<int, int> Matching post IDs (fields=ids semantics). */
+	public $posts = array();
+
+	/** @var int */
+	public $found_posts = 0;
+
+	/** @var int */
+	public $max_num_pages = 0;
+
+	/**
+	 * In-memory query over the harness fixtures: post_type, post_status,
+	 * equality meta_query clauses, pagination. Enough for list screens.
+	 *
+	 * @param array<string, mixed> $query_vars Seed query vars.
+	 */
+	public function __construct( array $query_vars = array() ) {
+		$this->query_vars = $query_vars;
+		if ( ! isset( $query_vars['post_type'] ) ) {
+			return;
+		}
+		$types    = (array) $query_vars['post_type'];
+		$statuses = isset( $query_vars['post_status'] ) ? (array) $query_vars['post_status'] : array( 'publish' );
+		$matches  = array();
+		foreach ( $GLOBALS['mw_test_types'] as $post_id => $post_type ) {
+			if ( ! in_array( $post_type, $types, true ) || ( ! in_array( 'any', $statuses, true ) && ! in_array( (string) get_post_status( (int) $post_id ), $statuses, true ) ) ) {
+				continue;
+			}
+			$keep = true;
+			foreach ( isset( $query_vars['meta_query'] ) && is_array( $query_vars['meta_query'] ) ? $query_vars['meta_query'] : array() as $clause ) {
+				if ( is_array( $clause ) && isset( $clause['key'] ) && (string) get_post_meta( (int) $post_id, (string) $clause['key'], true ) !== (string) $clause['value'] ) {
+					$keep = false;
+				}
+			}
+			if ( $keep ) {
+				$matches[] = (int) $post_id;
+			}
+		}
+		rsort( $matches );
+		$this->found_posts   = count( $matches );
+		$per_page            = isset( $query_vars['posts_per_page'] ) ? max( 1, (int) $query_vars['posts_per_page'] ) : 10;
+		$page                = isset( $query_vars['paged'] ) ? max( 1, (int) $query_vars['paged'] ) : 1;
+		$this->max_num_pages = (int) ceil( $this->found_posts / $per_page );
+		$this->posts         = array_slice( $matches, ( $page - 1 ) * $per_page, $per_page );
+	}
+
+	/** @return mixed */
+	public function get( string $query_var, $default_value = '' ) {
+		return array_key_exists( $query_var, $this->query_vars ) ? $this->query_vars[ $query_var ] : $default_value;
+	}
+
+	/** @param mixed $value Query var value. */
+	public function set( string $query_var, $value ): void {
+		$this->query_vars[ $query_var ] = $value;
+	}
+
 	public function is_main_query(): bool {
 		return $this->mw_test_is_main;
 	}
@@ -158,6 +262,44 @@ final class WP_Query {
 	/** @param mixed $post_type */
 	public function is_post_type_archive( $post_type = '' ): bool {
 		return in_array( (string) $post_type, $this->mw_test_archive_types, true );
+	}
+}
+
+/**
+ * Minimal wpdb double: real prepare()/esc_like() semantics, no database.
+ */
+final class wpdb { // phpcs:ignore
+	/** @var string */
+	public $posts = 'wp_posts';
+
+	/** @var string */
+	public $postmeta = 'wp_postmeta';
+
+	/** @var string */
+	public $terms = 'wp_terms';
+
+	/** @var string */
+	public $term_taxonomy = 'wp_term_taxonomy';
+
+	/** @var string */
+	public $term_relationships = 'wp_term_relationships';
+
+	public function esc_like( string $text ): string {
+		return addcslashes( $text, '_%\\' );
+	}
+
+	/** @param mixed ...$args Placeholder values. */
+	public function prepare( string $query, ...$args ): string {
+		if ( 1 === count( $args ) && is_array( $args[0] ) ) {
+			$args = $args[0];
+		}
+		$escaped = array();
+		foreach ( $args as $arg ) {
+			$escaped[] = is_int( $arg ) || is_float( $arg ) ? $arg : "'" . addslashes( (string) $arg ) . "'";
+		}
+		$query = str_replace( array( '%s', '%d' ), '%s', $query );
+
+		return vsprintf( $query, $escaped );
 	}
 }
 
@@ -250,6 +392,11 @@ function wp_login_url( string $redirect = '' ): string {
 
 function wp_create_nonce( string $action = '' ): string {
 	return 'nonce-' . md5( $action );
+}
+
+/** @return int|false */
+function wp_verify_nonce( string $nonce, string $action = '' ) {
+	return wp_create_nonce( $action ) === $nonce ? 1 : false;
 }
 
 function wp_nonce_field( string $action = '', string $name = '_wpnonce', bool $referer = true, bool $display = true ): string {
@@ -420,6 +567,94 @@ function get_post_status( int $post_id ) {
 	return isset( $GLOBALS['mw_test_statuses'][ $post_id ] ) ? $GLOBALS['mw_test_statuses'][ $post_id ] : 'publish';
 }
 
+/** @param array<string, mixed> $post Post fields (ID required). */
+function wp_update_post( array $post, bool $wp_error = false ) {
+	unset( $wp_error );
+	$post_id = isset( $post['ID'] ) ? (int) $post['ID'] : 0;
+	if ( $post_id < 1 || '' === get_post_type( $post_id ) ) {
+		return 0;
+	}
+	if ( isset( $post['post_status'] ) ) {
+		$GLOBALS['mw_test_statuses'][ $post_id ] = (string) $post['post_status'];
+	}
+	if ( isset( $post['post_title'] ) ) {
+		$GLOBALS['mw_test_titles'][ $post_id ] = (string) $post['post_title'];
+	}
+	return $post_id;
+}
+
+function wp_delete_post( int $post_id, bool $force = false ) {
+	unset( $force );
+	if ( '' === get_post_type( $post_id ) ) {
+		return false;
+	}
+	$deleted = new WP_Post( $post_id, get_post_type( $post_id ) );
+	unset( $GLOBALS['mw_test_types'][ $post_id ], $GLOBALS['mw_test_statuses'][ $post_id ], $GLOBALS['mw_test_titles'][ $post_id ], $GLOBALS['mw_test_meta'][ $post_id ] );
+	$GLOBALS['mw_test_deleted'][] = $post_id;
+	return $deleted;
+}
+
+function wp_count_posts( string $type = 'post' ): object {
+	$counts = array();
+	foreach ( $GLOBALS['mw_test_types'] as $post_id => $post_type ) {
+		if ( $post_type !== $type ) {
+			continue;
+		}
+		$status            = (string) get_post_status( (int) $post_id );
+		$counts[ $status ] = ( isset( $counts[ $status ] ) ? $counts[ $status ] : 0 ) + 1;
+	}
+	return (object) $counts;
+}
+
+/** @param mixed $headers Headers. */
+function wp_mail( string $to, string $subject, string $message, $headers = array() ): bool {
+	$GLOBALS['mw_test_mail'][] = array(
+		'to'      => $to,
+		'subject' => $subject,
+		'message' => $message,
+		'headers' => $headers,
+	);
+	return empty( $GLOBALS['mw_test_mail_fails'] );
+}
+
+function is_email( string $email ) {
+	return false !== filter_var( $email, FILTER_VALIDATE_EMAIL ) ? $email : false;
+}
+
+function sanitize_textarea_field( string $value ): string {
+	return trim( strip_tags( $value ) );
+}
+
+function get_bloginfo( string $show = '' ): string {
+	return 'admin_email' === $show ? 'owner@example.test' : 'MusicWave Test';
+}
+
+function wp_specialchars_decode( string $value, int $quote_style = ENT_NOQUOTES ): string {
+	return htmlspecialchars_decode( $value, $quote_style );
+}
+
+function wp_generate_password( int $length = 12, bool $special = true, bool $extra = false ): string {
+	unset( $special, $extra );
+	return substr( bin2hex( random_bytes( 32 ) ), 0, $length );
+}
+
+function esc_textarea( string $value ): string {
+	return htmlspecialchars( $value, ENT_QUOTES );
+}
+
+function checked( $checked, $current = true, bool $display = true ): string {
+	$markup = (string) $checked === (string) $current ? ' checked="checked"' : '';
+	if ( $display ) {
+		echo $markup; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+	}
+	return $markup;
+}
+
+function wp_enqueue_style( string $handle, string $src = '', array $deps = array(), $ver = false ): void {
+	unset( $src, $deps, $ver );
+	$GLOBALS['mw_test_styles'][] = $handle;
+}
+
 function current_user_can( string $capability, ...$arguments ): bool {
 	unset( $arguments );
 	$granted = isset( $GLOBALS['mw_test_capabilities'] ) && is_array( $GLOBALS['mw_test_capabilities'] ) ? $GLOBALS['mw_test_capabilities'] : array();
@@ -505,8 +740,26 @@ function get_post_modified_time( string $format = 'U', bool $gmt = false, $post_
 }
 
 function get_the_post_thumbnail_url( int $post_id, $size = 'post-thumbnail' ) {
-	unset( $post_id, $size );
+	unset( $size );
+	if ( isset( $GLOBALS['mw_test_thumbnails'][ $post_id ] ) ) {
+		return $GLOBALS['mw_test_thumbnails'][ $post_id ];
+	}
+
 	return false;
+}
+
+/**
+ * @param mixed $output    Unused.
+ * @param mixed $post_type Unused.
+ * @return WP_Post|null
+ */
+function get_page_by_path( string $path, $output = null, $post_type = 'page' ) {
+	unset( $output, $post_type );
+	if ( isset( $GLOBALS['mw_test_pages_by_path'][ $path ] ) ) {
+		return $GLOBALS['mw_test_pages_by_path'][ $path ];
+	}
+
+	return null;
 }
 
 function get_the_excerpt( int $post_id ): string {
@@ -547,6 +800,26 @@ function get_post( $post = null ) {
 
 function untrailingslashit( string $value ): string {
 	return rtrim( $value, '/\\' );
+}
+
+function user_trailingslashit( string $value, string $type_of_url = '' ): string {
+	unset( $type_of_url );
+	return untrailingslashit( $value ) . '/';
+}
+
+function get_the_terms( int $post_id, string $taxonomy ) {
+	if ( isset( $GLOBALS['mw_test_term_objects'][ $post_id ][ $taxonomy ] ) ) {
+		return $GLOBALS['mw_test_term_objects'][ $post_id ][ $taxonomy ];
+	}
+	$slugs = wp_get_post_terms( $post_id, $taxonomy );
+	if ( array() === $slugs ) {
+		return false;
+	}
+	$terms = array();
+	foreach ( $slugs as $index => $slug ) {
+		$terms[] = new WP_Term( 700 + $index, $taxonomy, (string) $slug, (string) $slug );
+	}
+	return $terms;
 }
 
 function add_query_arg( array $args, string $url ): string {
@@ -748,6 +1021,10 @@ function update_option( string $key, $value, $autoload = null ): bool {
 	unset( $autoload );
 	$GLOBALS['mw_test_options'][ $key ] = $value;
 	return true;
+}
+
+function flush_rewrite_rules( bool $hard = true ): void {
+	$GLOBALS['mw_test_rewrite_flushes'][] = $hard;
 }
 
 function delete_option( string $key ): bool {
@@ -1575,6 +1852,86 @@ $mw_secondary_search->mw_test_archive_types  = array( 'mw_release' );
 ( new ManaCore\MusicWave\Core\Catalog\ReleaseArchiveQuery() )->scope_archive_search( $mw_secondary_search );
 mw_assert_same( true, $mw_secondary_search->is_search, 'Secondary queries must never be adjusted by the catalog scoping.' );
 
+// --- Release-type permalinks: URL bases follow the release type (PROJECT_PLAN.md Stage 4 UX) ---
+
+final class TestRewrite {
+	/** @var array<string, string> */
+	public $structs = array();
+
+	public function get_extra_permastruct( string $name ) {
+		return isset( $this->structs[ $name ] ) ? $this->structs[ $name ] : false;
+	}
+}
+
+$mw_permalinks = new ManaCore\MusicWave\Core\Catalog\ReleasePermalinks();
+mw_assert_same( 'album', $mw_permalinks->base_for_types( array( 'album' ) ), 'Albums must live under /album/.' );
+mw_assert_same( 'track', $mw_permalinks->base_for_types( array( 'single' ) ), 'Singles must share the /track/ base with tracks.' );
+mw_assert_same( 'track', $mw_permalinks->base_for_types( array( 'track' ) ), 'Tracks must live under /track/.' );
+mw_assert_same( 'album', $mw_permalinks->base_for_types( array( 'track', 'album' ) ), 'Collections must win over track types when a release carries both.' );
+mw_assert_same( 'podcast', $mw_permalinks->base_for_types( array( 'podcast_show' ) ), 'Podcast shows must live under /podcast/.' );
+mw_assert_same( 'episode', $mw_permalinks->base_for_types( array( 'podcast_episode' ) ), 'Podcast episodes must live under /episode/.' );
+mw_assert_same( 'music', $mw_permalinks->base_for_types( array() ), 'Untyped releases must keep the legacy /music/ base.' );
+mw_assert_same( 'music', $mw_permalinks->base_for_types( array( 'unknown-type' ) ), 'Unknown release types must keep the legacy /music/ base.' );
+mw_assert_same( 'album', $mw_permalinks->base_for( 1 ), 'The base must resolve from the release-type terms of a release.' );
+mw_assert_same( 'track', $mw_permalinks->base_for( 2 ), 'Track releases must resolve to the /track/ base.' );
+mw_assert_same( 'music', $mw_permalinks->base_for( 4 ), 'Releases without release-type terms must resolve to the legacy base.' );
+mw_assert_same( false, in_array( 'music', $mw_permalinks->extra_bases(), true ), 'The post type base must not be re-registered as an extra permastruct.' );
+mw_assert_same( array( 'album', 'ep', 'mix', 'playlist', 'podcast', 'episode', 'track' ), $mw_permalinks->extra_bases(), 'Every distinct mapped base must get its own permastruct exactly once.' );
+mw_assert_same( 'mw_release_base_podcast', ManaCore\MusicWave\Core\Catalog\ReleasePermalinks::permastruct_name( 'podcast' ), 'Permastruct names must be derived from the base.' );
+mw_assert_same( 'music/album', ManaCore\MusicWave\Core\Catalog\ReleasePermalinks::sanitize_base( '/Music/Album/' ), 'Multi-segment bases must be lower-cased and trimmed.' );
+mw_assert_same( '', ManaCore\MusicWave\Core\Catalog\ReleasePermalinks::sanitize_base( 'bad base!' ), 'Bases with unsafe characters must be rejected.' );
+mw_assert_same( '', ManaCore\MusicWave\Core\Catalog\ReleasePermalinks::sanitize_base( 'a//b' ), 'Bases with empty segments must be rejected.' );
+
+$GLOBALS['mw_test_filters']['music_wave_release_permalink_bases'] = array(
+	'album'   => 'Records/',
+	'track'   => 'bad base!',
+	''        => 'ignored',
+	'podcast' => '',
+);
+$mw_filtered_permalinks = new ManaCore\MusicWave\Core\Catalog\ReleasePermalinks();
+mw_assert_same( array( 'album' => 'records' ), $mw_filtered_permalinks->bases(), 'Filtered bases must be sanitized and invalid entries dropped.' );
+mw_assert_same( 'music', $mw_filtered_permalinks->base_for_types( array( 'track' ) ), 'Types dropped by the filter must fall back to the legacy base.' );
+unset( $GLOBALS['mw_test_filters']['music_wave_release_permalink_bases'] );
+
+// Rewrite rules regenerate themselves once per base map, so the first request
+// after an update resolves the new bases without a manual permalink re-save.
+$GLOBALS['mw_test_rewrite_flushes'] = array();
+unset( $GLOBALS['mw_test_options'][ ManaCore\MusicWave\Core\Catalog\ReleasePermalinks::OPTION_RULES_SIGNATURE ] );
+$mw_permalinks->maybe_flush_rewrite_rules();
+mw_assert_same( array( false ), $GLOBALS['mw_test_rewrite_flushes'], 'An unknown base map must trigger exactly one soft rewrite flush.' );
+mw_assert_same( $mw_permalinks->rules_signature(), (string) get_option( ManaCore\MusicWave\Core\Catalog\ReleasePermalinks::OPTION_RULES_SIGNATURE ), 'The flushed base map must be remembered.' );
+$mw_permalinks->maybe_flush_rewrite_rules();
+mw_assert_same( 1, count( $GLOBALS['mw_test_rewrite_flushes'] ), 'An unchanged base map must not flush again.' );
+$GLOBALS['mw_test_filters']['music_wave_release_permalink_bases'] = array( 'album' => 'records' );
+( new ManaCore\MusicWave\Core\Catalog\ReleasePermalinks() )->maybe_flush_rewrite_rules();
+mw_assert_same( 2, count( $GLOBALS['mw_test_rewrite_flushes'] ), 'Changing the base map through the filter must flush once more.' );
+unset( $GLOBALS['mw_test_filters']['music_wave_release_permalink_bases'] );
+mw_assert_same( $mw_permalinks->rules_signature(), ( new ManaCore\MusicWave\Core\Catalog\ReleasePermalinks() )->rules_signature(), 'Signatures must be deterministic for the same map.' );
+
+$GLOBALS['wp_rewrite']          = new TestRewrite();
+$GLOBALS['wp_rewrite']->structs = array( 'mw_release_base_album' => '/album/%mw_release%', 'mw_release_base_track' => '/track/%mw_release%' );
+$mw_album_post                  = new WP_Post( 1, 'mw_release', 'night-signals' );
+$mw_track_post                  = new WP_Post( 2, 'mw_release', 'midnight-drive' );
+$mw_untyped_post                = new WP_Post( 4, 'mw_release', 'untitled' );
+mw_assert_same( 'https://example.test/album/night-signals/', $mw_permalinks->filter_post_type_link( 'https://example.test/music/night-signals/', $mw_album_post, false ), 'Album permalinks must swap the post type base for /album/.' );
+mw_assert_same( 'https://example.test/track/%mw_release%/', $mw_permalinks->filter_post_type_link( 'https://example.test/music/%mw_release%/', $mw_track_post, true ), 'Sample permalinks must keep the post name token for the editor slug UI.' );
+mw_assert_same( 'https://example.test/music/untitled/', $mw_permalinks->filter_post_type_link( 'https://example.test/music/untitled/', $mw_untyped_post, false ), 'Untyped releases must keep their legacy permalink.' );
+mw_assert_same( 'https://example.test/?mw_release=night-signals', $mw_permalinks->filter_post_type_link( 'https://example.test/?mw_release=night-signals', $mw_album_post, false ), 'Plain permalinks must never be rewritten.' );
+mw_assert_same( 'https://example.test/music/night-signals/', $mw_permalinks->filter_post_type_link( 'https://example.test/music/night-signals/', new WP_Post( 10, 'product', 'night-signals' ), false ), 'Only release permalinks may be rewritten.' );
+$GLOBALS['wp_rewrite']->structs = array();
+mw_assert_same( 'https://example.test/music/night-signals/', $mw_permalinks->filter_post_type_link( 'https://example.test/music/night-signals/', $mw_album_post, false ), 'Permalinks must stay untouched until the permastruct is registered.' );
+unset( $GLOBALS['wp_rewrite'] );
+
+mw_assert_same( 'https://example.test/album/night-signals/', ManaCore\MusicWave\Core\Catalog\ReleasePermalinks::redirect_target( '/music/night-signals/', 'https://example.test/album/night-signals/', 'night-signals' ), 'Legacy /music/ requests must redirect to the typed permalink.' );
+mw_assert_same( 'https://example.test/album/night-signals/2/?utm=x', ManaCore\MusicWave\Core\Catalog\ReleasePermalinks::redirect_target( '/music/night-signals/2/?utm=x', 'https://example.test/album/night-signals/', 'night-signals' ), 'Redirects must keep sub-routes and the query string.' );
+mw_assert_same( 'https://example.test/album/night-signals/comment-page-2/', ManaCore\MusicWave\Core\Catalog\ReleasePermalinks::redirect_target( '/track/night-signals/comment-page-2', 'https://example.test/album/night-signals/', 'night-signals' ), 'Stale typed bases must redirect after a release changes type.' );
+mw_assert_same( null, ManaCore\MusicWave\Core\Catalog\ReleasePermalinks::redirect_target( '/album/night-signals/', 'https://example.test/album/night-signals/', 'night-signals' ), 'Canonical requests must not redirect.' );
+mw_assert_same( null, ManaCore\MusicWave\Core\Catalog\ReleasePermalinks::redirect_target( '/album/night-signals/2/', 'https://example.test/album/night-signals/', 'night-signals' ), 'Canonical paginated requests must not redirect.' );
+mw_assert_same( null, ManaCore\MusicWave\Core\Catalog\ReleasePermalinks::redirect_target( '/music/night-signals/', 'https://example.test/?mw_release=night-signals', 'night-signals' ), 'Plain permalinks must never trigger a redirect.' );
+mw_assert_same( null, ManaCore\MusicWave\Core\Catalog\ReleasePermalinks::redirect_target( '/music/other-release/', 'https://example.test/album/night-signals/', 'night-signals' ), 'Requests that do not contain the release slug must be left to WordPress.' );
+mw_assert_same( 'https://example.test/album/%D8%A2%D9%84%D8%A8%D9%88%D9%85/', ManaCore\MusicWave\Core\Catalog\ReleasePermalinks::redirect_target( '/music/%d8%a2%d9%84%d8%a8%d9%88%d9%85/', 'https://example.test/album/%D8%A2%D9%84%D8%A8%D9%88%D9%85/', '%d8%a2%d9%84%d8%a8%d9%88%d9%85' ), 'Percent-encoded non-ASCII slugs must match regardless of hex case.' );
+
+
 $GLOBALS['mw_test_types'][2] = 'mw_release';
 $GLOBALS['mw_test_types'][3] = 'mw_release';
 $relation_repository         = new ManaCore\MusicWave\Core\Infrastructure\WordPressReleaseRepository( $schema );
@@ -2034,6 +2391,51 @@ $public_playlist_id = $playlists->create( 7, 'Editorial picks', 'public' );
 $playlists->add_item( 7, $public_playlist_id, 2 );
 mw_assert_same( true, $playlists->can_view( $playlists->find( $public_playlist_id ), 0 ), 'Public playlists must be readable by anyone.' );
 mw_assert_same( 1, (int) $playlists->view( $public_playlist_id, 0 )['count'], 'Public playlist views must list published items.' );
+
+// The community listing ships cover previews for the theme's fanned artwork
+// stack: published items only (a draft the owner may read must not leak its
+// cover to anonymous callers), thumbnail URL when present, empty otherwise.
+$playlists->add_item( 7, $public_playlist_id, 3 );
+$playlists->add_item( 7, $public_playlist_id, 4 );
+$GLOBALS['mw_test_capabilities'] = array( 'read_post' );
+mw_assert_same( true, $playlists->add_item( 7, $public_playlist_id, 9 ), 'The owner may keep an unpublished release in a public playlist.' );
+$GLOBALS['mw_test_capabilities']  = array();
+$GLOBALS['mw_test_thumbnails'][2] = 'https://cdn.example.test/covers/2.jpg';
+$GLOBALS['mw_test_titles'][3]     = 'Night Drive';
+$GLOBALS['mw_test_current_user']  = 0;
+$public_listing                   = ( new ManaCore\MusicWave\Core\Playlists\PlaylistRoutes( $playlists ) )->public_index( new WP_REST_Request( array( 'per_page' => 12 ) ) );
+$public_listing_data              = $public_listing->get_data();
+$public_listing_card              = null;
+foreach ( $public_listing_data['items'] as $public_listing_item ) {
+	if ( (int) $public_listing_item['id'] === $public_playlist_id ) {
+		$public_listing_card = $public_listing_item;
+	}
+}
+mw_assert_same( true, is_array( $public_listing_card ), 'The public playlists listing must include public playlists.' );
+mw_assert_same( false, array_key_exists( 'share_token', (array) $public_listing_card ), 'The public listing must never expose share tokens.' );
+mw_assert_same(
+	array(
+		array(
+			'title' => 'Release 2',
+			'image' => 'https://cdn.example.test/covers/2.jpg',
+		),
+		array(
+			'title' => 'Night Drive',
+			'image' => '',
+		),
+		array(
+			'title' => 'Release 4',
+			'image' => '',
+		),
+	),
+	$public_listing_card['covers'],
+	'Public playlist cards must carry cover previews for published items only, with thumbnail URLs when available.'
+);
+mw_assert_same( 3, (int) $public_listing_card['count'], 'Public card counts must match the publicly visible items.' );
+unset( $GLOBALS['mw_test_thumbnails'][2], $GLOBALS['mw_test_titles'][3] );
+$playlists->remove_item( 7, $public_playlist_id, 3 );
+$playlists->remove_item( 7, $public_playlist_id, 4 );
+$playlists->remove_item( 7, $public_playlist_id, 9 );
 
 mw_assert_same( 2, count( $playlists->export( 7 ) ), 'Playlists must be exportable for privacy requests.' );
 $playlists->handle_deleted_post( 2 );
@@ -2661,6 +3063,351 @@ $GLOBALS['mw_test_user_meta'][9][ ManaCore\MusicWave\Core\Listening\ListeningRep
 
 $GLOBALS['mw_test_terms']      = $shelf_terms_backup;
 $GLOBALS['mw_test_term_meta']  = $shelf_term_meta_bak;
+
+// --- Script-aware site search: Persian phrases must find the matching posts ---
+
+use ManaCore\MusicWave\Core\Discovery\PersianSearchNormalizer;
+use ManaCore\MusicWave\Core\Discovery\ScriptAwareSearchQuery;
+
+mw_assert_same( 'موسیقی', PersianSearchNormalizer::normalize( 'موسيقي' ), 'Arabic yeh must fold to Persian yeh.' );
+mw_assert_same( 'کتاب', PersianSearchNormalizer::normalize( 'كتاب' ), 'Arabic kaf must fold to Persian keheh.' );
+mw_assert_same( 'می خواهم', PersianSearchNormalizer::normalize( "می\u{200C}خواهم" ), 'The zero-width non-joiner must normalize to a space.' );
+mw_assert_same( 'سال 1403', PersianSearchNormalizer::normalize( 'سال ۱۴۰۳' ), 'Persian digits must normalize to ASCII digits.' );
+mw_assert_same( 'سلام', PersianSearchNormalizer::normalize( "سَلاَمْ" ), 'Diacritics must be stripped.' );
+mw_assert_same( 'release 3', PersianSearchNormalizer::normalize( '  Release   3 ' ), 'Latin phrases must be lower-cased and whitespace-collapsed.' );
+mw_assert_same( true, PersianSearchNormalizer::equals( 'سیگنال نیمه‌شب', 'سيگنال نيمه شب' ), 'Equality must ignore script and spacing differences.' );
+mw_assert_same( true, PersianSearchNormalizer::contains( 'جریان شیشه ای', 'شيشه' ), 'Containment must match across yeh variants.' );
+mw_assert_same( false, PersianSearchNormalizer::contains( 'جریان شیشه ای', '' ), 'An empty needle never matches.' );
+mw_assert_same( true, PersianSearchNormalizer::has_arabic_script( 'Glass جریان' ), 'Mixed phrases count as Arabic script.' );
+mw_assert_same( false, PersianSearchNormalizer::has_arabic_script( 'Glass Current' ), 'Latin phrases must not trigger the expansion.' );
+
+$mw_variants = PersianSearchNormalizer::variants( 'موسيقي' );
+mw_assert_same( 'موسیقی', $mw_variants[0], 'The Persian spelling must be the primary variant.' );
+mw_assert_same( true, in_array( 'موسيقي', $mw_variants, true ), 'The Arabic spelling must remain a variant so legacy content still matches.' );
+$mw_zwnj_variants = PersianSearchNormalizer::variants( 'نیمه شب' );
+mw_assert_same( true, in_array( "نیمه\u{200C}شب", $mw_zwnj_variants, true ), 'A spaced word must also try the ZWNJ spelling.' );
+mw_assert_same( true, in_array( 'نیمه‌شب', $mw_zwnj_variants, true ) || in_array( 'نیمهشب', $mw_zwnj_variants, true ), 'A spaced word must also try the joined spelling.' );
+$mw_digit_variants = PersianSearchNormalizer::variants( '۱۴۰۳' );
+mw_assert_same( '1403', $mw_digit_variants[0], 'Digits fold to ASCII first.' );
+mw_assert_same( true, in_array( '۱۴۰۳', $mw_digit_variants, true ), 'The Persian digit spelling stays available.' );
+mw_assert_same( array(), PersianSearchNormalizer::variants( '   ' ), 'Blank words produce no variants.' );
+mw_assert_same( array( 'نیمه‌شب', 'signal', 'دو کلمه' ), PersianSearchNormalizer::words( 'نیمه‌شب signal "دو کلمه"' ), 'Words must keep the ZWNJ and quoted phrases intact.' );
+
+$mw_script_search = new ScriptAwareSearchQuery();
+$mw_plan          = $mw_script_search->plan( array( 'موسيقي', '-جاز' ) );
+mw_assert_same( 2, count( $mw_plan ), 'Every search word must receive a plan entry.' );
+mw_assert_same( false, $mw_plan[0]['exclude'], 'Plain words are inclusive.' );
+mw_assert_same( true, in_array( 'موسیقی', $mw_plan[0]['variants'], true ) && in_array( 'موسيقي', $mw_plan[0]['variants'], true ), 'Both script spellings must be planned for a word.' );
+mw_assert_same( true, $mw_plan[1]['exclude'], 'Prefixed words must stay exclusions.' );
+mw_assert_same( 'جاز', $mw_plan[1]['variants'][0], 'The exclusion prefix must be stripped from the planned word.' );
+mw_assert_same( true, count( $mw_plan[0]['variants'] ) <= ScriptAwareSearchQuery::MAX_VARIANTS, 'Variants per word must stay bounded.' );
+
+$mw_main_search = new WP_Query( array( 's' => 'سيگنال', 'search_terms' => array( 'سيگنال' ) ) );
+mw_assert_same( true, $mw_script_search->applies( $mw_main_search ), 'The main query with a Persian phrase must opt in.' );
+$mw_latin_search = new WP_Query( array( 's' => 'glass', 'search_terms' => array( 'glass' ) ) );
+mw_assert_same( false, $mw_script_search->applies( $mw_latin_search ), 'Latin-only phrases keep the core search untouched.' );
+$mw_secondary_plain                  = new WP_Query( array( 's' => 'سيگنال', 'search_terms' => array( 'سيگنال' ), 'post_type' => 'post' ) );
+$mw_secondary_plain->mw_test_is_main = false;
+mw_assert_same( false, $mw_script_search->applies( $mw_secondary_plain ), 'Unrelated secondary queries are never rewritten.' );
+$mw_secondary_release                  = new WP_Query( array( 's' => 'سيگنال', 'search_terms' => array( 'سيگنال' ), 'post_type' => 'mw_release' ) );
+$mw_secondary_release->mw_test_is_main = false;
+mw_assert_same( true, $mw_script_search->applies( $mw_secondary_release ), 'Release-scoped secondary queries opt in automatically.' );
+$mw_opted_in                  = new WP_Query( array( 's' => 'سيگنال', 'search_terms' => array( 'سيگنال' ), 'post_type' => 'post', ScriptAwareSearchQuery::QUERY_VAR => true ) );
+$mw_opted_in->mw_test_is_main = false;
+mw_assert_same( true, $mw_script_search->applies( $mw_opted_in ), 'The query var must opt any query in.' );
+
+$GLOBALS['wpdb'] = new wpdb();
+$mw_core_sql     = " AND (((wp_posts.post_title LIKE '%سيگنال%') OR (wp_posts.post_excerpt LIKE '%سيگنال%') OR (wp_posts.post_content LIKE '%سيگنال%'))) ";
+$mw_sql          = $mw_script_search->filter_search( $mw_core_sql, $mw_main_search );
+mw_assert_same( true, false !== strpos( $mw_sql, "wp_posts.post_title LIKE '%سیگنال%'" ), 'The rewritten clause must try the Persian spelling of the title.' );
+mw_assert_same( true, false !== strpos( $mw_sql, "wp_posts.post_title LIKE '%سيگنال%'" ), 'The rewritten clause must keep the typed Arabic spelling.' );
+mw_assert_same( true, false !== strpos( $mw_sql, 'wp_posts.post_excerpt LIKE' ) && false !== strpos( $mw_sql, 'wp_posts.post_content LIKE' ), 'Excerpt and content stay searchable.' );
+mw_assert_same( true, false !== strpos( $mw_sql, 'wp_posts.ID IN (SELECT mw_tr.object_id FROM wp_term_relationships' ), 'Catalog term names must be searched through a bounded sub-query.' );
+mw_assert_same( true, false !== strpos( $mw_sql, "mw_tt.taxonomy IN ('mw_artist', 'mw_genre', 'mw_mood', 'mw_label', 'mw_release_type')" ), 'Only the public catalog taxonomies are searched by name.' );
+mw_assert_same( true, false !== strpos( $mw_sql, "mw_pm.meta_key IN ('mw_album', 'mw_catalog_number', 'mw_isrc', 'mw_credits')" ), 'Only allow-listed descriptive meta keys are searched.' );
+mw_assert_same( false, false !== strpos( $mw_sql, 'mw_product_ids' ) || false !== strpos( $mw_sql, 'mw_download' ), 'Commerce and asset meta must never be searched.' );
+mw_assert_same( true, false !== strpos( $mw_sql, "wp_posts.post_password = ''" ), 'Password-protected posts stay hidden from anonymous searches.' );
+mw_assert_same( false, false !== strpos( $mw_sql, ' JOIN ' ) && false === strpos( $mw_sql, 'INNER JOIN wp_term_taxonomy' ), 'The outer query must not gain joins.' );
+mw_assert_same( $mw_core_sql, $mw_script_search->filter_search( $mw_core_sql, $mw_latin_search ), 'Latin searches must return the core clause verbatim.' );
+mw_assert_same( '', $mw_script_search->filter_search( '', $mw_main_search ), 'An empty core clause (no search) must stay empty.' );
+
+$mw_multi_search = new WP_Query( array( 's' => 'نیمه شب -جاز', 'search_terms' => array( 'نیمه', 'شب', '-جاز' ) ) );
+$mw_multi_sql    = $mw_script_search->filter_search( $mw_core_sql, $mw_multi_search );
+mw_assert_same( 2, substr_count( $mw_multi_sql, ') AND (' ) >= 2 ? 2 : substr_count( $mw_multi_sql, ') AND (' ), 'Multiple words must still be combined with AND.' );
+mw_assert_same( true, false !== strpos( $mw_multi_sql, "wp_posts.post_title NOT LIKE '%جاز%'" ), 'Exclusions must stay exclusions.' );
+mw_assert_same( true, false !== strpos( $mw_multi_sql, 'wp_posts.ID NOT IN (SELECT mw_tr.object_id' ), 'Excluded words must also exclude term matches.' );
+
+$mw_exact_search = new WP_Query( array( 's' => 'شب', 'search_terms' => array( 'شب' ), 'exact' => true ) );
+mw_assert_same( true, false !== strpos( $mw_script_search->filter_search( $mw_core_sql, $mw_exact_search ), "wp_posts.post_title LIKE 'شب'" ), 'Exact searches must not add wildcards.' );
+
+$mw_injection = new WP_Query( array( 's' => "سیگنال' OR 1=1 --", 'search_terms' => array( "سیگنال'", 'OR', '1=1', '--' ) ) );
+$mw_injected  = $mw_script_search->filter_search( $mw_core_sql, $mw_injection );
+mw_assert_same( false, false !== strpos( $mw_injected, "'%سیگنال'%'" ), 'Quotes inside search words must be escaped through prepare().' );
+mw_assert_same( true, false !== strpos( $mw_injected, "\\'%'" ), 'Escaped quotes must survive in the prepared SQL.' );
+
+$mw_orderby = $mw_script_search->filter_search_orderby( 'wp_posts.post_title LIKE \'%سيگنال%\' DESC', $mw_main_search );
+mw_assert_same( true, 0 === strpos( $mw_orderby, '(CASE WHEN (' ) && false !== strpos( $mw_orderby, "post_title LIKE '%سیگنال%'" ) && false !== strpos( $mw_orderby, 'ELSE 3 END) ASC' ), 'Relevance ordering must rank title matches of any spelling first.' );
+mw_assert_same( '', $mw_script_search->filter_search_orderby( '', $mw_main_search ), 'Explicit sort choices (empty relevance clause) must be respected.' );
+
+// Per-query scoping: an internal listing searches its own meta keys, no taxonomies, even for Latin phrases.
+$mw_scoped_search                  = new WP_Query(
+	array(
+		's'                                       => 'sara@example.test',
+		'search_terms'                            => array( 'sara@example.test' ),
+		'post_type'                               => 'mw_request',
+		ScriptAwareSearchQuery::QUERY_VAR         => true,
+		ScriptAwareSearchQuery::TAXONOMIES_VAR    => array(),
+		ScriptAwareSearchQuery::META_KEYS_VAR     => array( 'mw_request_name', 'mw_request_email', 'mw_request_email', 42 ),
+	)
+);
+$mw_scoped_search->mw_test_is_main = false;
+mw_assert_same( true, $mw_script_search->applies( $mw_scoped_search ), 'A query that supplies its own meta keys is rewritten even for Latin phrases (core cannot search meta).' );
+$mw_scoped_sql = $mw_script_search->filter_search( " AND (((wp_posts.post_title LIKE '%sara@example.test%'))) ", $mw_scoped_search );
+mw_assert_same( true, false !== strpos( $mw_scoped_sql, "mw_pm.meta_key IN ('mw_request_name', 'mw_request_email')" ), 'Scoped meta keys replace the catalog allow-list for that query; duplicates and non-strings are dropped.' );
+mw_assert_same( false, false !== strpos( $mw_scoped_sql, 'wp_term_relationships' ), 'An empty taxonomy scope switches the term sub-query off.' );
+mw_assert_same( false, false !== strpos( $mw_scoped_sql, 'mw_album' ), 'The catalog meta keys never leak into a scoped query.' );
+mw_assert_same( true, false !== strpos( $mw_scoped_sql, "wp_posts.post_title LIKE '%sara@example.test%'" ), 'Post columns are still searched in a scoped query.' );
+$mw_unscoped_latin                  = new WP_Query( array( 's' => 'glass', 'search_terms' => array( 'glass' ), 'post_type' => 'mw_release', ScriptAwareSearchQuery::QUERY_VAR => true ) );
+$mw_unscoped_latin->mw_test_is_main = false;
+mw_assert_same( false, $mw_script_search->applies( $mw_unscoped_latin ), 'Opting in without meta keys still leaves Latin phrases to core.' );
+unset( $GLOBALS['wpdb'] );
+
+$mw_folded_search = new ManaCore\MusicWave\Core\Discovery\CatalogSearch();
+mw_assert_same( 'موسیقی نیمه‌شب', $mw_folded_search->sanitize_term( 'موسيقي نیمه‌شب' ), 'Autocomplete terms must be folded to the Persian spelling while keeping the ZWNJ.' );
+$GLOBALS['mw_test_types'][13]    = 'mw_release';
+$GLOBALS['mw_test_statuses'][13] = 'publish';
+$GLOBALS['mw_test_titles'][13]   = 'سیگنال بعد از نیمه شب';
+$GLOBALS['mw_test_transients']   = array();
+$mw_persian_ids                  = array();
+foreach ( $mw_folded_search->suggest( 'سيگنال', 8 ) as $mw_suggestion ) {
+	if ( 'release' === (string) $mw_suggestion['type'] ) {
+		$mw_persian_ids[] = (int) $mw_suggestion['id'];
+	}
+}
+mw_assert_same( array( 13 ), $mw_persian_ids, 'Autocomplete must match a Persian title typed with Arabic letters.' );
+$GLOBALS['mw_test_transients'] = array();
+
+// --- Song requests & collaboration: validation, storage, workflow, email, admin placement ---
+
+use ManaCore\MusicWave\Core\Requests\RequestFormHandler;
+use ManaCore\MusicWave\Core\Requests\RequestMailer;
+use ManaCore\MusicWave\Core\Requests\RequestPostType;
+use ManaCore\MusicWave\Core\Requests\RequestRepository;
+use ManaCore\MusicWave\Core\Requests\RequestSettings;
+use ManaCore\MusicWave\Core\Requests\RequestsAdminPage;
+use ManaCore\MusicWave\Core\Requests\RequestSubmission;
+use ManaCore\MusicWave\Core\Blocks\RequestFormBlock;
+
+if ( ! defined( 'MUSIC_WAVE_TESTING' ) ) {
+	define( 'MUSIC_WAVE_TESTING', true );
+}
+
+$mw_req_valid = array(
+	'name'     => '  سارا  احمدی ',
+	'email'    => 'Sara@Example.TEST',
+	'phone'    => '۰۹۱۲ ۳۴۵ ۶۷۸۹',
+	'role'     => 'singer',
+	'type'     => 'song',
+	'subject'  => 'قطعهٔ پاپ برای آلبوم جدید',
+	'message'  => "یک قطعهٔ پاپ با حال‌وهوای شاد برای آلبوم بعدی می‌خواهم.\n\n\n\nمدت حدود سه دقیقه.",
+	'budget'   => 'standard',
+	'deadline' => '۲۰۹۹-۰۳-۱۵',
+	'links'    => "soundcloud.com/sara\nhttps://instagram.com/sara, javascript:alert(1)",
+	'consent'  => '1',
+);
+$mw_req_result = RequestSubmission::validate( $mw_req_valid, 1700000000 );
+mw_assert_same( true, isset( $mw_req_result['errors']['links'] ), 'A javascript: pseudo-link must be reported, never stored.' );
+unset( $mw_req_valid['links'] );
+$mw_req_valid['links'] = "soundcloud.com/sara\nhttps://instagram.com/sara";
+$mw_req_result         = RequestSubmission::validate( $mw_req_valid, 1700000000 );
+mw_assert_same( array(), $mw_req_result['errors'], 'A complete submission must validate without errors.' );
+mw_assert_same( 'سارا احمدی', $mw_req_result['data']['name'], 'Names are trimmed and whitespace-collapsed.' );
+mw_assert_same( 'sara@example.test', $mw_req_result['data']['email'], 'Emails are lower-cased.' );
+mw_assert_same( '0912 345 6789', $mw_req_result['data']['phone'], 'Persian digits in phone numbers are normalized to ASCII.' );
+mw_assert_same( '2099-03-15', $mw_req_result['data']['deadline'], 'Persian digits in dates are normalized and the date is canonical.' );
+mw_assert_same( array( 'https://soundcloud.com/sara', 'https://instagram.com/sara' ), $mw_req_result['data']['links'], 'Links are normalized to https and deduplicated.' );
+mw_assert_same( false, false !== strpos( $mw_req_result['data']['message'], "\n\n\n" ), 'Excess blank lines in the message are collapsed.' );
+
+$mw_req_bad = RequestSubmission::validate(
+	array(
+		'name'     => 'A',
+		'email'    => 'not-an-email',
+		'role'     => 'hacker',
+		'type'     => '<script>',
+		'subject'  => 'x',
+		'message'  => 'short',
+		'deadline' => '2001-01-01',
+		'consent'  => '',
+	),
+	1700000000
+);
+mw_assert_same( array( 'name', 'email', 'subject', 'message', 'deadline', 'consent' ), array_keys( $mw_req_bad['errors'] ), 'Every invalid field must carry its own translated error.' );
+mw_assert_same( 'other', $mw_req_bad['data']['role'], 'Unknown roles fall back to "other".' );
+mw_assert_same( 'song', $mw_req_bad['data']['type'], 'Unknown types fall back to the default type.' );
+
+$mw_req_settings = new RequestSettings();
+mw_assert_same( 'enabled', RequestSettings::all()['form_enabled'], 'The public form is enabled by default.' );
+mw_assert_same( array( 'a@example.test', 'b@example.test' ), RequestSettings::parse_recipients( "A@example.test, b@example.test\nnot-an-email, a@example.test" ), 'Recipients are validated, lower-cased and deduplicated.' );
+$mw_req_sanitized = RequestSettings::sanitize( array( 'rate_limit' => '500', 'rate_window' => '10', 'reply_to' => 'bad', 'enabled_types' => array( 'song', 'nope' ), 'form_enabled' => 'disabled' ) );
+mw_assert_same( 3, $mw_req_sanitized['rate_limit'], 'Out-of-range rate limits fall back to the default.' );
+mw_assert_same( 3600, $mw_req_sanitized['rate_window'], 'Out-of-range windows fall back to the default.' );
+mw_assert_same( '', $mw_req_sanitized['reply_to'], 'Invalid reply-to addresses are dropped.' );
+mw_assert_same( array( 'song' ), $mw_req_sanitized['enabled_types'], 'Unknown request types are dropped.' );
+mw_assert_same( 'disabled', $mw_req_sanitized['form_enabled'], 'The form switch persists.' );
+mw_assert_same( array( 'owner@example.test' ), $mw_req_settings->notification_recipients(), 'Without configured recipients the site admin receives alerts.' );
+
+$mw_req_repo = new RequestRepository();
+$mw_req_id   = $mw_req_repo->create( $mw_req_result['data'], 0, 'form' );
+mw_assert_same( true, $mw_req_id > 0, 'A validated submission must be stored.' );
+mw_assert_same( RequestPostType::KEY, get_post_type( $mw_req_id ), 'Requests are stored as the private mw_request post type.' );
+mw_assert_same( RequestPostType::STATUS_NEW, get_post_status( $mw_req_id ), 'New requests start in the "new" status.' );
+$mw_req = $mw_req_repo->find( $mw_req_id );
+mw_assert_same( 'sara@example.test', $mw_req['email'], 'Stored requests expose the requester email.' );
+mw_assert_same( sprintf( 'MW-%s-%06d', gmdate( 'Y' ), $mw_req_id ), $mw_req['reference'], 'Every request gets a human reference.' );
+mw_assert_same( 32, strlen( $mw_req['token'] ), 'Every request gets an unguessable token.' );
+mw_assert_same( 'normal', $mw_req['priority'], 'Requests start with normal priority.' );
+mw_assert_same( null, $mw_req_repo->find( 1 ), 'Releases are never readable as requests.' );
+
+mw_assert_same( true, $mw_req_repo->set_status( $mw_req_id, RequestPostType::STATUS_REVIEW, 5 ), 'Status transitions must succeed for known statuses.' );
+mw_assert_same( false, $mw_req_repo->set_status( $mw_req_id, 'publish', 5 ), 'Requests can never be moved to a public status.' );
+mw_assert_same( RequestPostType::STATUS_REVIEW, $mw_req_repo->find( $mw_req_id )['status'], 'The status change persists.' );
+mw_assert_same( RequestRepository::LOG_EVENT, $mw_req_repo->find( $mw_req_id )['log'][0]['kind'], 'Status changes are logged as events.' );
+mw_assert_same( true, $mw_req_repo->set_priority( $mw_req_id, 'high' ), 'Priority can be raised.' );
+mw_assert_same( false, $mw_req_repo->set_priority( $mw_req_id, 'critical' ), 'Unknown priorities are refused.' );
+mw_assert_same( null, $mw_req_repo->append_log( $mw_req_id, RequestRepository::LOG_NOTE, '   ', 5 ), 'Blank log entries are refused.' );
+
+$GLOBALS['mw_test_mail'] = array();
+$mw_req_mailer           = new RequestMailer( $mw_req_settings );
+mw_assert_same( true, $mw_req_mailer->send_receipt( $mw_req_repo->find( $mw_req_id ) ), 'The requester receives a receipt.' );
+mw_assert_same( 'sara@example.test', $GLOBALS['mw_test_mail'][0]['to'], 'The receipt goes to the requester.' );
+mw_assert_same( true, false !== strpos( $GLOBALS['mw_test_mail'][0]['message'], $mw_req['reference'] ), 'The receipt carries the reference number.' );
+mw_assert_same( true, $mw_req_mailer->send_manager_alert( $mw_req_repo->find( $mw_req_id ), 'https://example.test/wp-admin/edit.php?page=music-wave-requests' ), 'Managers are alerted.' );
+mw_assert_same( 'owner@example.test', $GLOBALS['mw_test_mail'][1]['to'], 'The alert goes to the configured recipients (admin email fallback).' );
+mw_assert_same( true, in_array( 'Reply-To: "سارا احمدی" <sara@example.test>', (array) $GLOBALS['mw_test_mail'][1]['headers'], true ), 'Managers can reply directly to the requester.' );
+$GLOBALS['mw_test_filters']['music_wave_request_message'] = false;
+mw_assert_same( false, $mw_req_mailer->send_reply( $mw_req_repo->find( $mw_req_id ), 'سلام' ), 'The message filter can suppress delivery.' );
+unset( $GLOBALS['mw_test_filters']['music_wave_request_message'] );
+
+$GLOBALS['mw_test_transients'] = array();
+$GLOBALS['mw_test_mail']       = array();
+$mw_req_forms                  = new RequestFormHandler( $mw_req_repo, $mw_req_mailer, $mw_req_settings, new ManaCore\MusicWave\Core\Discovery\DiscoveryRateLimiter( 2, 60 ) );
+$mw_req_input                  = array_merge( $mw_req_valid, array( RequestFormHandler::TIMER => (string) ( time() - 30 ) ) );
+$mw_req_run                    = $mw_req_forms->run( $mw_req_input, 0, time() );
+mw_assert_same( 'sent', $mw_req_run['notice'], 'A valid public submission is accepted.' );
+mw_assert_same( true, $mw_req_run['request_id'] > 0, 'The stored request ID is returned.' );
+mw_assert_same( 2, count( $GLOBALS['mw_test_mail'] ), 'A public submission sends the receipt and the manager alert.' );
+mw_assert_same( true, in_array( 'music_wave_request_created', $GLOBALS['mw_test_actions'], true ), 'Integrations are notified about new requests.' );
+
+$mw_req_bot = $mw_req_forms->run( array_merge( $mw_req_input, array( RequestFormHandler::HONEYPOT => 'http://spam' ) ), 0, time() );
+mw_assert_same( 'sent', $mw_req_bot['notice'], 'Honeypot hits look like success to the bot.' );
+mw_assert_same( 0, $mw_req_bot['request_id'], 'Honeypot hits are never stored.' );
+$mw_req_fast = $mw_req_forms->run( array_merge( $mw_req_input, array( RequestFormHandler::TIMER => (string) time() ) ), 0, time() );
+mw_assert_same( 'too-fast', $mw_req_fast['notice'], 'Instant submissions are refused.' );
+$mw_req_errors = $mw_req_forms->run( array_merge( $mw_req_input, array( 'email' => 'nope' ) ), 0, time() );
+mw_assert_same( 'errors', $mw_req_errors['notice'], 'Invalid submissions come back with field errors.' );
+mw_assert_same( true, '' !== $mw_req_errors['token'], 'Field errors are stashed under a one-shot token.' );
+$mw_req_stash = $mw_req_forms->stashed( $mw_req_errors['token'] );
+mw_assert_same( array( 'email' ), array_keys( $mw_req_stash['errors'] ), 'The stash carries the field errors.' );
+mw_assert_same( 'سارا احمدی', $mw_req_stash['values']['name'], 'The stash carries the sanitized values for refilling.' );
+mw_assert_same( false, isset( $mw_req_stash['values']['consent'] ), 'Consent is never pre-checked from the stash.' );
+mw_assert_same( array(), $mw_req_forms->stashed( '../etc' )['errors'], 'Malformed tokens read nothing.' );
+$mw_req_throttled = $mw_req_forms->run( $mw_req_input, 0, time() );
+mw_assert_same( 'throttled', $mw_req_throttled['notice'], 'The per-actor rate limit applies to public submissions.' );
+mw_assert_same( true, $mw_req_forms->notice_is_error( 'throttled' ) && ! $mw_req_forms->notice_is_error( 'sent' ), 'Notice severities are classified.' );
+mw_assert_same( '', $mw_req_forms->notice_message( 'bogus' ), 'Unknown notice codes render nothing.' );
+
+$GLOBALS['mw_test_options'][ RequestSettings::OPTION ] = array( 'form_enabled' => 'disabled' );
+mw_assert_same( 'closed', $mw_req_forms->run( $mw_req_input, 0, time() )['notice'], 'A disabled form refuses submissions server-side too.' );
+unset( $GLOBALS['mw_test_options'][ RequestSettings::OPTION ] );
+
+// The admin-post entry point: a stale nonce redirects with a notice instead of dying.
+$GLOBALS['mw_test_redirects'] = array();
+$_POST                        = array_merge( $mw_req_input, array( '_wpnonce' => 'stale', 'mw_redirect' => 'https://example.test/requests/' ) );
+$mw_req_forms->handle();
+$mw_req_last_redirect = end( $GLOBALS['mw_test_redirects'] );
+mw_assert_same( true, is_array( $mw_req_last_redirect ) && false !== strpos( (string) $mw_req_last_redirect[0], 'mw-request=invalid' ) && 303 === $mw_req_last_redirect[1], 'A failed nonce check redirects back to the form with the expired notice (never wp_die()).' );
+mw_assert_same( true, is_array( $mw_req_last_redirect ) && 0 === strpos( (string) $mw_req_last_redirect[0], 'https://example.test/requests/' ), 'The visitor returns to the page that hosted the form.' );
+$_POST                        = array_merge( $mw_req_input, array( '_wpnonce' => wp_create_nonce( RequestFormHandler::NONCE ), 'mw_redirect' => 'https://example.test/requests/' ) );
+$GLOBALS['mw_test_redirects'] = array();
+$mw_req_forms->handle();
+$mw_req_last_redirect = end( $GLOBALS['mw_test_redirects'] );
+mw_assert_same( true, is_array( $mw_req_last_redirect ) && false !== strpos( (string) $mw_req_last_redirect[0], 'mw-request=throttled' ), 'A valid nonce reaches the pipeline (here the exhausted rate limit answers).' );
+$_POST = array();
+
+$mw_req_block = new RequestFormBlock( $mw_req_forms, $mw_req_settings );
+$mw_req_html  = $mw_req_block->render( array() );
+mw_assert_same( true, false !== strpos( $mw_req_html, 'class="mw-request-form mw-request-form--split"' ), 'The block renders the split layout by default.' );
+mw_assert_same( true, false !== strpos( $mw_req_html, 'action="https://example.test/wp-admin/admin-post.php"' ), 'The form posts to admin-post.php for no-JS operation.' );
+mw_assert_same( true, false !== strpos( $mw_req_html, 'name="' . RequestFormHandler::HONEYPOT . '"' ) && false !== strpos( $mw_req_html, 'name="' . RequestFormHandler::TIMER . '"' ), 'The form carries the honeypot and the timing field.' );
+mw_assert_same( true, false !== strpos( $mw_req_html, 'name="consent"' ) && false !== strpos( $mw_req_html, 'name="_wpnonce"' ), 'The form carries consent and a nonce.' );
+mw_assert_same( true, false !== strpos( $mw_req_html, 'mw-request-form__chip' ) && false !== strpos( $mw_req_html, 'mw-request-form__steps' ), 'The creative layout ships chips and steps.' );
+mw_assert_same( true, in_array( 'music-wave-request-form', $GLOBALS['mw_test_styles'], true ), 'The block enqueues its own stylesheet.' );
+$mw_req_plain = $mw_req_block->render( array( 'layout' => 'stacked', 'showSteps' => false, 'showHighlights' => false, 'showPhone' => false ) );
+mw_assert_same( true, false !== strpos( $mw_req_plain, 'mw-request-form--form-only' ) && false === strpos( $mw_req_plain, 'name="phone"' ), 'Block attributes hide the side column and optional fields.' );
+$GLOBALS['mw_test_options'][ RequestSettings::OPTION ] = array( 'form_enabled' => 'disabled' );
+mw_assert_same( true, false !== strpos( $mw_req_block->render( array() ), 'mw-request-form__closed' ), 'A disabled form shows the closed notice instead of inputs.' );
+unset( $GLOBALS['mw_test_options'][ RequestSettings::OPTION ] );
+
+$mw_req_admin = new RequestsAdminPage( $mw_req_repo, $mw_req_mailer, $mw_req_settings );
+$mw_req_menu  = array(
+	array( 'همهٔ انتشارها', 'edit_mw_releases', 'edit.php?post_type=mw_release' ),
+	array( 'تنظیمات', 'manage_options', 'music-wave-settings' ),
+	array( 'MusicWave VIP', 'manage_options', 'music-wave-vip' ),
+	array( 'درخواست‌ها', RequestPostType::MANAGE_CAP, RequestsAdminPage::PAGE ),
+);
+$mw_req_order = array_column( RequestsAdminPage::reorder( $mw_req_menu, RequestsAdminPage::PAGE, 'music-wave-vip' ), 2 );
+mw_assert_same( array( 'edit.php?post_type=mw_release', 'music-wave-settings', RequestsAdminPage::PAGE, 'music-wave-vip' ), $mw_req_order, 'The requests menu item must sit directly above MusicWave VIP.' );
+$mw_req_no_vip = array_column( RequestsAdminPage::reorder( array( $mw_req_menu[3], $mw_req_menu[0], $mw_req_menu[1] ), RequestsAdminPage::PAGE, 'music-wave-vip' ), 2 );
+mw_assert_same( array( 'edit.php?post_type=mw_release', 'music-wave-settings', RequestsAdminPage::PAGE ), $mw_req_no_vip, 'Without VIP the item goes to the end of the MusicWave group.' );
+mw_assert_same( 'https://example.test/wp-admin/edit.php?post_type=mw_release&page=music-wave-requests&request=' . $mw_req_id, RequestsAdminPage::url( array( 'request' => $mw_req_id ) ), 'The screen lives under the MusicWave (mw_release) menu.' );
+
+$GLOBALS['mw_test_mail'] = array();
+$mw_req_reply            = $mw_req_admin->run( 'reply', $mw_req_id, array(), array( 'status' => '', 'priority' => '', 'body' => 'سلام سارا، درخواست شما را بررسی کردیم.', 'subject' => '', 'bulk' => '' ), array(), 5 );
+mw_assert_same( 'replied', $mw_req_reply['notice'], 'A manager reply is emailed.' );
+mw_assert_same( 'sara@example.test', $GLOBALS['mw_test_mail'][0]['to'], 'The reply goes to the requester.' );
+mw_assert_same( RequestPostType::STATUS_REPLIED, $mw_req_repo->find( $mw_req_id )['status'], 'Replying moves an open request to "replied".' );
+$mw_req_log_kinds = array_column( $mw_req_repo->find( $mw_req_id )['log'], 'kind' );
+mw_assert_same( true, in_array( RequestRepository::LOG_REPLY, $mw_req_log_kinds, true ), 'Replies are kept in the conversation log.' );
+$GLOBALS['mw_test_mail_fails'] = true;
+mw_assert_same( 'reply-logged', $mw_req_admin->run( 'reply', $mw_req_id, array(), array( 'status' => '', 'priority' => '', 'body' => 'دوباره', 'subject' => '', 'bulk' => '' ), array(), 5 )['notice'], 'A failed email still keeps the reply in the log and tells the manager.' );
+unset( $GLOBALS['mw_test_mail_fails'] );
+mw_assert_same( 'reply-empty', $mw_req_admin->run( 'reply', $mw_req_id, array(), array( 'status' => '', 'priority' => '', 'body' => ' ', 'subject' => '', 'bulk' => '' ), array(), 5 )['notice'], 'Empty replies are refused.' );
+mw_assert_same( 'noted', $mw_req_admin->run( 'note', $mw_req_id, array(), array( 'status' => '', 'priority' => '', 'body' => 'یادداشت داخلی', 'subject' => '', 'bulk' => '' ), array(), 5 )['notice'], 'Internal notes are stored.' );
+mw_assert_same( 'status-updated', $mw_req_admin->run( 'status', $mw_req_id, array(), array( 'status' => RequestPostType::STATUS_ACCEPTED, 'priority' => '', 'body' => '', 'subject' => '', 'bulk' => '' ), array(), 5 )['notice'], 'Managers can accept a collaboration.' );
+mw_assert_same( 'status-failed', $mw_req_admin->run( 'status', $mw_req_id, array(), array( 'status' => 'publish', 'priority' => '', 'body' => '', 'subject' => '', 'bulk' => '' ), array(), 5 )['notice'], 'Public statuses are refused by the admin action too.' );
+$mw_req_created = $mw_req_admin->run( 'create', 0, array(), array( 'status' => '', 'priority' => '', 'body' => '', 'subject' => '', 'bulk' => '' ), array( 'name' => 'رضا', 'email' => 'reza@example.test', 'subject' => 'تبلیغ رادیویی', 'message' => 'یک جینگل سی‌ثانیه‌ای برای کمپین پاییزی می‌خواهیم.', 'type' => 'advertising', 'role' => 'advertiser' ), 5 );
+mw_assert_same( 'created', $mw_req_created['notice'], 'Managers can add requests manually.' );
+mw_assert_same( 'manual', $mw_req_repo->find( $mw_req_created['request_id'] )['source'], 'Manual requests are marked as such.' );
+mw_assert_same( 'form-invalid', $mw_req_admin->run( 'create', 0, array(), array( 'status' => '', 'priority' => '', 'body' => '', 'subject' => '', 'bulk' => '' ), array( 'name' => 'x' ), 5 )['notice'], 'Manual entry is validated like the public form.' );
+mw_assert_same( 'updated', $mw_req_admin->run( 'update', $mw_req_id, array(), array( 'status' => '', 'priority' => '', 'body' => '', 'subject' => '', 'bulk' => '' ), array_merge( $mw_req_valid, array( 'subject' => 'عنوان ویرایش‌شده' ) ), 5 )['notice'], 'Managers can edit request fields.' );
+mw_assert_same( 'عنوان ویرایش‌شده', $mw_req_repo->find( $mw_req_id )['subject'], 'Edited subjects persist.' );
+
+$mw_req_list = $mw_req_repo->query( array( 'type' => 'advertising' ), 1, 20 );
+mw_assert_same( array( $mw_req_created['request_id'] ), array_column( $mw_req_list['items'], 'id' ), 'The inbox filters by request type.' );
+$mw_req_list = $mw_req_repo->query( array( 'status' => RequestPostType::STATUS_ACCEPTED ), 1, 20 );
+mw_assert_same( array( $mw_req_id ), array_column( $mw_req_list['items'], 'id' ), 'The inbox filters by status.' );
+$mw_req_list = $mw_req_repo->query( array( 'priority' => 'high' ), 1, 20 );
+mw_assert_same( array( $mw_req_id ), array_column( $mw_req_list['items'], 'id' ), 'The inbox filters by priority.' );
+$mw_req_counts = $mw_req_repo->counts();
+mw_assert_same( 1, $mw_req_counts[ RequestPostType::STATUS_ACCEPTED ], 'Status counts feed the tabs and badge.' );
+mw_assert_same( array( $mw_req_id, $mw_req_run['request_id'] ), array_column( $mw_req_repo->find_by_email( 'sara@example.test' ), 'id' ), 'Privacy tooling can find every request submitted with one email.' );
+
+$mw_req_bulk = $mw_req_admin->run( 'bulk', 0, array( $mw_req_id, $mw_req_created['request_id'] ), array( 'status' => '', 'priority' => '', 'body' => '', 'subject' => '', 'bulk' => 'status:' . RequestPostType::STATUS_ARCHIVED ), array(), 5 );
+mw_assert_same( 'bulk-done', $mw_req_bulk['notice'], 'Bulk status changes apply to the selection.' );
+mw_assert_same( RequestPostType::STATUS_ARCHIVED, $mw_req_repo->find( $mw_req_created['request_id'] )['status'], 'Bulk changes persist.' );
+mw_assert_same( 'bulk-none', $mw_req_admin->run( 'bulk', 0, array(), array( 'status' => '', 'priority' => '', 'body' => '', 'subject' => '', 'bulk' => 'delete' ), array(), 5 )['notice'], 'Bulk actions without a selection do nothing.' );
+mw_assert_same( 'deleted', $mw_req_admin->run( 'delete', $mw_req_created['request_id'], array(), array( 'status' => '', 'priority' => '', 'body' => '', 'subject' => '', 'bulk' => '' ), array(), 5 )['notice'], 'Managers can delete a request permanently.' );
+mw_assert_same( null, $mw_req_repo->find( $mw_req_created['request_id'] ), 'Deleted requests are gone.' );
+mw_assert_same( 'not-found', $mw_req_admin->run( 'delete', 1, array(), array( 'status' => '', 'priority' => '', 'body' => '', 'subject' => '', 'bulk' => '' ), array(), 5 )['notice'], 'Releases can never be deleted through the request screen.' );
+mw_assert_same( 'mw_release', get_post_type( 1 ), 'Release 1 survives the request delete attempt.' );
+
+$mw_req_privacy = new ManaCore\MusicWave\Core\Requests\RequestPrivacy( $mw_req_repo );
+$mw_req_export  = $mw_req_privacy->export( 'sara@example.test' );
+mw_assert_same( 2, count( $mw_req_export['data'] ), 'The privacy exporter returns every request of the requester.' );
+mw_assert_same( true, $mw_req_privacy->erase( 'sara@example.test' )['items_removed'], 'The privacy eraser removes them.' );
+mw_assert_same( array(), $mw_req_repo->find_by_email( 'sara@example.test' ), 'Nothing remains after erasure.' );
+$GLOBALS['mw_test_transients'] = array();
+$GLOBALS['mw_test_mail']       = array();
 
 // --- WooCommerce plan products as VIP membership (PROJECT_PLAN.md Stage 3 lifecycle parity) ---
 

@@ -65,7 +65,7 @@ final class ReleasePostType {
 				'rewrite'             => array( 'slug' => 'music' ),
 				'menu_icon'           => 'dashicons-album',
 				'menu_position'       => 25,
-				'supports'            => array( 'title', 'editor', 'excerpt', 'thumbnail', 'author', 'revisions', 'custom-fields' ),
+				'supports'            => array( 'title', 'editor', 'excerpt', 'thumbnail', 'author', 'revisions', 'custom-fields', 'comments' ),
 				'template_lock'       => false,
 				'show_in_nav_menus'   => true,
 				'exclude_from_search' => false,

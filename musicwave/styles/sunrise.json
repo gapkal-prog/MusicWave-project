@@ -3,6 +3,12 @@
   "version": 3,
   "title": "Sunrise",
   "settings": {
+    "custom": {
+      "scheme": {
+        "light": { "canvas": "#fff8f0", "surface": "#ffffff", "surfaceRaised": "#fff1e0", "text": "#1f1a17", "muted": "#8a7a6e", "accent": "#ff6b35", "accentStrong": "#e85d04", "editorial": "#d90429", "onAccent": "#ffffff" },
+        "dark": { "canvas": "#17110e", "surface": "#221a15", "surfaceRaised": "#2f241d", "text": "#fbf3ec", "muted": "#b8a79a", "accent": "#ff7a45", "accentStrong": "#ff9a6b", "editorial": "#fb7185", "onAccent": "#2a1206" }
+      }
+    },
     "color": {
       "palette": [
         { "slug": "canvas", "name": "Canvas", "color": "#fff8f0" },

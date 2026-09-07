@@ -961,6 +961,75 @@
             ],
             "بخش معرفی": [
                 "Hero"
+            ],
+            "اسلاید %1$d از %2$d": [
+                "Slide %1$d of %2$d"
+            ],
+            "اسلاید %1$d: %2$s": [
+                "Slide %1$d: %2$s"
+            ],
+            "اسلاید بعدی": [
+                "Next slide"
+            ],
+            "اسلاید قبلی": [
+                "Previous slide"
+            ],
+            "اسلایدر انتشارها": [
+                "Release slider"
+            ],
+            "اسلایدر هیرو": [
+                "Hero slider"
+            ],
+            "بدنه پلاس جاکارتا": [
+                "Plus Jakarta Sans (body)"
+            ],
+            "بعدی": [
+                "Next"
+            ],
+            "تنظیمات اسلایدر هیرو": [
+                "Hero slider settings"
+            ],
+            "درخواست آهنگ و همکاری": [
+                "Song request & collaboration"
+            ],
+            "رفتن به اسلاید %d": [
+                "Go to slide %d"
+            ],
+            "سربرگ (استریم)": [
+                "Header (stream)"
+            ],
+            "صفحهبندی اسلایدر": [
+                "Slider pagination"
+            ],
+            "فاصلهٔ تعویض اسلایدها (میلی‌ثانیه)": [
+                "Slide interval (milliseconds)"
+            ],
+            "فراخوان درخواست آهنگ و همکاری": [
+                "Song request & collaboration call-to-action"
+            ],
+            "قبلی": [
+                "Previous"
+            ],
+            "نمایش انتشارها بهصورت شبکهای، ویترین افقی، فهرست جمعوجور، ویژهنامه سرمقاله یا اسلایدر هیرو. بین انتشارها و فهرستهای پخش عمومی جامعه جابهجا شوید. چیدمان، رنگها و فاصلهها در ویرایشگر سایت قابل ویرایش هستند.": [
+                "Display releases as a grid, horizontal showcase, compact list, editorial feature, or hero slider. Switch between releases and the community's public playlists. Layout, colors, and spacing are editable in the Site Editor."
+            ],
+            "نمایش فلش‌ها": [
+                "Show arrows"
+            ],
+            "نمایش نقاط صفحهبندی": [
+                "Show pagination dots"
+            ],
+            "نمایشی ساین": [
+                "Syne (display)"
+            ],
+            "هیرو": [
+                "Hero"
+            ],
+            "ویژهنامه سرمقاله": [
+                "Editorial feature"
+            ],
+            "پخش خودکار اسلایدها": [
+                "Autoplay slides"
             ]
         }
     }

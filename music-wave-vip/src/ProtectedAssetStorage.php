@@ -346,11 +346,8 @@ final class ProtectedAssetStorage {
 		// MIME hardening: verify actual file content via finfo, not just extension.
 		// Prevents spoofed extensions (e.g. .mp3 containing PHP) and limits ZIP bombs.
 		if ( function_exists( 'finfo_open' ) ) {
-			$finfo = finfo_open( FILEINFO_MIME_TYPE );
-			if ( false !== $finfo ) {
-				$mime = finfo_file( $finfo, $file['tmp_name'] );
-				finfo_close( $finfo );
-				$mime          = is_string( $mime ) ? strtolower( $mime ) : '';
+			$mime = self::detect_mime_type( (string) $file['tmp_name'] );
+			if ( null !== $mime ) {
 				$allowed_mimes = array(
 					'mp3'  => array( 'audio/mpeg', 'audio/mp3' ),
 					'm4a'  => array( 'audio/mp4', 'audio/m4a', 'audio/x-m4a' ),
@@ -380,14 +377,10 @@ final class ProtectedAssetStorage {
 		}
 		// Post-move MIME re-check to prevent race / tmp spoof.
 		if ( function_exists( 'finfo_open' ) && 'zip' === $extension ) {
-			$finfo = finfo_open( FILEINFO_MIME_TYPE );
-			if ( false !== $finfo ) {
-				$dest_mime = finfo_file( $finfo, $destination );
-				finfo_close( $finfo );
-				if ( is_string( $dest_mime ) && 0 === stripos( $dest_mime, 'text/' ) ) {
-					unlink( $destination ); // phpcs:ignore WordPress.WP.AlternativeFunctions.unlink_unlink
-					return new WP_Error( 'mw_protected_asset_mime', __( 'محتوای فایل یک بایگانی ZIP معتبر نیست.', 'music-wave-vip' ), array( 'status' => 400 ) );
-				}
+			$dest_mime = self::detect_mime_type( $destination );
+			if ( null !== $dest_mime && 0 === stripos( $dest_mime, 'text/' ) ) {
+				unlink( $destination ); // phpcs:ignore WordPress.WP.AlternativeFunctions.unlink_unlink
+				return new WP_Error( 'mw_protected_asset_mime', __( 'محتوای فایل یک بایگانی ZIP معتبر نیست.', 'music-wave-vip' ), array( 'status' => 400 ) );
 			}
 		}
 
@@ -541,5 +534,31 @@ final class ProtectedAssetStorage {
 		$prefix = rtrim( $root, DIRECTORY_SEPARATOR ) . DIRECTORY_SEPARATOR;
 
 		return 0 === strpos( $path, $prefix );
+	}
+
+	/**
+	 * Detect the MIME type of a file from its content.
+	 *
+	 * Uses the `finfo` resource API without `finfo_close()`: the handle is
+	 * released when it goes out of scope on every supported PHP version and
+	 * the explicit close call is deprecated as of PHP 8.5.
+	 *
+	 * @param string $path Absolute file path.
+	 * @return string|null Lower-case MIME type, or null when detection is unavailable or fails.
+	 */
+	private static function detect_mime_type( string $path ): ?string {
+		if ( ! function_exists( 'finfo_open' ) || '' === $path || ! is_readable( $path ) ) {
+			return null;
+		}
+
+		$finfo = finfo_open( FILEINFO_MIME_TYPE );
+		if ( false === $finfo ) {
+			return null;
+		}
+
+		$mime  = finfo_file( $finfo, $path );
+		$finfo = null;
+
+		return is_string( $mime ) && '' !== $mime ? strtolower( $mime ) : null;
 	}
 }

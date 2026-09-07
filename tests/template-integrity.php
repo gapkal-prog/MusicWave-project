@@ -214,7 +214,7 @@ foreach ( $core_block_files as $core_block_file ) {
 	mw_assert_same( 'https://schemas.wp.org/trunk/block.json', is_array( $metadata ) && isset( $metadata['$schema'] ) ? $metadata['$schema'] : '', $label . ' must declare the WordPress block.json schema.' );
 	mw_assert_same( true, is_array( $metadata ) && ! empty( $metadata['keywords'] ) && isset( $metadata['attributes'] ) && is_array( $metadata['attributes'] ) && isset( $metadata['supports'] ) && is_array( $metadata['supports'] ) && isset( $metadata['example'] ) && is_array( $metadata['example'] ), $label . ' must provide complete metadata objects.' );
 }
-mw_assert_same( 26, count( $core_names ), 'Core metadata inventory must contain 26 blocks.' );
+mw_assert_same( 27, count( $core_names ), 'Core metadata inventory must contain 27 blocks.' );
 mw_assert_same( count( $core_names ), count( array_unique( $core_names ) ), 'Core metadata names must be unique.' );
 
 $theme_json_blocks = isset( $theme_json['settings']['blocks'] ) && is_array( $theme_json['settings']['blocks'] ) ? $theme_json['settings']['blocks'] : array();
@@ -640,6 +640,7 @@ $music_wave_expected_blocks    = array(
 	'add-to-queue',
 	'share-button',
 	'shuffle-button',
+	'request-form',
 );
 foreach ( $music_wave_expected_blocks as $music_wave_block_slug ) {
 	$music_wave_metadata_file = $music_wave_block_metadata_dir . '/' . $music_wave_block_slug . '/block.json';

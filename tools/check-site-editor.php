@@ -207,8 +207,8 @@ foreach ($core_block_files as $block_file) {
 		$fail($name . ' must be present in both Core PHP and JavaScript editor registries.');
 	}
 }
-if (26 !== count($core_block_names) || count($core_block_names) !== count(array_unique($core_block_names))) {
-	$fail('Core block metadata inventory must contain 26 unique blocks.');
+if (27 !== count($core_block_names) || count($core_block_names) !== count(array_unique($core_block_names))) {
+	$fail('Core block metadata inventory must contain 27 unique blocks.');
 }
 foreach ($expected_theme_blocks as $expected_block) {
 	if (! isset($theme_block_names[$expected_block])) {

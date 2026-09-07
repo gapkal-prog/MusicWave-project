@@ -13,8 +13,10 @@ use ManaCore\MusicWave\Core\Catalog\ReleasePostType;
 use ManaCore\MusicWave\Core\Catalog\ReleaseTaxonomies;
 use ManaCore\MusicWave\Core\Catalog\ArtistTermMeta;
 use ManaCore\MusicWave\Core\Catalog\ReleaseArchiveQuery;
+use ManaCore\MusicWave\Core\Catalog\ReleasePermalinks;
 use ManaCore\MusicWave\Core\Catalog\ReleaseDefaults;
 use ManaCore\MusicWave\Core\Contracts\Module;
+use ManaCore\MusicWave\Core\Discovery\ScriptAwareSearchQuery;
 use ManaCore\MusicWave\Core\Migrations\MigrationRunner;
 use ManaCore\MusicWave\Core\Schema\ReleaseMetaRegistry;
 use ManaCore\MusicWave\Core\Infrastructure\CollectionRestPolicy;
@@ -44,7 +46,13 @@ final class Catalog implements Module {
 	/** @var ReleaseDefaults|null */
 	private $release_defaults;
 
-	public function __construct( ReleasePostType $post_type, ReleaseTaxonomies $taxonomies, ReleaseMetaRegistry $meta_registry, MigrationRunner $migrations, ?CollectionRestPolicy $collection_rest_policy = null, ?ArtistTermMeta $artist_term_meta = null, ?ReleaseArchiveQuery $archive_query = null, ?ReleaseDefaults $release_defaults = null ) {
+	/** @var ReleasePermalinks|null */
+	private $permalinks;
+
+	/** @var ScriptAwareSearchQuery|null */
+	private $script_search;
+
+	public function __construct( ReleasePostType $post_type, ReleaseTaxonomies $taxonomies, ReleaseMetaRegistry $meta_registry, MigrationRunner $migrations, ?CollectionRestPolicy $collection_rest_policy = null, ?ArtistTermMeta $artist_term_meta = null, ?ReleaseArchiveQuery $archive_query = null, ?ReleaseDefaults $release_defaults = null, ?ReleasePermalinks $permalinks = null, ?ScriptAwareSearchQuery $script_search = null ) {
 		$this->post_type              = $post_type;
 		$this->taxonomies             = $taxonomies;
 		$this->meta_registry          = $meta_registry;
@@ -53,6 +61,8 @@ final class Catalog implements Module {
 		$this->artist_term_meta       = $artist_term_meta;
 		$this->archive_query          = $archive_query;
 		$this->release_defaults       = $release_defaults;
+		$this->permalinks             = $permalinks;
+		$this->script_search          = $script_search;
 	}
 
 	public function register(): void {
@@ -71,6 +81,12 @@ final class Catalog implements Module {
 		}
 		if ( null !== $this->release_defaults ) {
 			$this->release_defaults->register();
+		}
+		if ( null !== $this->permalinks ) {
+			$this->permalinks->register();
+		}
+		if ( null !== $this->script_search ) {
+			$this->script_search->register();
 		}
 	}
 }

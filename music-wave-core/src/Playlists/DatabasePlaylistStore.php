@@ -27,7 +27,7 @@ final class DatabasePlaylistStore implements PlaylistStore {
 		if ( null !== $this->available ) {
 			return $this->available;
 		}
-		if ( ! isset( $wpdb ) || ! is_object( $wpdb ) || ! method_exists( $wpdb, 'get_var' ) ) {
+		if ( ! $wpdb instanceof \wpdb ) {
 			$this->available = false;
 
 			return false;

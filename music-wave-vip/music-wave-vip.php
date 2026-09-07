@@ -2,7 +2,7 @@
 /**
  * Plugin Name:       MusicWave VIP Integration
  * Description:       Configurable protected-file delivery, remote-host signing, WooCommerce plan membership, and membership adapters for MusicWave Core.
- * Version:           0.5.0
+ * Version:           0.5.1
  * Requires at least: 6.6
  * Requires PHP:      7.4
  * Author:            ManaCore
@@ -17,7 +17,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; }
 define( 'MUSIC_WAVE_VIP_FILE', __FILE__ );
 define( 'MUSIC_WAVE_VIP_PATH', plugin_dir_path( __FILE__ ) );
-define( 'MUSIC_WAVE_VIP_VERSION', '0.5.0' );
+define( 'MUSIC_WAVE_VIP_VERSION', '0.5.1' );
 require_once MUSIC_WAVE_VIP_PATH . 'src/Autoloader.php';
 ManaCore\MusicWave\Vip\Autoloader::register();
 

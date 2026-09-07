@@ -3,6 +3,12 @@
   "version": 3,
   "title": "Cassette",
   "settings": {
+    "custom": {
+      "scheme": {
+        "light": { "canvas": "#f6f0e6", "surface": "#fffaf2", "surfaceRaised": "#eadcc8", "text": "#2a211d", "muted": "#75645b", "accent": "#bd3f32", "accentStrong": "#8d2b24", "editorial": "#b91c1c", "onAccent": "#fff7ed" },
+        "dark": { "canvas": "#1a1412", "surface": "#241c18", "surfaceRaised": "#332822", "text": "#f6efe6", "muted": "#b8a99c", "accent": "#e0674f", "accentStrong": "#f08a74", "editorial": "#f87171", "onAccent": "#2a120d" }
+      }
+    },
     "color": {
       "palette": [
         { "slug": "canvas", "name": "Canvas", "color": "#f6f0e6" },

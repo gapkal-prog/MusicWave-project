@@ -49,6 +49,8 @@ npm run test:e2e
 
 Connection settings default to `docs/staging.md` values and can be overridden via `WP_BASE_URL`, `WP_USERNAME`, `WP_PASSWORD`.
 
+A step-by-step Persian walkthrough for checking out a branch, running wp-env or a LocalWP install, and working through the manual UI checklist lives in `docs/local-testing-fa.md`.
+
 > Note: the committed JS sources are validated by `node --check`-compatible syntax at all times; `npm install` requires registry access, so the ESLint/Playwright gates activate on machines that can reach the npm registry.
 
 ## Current status

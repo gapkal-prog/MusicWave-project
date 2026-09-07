@@ -239,55 +239,191 @@
 	align-items: center;
 }
 
-/* Art grid 2x2 — key differentiator from library list/grid */
+/* -------------------------------------------------------------------------
+ * Playlist artwork — fanned cover stack
+ *
+ * The server renders up to four `.mw-playlists__art-cell` children (cover
+ * image, initial fallback or empty pad) inside `.mw-playlists__art-grid`.
+ * Instead of a flat 2×2 mosaic the cells are layered like a hand of record
+ * sleeves: the first cover sits in front, the others peek out behind it with
+ * a slight rotation and offset. On hover/focus the fan opens a little.
+ * Everything is driven by custom properties so the account list, the public
+ * playlists block (square / landscape / portrait / circle) and the client
+ * side re-render share one implementation.
+ * ------------------------------------------------------------------------- */
 .mw-playlists__art {
 	flex: 0 0 auto;
+	container-type: inline-size;
 }
 
 .mw-playlists__art-grid {
-	display: grid;
-	grid-template-columns: repeat(2, 1fr);
-	grid-template-rows: repeat(2, 1fr);
-	overflow: hidden;
-	border-radius: 10px;
-	background: var(--mw-color-surface, #151922);
-	border: 1px solid var(--mw-color-border, rgba(255,255,255,0.08));
+	--mw-fan-spread: 9%;
+	--mw-fan-tilt: 6deg;
+	--mw-fan-radius: 14%;
+	--mw-fan-inset: 12%;
+	position: relative;
+	display: block;
+	aspect-ratio: 1;
+	inline-size: 100%;
+	block-size: auto;
+	isolation: isolate;
+	overflow: visible;
+	border: 0;
+	border-radius: 0;
+	background: transparent;
 }
 
-.mw-playlists__art-grid--empty {
-	display: grid;
-	place-items: center;
-	background: color-mix(in srgb, var(--mw-color-accent) 9%, var(--mw-color-surface-raised));
-}
-
-.mw-playlists__art-placeholder {
-	font-size: 1.5rem;
-	opacity: 0.9;
+/* Soft accent halo behind the stack so it reads as one object. */
+.mw-playlists__art-grid::before {
+	content: "";
+	position: absolute;
+	inset: 6% 4% 0;
+	border-radius: 24%;
+	background: radial-gradient(ellipse at 50% 60%, color-mix(in srgb, var(--mw-color-accent) 26%, transparent), transparent 70%);
+	filter: blur(6px);
+	z-index: 0;
+	pointer-events: none;
 }
 
 .mw-playlists__art-cell {
+	position: absolute;
+	inset: var(--mw-fan-inset);
+	display: grid;
+	place-items: center;
 	overflow: hidden;
+	border-radius: var(--mw-fan-radius);
 	background: var(--mw-color-surface-raised);
+	box-shadow:
+		0 1px 0 color-mix(in srgb, #fff 18%, transparent) inset,
+		0 10px 24px rgb(0 0 0 / 32%);
+	transform-origin: 50% 100%;
+	transition:
+		transform 420ms var(--mw-ease-out, cubic-bezier(0.22, 1, 0.36, 1)),
+		box-shadow 420ms ease;
+	will-change: transform;
 }
 
 .mw-playlists__art-cell img {
-	width: 100%;
-	height: 100%;
+	inline-size: 100%;
+	block-size: 100%;
 	object-fit: cover;
 	display: block;
 }
 
-.mw-playlists__art-cell--fallback {
-	display: grid;
-	place-items: center;
-	color: var(--mw-color-on-accent, #fff);
-	background: var(--mw-color-accent, #1db954);
-	font-weight: 800;
-	font-size: 0.85rem;
+/* Layer order: 1st cover in front, the rest fan out behind. */
+.mw-playlists__art-cell:nth-child(1) {
+	z-index: 4;
+	transform: translateY(0) rotate(0deg) scale(1);
 }
 
+.mw-playlists__art-cell:nth-child(2) {
+	z-index: 3;
+	transform: translate(calc(var(--mw-fan-spread) * -1), -4%) rotate(calc(var(--mw-fan-tilt) * -1)) scale(0.94);
+	filter: brightness(0.9);
+}
+
+.mw-playlists__art-cell:nth-child(3) {
+	z-index: 2;
+	transform: translate(var(--mw-fan-spread), -4%) rotate(var(--mw-fan-tilt)) scale(0.94);
+	filter: brightness(0.9);
+}
+
+.mw-playlists__art-cell:nth-child(4) {
+	z-index: 1;
+	transform: translateY(-9%) scale(0.86);
+	filter: brightness(0.78);
+}
+
+/* Fan open on interaction of the owning card/link. */
+:is(a, button, .mw-playlists__item, .mw-public-playlists__card, .mw-release-shelf__artwrap):is(:hover, :focus-visible, :focus-within) .mw-playlists__art-cell:nth-child(1) {
+	transform: translateY(2%) scale(1.02);
+	box-shadow:
+		0 1px 0 color-mix(in srgb, #fff 18%, transparent) inset,
+		0 16px 32px rgb(0 0 0 / 38%);
+}
+
+:is(a, button, .mw-playlists__item, .mw-public-playlists__card, .mw-release-shelf__artwrap):is(:hover, :focus-visible, :focus-within) .mw-playlists__art-cell:nth-child(2) {
+	transform: translate(calc(var(--mw-fan-spread) * -1.9), -7%) rotate(calc(var(--mw-fan-tilt) * -1.8)) scale(0.94);
+}
+
+:is(a, button, .mw-playlists__item, .mw-public-playlists__card, .mw-release-shelf__artwrap):is(:hover, :focus-visible, :focus-within) .mw-playlists__art-cell:nth-child(3) {
+	transform: translate(calc(var(--mw-fan-spread) * 1.9), -7%) rotate(calc(var(--mw-fan-tilt) * 1.8)) scale(0.94);
+}
+
+:is(a, button, .mw-playlists__item, .mw-public-playlists__card, .mw-release-shelf__artwrap):is(:hover, :focus-visible, :focus-within) .mw-playlists__art-cell:nth-child(4) {
+	transform: translateY(-14%) scale(0.88);
+}
+
+/* Fallback cover: initial on an accent gradient with a vinyl-like ring. */
+.mw-playlists__art-cell--fallback {
+	color: var(--mw-color-on-accent, #fff);
+	font-weight: 800;
+	font-size: clamp(0.85rem, 34cqi, 1.6rem);
+	letter-spacing: -0.02em;
+	background:
+		radial-gradient(circle at 50% 50%, transparent 18%, color-mix(in srgb, #000 22%, transparent) 19%, transparent 21%),
+		linear-gradient(145deg, var(--mw-color-accent, #1db954), color-mix(in srgb, var(--mw-color-accent, #1db954) 55%, #0b0f14));
+}
+
+/* Empty pads stay as subtle sleeves so short playlists still look stacked. */
 .mw-playlists__art-cell--empty {
-	background: color-mix(in srgb, var(--mw-color-surface) 85%, var(--mw-color-surface-raised));
+	background:
+		linear-gradient(160deg, color-mix(in srgb, var(--mw-color-text) 8%, var(--mw-color-surface)), color-mix(in srgb, var(--mw-color-text) 3%, var(--mw-color-surface)));
+	box-shadow: 0 6px 16px rgb(0 0 0 / 22%);
+}
+
+/* Empty playlist: single sleeve with a note glyph. */
+.mw-playlists__art-grid--empty {
+	display: grid;
+	place-items: center;
+}
+
+.mw-playlists__art-grid--empty::after {
+	content: "";
+	position: absolute;
+	inset: var(--mw-fan-inset);
+	border-radius: var(--mw-fan-radius);
+	background:
+		radial-gradient(circle at 50% 50%, transparent 18%, color-mix(in srgb, #000 18%, transparent) 19%, transparent 21%),
+		linear-gradient(145deg, color-mix(in srgb, var(--mw-color-accent) 55%, var(--mw-color-surface-raised)), var(--mw-color-surface));
+	box-shadow: 0 10px 24px rgb(0 0 0 / 30%);
+	z-index: 1;
+}
+
+.mw-playlists__art-placeholder {
+	position: relative;
+	z-index: 2;
+	color: var(--mw-color-text);
+	font-size: clamp(1.1rem, 34cqi, 1.9rem);
+	line-height: 1;
+	opacity: 0.92;
+}
+
+/* Circle shape: round sleeves, no tilt. */
+.mw-playlists__art-grid--circle,
+.mw-public-playlists__art--circle .mw-playlists__art-grid {
+	--mw-fan-radius: 50%;
+	--mw-fan-tilt: 0deg;
+}
+
+/* Wide/tall containers keep the fan proportional to the box. */
+.mw-playlists__art-grid--landscape,
+.mw-public-playlists__art--landscape .mw-playlists__art-grid {
+	aspect-ratio: 16 / 10;
+	--mw-fan-spread: 11%;
+	--mw-fan-inset: 8% 16%;
+}
+
+.mw-playlists__art-grid--portrait,
+.mw-public-playlists__art--portrait .mw-playlists__art-grid {
+	aspect-ratio: 4 / 5;
+	--mw-fan-inset: 14% 10%;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.mw-playlists__art-cell {
+		transition: none;
+	}
 }
 
 .mw-playlists__main {
@@ -1022,9 +1158,8 @@
 		gap: 0.75rem;
 	}
 
-	.mw-playlists__art-grid {
-		width: 4rem;
-		height: 4rem;
+	.mw-playlists__art {
+		inline-size: 4rem;
 	}
 
 	.mw-playlists__header {
@@ -1172,7 +1307,7 @@
 	border-radius: 12px;
 }
 
-.mw-public-playlists__toolbar input[type=""search""] {
+.mw-public-playlists__toolbar input[type="search"] {
 	flex: 1 1 14rem;
 	min-height: 2.4rem;
 	padding-inline: 0.75rem;
@@ -1260,17 +1395,14 @@
 
 .mw-public-playlists__art {
 	width: 100%;
-	aspect-ratio: 1;
-	overflow: hidden;
-	border-radius: 10px;
-	background: var(--mw-color-surface, #151922);
-	border: 1px solid var(--mw-color-border, rgba(255,255,255,0.06));
+	container-type: inline-size;
 }
 
-/* Artwork shape variants — mirror the release-shelf art modifiers. */
-.mw-public-playlists__art--landscape { aspect-ratio: 16 / 10; }
-.mw-public-playlists__art--portrait { aspect-ratio: 4 / 5; }
-.mw-public-playlists__art--circle { border-radius: 50%; }
+/* Artwork shape variants — mirror the release-shelf art modifiers; the
+ * aspect ratio lives on the stack itself (see .mw-playlists__art-grid). */
+.mw-public-playlists__art--landscape .mw-playlists__art-grid { aspect-ratio: 16 / 10; }
+.mw-public-playlists__art--portrait .mw-playlists__art-grid { aspect-ratio: 4 / 5; }
+.mw-public-playlists__art--circle .mw-playlists__art-grid { --mw-fan-radius: 50%; }
 
 .mw-public-playlists__grid--list .mw-public-playlists__card {
 	flex-direction: row;
@@ -1279,28 +1411,11 @@
 
 .mw-public-playlists__grid--list .mw-public-playlists__art {
 	width: 5rem;
-	height: 5rem;
 	flex: 0 0 auto;
-	aspect-ratio: auto;
 }
 
-/* Shared artwork hover zoom — mirrors the release slider and shelf cards. */
-.mw-public-playlists__card .mw-playlists__art-cell img {
-	transition: transform 360ms var(--mw-ease-out, ease-out);
-}
-
-.mw-public-playlists__card:hover .mw-playlists__art-cell img {
-	transform: scale(1.045);
-}
-
-@media (prefers-reduced-motion: reduce) {
-	.mw-public-playlists__card .mw-playlists__art-cell img {
-		transition: none;
-	}
-
-	.mw-public-playlists__card:hover .mw-playlists__art-cell img {
-		transform: none;
-	}
+.mw-public-playlists__grid--list .mw-public-playlists__art .mw-playlists__art-grid {
+	aspect-ratio: 1;
 }
 
 .mw-public-playlists__main {

@@ -1,13 +1,18 @@
-<!-- wp:group {"align":"full","className":"mw-site-header mw-site-header--centered","layout":{"type":"constrained"}} -->
+<!-- wp:group {"align":"full","className":"mw-site-header mw-site-header--centered","style":{"spacing":{"padding":{"top":"0","bottom":"0"}}},"layout":{"type":"constrained"}} -->
 <div class="wp-block-group alignfull mw-site-header mw-site-header--centered"><!-- wp:group {"align":"wide","className":"mw-site-header__inner mw-site-header__inner--centered","style":{"spacing":{"padding":{"top":"var:preset|spacing|30","bottom":"var:preset|spacing|20"},"blockGap":"var:preset|spacing|20"}},"layout":{"type":"flex","orientation":"vertical","justifyContent":"center"}} -->
-<div class="wp-block-group alignwide mw-site-header__inner mw-site-header__inner--centered" style="padding-top:var(--wp--preset--spacing--30);padding-bottom:var(--wp--preset--spacing--20)"><!-- wp:group {"style":{"spacing":{"blockGap":"0.75rem"}},"layout":{"type":"flex","orientation":"vertical","justifyContent":"center","verticalAlignment":"center"}} -->
-<div class="wp-block-group"><!-- wp:site-logo {"width":44,"shouldSyncIcon":true} /-->
+<div class="wp-block-group alignwide mw-site-header__inner mw-site-header__inner--centered" style="padding-top:var(--wp--preset--spacing--30);padding-bottom:var(--wp--preset--spacing--20)"><!-- wp:group {"className":"mw-brand mw-brand--stacked","style":{"spacing":{"blockGap":"0.75rem"}},"layout":{"type":"flex","orientation":"vertical","justifyContent":"center","verticalAlignment":"center"}} -->
+<div class="wp-block-group mw-brand mw-brand--stacked"><!-- wp:site-logo {"width":44,"shouldSyncIcon":true} /-->
 <!-- wp:site-title {"level":0,"textAlign":"center","style":{"typography":{"fontWeight":"800"}},"fontSize":"large"} /-->
 <!-- wp:site-tagline {"textAlign":"center","textColor":"muted","fontSize":"small"} /--></div>
 <!-- /wp:group -->
-<!-- wp:group {"style":{"spacing":{"blockGap":"var:preset|spacing|20"}},"layout":{"type":"flex","flexWrap":"wrap","justifyContent":"center","verticalAlignment":"center"}} -->
-<div class="wp-block-group"><!-- wp:navigation {"overlayMenu":"mobile","icon":"menu","layout":{"type":"flex","justifyContent":"center"}} /-->
+<!-- wp:group {"className":"mw-site-header__row","style":{"spacing":{"blockGap":"var:preset|spacing|20"}},"layout":{"type":"flex","flexWrap":"nowrap","justifyContent":"center","verticalAlignment":"center"}} -->
+<div class="wp-block-group mw-site-header__row"><!-- wp:group {"className":"mw-site-header__nav","layout":{"type":"flex","flexWrap":"nowrap","justifyContent":"center","verticalAlignment":"center"}} -->
+<div class="wp-block-group mw-site-header__nav"><!-- wp:navigation {"overlayMenu":"always","openSubmenusOnClick":true,"icon":"menu","className":"mw-site-nav","layout":{"type":"flex","justifyContent":"center","flexWrap":"nowrap"}} /--></div>
+<!-- /wp:group -->
+<!-- wp:group {"className":"mw-header-actions","style":{"spacing":{"blockGap":"var:preset|spacing|20"}},"layout":{"type":"flex","flexWrap":"nowrap","justifyContent":"center","verticalAlignment":"center"}} -->
+<div class="wp-block-group mw-header-actions"><!-- wp:search {"label":"جست‌وجو","showLabel":false,"placeholder":"جست‌وجوی موسیقی…","buttonText":"جست‌وجو","buttonPosition":"button-only","buttonUseIcon":true,"className":"mw-header-search"} /-->
 <!-- wp:music-wave/theme-toggle /--></div>
+<!-- /wp:group --></div>
 <!-- /wp:group --></div>
 <!-- /wp:group --></div>
 <!-- /wp:group -->

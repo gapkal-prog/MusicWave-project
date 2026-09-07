@@ -167,6 +167,10 @@
       ]
     },
     "custom": {
+      "scheme": {
+        "light": { "canvas": "#f7f7f8", "surface": "#ffffff", "surfaceRaised": "#eef0f2", "text": "#0f1115", "muted": "#5b6170", "accent": "#15803d", "accentStrong": "#166534", "editorial": "#be123c", "onAccent": "#ffffff" },
+        "dark": { "canvas": "#0a0a0a", "surface": "#181818", "surfaceRaised": "#282828", "text": "#f7f8fb", "muted": "#a0a0a0", "accent": "#1db954", "accentStrong": "#1ed760", "editorial": "#fa2d48", "onAccent": "#052e16" }
+      },
       "radius": {
         "small": "0.5rem",
         "medium": "0.75rem",
@@ -483,6 +487,11 @@
     {
       "name": "page-playlists",
       "title": "فهرست‌های پخش عمومی",
+      "postTypes": ["page"]
+    },
+    {
+      "name": "page-requests",
+      "title": "درخواست آهنگ و همکاری",
       "postTypes": ["page"]
     },
     {

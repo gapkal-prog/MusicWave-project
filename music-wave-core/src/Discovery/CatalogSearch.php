@@ -189,6 +189,10 @@ final class CatalogSearch {
 	 */
 	public function sanitize_term( string $term ): string {
 		$term = function_exists( 'sanitize_text_field' ) ? sanitize_text_field( $term ) : trim( strip_tags( $term ) ); // phpcs:ignore WordPress.WP.AlternativeFunctions
+		// Fold Arabic-script variants (ي/ی, ك/ک, digits, diacritics) so the
+		// cache key, the adapter and the re-checks all see one canonical form
+		// while spacing/ZWNJ stays intact for the query expansion.
+		$term = PersianSearchNormalizer::fold( $term );
 		$term = trim( preg_replace( '/\s+/u', ' ', $term ) ?? '' );
 		$term = function_exists( 'mb_substr' ) ? mb_substr( $term, 0, self::MAX_TERM_LENGTH ) : substr( $term, 0, self::MAX_TERM_LENGTH );
 		$size = function_exists( 'mb_strlen' ) ? mb_strlen( $term ) : strlen( $term );
@@ -247,14 +251,18 @@ final class CatalogSearch {
 
 		$ids = get_posts(
 			array(
-				'post_type'      => ReleasePostType::KEY,
-				'post_status'    => 'publish',
-				'fields'         => 'ids',
-				'posts_per_page' => min( 50, $limit * 3 ),
-				's'              => $term,
-				'no_found_rows'  => true,
-				'orderby'        => 'date',
-				'order'          => 'DESC',
+				'post_type'                       => ReleasePostType::KEY,
+				'post_status'                     => 'publish',
+				'fields'                          => 'ids',
+				'posts_per_page'                  => min( 50, $limit * 3 ),
+				's'                               => $term,
+				'no_found_rows'                   => true,
+				'orderby'                         => 'date',
+				'order'                           => 'DESC',
+				// get_posts() suppresses query filters by default; the
+				// script-aware search must run so Persian spellings match.
+				'suppress_filters'                => false,
+				ScriptAwareSearchQuery::QUERY_VAR => true,
 			)
 		);
 
@@ -262,7 +270,7 @@ final class CatalogSearch {
 		foreach ( $this->publicly_visible( is_array( $ids ) ? $ids : array() ) as $release_id ) {
 			// Re-check the term against the public title so the suggestion list
 			// stays predictable regardless of the search backend in play.
-			if ( false !== stripos( get_the_title( $release_id ), $term ) ) {
+			if ( PersianSearchNormalizer::contains( get_the_title( $release_id ), $term ) ) {
 				$matched[] = $release_id;
 			}
 		}
@@ -280,18 +288,33 @@ final class CatalogSearch {
 			return array();
 		}
 
+		// Stored term names may use either script or spacing convention, so
+		// each bounded lookup tries the few plausible spellings of the term.
+		$spellings = array_slice( PersianSearchNormalizer::variants( $term ), 0, 3 );
+		if ( array() === $spellings ) {
+			$spellings = array( $term );
+		}
+
 		$suggestions = array();
 		foreach ( $this->taxonomies() as $taxonomy ) {
-			$terms = get_terms(
-				array(
-					'taxonomy'   => $taxonomy,
-					'search'     => $term,
-					'number'     => self::MAX_TERM_HITS,
-					'hide_empty' => true,
-				)
-			);
-			if ( ! is_array( $terms ) ) {
-				continue;
+			$terms = array();
+			foreach ( $spellings as $spelling ) {
+				$found_terms = get_terms(
+					array(
+						'taxonomy'   => $taxonomy,
+						'search'     => $spelling,
+						'number'     => self::MAX_TERM_HITS,
+						'hide_empty' => true,
+					)
+				);
+				if ( ! is_array( $found_terms ) ) {
+					continue;
+				}
+				foreach ( $found_terms as $found_term ) {
+					if ( $found_term instanceof WP_Term && ! isset( $terms[ (int) $found_term->term_id ] ) ) {
+						$terms[ (int) $found_term->term_id ] = $found_term;
+					}
+				}
 			}
 
 			$hits = 0;
@@ -299,7 +322,7 @@ final class CatalogSearch {
 				if ( ! $found instanceof WP_Term || $hits >= self::MAX_TERM_HITS ) {
 					continue;
 				}
-				if ( false === stripos( $found->name, $term ) && false === stripos( $found->slug, $term ) ) {
+				if ( ! PersianSearchNormalizer::contains( $found->name, $term ) && false === stripos( $found->slug, $term ) ) {
 					continue;
 				}
 				$link          = get_term_link( $found );

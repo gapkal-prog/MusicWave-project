@@ -72,6 +72,7 @@ be readable; only its availability date lies ahead.
 | `/listening/queue` | GET, POST | Required | Durable queue with shuffle/repeat |
 | `/recommendations` | GET | Public | Editorial for anonymous callers; personalized responses are `no-store` |
 | `/playlists` | GET, POST | Required | Own playlists; create with `title`, `visibility` |
+| `/playlists/public` | GET | Public | Paginated public playlists (`page`, `per_page`, `orderby`); each item carries `covers` — up to four `{title, image}` pairs from published releases (thumbnail URL or empty when the release has no cover) for the theme's fanned cover stack |
 | `/playlists/<id>` | GET | Public | Filtered by playlist privacy; accepts `share` token |
 | `/playlists/<id>` | POST, DELETE | Required | Owner-only rename/visibility/delete |
 | `/playlists/<id>/items` | POST, DELETE | Required | Owner-only add/remove by `release_id` |

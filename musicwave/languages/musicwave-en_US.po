@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: musicwave\n"
 "Language: en_US\n"
 "Language-Team: English\n"
-"PO-Revision-Date: 2026-08-30 00:00+0000\n"
+"PO-Revision-Date: 2026-09-07 00:00+0000\n"
 "Last-Translator: MusicWave Translation Team\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -1056,4 +1056,71 @@ msgstr "Shop sidebar"
 msgid "بخش معرفی"
 msgstr "Hero"
 
+msgid "اسلاید %1$d از %2$d"
+msgstr "Slide %1$d of %2$d"
 
+msgid "اسلاید %1$d: %2$s"
+msgstr "Slide %1$d: %2$s"
+
+msgid "اسلاید بعدی"
+msgstr "Next slide"
+
+msgid "اسلاید قبلی"
+msgstr "Previous slide"
+
+msgid "اسلایدر انتشارها"
+msgstr "Release slider"
+
+msgid "اسلایدر هیرو"
+msgstr "Hero slider"
+
+msgid "بدنه پلاس جاکارتا"
+msgstr "Plus Jakarta Sans (body)"
+
+msgid "بعدی"
+msgstr "Next"
+
+msgid "تنظیمات اسلایدر هیرو"
+msgstr "Hero slider settings"
+
+msgid "درخواست آهنگ و همکاری"
+msgstr "Song request & collaboration"
+
+msgid "رفتن به اسلاید %d"
+msgstr "Go to slide %d"
+
+msgid "سربرگ (استریم)"
+msgstr "Header (stream)"
+
+msgid "صفحهبندی اسلایدر"
+msgstr "Slider pagination"
+
+msgid "فاصلهٔ تعویض اسلایدها (میلی‌ثانیه)"
+msgstr "Slide interval (milliseconds)"
+
+msgid "فراخوان درخواست آهنگ و همکاری"
+msgstr "Song request & collaboration call-to-action"
+
+msgid "قبلی"
+msgstr "Previous"
+
+msgid "نمایش انتشارها بهصورت شبکهای، ویترین افقی، فهرست جمعوجور، ویژهنامه سرمقاله یا اسلایدر هیرو. بین انتشارها و فهرستهای پخش عمومی جامعه جابهجا شوید. چیدمان، رنگها و فاصلهها در ویرایشگر سایت قابل ویرایش هستند."
+msgstr "Display releases as a grid, horizontal showcase, compact list, editorial feature, or hero slider. Switch between releases and the community's public playlists. Layout, colors, and spacing are editable in the Site Editor."
+
+msgid "نمایش فلش‌ها"
+msgstr "Show arrows"
+
+msgid "نمایش نقاط صفحهبندی"
+msgstr "Show pagination dots"
+
+msgid "نمایشی ساین"
+msgstr "Syne (display)"
+
+msgid "هیرو"
+msgstr "Hero"
+
+msgid "ویژهنامه سرمقاله"
+msgstr "Editorial feature"
+
+msgid "پخش خودکار اسلایدها"
+msgstr "Autoplay slides"

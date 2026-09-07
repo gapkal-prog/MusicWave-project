@@ -76,7 +76,7 @@ final class LibraryRepository {
 		if ( $item_id < 1 || ! in_array( $type, $this->types(), true ) ) {
 			return array();
 		}
-		if ( ! isset( $wpdb ) || ! is_object( $wpdb ) || ! property_exists( $wpdb, 'usermeta' ) || ! method_exists( $wpdb, 'get_col' ) ) {
+		if ( ! $wpdb instanceof \wpdb ) {
 			return array();
 		}
 
@@ -85,17 +85,11 @@ final class LibraryRepository {
 		// candidates in SQL instead of deserializing every library. False
 		// positives are possible across items of one library; has() below
 		// stays the authoritative check.
-		$sql    = "SELECT user_id FROM {$wpdb->usermeta} WHERE meta_key = %s";
-		$params = array( self::META_KEY );
-		if ( method_exists( $wpdb, 'prepare' ) && method_exists( $wpdb, 'esc_like' ) ) {
-			$type_pattern = '%' . $wpdb->esc_like( 's:4:"type";s:' . strlen( $type ) . ':"' . $type . '";' ) . '%';
-			$int_pattern  = '%' . $wpdb->esc_like( 's:2:"id";i:' . $item_id . ';' ) . '%';
-			$str_pattern  = '%' . $wpdb->esc_like( 's:2:"id";s:' . strlen( (string) $item_id ) . ':"' . $item_id . '";' ) . '%';
-			$sql         .= ' AND meta_value LIKE %s AND ( meta_value LIKE %s OR meta_value LIKE %s )';
-			$params[]     = $type_pattern;
-			$params[]     = $int_pattern;
-			$params[]     = $str_pattern;
-		}
+		$type_pattern = '%' . $wpdb->esc_like( 's:4:"type";s:' . strlen( $type ) . ':"' . $type . '";' ) . '%';
+		$int_pattern  = '%' . $wpdb->esc_like( 's:2:"id";i:' . $item_id . ';' ) . '%';
+		$str_pattern  = '%' . $wpdb->esc_like( 's:2:"id";s:' . strlen( (string) $item_id ) . ':"' . $item_id . '";' ) . '%';
+		$sql          = "SELECT user_id FROM {$wpdb->usermeta} WHERE meta_key = %s AND meta_value LIKE %s AND ( meta_value LIKE %s OR meta_value LIKE %s )";
+		$params       = array( self::META_KEY, $type_pattern, $int_pattern, $str_pattern );
 
 		$candidates = $wpdb->get_col( $wpdb->prepare( $sql, $params ) ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.NotPrepared
 

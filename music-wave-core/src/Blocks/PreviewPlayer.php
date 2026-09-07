@@ -127,6 +127,8 @@ final class PreviewPlayer {
 					'streamError'  => __( 'پخش امن شروع نشد.', 'music-wave-core' ),
 					'sessionError' => __( 'جلسه شما تمام شده است. صفحه را تازه کنید یا دوباره وارد شوید.', 'music-wave-core' ),
 					'volume'       => __( 'حجم', 'music-wave-core' ),
+					'mute'         => __( 'بی‌صدا', 'music-wave-core' ),
+					'unmute'       => __( 'باصدا', 'music-wave-core' ),
 					'closeNotice'  => __( 'رد اطلاعیه', 'music-wave-core' ),
 					/* translators: %s: release title. */
 					'playRelease'  => __( 'پخش %s', 'music-wave-core' ),
@@ -275,7 +277,41 @@ final class PreviewPlayer {
 	}
 
 	/**
+	 * Inline SVG icon used by the persistent player controls.
+	 *
+	 * Icons are decorative (labels live on the buttons) and inherit
+	 * `currentColor`, so the theme recolours them with tokens alone.
+	 *
+	 * @param string $name  Icon key.
+	 * @param string $extra_class Extra class names for the <svg> element.
+	 * @return string
+	 */
+	private function icon( string $name, string $extra_class = '' ): string {
+		$paths = array(
+			'play'       => '<path d="M8 5.14v13.72c0 .79.87 1.27 1.54.84l10.63-6.86a1 1 0 0 0 0-1.68L9.54 4.3C8.87 3.87 8 4.35 8 5.14Z"/>',
+			'pause'      => '<path d="M7 5a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1H8a1 1 0 0 1-1-1V5Zm6 0a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1h-2a1 1 0 0 1-1-1V5Z"/>',
+			'previous'   => '<path d="M6 5a1 1 0 0 1 1 1v12a1 1 0 1 1-2 0V6a1 1 0 0 1 1-1Zm12.53.21A1 1 0 0 1 20 6.06v11.88a1 1 0 0 1-1.53.85L9.2 12.85a1 1 0 0 1 0-1.7l9.27-5.94a1 1 0 0 1 .06 0Z"/>',
+			'next'       => '<path d="M18 5a1 1 0 0 1 1 1v12a1 1 0 1 1-2 0V6a1 1 0 0 1 1-1ZM5.47 5.21a1 1 0 0 1 1.06 0l9.27 5.94a1 1 0 0 1 0 1.7l-9.27 5.94A1 1 0 0 1 5 17.94V6.06a1 1 0 0 1 .47-.85Z"/>',
+			'queue'      => '<path d="M4 6a1 1 0 0 1 1-1h14a1 1 0 1 1 0 2H5a1 1 0 0 1-1-1Zm0 5a1 1 0 0 1 1-1h14a1 1 0 1 1 0 2H5a1 1 0 0 1-1-1Zm1 4a1 1 0 1 0 0 2h8a1 1 0 1 0 0-2H5Zm12.5-1a1 1 0 0 1 1 1v1.5H20a1 1 0 1 1 0 2h-1.5V20a1 1 0 1 1-2 0v-1.5H15a1 1 0 1 1 0-2h1.5V15a1 1 0 0 1 1-1Z"/>',
+			'close'      => '<path d="M6.22 6.22a1 1 0 0 1 1.41 0L12 10.59l4.36-4.37a1 1 0 1 1 1.42 1.42L13.41 12l4.37 4.36a1 1 0 0 1-1.42 1.42L12 13.41l-4.37 4.37a1 1 0 0 1-1.41-1.42L10.59 12 6.22 7.63a1 1 0 0 1 0-1.41Z"/>',
+			'volume'     => '<path d="M4 9.5A1.5 1.5 0 0 1 5.5 8H8l4.35-3.48A1 1 0 0 1 14 5.3v13.4a1 1 0 0 1-1.65.78L8 16H5.5A1.5 1.5 0 0 1 4 14.5v-5Zm12.7-1.03a1 1 0 0 1 1.4.13A5.98 5.98 0 0 1 19.5 12c0 1.3-.42 2.5-1.4 3.4a1 1 0 0 1-1.53-1.27c.62-.52.93-1.28.93-2.13 0-.85-.31-1.6-.93-2.13a1 1 0 0 1 .13-1.4Zm2.7-2.6a1 1 0 0 1 1.4.16A9.96 9.96 0 0 1 22.5 12a9.96 9.96 0 0 1-1.7 5.97 1 1 0 0 1-1.56-1.24A7.96 7.96 0 0 0 20.5 12c0-1.7-.5-3.28-1.26-4.73a1 1 0 0 1 .16-1.4Z"/>',
+			'volume-off' => '<path d="M4 9.5A1.5 1.5 0 0 1 5.5 8H8l4.35-3.48A1 1 0 0 1 14 5.3v13.4a1 1 0 0 1-1.65.78L8 16H5.5A1.5 1.5 0 0 1 4 14.5v-5Zm12.3-.2a1 1 0 0 1 1.4 0L19 10.6l1.3-1.3a1 1 0 1 1 1.4 1.4L20.4 12l1.3 1.3a1 1 0 0 1-1.4 1.4L19 13.4l-1.3 1.3a1 1 0 0 1-1.4-1.4l1.3-1.3-1.3-1.3a1 1 0 0 1 0-1.4Z"/>',
+			'spinner'    => '<path d="M12 3a1 1 0 0 1 1 1v2.5a1 1 0 1 1-2 0V4a1 1 0 0 1 1-1Zm0 13.5a1 1 0 0 1 1 1V20a1 1 0 1 1-2 0v-2.5a1 1 0 0 1 1-1ZM3 12a1 1 0 0 1 1-1h2.5a1 1 0 1 1 0 2H4a1 1 0 0 1-1-1Zm13.5 0a1 1 0 0 1 1-1H20a1 1 0 1 1 0 2h-2.5a1 1 0 0 1-1-1ZM5.64 5.64a1 1 0 0 1 1.41 0l1.77 1.77a1 1 0 1 1-1.41 1.41L5.64 7.05a1 1 0 0 1 0-1.41Zm9.54 9.54a1 1 0 0 1 1.41 0l1.77 1.77a1 1 0 0 1-1.41 1.41l-1.77-1.77a1 1 0 0 1 0-1.41Zm3.18-9.54a1 1 0 0 1 0 1.41l-1.77 1.77a1 1 0 1 1-1.41-1.41l1.77-1.77a1 1 0 0 1 1.41 0ZM8.82 15.18a1 1 0 0 1 0 1.41l-1.77 1.77a1 1 0 0 1-1.41-1.41l1.77-1.77a1 1 0 0 1 1.41 0Z"/>',
+		);
+		if ( ! isset( $paths[ $name ] ) ) {
+			return '';
+		}
+		$classes = trim( 'mw-global-player__icon mw-global-player__icon--' . $name . ' ' . $extra_class );
+
+		return '<svg class="' . esc_attr( $classes ) . '" viewBox="0 0 24 24" width="24" height="24" fill="currentColor" aria-hidden="true" focusable="false">' . $paths[ $name ] . '</svg>';
+	}
+
+	/**
 	 * Render the persistent player; it stays hidden until a preview starts.
+	 *
+	 * Class names are a contract with assets/preview-player.js (and the
+	 * theme's global-player.css): the script resolves every control by class,
+	 * so new elements are added but existing hooks are never renamed.
 	 *
 	 * @return void
 	 */
@@ -284,9 +320,50 @@ final class PreviewPlayer {
 			return;
 		}
 
-		$queue  = '<div class="mw-global-player__queue" data-mw-queue hidden><div class="mw-global-player__queue-header"><h3>' . esc_html__( 'بعدی', 'music-wave-core' ) . '</h3><button type="button" class="mw-global-player__queue-close" aria-label="' . esc_attr__( 'بستن صف', 'music-wave-core' ) . '">×</button></div><ol class="mw-global-player__queue-list"></ol></div>';
-		$notice = '<div class="mw-global-player__notice" role="status" hidden><span class="mw-global-player__notice-message"></span><a class="mw-global-player__notice-cta wp-element-button" href="#" hidden></a><a class="mw-global-player__notice-login" href="#" hidden></a><button type="button" class="mw-global-player__notice-close" aria-label="' . esc_attr__( 'رد اطلاعیه', 'music-wave-core' ) . '">×</button></div>';
+		$queue = '<div class="mw-global-player__queue" data-mw-queue hidden>'
+			. '<div class="mw-global-player__queue-header"><h3>' . esc_html__( 'بعدی', 'music-wave-core' ) . '</h3>'
+			. '<button type="button" class="mw-global-player__queue-close" aria-label="' . esc_attr__( 'بستن صف', 'music-wave-core' ) . '">' . $this->icon( 'close' ) . '</button></div>'
+			. '<ol class="mw-global-player__queue-list"></ol></div>';
 
-		echo '<aside class="mw-global-player" data-mw-preview-player hidden aria-label="' . esc_attr__( 'پخش‌کننده پیش‌نمایش موسیقی', 'music-wave-core' ) . '">' . $queue . $notice . '<audio preload="metadata"></audio><div class="mw-global-player__track"><img class="mw-global-player__art" alt="" hidden><div><strong class="mw-global-player__title"></strong><span class="mw-global-player__artist"></span></div></div><div class="mw-global-player__controls"><button type="button" class="mw-global-player__previous" aria-label="' . esc_attr__( 'پیش‌نمایش قبلی', 'music-wave-core' ) . '">⏮</button><button type="button" class="mw-global-player__toggle" aria-label="' . esc_attr__( 'پخش پیش‌نمایش', 'music-wave-core' ) . '">▶</button><button type="button" class="mw-global-player__next" aria-label="' . esc_attr__( 'پیش‌نمایش بعدی', 'music-wave-core' ) . '">⏭</button><button type="button" class="mw-global-player__queue-toggle" aria-expanded="false" aria-label="' . esc_attr__( 'صف پیش‌نمایش', 'music-wave-core' ) . '" hidden>♫</button></div><label class="mw-global-player__progress"><span class="screen-reader-text">' . esc_html__( 'میزان پیشرفت پیش‌نمایش', 'music-wave-core' ) . '</span><input type="range" min="0" max="100" value="0" step="0.1"></label><span class="mw-global-player__time">0:00</span><input type="range" class="mw-global-player__volume" min="0" max="100" value="100" step="1" aria-label="' . esc_attr__( 'حجم', 'music-wave-core' ) . '"><button type="button" class="mw-global-player__close" aria-label="' . esc_attr__( 'بستن پخش‌کننده', 'music-wave-core' ) . '">×</button></aside>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- $queue and $notice are assembled from fully escaped fragments above.
+		$notice = '<div class="mw-global-player__notice" role="status" hidden>'
+			. '<span class="mw-global-player__notice-message"></span>'
+			. '<a class="mw-global-player__notice-cta wp-element-button" href="#" hidden></a>'
+			. '<a class="mw-global-player__notice-login" href="#" hidden></a>'
+			. '<button type="button" class="mw-global-player__notice-close" aria-label="' . esc_attr__( 'رد اطلاعیه', 'music-wave-core' ) . '">' . $this->icon( 'close' ) . '</button></div>';
+
+		$track = '<div class="mw-global-player__track">'
+			. '<img class="mw-global-player__art" alt="" hidden width="48" height="48" decoding="async">'
+			. '<span class="mw-global-player__art-fallback" aria-hidden="true">' . $this->icon( 'play' ) . '</span>'
+			. '<div class="mw-global-player__meta"><strong class="mw-global-player__title"></strong><span class="mw-global-player__artist"></span></div></div>';
+
+		$controls = '<div class="mw-global-player__controls">'
+			. '<button type="button" class="mw-global-player__previous" aria-label="' . esc_attr__( 'پیش‌نمایش قبلی', 'music-wave-core' ) . '">' . $this->icon( 'previous' ) . '</button>'
+			. '<button type="button" class="mw-global-player__toggle" aria-label="' . esc_attr__( 'پخش پیش‌نمایش', 'music-wave-core' ) . '">' . $this->icon( 'play' ) . $this->icon( 'pause' ) . $this->icon( 'spinner' ) . '</button>'
+			. '<button type="button" class="mw-global-player__next" aria-label="' . esc_attr__( 'پیش‌نمایش بعدی', 'music-wave-core' ) . '">' . $this->icon( 'next' ) . '</button>'
+			. '</div>';
+
+		$timeline = '<div class="mw-global-player__timeline">'
+			. '<span class="mw-global-player__time mw-global-player__time--current" aria-hidden="true">0:00</span>'
+			. '<label class="mw-global-player__progress"><span class="screen-reader-text">' . esc_html__( 'میزان پیشرفت پیش‌نمایش', 'music-wave-core' ) . '</span>'
+			. '<input type="range" min="0" max="100" value="0" step="0.1" aria-valuetext="0:00"></label>'
+			. '<span class="mw-global-player__duration" aria-hidden="true">0:00</span>'
+			. '</div>';
+
+		$tools = '<div class="mw-global-player__tools">'
+			. '<button type="button" class="mw-global-player__queue-toggle" aria-expanded="false" aria-label="' . esc_attr__( 'صف پیش‌نمایش', 'music-wave-core' ) . '" hidden>' . $this->icon( 'queue' ) . '</button>'
+			. '<div class="mw-global-player__volume-group">'
+			. '<button type="button" class="mw-global-player__mute" aria-pressed="false" aria-label="' . esc_attr__( 'بی‌صدا', 'music-wave-core' ) . '">' . $this->icon( 'volume' ) . $this->icon( 'volume-off' ) . '</button>'
+			. '<input type="range" class="mw-global-player__volume" min="0" max="100" value="100" step="1" aria-label="' . esc_attr__( 'حجم', 'music-wave-core' ) . '">'
+			. '</div>'
+			. '<button type="button" class="mw-global-player__close" aria-label="' . esc_attr__( 'بستن پخش‌کننده', 'music-wave-core' ) . '">' . $this->icon( 'close' ) . '</button>'
+			. '</div>';
+
+		$markup = '<aside class="mw-global-player" data-mw-preview-player hidden aria-label="' . esc_attr__( 'پخش‌کننده پیش‌نمایش موسیقی', 'music-wave-core' ) . '">'
+			. $queue . $notice
+			. '<audio preload="metadata"></audio>'
+			. '<div class="mw-global-player__bar">' . $track . '<div class="mw-global-player__center">' . $controls . $timeline . '</div>' . $tools . '</div>'
+			. '</aside>';
+
+		echo $markup; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Assembled above from escaped fragments and static SVG markup.
 	}
 }

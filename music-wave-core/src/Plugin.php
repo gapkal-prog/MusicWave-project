@@ -37,6 +37,7 @@ use ManaCore\MusicWave\Core\Catalog\ReleaseVisibility;
 use ManaCore\MusicWave\Core\Catalog\ArtistTermMeta;
 use ManaCore\MusicWave\Core\Catalog\DemoContentImporter;
 use ManaCore\MusicWave\Core\Catalog\ReleaseArchiveQuery;
+use ManaCore\MusicWave\Core\Catalog\ReleasePermalinks;
 use ManaCore\MusicWave\Core\Catalog\ReleaseDefaults;
 use ManaCore\MusicWave\Core\Commerce\ProductMapper;
 use ManaCore\MusicWave\Core\Commerce\PurchaseChecker;
@@ -194,7 +195,9 @@ final class Plugin {
 				new CollectionRestPolicy( $releases ),
 				new ArtistTermMeta(),
 				new ReleaseArchiveQuery(),
-				new ReleaseDefaults( $releases )
+				new ReleaseDefaults( $releases ),
+				new ReleasePermalinks(),
+				new \ManaCore\MusicWave\Core\Discovery\ScriptAwareSearchQuery()
 			)
 		);
 		$registry->add( new Admin( new ReleaseMetaBox( $schema, $releases, $mapper ), new EditorAssets(), new ReleaseReadiness( $releases ), new CollectionCandidateRoutes(), new SettingsPage( new BulkAccessManager( $releases ), $playlists, $listening_repository ) ) );
@@ -227,6 +230,19 @@ final class Plugin {
 			)
 		);
 		$registry->add( new Seo( new ReleaseJsonLd( $releases, $visibility ), new ReleaseMetadata( $releases ) ) );
+		$request_repository = new \ManaCore\MusicWave\Core\Requests\RequestRepository();
+		$request_settings   = new \ManaCore\MusicWave\Core\Requests\RequestSettings();
+		$request_mailer     = new \ManaCore\MusicWave\Core\Requests\RequestMailer( $request_settings );
+		$request_forms      = new \ManaCore\MusicWave\Core\Requests\RequestFormHandler( $request_repository, $request_mailer, $request_settings );
+		$registry->add(
+			new \ManaCore\MusicWave\Core\Modules\Requests(
+				new \ManaCore\MusicWave\Core\Requests\RequestPostType(),
+				$request_forms,
+				new \ManaCore\MusicWave\Core\Blocks\RequestFormBlock( $request_forms, $request_settings ),
+				new \ManaCore\MusicWave\Core\Requests\RequestsAdminPage( $request_repository, $request_mailer, $request_settings ),
+				new \ManaCore\MusicWave\Core\Requests\RequestPrivacy( $request_repository )
+			)
+		);
 		$registry->add( new \ManaCore\MusicWave\Core\Modules\Metadata( new MetadataLookupRoutes( $metadata_resolver, $metadata_taxonomies ), $metadata_taxonomies ) );
 
 		/**

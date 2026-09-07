@@ -142,7 +142,9 @@
 			'.mw-global-player__progress input'
 		);
 		var time = player.querySelector( '.mw-global-player__time' );
+		var duration = player.querySelector( '.mw-global-player__duration' );
 		var volume = player.querySelector( 'input.mw-global-player__volume' );
+		var mute = player.querySelector( '.mw-global-player__mute' );
 		var queueToggle = player.querySelector(
 			'.mw-global-player__queue-toggle'
 		);
@@ -193,9 +195,91 @@
 			return audio.paused ? '▶' : '❚❚';
 		}
 
+		// The play/pause button ships one SVG per state (play, pause,
+		// spinner); the stylesheet reveals the icon named by data-state.
+		// Legacy markup without icons keeps the text glyph so the control
+		// never renders empty.
+		var buffering = false;
+
+		function renderToggle() {
+			var waiting = busy || buffering;
+			var state = 'playing';
+			if ( waiting ) {
+				state = 'loading';
+			} else if ( audio.paused ) {
+				state = 'paused';
+			}
+			toggle.setAttribute( 'data-state', state );
+			toggle.setAttribute( 'aria-busy', busy ? 'true' : 'false' );
+			if ( ! toggle.querySelector( 'svg' ) ) {
+				toggle.textContent = waiting ? '…' : playGlyph();
+			}
+		}
+
 		function setLoading( loading ) {
 			busy = loading;
-			toggle.textContent = loading ? '…' : playGlyph();
+			renderToggle();
+		}
+
+		// Elapsed / total, mirrored into aria-valuetext so the range input
+		// announces "0:42 / 3:10" instead of a bare percentage. The total is
+		// the full stream length (the preview limit is explained by the
+		// upsell notice, not by shortening the timeline).
+		function renderTime() {
+			var total = audio.duration || 0;
+			var elapsed = formatTime( audio.currentTime );
+			var length = total ? formatTime( total ) : '';
+			if ( duration ) {
+				time.textContent = elapsed;
+				duration.textContent = length || '–:––';
+			} else {
+				time.textContent = elapsed + ( length ? ' / ' + length : '' );
+			}
+			progress.setAttribute(
+				'aria-valuetext',
+				length ? elapsed + ' / ' + length : elapsed
+			);
+		}
+
+		// layout.css keeps page content and sticky rails clear of the bar by
+		// reading --mw-player-offset from <html>. The stylesheet ships a rem
+		// estimate; measuring the rendered footprint (height plus the gap to
+		// the viewport edge) covers zoom, font size, and the docked phone
+		// layout. Transforms from the entrance animation do not affect
+		// offsetHeight or the computed inset, so this is safe mid-animation.
+		function measureFootprint() {
+			var root = document.documentElement;
+			if ( player.hidden ) {
+				root.style.removeProperty( '--mw-player-offset' );
+				return;
+			}
+			var inset =
+				parseFloat( window.getComputedStyle( player ).bottom ) || 0;
+			var covered = player.offsetHeight + inset;
+			if ( covered > 0 ) {
+				root.style.setProperty(
+					'--mw-player-offset',
+					Math.ceil( covered ) + 'px'
+				);
+			}
+		}
+
+		function setPresence( active ) {
+			document.documentElement.classList.toggle(
+				'mw-has-player',
+				active
+			);
+			if ( window.requestAnimationFrame ) {
+				window.requestAnimationFrame( measureFootprint );
+			} else {
+				measureFootprint();
+			}
+		}
+
+		if ( 'ResizeObserver' in window ) {
+			new window.ResizeObserver( measureFootprint ).observe( player );
+		} else {
+			window.addEventListener( 'resize', measureFootprint );
 		}
 
 		function updateButtons() {
@@ -486,9 +570,8 @@
 				audio.paused ? 'paused' : 'playing'
 			);
 			player.hidden = false;
-			if ( ! busy ) {
-				toggle.textContent = playGlyph();
-			}
+			setPresence( true );
+			renderToggle();
 			toggle.setAttribute(
 				'aria-label',
 				audio.paused
@@ -786,19 +869,49 @@
 			queueMeta = null;
 			player.hidden = true;
 			player.removeAttribute( 'data-mw-state' );
+			setPresence( false );
 			setQueueOpen( false );
 			hideNotice();
 			clearState();
 			updateButtons();
 		} );
 		var VOLUME_KEY = 'mw-player-volume';
+		var lastAudibleVolume = 1;
+
+		function renderVolume() {
+			var level = audio.muted || 0 === audio.volume ? 'muted' : 'audible';
+			player.setAttribute( 'data-mw-volume', level );
+			if ( volume ) {
+				volume.style.setProperty(
+					'--mw-volume',
+					Math.round( ( audio.muted ? 0 : audio.volume ) * 100 ) + '%'
+				);
+			}
+			if ( mute ) {
+				mute.setAttribute(
+					'aria-pressed',
+					'muted' === level ? 'true' : 'false'
+				);
+				mute.setAttribute(
+					'aria-label',
+					'muted' === level
+						? labels.unmute || 'باصدا'
+						: labels.mute || 'بی‌صدا'
+				);
+			}
+		}
 
 		function applyVolume( raw ) {
 			var value = Math.min( 1, Math.max( 0, parseFloat( raw ) || 0 ) );
 			audio.volume = value;
+			if ( value > 0 ) {
+				lastAudibleVolume = value;
+				audio.muted = false;
+			}
 			if ( volume ) {
 				volume.value = String( Math.round( value * 100 ) );
 			}
+			renderVolume();
 
 			return value;
 		}
@@ -817,6 +930,21 @@
 				}
 			} catch ( e ) {}
 		}
+		if ( mute ) {
+			mute.addEventListener( 'click', function () {
+				if ( audio.muted || 0 === audio.volume ) {
+					audio.muted = false;
+					if ( 0 === audio.volume ) {
+						applyVolume( lastAudibleVolume || 1 );
+					}
+				} else {
+					audio.muted = true;
+				}
+				renderVolume();
+			} );
+		}
+		audio.addEventListener( 'volumechange', renderVolume );
+		renderVolume();
 
 		/* -------------------------------------------------------------- *
 		 * Session persistence — the Spotify/Apple Music behavior.         *
@@ -957,11 +1085,7 @@
 							'--mw-progress',
 							progress.value + '%'
 						);
-						time.textContent =
-							formatTime( audio.currentTime ) +
-							( audio.duration
-								? ' / ' + formatTime( audio.duration )
-								: '' );
+						renderTime();
 						if ( shouldResume ) {
 							audio.play().catch( function () {
 								// Autoplay blocked after reload: stay paused
@@ -1007,6 +1131,20 @@
 		restoreSession();
 		audio.addEventListener( 'play', render );
 		audio.addEventListener( 'pause', render );
+		// Network stalls surface as the spinner without blocking the toggle,
+		// so a visitor can still pause a stream that is buffering.
+		audio.addEventListener( 'waiting', function () {
+			buffering = true;
+			renderToggle();
+		} );
+		[ 'playing', 'canplay', 'pause', 'emptied', 'error' ].forEach(
+			function ( name ) {
+				audio.addEventListener( name, function () {
+					buffering = false;
+					renderToggle();
+				} );
+			}
+		);
 		audio.addEventListener( 'ended', function () {
 			if ( current < queue.length - 1 ) {
 				select( current + 1, true );
@@ -1027,7 +1165,7 @@
 			render();
 		} );
 		audio.addEventListener( 'timeupdate', function () {
-			var duration = audio.duration || 0;
+			var total = audio.duration || 0;
 			var track = currentTrack();
 			if (
 				track &&
@@ -1048,21 +1186,22 @@
 				render();
 				return;
 			}
-			progress.value = duration
-				? String( ( audio.currentTime / duration ) * 100 )
+			progress.value = total
+				? String( ( audio.currentTime / total ) * 100 )
 				: '0';
 			// Feeds the webkit slider gradient stop in the theme stylesheet.
 			progress.style.setProperty( '--mw-progress', progress.value + '%' );
-			time.textContent =
-				formatTime( audio.currentTime ) +
-				( duration ? ' / ' + formatTime( duration ) : '' );
+			renderTime();
 		} );
+		audio.addEventListener( 'loadedmetadata', renderTime );
+		audio.addEventListener( 'durationchange', renderTime );
 		progress.addEventListener( 'input', function () {
 			progress.style.setProperty( '--mw-progress', progress.value + '%' );
 			if ( audio.duration ) {
 				audio.currentTime =
 					( parseFloat( progress.value ) / 100 ) * audio.duration;
 			}
+			renderTime();
 		} );
 
 		playerController = {
@@ -1118,7 +1257,13 @@
 				return Boolean( currentTrack() );
 			},
 			seekBy,
-			sync: updateButtons,
+			sync() {
+				// Soft navigation swaps <body>; the presence flag lives on
+				// <html> so it survives, but re-assert it in case the
+				// incoming page reset the element.
+				setPresence( Boolean( currentTrack() ) );
+				updateButtons();
+			},
 		};
 		// Expose for playlists.js progressive enhancement.
 		window._mwPreviewController = playerController;
@@ -1196,9 +1341,10 @@
 
 	var navFileHref = /\.(mp3|m4a|aac|ogg|wav|flac|zip|rar|pdf)([?#]|$)/i;
 	var navSwapped = false;
-	// Native navigation is the default; the persistent body swap is opt-in
-	// because it cannot safely reconcile every WordPress/WooCommerce page
-	// lifecycle (PROJECT_PLAN.md Stage 4 deliverable 1).
+	// Shipped enabled through the `persistent_navigation` setting and the
+	// `music_wave_persistent_navigation` filter; sites that prefer native
+	// navigation everywhere switch it off there. Commerce, auth, and admin
+	// routes are never intercepted regardless of the setting.
 	var navEnabled = settings.persistentNav === true;
 
 	function navSupported() {
@@ -1210,7 +1356,11 @@
 					window.URL &&
 					window.CustomEvent
 			) &&
-			typeof document.body.replaceChildren === 'function'
+			typeof document.body.replaceChildren === 'function' &&
+			// A page with router regions (enhanced query pagination, Woo
+			// collections) is driven by the core Interactivity router,
+			// whose own history handling must not be second-guessed.
+			! document.querySelector( '[data-wp-router-region]' )
 		);
 	}
 
@@ -1282,6 +1432,15 @@
 		if ( link.closest( '#wpadminbar' ) ) {
 			return false;
 		}
+		// Links the core Interactivity API drives itself (enhanced query
+		// pagination, WooCommerce actions) already have a client-side owner.
+		if (
+			link.hasAttribute( 'data-wp-on--click' ) ||
+			link.hasAttribute( 'data-wp-on-async--click' ) ||
+			link.closest( '[data-wp-router-region]' )
+		) {
+			return false;
+		}
 		var href = link.getAttribute( 'href' );
 		if (
 			! href ||
@@ -1310,43 +1469,295 @@
 		);
 	}
 
-	function navScriptLoaded( src ) {
-		var scripts = document.getElementsByTagName( 'script' );
-		for ( var index = 0; index < scripts.length; index += 1 ) {
-			if ( scripts[ index ].src === src ) {
+	/* Safety contract for the body swap.
+	 *
+	 * WordPress hydrates `data-wp-interactive` regions exactly once, on
+	 * DOMContentLoaded. A region arriving through a swap would therefore be
+	 * inert: a hamburger that never opens, a lightbox that never expands.
+	 * The site header is the one such region every route shares, so its
+	 * live, already-hydrated node is carried across navigations instead of
+	 * being replaced (only its current-item markers are refreshed). Any
+	 * other interactive region on the incoming page makes the router hand
+	 * the click back to the browser — a native load, after which the player
+	 * restores itself from sessionStorage. */
+
+	var NAV_CURRENT_CLASSES = [
+		'current-menu-item',
+		'current-menu-ancestor',
+		'current-menu-parent',
+	];
+	var NAV_ITEM_SELECTOR =
+		'.wp-block-navigation-item, .wp-block-pages-list__item';
+
+	function navChrome( doc ) {
+		var header = doc.querySelector( '.mw-site-header' );
+		if ( ! header ) {
+			return null;
+		}
+		return header.closest( '.wp-block-template-part' ) || header;
+	}
+
+	// Two headers are the same chrome when their menus list the same
+	// items. Labels rather than hrefs: login/redirect style links change
+	// per page, and hrefs are re-synced after the swap anyway.
+	function navChromeSignature( root ) {
+		var header = root.querySelector( '.mw-site-header' ) || root;
+		var items = root.querySelectorAll( NAV_ITEM_SELECTOR );
+		var labels = [ root.className, header.className ];
+		for ( var index = 0; index < items.length; index += 1 ) {
+			labels.push( ( items[ index ].textContent || '' ).trim() );
+		}
+		return labels.join( '|' );
+	}
+
+	function navCanCarryChrome( live, fresh ) {
+		return Boolean(
+			live &&
+				fresh &&
+				navChromeSignature( live ) === navChromeSignature( fresh )
+		);
+	}
+
+	function navHydrationSafe( fresh, replacedChrome ) {
+		var regions = fresh.querySelectorAll( '[data-wp-interactive]' );
+		for ( var index = 0; index < regions.length; index += 1 ) {
+			if (
+				! replacedChrome ||
+				! replacedChrome.contains( regions[ index ] )
+			) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	// The carried header still describes the previous route: mirror the
+	// hrefs (login redirects and the like) and the current-item markers that
+	// WordPress rendered for the new one. Only attributes outside the
+	// Interactivity bindings are touched, so the hydrated state stays valid.
+	function navSyncChromeState( live, fresh ) {
+		var liveLinks = live.querySelectorAll( 'a[href]' );
+		var freshLinks = fresh.querySelectorAll( 'a[href]' );
+		if ( liveLinks.length === freshLinks.length ) {
+			for ( var index = 0; index < liveLinks.length; index += 1 ) {
+				liveLinks[ index ].setAttribute(
+					'href',
+					freshLinks[ index ].getAttribute( 'href' )
+				);
+				if ( freshLinks[ index ].hasAttribute( 'aria-current' ) ) {
+					liveLinks[ index ].setAttribute(
+						'aria-current',
+						freshLinks[ index ].getAttribute( 'aria-current' )
+					);
+				} else {
+					liveLinks[ index ].removeAttribute( 'aria-current' );
+				}
+			}
+		}
+		var liveItems = live.querySelectorAll( NAV_ITEM_SELECTOR );
+		var freshItems = fresh.querySelectorAll( NAV_ITEM_SELECTOR );
+		if ( liveItems.length !== freshItems.length ) {
+			return;
+		}
+		for ( var item = 0; item < liveItems.length; item += 1 ) {
+			for ( var name = 0; name < NAV_CURRENT_CLASSES.length; name += 1 ) {
+				liveItems[ item ].classList.toggle(
+					NAV_CURRENT_CLASSES[ name ],
+					freshItems[ item ].classList.contains(
+						NAV_CURRENT_CLASSES[ name ]
+					)
+				);
+			}
+		}
+	}
+
+	// Links inside the open mobile overlay are the main soft-navigation
+	// path, and the overlay must end up closed the way a full load would
+	// have closed it. Going through the hydrated close button keeps the
+	// block's own state (aria-expanded, focus return, html.has-modal-open)
+	// consistent; toggling classes by hand would desynchronize it.
+	function navCloseOverlay( root ) {
+		var open = root.querySelector(
+			'.wp-block-navigation__responsive-container.is-menu-open'
+		);
+		var close = open
+			? open.querySelector(
+					'.wp-block-navigation__responsive-container-close'
+			  )
+			: null;
+		if ( close ) {
+			close.click();
+		}
+	}
+
+	function navCopyAttributes( source, target ) {
+		for ( var index = 0; index < source.attributes.length; index += 1 ) {
+			target.setAttribute(
+				source.attributes[ index ].name,
+				source.attributes[ index ].value
+			);
+		}
+	}
+
+	function navHasStylesheet( href ) {
+		var links = document.head.querySelectorAll( 'link[rel="stylesheet"]' );
+		for ( var index = 0; index < links.length; index += 1 ) {
+			if ( links[ index ].getAttribute( 'href' ) === href ) {
 				return true;
 			}
 		}
 		return false;
 	}
 
-	function navActivateScripts( root ) {
-		root.querySelectorAll( 'script' ).forEach( function ( existing ) {
-			if ( existing.src && navScriptLoaded( existing.src ) ) {
-				if ( existing.parentNode ) {
-					existing.parentNode.removeChild( existing );
+	function navHasInlineStyle( css ) {
+		var styles = document.head.getElementsByTagName( 'style' );
+		for ( var index = 0; index < styles.length; index += 1 ) {
+			if ( ! styles[ index ].id && styles[ index ].textContent === css ) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	var NAV_STYLE_TIMEOUT = 2000;
+
+	// Block themes print per-block and per-layout CSS in <head> for exactly
+	// the blocks a route renders, so a swapped-in page can reference rules
+	// the first page never loaded. New stylesheets are appended (never
+	// removed: the carried header still needs its own rules) and inline
+	// blocks are merged by id, de-duplicated by content. Resolves once new
+	// files have loaded, so the swap never paints unstyled.
+	function navMergeStyles( fresh ) {
+		var pending = [];
+		// Block styles rendered late in the page are printed in <body>;
+		// hoisting them next to the head styles lets the swap wait for
+		// them as well instead of painting the new page unstyled.
+		Array.prototype.forEach.call(
+			fresh.body.querySelectorAll( 'link[rel="stylesheet"][href]' ),
+			function ( late ) {
+				fresh.head.appendChild( late );
+			}
+		);
+		var nodes = fresh.head.querySelectorAll(
+			'link[rel="stylesheet"][href], style'
+		);
+		Array.prototype.forEach.call( nodes, function ( node ) {
+			if ( 'LINK' === node.tagName ) {
+				var href = node.getAttribute( 'href' );
+				if ( navHasStylesheet( href ) ) {
+					return;
+				}
+				var link = document.createElement( 'link' );
+				navCopyAttributes( node, link );
+				pending.push(
+					new Promise( function ( resolve ) {
+						link.addEventListener( 'load', resolve );
+						link.addEventListener( 'error', resolve );
+						window.setTimeout( resolve, NAV_STYLE_TIMEOUT );
+					} )
+				);
+				document.head.appendChild( link );
+				return;
+			}
+			var css = node.textContent || '';
+			if ( ! css.trim() ) {
+				return;
+			}
+			var current = node.id ? document.getElementById( node.id ) : null;
+			if ( current && 'STYLE' === current.tagName ) {
+				if ( current.textContent.indexOf( css ) === -1 ) {
+					current.appendChild(
+						document.createTextNode( '\n' + css )
+					);
 				}
 				return;
 			}
-			var replacement = document.createElement( 'script' );
-			var attributes = existing.attributes;
-			for ( var index = 0; index < attributes.length; index += 1 ) {
-				replacement.setAttribute(
-					attributes[ index ].name,
-					attributes[ index ].value
-				);
+			if ( ! node.id && navHasInlineStyle( css ) ) {
+				return;
 			}
-			replacement.textContent = existing.textContent;
-			if ( existing.parentNode ) {
-				existing.parentNode.replaceChild( replacement, existing );
-			}
+			var style = document.createElement( 'style' );
+			navCopyAttributes( node, style );
+			style.textContent = css;
+			document.head.appendChild( style );
 		} );
+		return Promise.all( pending );
+	}
+
+	var NAV_SCRIPT_TIMEOUT = 10000;
+
+	function navIsExecutable( script ) {
+		var type = ( script.getAttribute( 'type' ) || '' ).trim().toLowerCase();
+		return (
+			'' === type ||
+			'text/javascript' === type ||
+			'application/javascript' === type ||
+			'module' === type
+		);
+	}
+
+	// Snapshot of the files already executing in this document. Taken
+	// before the swap: afterwards the fresh, inert script nodes are part of
+	// the document too and would match themselves.
+	function navLoadedScripts() {
+		var loaded = {};
+		var scripts = document.getElementsByTagName( 'script' );
+		for ( var index = 0; index < scripts.length; index += 1 ) {
+			if ( scripts[ index ].src ) {
+				loaded[ scripts[ index ].src ] = true;
+			}
+		}
+		return loaded;
+	}
+
+	// Scripts parsed out of a fetched document never execute, so each one is
+	// re-created in place. External files load in document order (async is
+	// off) and the chain waits for each before running the next, which keeps
+	// WordPress dependency order — `wp-api-fetch` before the modules using
+	// it, localized data before its consumer — exactly as on a full load.
+	function navRunScripts( scripts, loaded ) {
+		return scripts.reduce( function ( chain, existing ) {
+			return chain.then( function () {
+				if (
+					! document.body.contains( existing ) ||
+					! navIsExecutable( existing )
+				) {
+					return undefined;
+				}
+				if ( existing.src && loaded[ existing.src ] ) {
+					existing.parentNode.removeChild( existing );
+					return undefined;
+				}
+				var replacement = document.createElement( 'script' );
+				navCopyAttributes( existing, replacement );
+				if ( ! existing.src ) {
+					replacement.textContent = existing.textContent;
+					existing.parentNode.replaceChild( replacement, existing );
+					return undefined;
+				}
+				loaded[ existing.src ] = true;
+				replacement.async = false;
+				return new Promise( function ( resolve ) {
+					replacement.addEventListener( 'load', resolve );
+					replacement.addEventListener( 'error', resolve );
+					window.setTimeout( resolve, NAV_SCRIPT_TIMEOUT );
+					existing.parentNode.replaceChild( replacement, existing );
+				} );
+			} );
+		}, Promise.resolve() );
 	}
 
 	function navUpdateHead( fresh ) {
 		if ( fresh.title ) {
 			document.title = fresh.title;
 		}
+		// Language, direction, and the theme's colour-scheme hint live on
+		// <html>, which the swap never replaces.
+		[ 'lang', 'dir', 'data-mw-scheme' ].forEach( function ( name ) {
+			var value = fresh.documentElement.getAttribute( name );
+			if ( value ) {
+				document.documentElement.setAttribute( name, value );
+			}
+		} );
 		var pairs = [
 			[ 'link[rel="canonical"]', 'href' ],
 			[ 'meta[name="description"]', 'content' ],
@@ -1363,8 +1774,12 @@
 		} );
 	}
 
+	var navSequence = 0;
+
 	function navRenderPage( fresh, url, scrollY ) {
 		navSwapped = true;
+		navSequence += 1;
+		var sequence = navSequence;
 		var playerNode = document.querySelector( selector );
 		// The incoming page ships its own hidden player markup; drop it so the
 		// live instance (and its playing audio) stays the single source.
@@ -1379,27 +1794,55 @@
 		if ( freshAdminBar && freshAdminBar.parentNode ) {
 			freshAdminBar.parentNode.removeChild( freshAdminBar );
 		}
+		var loaded = navLoadedScripts();
+		var scripts = Array.prototype.slice.call(
+			fresh.body.querySelectorAll( 'script' )
+		);
+		var liveChrome = navChrome( document );
+		var freshChrome = navChrome( fresh );
+		var carry = navCanCarryChrome( liveChrome, freshChrome );
+		var slot = null;
+		if ( carry ) {
+			navSyncChromeState( liveChrome, freshChrome );
+			// The live header takes the fresh header's place after the
+			// swap; a placeholder marks the position so the node itself
+			// never has to be adopted into the parsed document.
+			slot = fresh.createElement( 'div' );
+			freshChrome.parentNode.replaceChild( slot, freshChrome );
+		}
 		navUpdateHead( fresh );
 		var children = Array.prototype.slice.call( fresh.body.children );
 		document.body.replaceChildren.apply( document.body, children );
 		document.body.className = fresh.body.className;
+		if ( slot ) {
+			slot.parentNode.replaceChild( liveChrome, slot );
+			navCloseOverlay( liveChrome );
+		}
 		if ( adminBar ) {
 			document.body.appendChild( adminBar );
 		}
 		if ( playerNode ) {
 			document.body.appendChild( playerNode );
 		}
-		navActivateScripts( document.body );
 		window.scrollTo( 0, scrollY || 0 );
 		navAnnounceRoute();
-		document.dispatchEvent(
-			new window.CustomEvent( 'mw-page-rendered', {
-				detail: { url },
-			} )
-		);
 		if ( playerController && playerController.sync ) {
 			playerController.sync();
 		}
+		// Re-entrant enhancers (sliders, dashboard, suggest) hear about the
+		// page only once its scripts — including ones loading for the first
+		// time — are in place; otherwise a freshly loaded module would miss
+		// both DOMContentLoaded and this event.
+		navRunScripts( scripts, loaded ).then( function () {
+			if ( sequence !== navSequence ) {
+				return;
+			}
+			document.dispatchEvent(
+				new window.CustomEvent( 'mw-page-rendered', {
+					detail: { url },
+				} )
+			);
+		} );
 	}
 
 	// Screen readers must hear soft navigations: announce the new title and
@@ -1424,6 +1867,17 @@
 			main.setAttribute( 'tabindex', '-1' );
 			main.focus( { preventScroll: true } );
 		}
+	}
+
+	// History entries the router creates carry the Interactivity API's
+	// session id: without it core treats them as foreign on popstate and
+	// forces a reload instead of letting the soft restore run.
+	function navRouteState( scrollY ) {
+		var state = { mwNav: true, mwScrollY: scrollY };
+		if ( history.state && history.state.wpInteractivityId ) {
+			state.wpInteractivityId = history.state.wpInteractivityId;
+		}
+		return state;
 	}
 
 	var navAbort = null;
@@ -1473,7 +1927,7 @@
 			} )
 			.then( function ( html ) {
 				if ( controller !== navAbort ) {
-					return;
+					return undefined;
 				}
 				var fresh = new window.DOMParser().parseFromString(
 					html,
@@ -1482,18 +1936,34 @@
 				if ( ! fresh.body || ! fresh.body.children.length ) {
 					fallback();
 
-					return;
+					return undefined;
 				}
-				try {
-					navRenderPage( fresh, url, push ? 0 : scrollY );
-				} catch ( error ) {
+				var freshChrome = navChrome( fresh );
+				var carry = navCanCarryChrome(
+					navChrome( document ),
+					freshChrome
+				);
+				if ( ! navHydrationSafe( fresh, carry ? freshChrome : null ) ) {
 					fallback();
 
-					return;
+					return undefined;
 				}
-				if ( push ) {
-					history.pushState( { mwNav: true }, '', url );
-				}
+
+				return navMergeStyles( fresh ).then( function () {
+					if ( controller !== navAbort ) {
+						return;
+					}
+					try {
+						navRenderPage( fresh, url, push ? 0 : scrollY );
+					} catch ( error ) {
+						fallback();
+
+						return;
+					}
+					if ( push ) {
+						history.pushState( navRouteState( 0 ), '', url );
+					}
+				} );
 			} )
 			.catch( function ( error ) {
 				if ( error && 'AbortError' === error.name ) {

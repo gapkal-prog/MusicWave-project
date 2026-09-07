@@ -116,7 +116,7 @@ final class IndexReconciler {
 	private function purge_stale_indexes( array $product_index, array $collection_index ): int {
 		global $wpdb;
 
-		if ( ! isset( $wpdb ) || ! is_object( $wpdb ) || ! method_exists( $wpdb, 'get_col' ) ) {
+		if ( ! $wpdb instanceof \wpdb ) {
 			return 0;
 		}
 

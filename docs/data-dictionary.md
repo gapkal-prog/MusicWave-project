@@ -1,12 +1,45 @@
 # MusicWave data dictionary
 
-Schema version: `0.8.0`
+Schema version: `0.11.0`
 
 ## Post type
 
 | Key | Purpose | REST | Public |
 |---|---|---:|---:|
 | `mw_release` | Canonical track, single, EP, album, mix, playlist, or podcast release | Yes | Yes |
+
+### Permalinks (Core 0.12.0)
+
+Single release URLs follow the primary `mw_release_type` term (ancestors are
+consulted for child terms). The post type's own `/music/%mw_release%`
+permastruct stays registered as the fallback and as the archive base
+(`/music/`); every mapped base registers its own permastruct, so pagination,
+comment pages, feeds, embeds and rewrite endpoints work under all of them.
+Stale bases (for example an old `/music/<slug>/` link, or an album whose type
+changed) are redirected with a permanent redirect to the canonical URL by
+`ReleasePermalinks`, preserving sub-routes and query strings; feeds, embeds,
+previews and non-GET requests are left alone.
+
+| Release type | URL base |
+|---|---|
+| `album` | `/album/<slug>/` |
+| `ep` | `/ep/<slug>/` |
+| `mix` | `/mix/<slug>/` |
+| `playlist` | `/playlist/<slug>/` |
+| `single`, `track` | `/track/<slug>/` |
+| `podcast_show` | `/podcast/<slug>/` |
+| `podcast_episode` | `/episode/<slug>/` |
+| no mapped type | `/music/<slug>/` |
+
+When a release carries several mapped types the first match in the order
+above wins (collections beat their tracks). Sites can adjust the map through
+the `music_wave_release_permalink_bases` filter; bases are sanitized to
+lowercase slugs and invalid entries are dropped. `ReleasePermalinks` stores a
+fingerprint of the active map in the `music_wave_release_permalink_rules`
+option and soft-flushes the rewrite rules on `wp_loaded` whenever the
+fingerprint changes, so existing installs (and sites that change the map
+through the filter) pick the new structures up on the next request without a
+manual permalink re-save. No database schema change is involved.
 
 ## Taxonomies
 
@@ -75,6 +108,49 @@ meta. See `docs/user-data-and-playlists.md` for the rules and REST surface.
 | `{prefix}mw_playlists` | 0.11.0 | User playlists (title, visibility, share token) | unique `share_token`, `user+updated_at` |
 | `{prefix}mw_playlist_items` | 0.11.0 | Ordered playlist entries | unique `playlist+release`, `playlist+position`, `release_id` |
 
+## Song requests (Core 0.13.0)
+
+Custom-song requests and collaboration proposals are a **private post type**
+`mw_request` (no public query, REST, rewrite, search, or standard edit UI).
+The lifecycle is the post status; everything else is post meta. No table is
+added, so the schema version stays `0.11.0`.
+
+| Status | Meaning |
+|---|---|
+| `mw_req_new` | Just submitted; counted in the menu badge |
+| `mw_req_review` | A manager is working on it |
+| `mw_req_replied` | A reply was emailed (set automatically by the first reply) |
+| `mw_req_accepted` | Collaboration accepted |
+| `mw_req_declined` | Declined |
+| `mw_req_archived` | Kept out of the inbox without deleting |
+
+| Key | Type | Purpose |
+|---|---|---|
+| `post_title` | string | Request subject |
+| `mw_request_name` / `mw_request_email` / `mw_request_phone` | string | Requester contact (email lower-cased; phone digits folded to ASCII) |
+| `mw_request_role` | key | `singer`, `producer`, `band`, `advertiser`, `business`, `fan`, `other` |
+| `mw_request_type` | key | `song`, `collab`, `advertising`, `event`, `other` |
+| `mw_request_message` | text | Free-text brief (20–4000 characters) |
+| `mw_request_budget` | key | `''`, `starter`, `standard`, `premium`, `enterprise` |
+| `mw_request_deadline` | `Y-m-d` | Requested date, never in the past at submission |
+| `mw_request_links` | array | ≤5 validated http(s) URLs |
+| `mw_request_priority` | key | `normal` or `high` (manager flag) |
+| `mw_request_source` | key | `form` (public) or `manual` (entered by a manager) |
+| `mw_request_user_id` | int | Logged-in submitter, `0` for guests |
+| `mw_request_reference` | string | Human reference `MW-YYYY-000123` |
+| `mw_request_log` | array | ≤200 entries `{kind: reply|note|event, body, actor, time, sent?}` |
+| `mw_request_token` | string | Unguessable per-request secret for requester-facing links |
+| `mw_request_consent_at` | int | Unix time the requester consented to storage |
+
+Option `music_wave_requests` (autoloaded, Settings API group `music_wave_requests`):
+`form_enabled`, `send_receipts` (`enabled|disabled`), `recipients` (validated, ≤10),
+`reply_to`, `receipt_intro`, `signature`, `success_notice` (≤1000 chars each),
+`rate_limit` (1–100, default 3), `rate_window` (60–86400 s, default 3600),
+`enabled_types` (subset of the type keys). Transients `mw_request_form_<token>` hold
+validation errors and values for one redirect round-trip (10 minutes); rate buckets use
+the discovery limiter under `requests`. The privacy exporter/eraser covers every request
+that matches the requester email.
+
 ## Invariants
 
 - Product IDs must refer to existing `product` posts.
@@ -92,6 +168,7 @@ meta. See `docs/user-data-and-playlists.md` for the rules and REST surface.
 - Deleting a release removes it from every personal library, wishlist, pre-save, and playlist without leaving orphaned rows or gaps in playlist positions.
 - Playlist share tokens are capabilities: minted per share, rotated on re-share, never returned to a non-owner, and never resolvable for a private playlist.
 - Non-owner playlist views contain published releases only.
+- Requests are never public: `mw_request` posts are excluded from search, REST, feeds and the front end; the only readers are the manager screen (capability `manage_mw_requests`) and the privacy tools.
 
 ## Relationship invariants
 
