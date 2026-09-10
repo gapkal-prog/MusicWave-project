@@ -1,0 +1,62 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/theme.json",
+  "version": 3,
+  "title": "WAVE Editorial",
+  "settings": {
+    "custom": {
+      "scheme": {
+        "light": { "canvas": "#f5f6f9", "surface": "#ffffff", "surfaceRaised": "#eceef3", "text": "#0e0f12", "muted": "#5c6272", "accent": "#e02055", "accentStrong": "#c4184a", "editorial": "#6c5ce7", "onAccent": "#ffffff" },
+        "dark": { "canvas": "#0e0f12", "surface": "#16181d", "surfaceRaised": "#1f222a", "text": "#f4f5f7", "muted": "#9ba1b0", "accent": "#fa2d65", "accentStrong": "#e02055", "editorial": "#6c5ce7", "onAccent": "#ffffff" }
+      },
+      "wave": {
+        "premium": "#e5b868",
+        "onPremium": "#1a1404",
+        "accentAlt": "#6c5ce7"
+      }
+    },
+    "color": {
+      "palette": [
+        { "slug": "canvas", "name": "Canvas", "color": "#0e0f12" },
+        { "slug": "surface", "name": "Surface", "color": "#16181d" },
+        { "slug": "surface-raised", "name": "Raised surface", "color": "#1f222a" },
+        { "slug": "text", "name": "Text", "color": "#f4f5f7" },
+        { "slug": "muted", "name": "Muted text", "color": "#9ba1b0" },
+        { "slug": "accent", "name": "Accent", "color": "#fa2d65" },
+        { "slug": "accent-strong", "name": "Accent strong", "color": "#e02055" },
+        { "slug": "editorial", "name": "Editorial violet", "color": "#6c5ce7" },
+        { "slug": "on-accent", "name": "On accent", "color": "#ffffff" }
+      ],
+      "gradients": [
+        { "slug": "accent-wash", "name": "Accent wash", "gradient": "radial-gradient(circle at 18% 16%, rgba(250,45,101,0.32), transparent 56%), radial-gradient(circle at 85% 80%, rgba(108,92,231,0.22), transparent 55%), linear-gradient(180deg, #16181d, #0e0f12)" },
+        { "slug": "accent-button", "name": "Accent button", "gradient": "linear-gradient(135deg, #fa2d65, #e02055)" },
+        { "slug": "editorial-rose", "name": "Crimson to violet", "gradient": "linear-gradient(135deg, #fa2d65, #6c5ce7)" },
+        { "slug": "premium-gold", "name": "Premium gold", "gradient": "linear-gradient(135deg, #f1d19a, #e5b868 60%, #c9962f)" }
+      ]
+    },
+    "shadow": {
+      "presets": [
+        { "slug": "card", "name": "Card", "shadow": "0 18px 50px rgb(0 0 0 / 32%)" },
+        { "slug": "floating", "name": "Floating", "shadow": "0 24px 70px rgb(0 0 0 / 48%)" }
+      ]
+    }
+  },
+  "styles": {
+    "color": {
+      "background": "var:preset|color|canvas",
+      "text": "var:preset|color|text"
+    },
+    "typography": {
+      "fontFamily": "var:preset|font-family|system"
+    },
+    "elements": {
+      "button": {
+        "border": { "radius": "999px" },
+        "color": { "background": "var:preset|color|accent", "text": "var:preset|color|on-accent" },
+        "typography": { "fontWeight": "700" },
+        ":hover": { "color": { "background": "var:preset|color|accent-strong", "text": "var:preset|color|on-accent" } }
+      },
+      "heading": { "typography": { "fontFamily": "var:preset|font-family|system", "fontWeight": "800", "lineHeight": "1.08", "letterSpacing": "-0.03em" } },
+      "link": { "color": { "text": "var:preset|color|text" } }
+    }
+  }
+}

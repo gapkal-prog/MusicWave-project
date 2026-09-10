@@ -63,6 +63,10 @@
       "type": "string",
       "default": "grid"
     },
+    "cardStyle": {
+      "type": "string",
+      "default": "classic"
+    },
     "imageShape": {
       "type": "string",
       "default": "circle"

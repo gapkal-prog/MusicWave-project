@@ -92,6 +92,7 @@ final class ArtistShelfBlock {
 		if ( 'grid' === $options['layout'] ) {
 			$shelf_class .= ' mw-release-shelf--columns-' . $options['columns'];
 		}
+		$shelf_class .= ' mw-artists-shelf--cards-' . $options['card_style'];
 
 		return '<section '
 			. BlockSupport::wrapper_attributes( $shelf_class )
@@ -110,6 +111,11 @@ final class ArtistShelfBlock {
 	private function resolve_options( array $attributes ): array {
 		$layout = isset( $attributes['layout'] ) ? sanitize_key( (string) $attributes['layout'] ) : 'grid';
 		$layout = in_array( $layout, array( 'grid', 'scroll', 'list' ), true ) ? $layout : 'grid';
+
+		// `wave` is the reference "Featured Artists" tile: centered avatar
+		// with an accent ring on hover, name, count and an outline Follow pill.
+		$card_style = isset( $attributes['cardStyle'] ) ? sanitize_key( (string) $attributes['cardStyle'] ) : 'classic';
+		$card_style = in_array( $card_style, array( 'classic', 'wave' ), true ) ? $card_style : 'classic';
 
 		$image_shape = isset( $attributes['imageShape'] ) ? sanitize_key( (string) $attributes['imageShape'] ) : 'circle';
 		$image_shape = in_array( $image_shape, array( 'circle', 'rounded', 'square' ), true ) ? $image_shape : 'circle';
@@ -137,6 +143,7 @@ final class ArtistShelfBlock {
 
 		return array(
 			'layout'        => $layout,
+			'card_style'    => $card_style,
 			'image_shape'   => $image_shape,
 			'image_size'    => $image_size,
 			'items'         => $items,
@@ -374,7 +381,7 @@ final class ArtistShelfBlock {
 				LibraryRepository::TYPE_ARTIST,
 				(int) $term->term_id,
 				array(
-					'style'   => 'ghost',
+					'style'   => 'wave' === $options['card_style'] ? 'outline' : 'ghost',
 					'compact' => true,
 				)
 			);

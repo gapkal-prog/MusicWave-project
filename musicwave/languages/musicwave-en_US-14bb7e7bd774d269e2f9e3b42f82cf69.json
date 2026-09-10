@@ -1045,6 +1045,51 @@
             ],
             "همکاری": [
                 "Collaboration"
+            ],
+            "%s پخش": [
+                "%s plays"
+            ],
+            "WAVE (کاشی سرمقاله)": [
+                "WAVE (editorial tile)"
+            ],
+            "جدول برترین‌ها (چارت)": [
+                "Top chart (table)"
+            ],
+            "زمان": [
+                "Time"
+            ],
+            "سبک WAVE کارت‌ها را روی سطح پدینگ‌دار با نشان کیفیت و خط متا نمایش می‌دهد.": [
+                "The WAVE style renders cards on a padded surface with a quality badge and a meta line."
+            ],
+            "سبک هیرو": [
+                "Hero style"
+            ],
+            "سبک کارت": [
+                "Card style"
+            ],
+            "سرمقاله (کارت + وینیل)": [
+                "Editorial (card + vinyl)"
+            ],
+            "سینمایی (تمام‌عرض)": [
+                "Cinematic (full-bleed)"
+            ],
+            "منتخب سرمقاله": [
+                "Editor's pick"
+            ],
+            "نمایش خط متا (نوع · سال)": [
+                "Show meta line (type · year)"
+            ],
+            "نمایش نشان کیفیت (Hi-Res/FLAC)": [
+                "Show quality badge (Hi-Res/FLAC)"
+            ],
+            "هیرو کارتی (WAVE)": [
+                "Card hero (WAVE)"
+            ],
+            "هیرو کارتی با وینیل (WAVE)": [
+                "Card hero with vinyl (WAVE)"
+            ],
+            "کلاسیک": [
+                "Classic"
             ]
         }
     }

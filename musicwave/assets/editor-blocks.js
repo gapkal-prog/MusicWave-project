@@ -423,11 +423,59 @@
 							label: __( 'اسلایدر هیرو', 'musicwave' ),
 							value: 'slider',
 						},
+						{
+							label: __( 'جدول برترین‌ها (چارت)', 'musicwave' ),
+							value: 'chart',
+						},
 					],
 					onChange( value ) {
 						update( 'layout', value );
 					},
 				} ),
+				[ 'grid', 'scroll', 'list' ].includes(
+					props.attributes.layout || 'grid'
+				)
+					? createElement( components.SelectControl, {
+							label: __( 'سبک کارت', 'musicwave' ),
+							help: __(
+								'سبک WAVE کارت‌ها را روی سطح پدینگ‌دار با نشان کیفیت و خط متا نمایش می‌دهد.',
+								'musicwave'
+							),
+							value: props.attributes.cardStyle || 'classic',
+							options: [
+								{
+									label: __( 'کلاسیک', 'musicwave' ),
+									value: 'classic',
+								},
+								{
+									label: __( 'WAVE (کاشی سرمقاله)', 'musicwave' ),
+									value: 'wave',
+								},
+							],
+							onChange( value ) {
+								update( 'cardStyle', value );
+							},
+					  } )
+					: null,
+				'slider' === ( props.attributes.layout || 'grid' )
+					? createElement( components.SelectControl, {
+							label: __( 'سبک هیرو', 'musicwave' ),
+							value: props.attributes.heroStyle || 'cinematic',
+							options: [
+								{
+									label: __( 'سینمایی (تمام‌عرض)', 'musicwave' ),
+									value: 'cinematic',
+								},
+								{
+									label: __( 'سرمقاله (کارت + وینیل)', 'musicwave' ),
+									value: 'editorial',
+								},
+							],
+							onChange( value ) {
+								update( 'heroStyle', value );
+							},
+					  } )
+					: null,
 				createElement( components.RangeControl, {
 					label: __( 'ستون‌های دسکتاپ', 'musicwave' ),
 					value: props.attributes.columns || 4,
@@ -465,6 +513,8 @@
 				toggle( 'showDate', __( 'نمایش تاریخ', 'musicwave' ) ),
 				toggle( 'showExcerpt', __( 'نمایش چکیده', 'musicwave' ) ),
 				toggle( 'showAction', __( 'نمایش پیوند اقدام', 'musicwave' ) ),
+				toggle( 'showBadge', __( 'نمایش نشان کیفیت (Hi-Res/FLAC)', 'musicwave' ) ),
+				toggle( 'showMeta', __( 'نمایش خط متا (نوع · سال)', 'musicwave' ) ),
 				createElement( components.TextControl, {
 					label: __( 'برچسب اقدام', 'musicwave' ),
 					value: props.attributes.actionLabel || '',

@@ -969,6 +969,28 @@ function wp_set_object_terms( int $post_id, array $term_ids, string $taxonomy, b
 	return $GLOBALS['mw_test_object_terms'][ $post_id ][ $taxonomy ];
 }
 
+function get_taxonomy( string $taxonomy ) {
+	$labels = array(
+		'mw_genre'  => 'Genre',
+		'mw_mood'   => 'Mood',
+		'mw_label'  => 'Label',
+		'mw_artist' => 'Artist',
+	);
+	if ( ! isset( $labels[ $taxonomy ] ) ) {
+		return false;
+	}
+
+	return (object) array(
+		'name'   => $taxonomy,
+		'labels' => (object) array( 'singular_name' => $labels[ $taxonomy ] ),
+	);
+}
+
+function get_the_date( string $format = '', int $post_id = 0 ) {
+	unset( $format, $post_id );
+	return '2025';
+}
+
 function get_term_meta( int $term_id, string $key, bool $single = false ) {
 	unset( $single );
 	return isset( $GLOBALS['mw_test_term_meta'][ $term_id ][ $key ] ) ? $GLOBALS['mw_test_term_meta'][ $term_id ][ $key ] : '';
@@ -2829,6 +2851,12 @@ $shelf_markup                    = $artists_shelf->render(
 );
 $GLOBALS['mw_test_current_user'] = 0;
 mw_assert_same( true, false !== strpos( $shelf_markup, 'mw-artists-shelf mw-release-shelf mw-release-shelf--grid mw-release-shelf--columns-4' ), 'The artists shelf must reuse the shared release-shelf chrome with grid columns.' );
+mw_assert_same( true, false !== strpos( $shelf_markup, 'mw-artists-shelf--cards-classic' ), 'The artists shelf defaults to the classic card style.' );
+$GLOBALS['mw_test_current_user'] = 9;
+$shelf_wave_markup               = $artists_shelf->render( array( 'source' => 'all', 'cardStyle' => 'wave' ) );
+$GLOBALS['mw_test_current_user'] = 0;
+mw_assert_same( true, false !== strpos( $shelf_wave_markup, 'mw-artists-shelf--cards-wave' ), 'The WAVE artist card style must reach the shelf wrapper.' );
+mw_assert_same( true, false !== strpos( $shelf_wave_markup, 'mw-library-button--outline' ), 'WAVE artist cards switch the follow button to the outline pill.' );
 mw_assert_same( true, false !== strpos( $shelf_markup, '>Popular artists</h2>' ), 'The artists shelf must render its heading chrome.' );
 foreach ( array( 'Aria', 'Bo', 'Caius' ) as $shelf_name ) {
 	mw_assert_same( true, false !== strpos( $shelf_markup, '>' . $shelf_name . '</a>' ), 'The artists shelf must render the artist name ' . $shelf_name . '.' );
@@ -2885,6 +2913,17 @@ mw_assert_same( true, false !== strpos( $plain_terms, '>Calm</span>' ), 'The tax
 mw_assert_same( true, false !== strpos( $plain_terms, 'mw-terms-shelf__tile--style-plain' ), 'The plain tile style must reach the markup.' );
 mw_assert_same( false, false !== strpos( $plain_terms, '>Rock</span>' ), 'Genre terms must never leak into mood shelves.' );
 mw_assert_same( false, false !== strpos( $plain_terms, 'mw-terms-shelf__count' ), 'Disabling counts must remove them from tiles.' );
+
+// WAVE mood tile: backdrop-ready tall card with taxonomy pill and description.
+$GLOBALS['mw_test_terms'][ $shelf_calm['term_id'] ]->description = 'Warm Rhodes pianos, subtle rainfall, slow jazz.';
+$mood_terms = $taxonomy_shelf->render( array( 'taxonomy' => 'mw_mood', 'cardStyle' => 'mood', 'itemsToShow' => 24 ) );
+mw_assert_same( true, false !== strpos( $mood_terms, 'mw-terms-shelf__tile--style-mood' ), 'The mood tile style must reach the markup.' );
+mw_assert_same( true, false !== strpos( $mood_terms, 'mw-terms-shelf__pill mw-pill">Mood</span>' ), 'Mood tiles must carry the taxonomy pill using the shared pill primitive.' );
+mw_assert_same( true, false !== strpos( $mood_terms, 'mw-terms-shelf__description">Warm Rhodes pianos' ), 'Mood tiles must surface the term description.' );
+mw_assert_same( true, false !== strpos( $mood_terms, 'mw-terms-shelf__scrim' ) && false === strpos( $mood_terms, 'has-backdrop' ), 'Mood tiles without term imagery must fall back to the hue scrim.' );
+mw_assert_same( true, false !== strpos( $mood_terms, 'انتشار 9' ), 'Mood tiles keep the release count when enabled.' );
+$mood_xss = $taxonomy_shelf->render( array( 'taxonomy' => 'mw_mood', 'cardStyle' => 'nope', 'itemsToShow' => 24 ) );
+mw_assert_same( true, false !== strpos( $mood_xss, 'mw-terms-shelf__tile--style-colorful' ), 'Unknown card styles must fall back to the colorful default.' );
 
 $manual_terms = $taxonomy_shelf->render( array( 'taxonomy' => 'mw_genre', 'source' => 'manual', 'termIds' => $shelf_rock['term_id'] . ', ' . $shelf_pop['term_id'], 'layout' => 'list', 'cardStyle' => 'plain' ) );
 mw_assert_same( true, strpos( $manual_terms, '>Rock</span>' ) < strpos( $manual_terms, '>Pop</span>' ), 'Hand-picked taxonomy shelves must preserve editor order.' );
@@ -3063,6 +3102,61 @@ $GLOBALS['mw_test_user_meta'][9][ ManaCore\MusicWave\Core\Listening\ListeningRep
 
 $GLOBALS['mw_test_terms']      = $shelf_terms_backup;
 $GLOBALS['mw_test_term_meta']  = $shelf_term_meta_bak;
+
+// --- WAVE quality badge + wave card surfaces ---
+
+$badge_repository = new TestPolicyRepository();
+$release_badge    = new ManaCore\MusicWave\Core\Blocks\ReleaseBadge( $badge_repository );
+mw_assert_same( array(), $release_badge->badge( 1 ), 'Releases without download variants earn no badge.' );
+
+$badge_repository->values['mw_download_assets'] = array(
+	array( 'key' => 'mp3-320', 'label' => 'MP3 320', 'format' => 'mp3', 'bitrate' => 320 ),
+);
+mw_assert_same( array(), ( new ManaCore\MusicWave\Core\Blocks\ReleaseBadge( $badge_repository ) )->badge( 1 ), 'Lossy-only releases never earn a quality badge.' );
+
+$badge_repository->values['mw_download_assets'] = array(
+	array( 'key' => 'mp3-320', 'label' => 'MP3 320', 'format' => 'mp3', 'bitrate' => 320 ),
+	array( 'key' => 'flac', 'label' => 'FLAC 16/44', 'format' => 'flac', 'bitrate' => 1411 ),
+);
+$flac_badge = ( new ManaCore\MusicWave\Core\Blocks\ReleaseBadge( $badge_repository ) )->badge( 1 );
+mw_assert_same( array( 'label' => 'FLAC', 'tone' => 'accent' ), $flac_badge, 'CD-quality lossless variants earn the accent FLAC badge.' );
+mw_assert_same( '<span class="mw-badge mw-badge--accent mw-release-shelf__badge">FLAC</span>', ManaCore\MusicWave\Core\Blocks\ReleaseBadge::markup( $flac_badge ), 'Badge markup uses the shared .mw-badge primitive.' );
+
+$badge_repository->values['mw_download_assets'] = array(
+	array( 'key' => 'flac-hires', 'label' => 'FLAC 24/96', 'format' => 'flac', 'bitrate' => 4608 ),
+);
+mw_assert_same( array( 'label' => 'Hi-Res', 'tone' => 'premium' ), ( new ManaCore\MusicWave\Core\Blocks\ReleaseBadge( $badge_repository ) )->badge( 1 ), 'High-bitrate lossless variants earn the premium Hi-Res badge.' );
+$badge_repository->values['mw_download_assets'] = array(
+	array( 'key' => 'hi-res-wav', 'label' => 'WAV', 'format' => 'wav', 'bitrate' => 0 ),
+);
+mw_assert_same( 'Hi-Res', ( new ManaCore\MusicWave\Core\Blocks\ReleaseBadge( $badge_repository ) )->badge( 1 )['label'], 'An explicit hi-res variant key qualifies even without a bitrate.' );
+$badge_repository->values['mw_download_assets'] = array(
+	array( 'key' => 'flac', 'label' => 'FLAC', 'format' => 'flac', 'bitrate' => 1411, 'asset_id' => 'local:secret/master.flac' ),
+);
+mw_assert_same( false, strpos( ManaCore\MusicWave\Core\Blocks\ReleaseBadge::markup( ( new ManaCore\MusicWave\Core\Blocks\ReleaseBadge( $badge_repository ) )->badge( 1 ) ), 'secret' ), 'Badge markup must never leak protected asset identifiers.' );
+mw_assert_same( '', ManaCore\MusicWave\Core\Blocks\ReleaseBadge::markup( array() ), 'Empty badges render nothing.' );
+mw_assert_same( 'album · 2025', ManaCore\MusicWave\Core\Blocks\ReleaseBadge::meta_line( 1 ), 'The meta line leads with the release type and appends the year with the reference dot separator.' );
+
+// Wave related cards: badge on the artwork corner + meta line first in the body; classic cards stay untouched.
+$wave_repository = new TestPolicyRepository();
+$wave_repository->values['mw_download_assets'] = array(
+	array( 'key' => 'flac', 'label' => 'FLAC', 'format' => 'flac', 'bitrate' => 1411 ),
+);
+$GLOBALS['mw_test_filters']['music_wave_release_badge'] = array( 'label' => 'FLAC', 'tone' => 'accent' );
+$wave_engine  = new ManaCore\MusicWave\Core\Access\AccessPolicyEngine( $wave_repository, new ManaCore\MusicWave\Core\Commerce\PurchaseChecker( $wave_repository ), new TestMembershipProvider() );
+$wave_blocks  = new ManaCore\MusicWave\Core\Blocks\ReleaseBlocks( $wave_engine, $wave_repository );
+$GLOBALS['mw_test_types'][41]              = 'mw_release';
+$GLOBALS['mw_test_terms_by_tax'][1]['mw_artist'] = array( 77 );
+$wave_related_args = array( 'releaseId' => 1, 'similarSection' => 'disabled', 'sameArtistSection' => 'enabled', 'cardStyle' => 'wave' );
+$wave_related      = $wave_blocks->render_related_releases( $wave_related_args );
+mw_assert_same( true, false !== strpos( $wave_related, 'mw-release-shelf--cards-wave' ), 'The wave card style must reach the related shelf wrapper.' );
+mw_assert_same( true, false !== strpos( $wave_related, 'mw-release-shelf__badge">FLAC</span>' ), 'Wave related cards stamp the quality badge.' );
+mw_assert_same( true, false !== strpos( $wave_related, '<div class="mw-release-shelf__body"><span class="mw-release-shelf__meta">' ), 'Wave related cards open the body with the meta line.' );
+$classic_related = $wave_blocks->render_related_releases( array( 'releaseId' => 1, 'similarSection' => 'disabled', 'sameArtistSection' => 'enabled' ) );
+mw_assert_same( true, false !== strpos( $classic_related, 'mw-release-shelf--cards-classic' ) && false === strpos( $classic_related, 'mw-release-shelf__badge' ) && false === strpos( $classic_related, 'mw-release-shelf__meta' ), 'Classic related cards render exactly as before (no badge, no meta line).' );
+$quiet_related = $wave_blocks->render_related_releases( array_merge( $wave_related_args, array( 'showBadge' => false, 'showMeta' => false ) ) );
+mw_assert_same( true, false === strpos( $quiet_related, 'mw-release-shelf__badge' ) && false === strpos( $quiet_related, 'mw-release-shelf__meta' ), 'Badge and meta toggles hide their elements on wave cards.' );
+unset( $GLOBALS['mw_test_filters']['music_wave_release_badge'], $GLOBALS['mw_test_types'][41], $GLOBALS['mw_test_terms_by_tax'][1] );
 
 // --- Script-aware site search: Persian phrases must find the matching posts ---
 
@@ -3336,7 +3430,7 @@ $_POST = array();
 
 $mw_req_block = new RequestFormBlock( $mw_req_forms, $mw_req_settings );
 $mw_req_html  = $mw_req_block->render( array() );
-mw_assert_same( true, false !== strpos( $mw_req_html, 'class="mw-request-form mw-request-form--split"' ), 'The block renders the split layout by default.' );
+mw_assert_same( true, 1 === preg_match( '/class="mw-request-form mw-request-form--split(?: |")/', $mw_req_html ) && false !== strpos( $mw_req_html, 'mw-request-form--mode-both' ), 'The block renders the split layout and the "both" mode by default.' );
 mw_assert_same( true, false !== strpos( $mw_req_html, 'action="https://example.test/wp-admin/admin-post.php"' ), 'The form posts to admin-post.php for no-JS operation.' );
 mw_assert_same( true, false !== strpos( $mw_req_html, 'name="' . RequestFormHandler::HONEYPOT . '"' ) && false !== strpos( $mw_req_html, 'name="' . RequestFormHandler::TIMER . '"' ), 'The form carries the honeypot and the timing field.' );
 mw_assert_same( true, false !== strpos( $mw_req_html, 'name="consent"' ) && false !== strpos( $mw_req_html, 'name="_wpnonce"' ), 'The form carries consent and a nonce.' );

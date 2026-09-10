@@ -79,6 +79,27 @@
 	width: 100%;
 }
 
+/* WAVE "glow" variant: the reference album-page Play — a solid accent pill
+   with a stronger coloured halo that intensifies on hover. */
+.mw-preview-button--glow {
+	box-shadow:
+		0 0 0 1px color-mix(in srgb, var(--mw-color-accent) 40%, transparent),
+		0 10px 32px color-mix(in srgb, var(--mw-color-accent) 55%, transparent);
+	min-height: 3rem;
+	padding-inline: 1.75rem;
+}
+
+.mw-preview-button--glow:hover,
+.mw-preview-button--glow[aria-pressed="true"] {
+	box-shadow:
+		0 0 0 1px color-mix(in srgb, var(--mw-color-accent) 60%, transparent),
+		0 14px 40px color-mix(in srgb, var(--mw-color-accent) 70%, transparent);
+}
+
+.is-style-glow .mw-card-play {
+	box-shadow: 0 10px 32px color-mix(in srgb, var(--mw-color-accent) 55%, transparent);
+}
+
 /* -------------------------------------------------------------------------
  * Global player bar
  *

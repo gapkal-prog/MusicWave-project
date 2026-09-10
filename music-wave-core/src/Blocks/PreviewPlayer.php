@@ -233,8 +233,8 @@ final class PreviewPlayer {
 		$compact   = ! empty( $attributes['compact'] );
 		$label     = isset( $attributes['label'] ) ? sanitize_text_field( (string) $attributes['label'] ) : '';
 		$style     = isset( $attributes['style'] ) && is_scalar( $attributes['style'] ) ? sanitize_key( (string) $attributes['style'] ) : 'solid';
-		$style     = in_array( $style, array( 'solid', 'outline', 'ghost' ), true ) ? $style : 'solid';
-		$variation = BlockSupport::style_variation( $attributes, array( 'outline', 'ghost' ) );
+		$style     = in_array( $style, array( 'solid', 'outline', 'ghost', 'glow' ), true ) ? $style : 'solid';
+		$variation = BlockSupport::style_variation( $attributes, array( 'outline', 'ghost', 'glow' ) );
 		if ( '' !== $variation ) {
 			$style = $variation;
 		}
@@ -264,7 +264,7 @@ final class PreviewPlayer {
 		$link    = get_permalink( $release_id );
 		$limit   = absint( $this->releases->get( $release_id, 'mw_preview_duration' ) );
 		$limit   = $limit >= 10 && $limit <= 120 ? $limit : 30;
-		$style   = in_array( $style, array( 'solid', 'outline', 'ghost' ), true ) ? $style : 'solid';
+		$style   = in_array( $style, array( 'solid', 'outline', 'ghost', 'glow' ), true ) ? $style : 'solid';
 		$class   = 'mw-preview-button'
 			. ( $compact ? ' mw-preview-button--compact' : '' )
 			. ( 'solid' !== $style ? ' mw-preview-button--' . $style : '' )

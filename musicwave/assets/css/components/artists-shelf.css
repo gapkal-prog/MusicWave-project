@@ -147,3 +147,71 @@
 		transition: none;
 	}
 }
+
+/* ---- WAVE card style (cardStyle: wave) ----
+   Reference "Featured Artists": a padded surface tile that lifts on hover,
+   the round avatar gaining an accent ring, name + count and an outline
+   Follow pill (the button's own outline style; nothing is duplicated). */
+.mw-artists-shelf--cards-wave .mw-artists-shelf__item {
+	background: var(--mw-color-surface, #181818);
+	border: 1px solid transparent;
+	border-radius: var(--mw-radius-md, .75rem);
+	padding: 1.25rem 1rem;
+	transition:
+		background-color var(--mw-speed-normal, 300ms) var(--mw-ease-snap, ease),
+		border-color var(--mw-speed-normal, 300ms) var(--mw-ease-snap, ease),
+		transform var(--mw-speed-normal, 300ms) var(--mw-ease-snap, ease);
+}
+
+.mw-artists-shelf--cards-wave .mw-artists-shelf__item:is(:hover, :focus-within) {
+	background: var(--mw-color-surface-raised, #282828);
+	border-color: var(--mw-color-border-subtle, transparent);
+	transform: translateY(-.2rem);
+}
+
+.mw-artists-shelf--cards-wave .mw-artists-shelf__avatar {
+	box-shadow: 0 0 0 2px var(--mw-color-border-subtle, transparent), 0 .75rem 2rem rgb(0 0 0 / 24%);
+	inline-size: min(100%, 7rem);
+	transition: box-shadow var(--mw-speed-normal, 300ms) ease;
+}
+
+.mw-artists-shelf--cards-wave .mw-artists-shelf__item:is(:hover, :focus-within) .mw-artists-shelf__avatar {
+	box-shadow: 0 0 0 2px var(--mw-color-accent, #fa2d65), 0 .75rem 2rem color-mix(in srgb, var(--mw-color-accent, #fa2d65) 25%, transparent);
+}
+
+.mw-artists-shelf--cards-wave .mw-artists-shelf__body {
+	padding-block-start: .9rem;
+}
+
+.mw-artists-shelf--cards-wave .mw-artists-shelf__name {
+	font-size: .9375rem;
+	font-weight: 700;
+}
+
+.mw-artists-shelf--cards-wave .mw-artists-shelf__count {
+	font-size: .75rem;
+}
+
+.mw-artists-shelf--cards-wave .mw-artists-shelf__follow {
+	margin-block-start: .65rem;
+}
+
+.mw-artists-shelf--cards-wave.mw-release-shelf--list .mw-artists-shelf__item {
+	border-block-end: 0;
+	padding: .5rem .75rem;
+}
+
+.mw-artists-shelf--cards-wave.mw-release-shelf--list .mw-artists-shelf__item:is(:hover, :focus-within) {
+	transform: none;
+}
+
+.mw-artists-shelf--cards-wave.mw-release-shelf--list .mw-artists-shelf__avatar {
+	inline-size: 3.5rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.mw-artists-shelf--cards-wave .mw-artists-shelf__item,
+	.mw-artists-shelf--cards-wave .mw-artists-shelf__avatar {
+		transition: none;
+	}
+}

@@ -76,3 +76,122 @@
 	color: var(--wp--preset--color--accent, #1db954);
 	font-weight: 800;
 }
+
+
+/* -------------------------------------------------------------------------
+ * Release hero — WAVE block styles (core/group carrying .mw-release-hero)
+ * "mw-hero-card": the reference album header — a bordered surface card with
+ * a soft accent glow instead of the full-bleed cover wash.
+ * "mw-hero-vinyl": the card plus a vinyl disc peeking out of the sleeve
+ * (pure CSS, shares the .mw-vinyl surface tokens from utilities.css).
+ * Both keep the cover-tint script working: --mw-hero-cover still feeds the glow.
+ * ---------------------------------------------------------------------- */
+.mw-release-hero.is-style-mw-hero-card,
+.mw-release-hero.is-style-mw-hero-vinyl {
+	margin-inline: 0;
+	margin-block-start: 0;
+	padding: clamp(1.5rem, 4vw, 3rem);
+	background:
+		radial-gradient(ellipse 60% 80% at 100% 100%, color-mix(in srgb, var(--mw-hero-cover) 22%, transparent), transparent 70%),
+		var(--mw-color-surface);
+	border: 1px solid var(--mw-color-border-subtle, transparent);
+	border-radius: var(--mw-radius-xl, 1.5rem);
+	box-shadow: var(--mw-shadow-card);
+}
+
+.mw-release-hero.is-style-mw-hero-card::before,
+.mw-release-hero.is-style-mw-hero-vinyl::before {
+	inset: auto -10% -30% auto;
+	width: min(22rem, 45vw);
+	height: min(22rem, 45vw);
+	background: color-mix(in srgb, var(--mw-hero-cover) 26%, transparent);
+	filter: blur(3.5rem);
+}
+
+.mw-release-hero.is-style-mw-hero-card .mw-release-hero__inner,
+.mw-release-hero.is-style-mw-hero-vinyl .mw-release-hero__inner {
+	align-items: center;
+}
+
+.mw-release-hero.is-style-mw-hero-card .mw-release-hero__kicker,
+.mw-release-hero.is-style-mw-hero-vinyl .mw-release-hero__kicker {
+	color: var(--mw-color-accent);
+}
+
+.mw-release-hero.is-style-mw-hero-card .mw-release-hero__kicker a,
+.mw-release-hero.is-style-mw-hero-vinyl .mw-release-hero__kicker a {
+	display: inline-flex;
+	padding: 0.3rem 0.8rem;
+	background: var(--mw-color-accent-dim);
+	border: 1px solid color-mix(in srgb, var(--mw-color-accent) 30%, transparent);
+	border-radius: 999px;
+	color: var(--mw-color-accent);
+	text-decoration: none;
+}
+
+.mw-release-hero.is-style-mw-hero-card .wp-block-post-title,
+.mw-release-hero.is-style-mw-hero-vinyl .wp-block-post-title {
+	text-transform: uppercase;
+	letter-spacing: -0.03em;
+}
+
+/* Vinyl: the cover column reserves room on the inline end for the disc. */
+.mw-release-hero.is-style-mw-hero-vinyl .mw-release-hero__cover {
+	position: relative;
+	padding-inline-end: 22%;
+}
+
+.mw-release-hero.is-style-mw-hero-vinyl .mw-release-hero__info {
+	padding-inline-start: clamp(0.5rem, 3vw, 2rem);
+}
+
+.mw-release-hero.is-style-mw-hero-vinyl .mw-release-hero__cover .wp-block-post-featured-image {
+	position: relative;
+	z-index: 1;
+	border-radius: var(--mw-radius-md, 0.75rem);
+}
+
+.mw-release-hero.is-style-mw-hero-vinyl .mw-release-hero__cover::after {
+	content: "";
+	position: absolute;
+	inset-block-start: 50%;
+	inset-inline-end: 0;
+	aspect-ratio: 1;
+	inline-size: 74%;
+	translate: 0 -50%;
+	background: var(--mw-vinyl-surface);
+	border-radius: 50%;
+	box-shadow: var(--mw-vinyl-shadow);
+	pointer-events: none;
+	transition: transform var(--mw-speed-normal, 300ms) var(--mw-ease-out, ease);
+}
+
+.mw-release-hero.is-style-mw-hero-vinyl .mw-release-hero__cover:is(:hover, :focus-within)::after {
+	transform: translateX(8%) rotate(20deg);
+}
+
+html[dir="rtl"] .mw-release-hero.is-style-mw-hero-vinyl .mw-release-hero__cover:is(:hover, :focus-within)::after {
+	transform: translateX(-8%) rotate(-20deg);
+}
+
+@media (max-width: 48rem) {
+	.mw-release-hero.is-style-mw-hero-card,
+	.mw-release-hero.is-style-mw-hero-vinyl {
+		margin-inline: 0;
+		border-radius: var(--mw-radius-lg, 1rem);
+	}
+
+	.mw-release-hero.is-style-mw-hero-vinyl .mw-release-hero__cover {
+		padding-inline-end: 0;
+	}
+
+	.mw-release-hero.is-style-mw-hero-vinyl .mw-release-hero__cover::after {
+		display: none;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.mw-release-hero.is-style-mw-hero-vinyl .mw-release-hero__cover::after {
+		transition: none;
+	}
+}

@@ -4970,6 +4970,48 @@
             ],
             "یادداشت حریم خصوصی": [
                 "Privacy note"
+            ],
+            "Hi-Res": [
+                "Hi-Res"
+            ],
+            "WAVE (کارت جدولی)": [
+                "WAVE (table card)"
+            ],
+            "WAVE (کاشی با حلقهٔ آواتار)": [
+                "WAVE (tile with avatar ring)"
+            ],
+            "WAVE (کاشی سرمقاله)": [
+                "WAVE (editorial tile)"
+            ],
+            "حال‌وهوا (WAVE، کارت بلند با پس‌زمینه)": [
+                "Mood (WAVE, tall card with backdrop)"
+            ],
+            "درخشان (WAVE)": [
+                "Glow (WAVE)"
+            ],
+            "سبک WAVE هر هنرمند را روی کاشی سطح‌دار با حلقهٔ رنگی آواتار و دکمهٔ دنبال‌کردن خطی نشان می‌دهد.": [
+                "The WAVE style shows each artist on a surface tile with an accent avatar ring and an outline follow button."
+            ],
+            "سبک WAVE کارت‌ها را روی سطح پدینگ‌دار با نشان کیفیت و خط متا نمایش می‌دهد.": [
+                "The WAVE style renders cards on a padded surface with a quality badge and a meta line."
+            ],
+            "سبک کارت": [
+                "Card style"
+            ],
+            "فقط در سبک کارت WAVE.": [
+                "WAVE card style only."
+            ],
+            "نمایش خط متا (نوع · سال)": [
+                "Show meta line (type · year)"
+            ],
+            "نمایش نشان کیفیت (Hi-Res/FLAC)": [
+                "Show quality badge (Hi-Res/FLAC)"
+            ],
+            "پیش‌فرض (ردیف‌های باز)": [
+                "Default (open rows)"
+            ],
+            "کلاسیک": [
+                "Classic"
             ]
         }
     }

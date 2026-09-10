@@ -545,6 +545,17 @@ function musicwave_register_block_styles(): void {
 			'name'  => 'mw-surface-raised',
 			'label' => __( 'سطح برجسته', 'musicwave' ),
 		),
+		// Release hero (the .mw-release-hero group in single-mw_release.html).
+		array(
+			'block' => 'core/group',
+			'name'  => 'mw-hero-card',
+			'label' => __( 'هیرو کارتی (WAVE)', 'musicwave' ),
+		),
+		array(
+			'block' => 'core/group',
+			'name'  => 'mw-hero-vinyl',
+			'label' => __( 'هیرو کارتی با وینیل (WAVE)', 'musicwave' ),
+		),
 		array(
 			'block' => 'core/columns',
 			'name'  => 'mw-tight-gap',
@@ -1671,12 +1682,14 @@ function musicwave_render_release_shelf( array $attributes ): string {
 		return '';
 	}
 
-	$layout  = isset( $attributes['layout'] ) ? sanitize_key( (string) $attributes['layout'] ) : 'grid';
-	$layout  = in_array( $layout, array( 'grid', 'scroll', 'list', 'feature', 'slider' ), true ) ? $layout : 'grid';
-	$shape   = isset( $attributes['imageShape'] ) ? sanitize_key( (string) $attributes['imageShape'] ) : 'square';
-	$shape   = in_array( $shape, array( 'square', 'landscape', 'portrait', 'circle' ), true ) ? $shape : 'square';
-	$columns = isset( $attributes['columns'] ) ? absint( $attributes['columns'] ) : 4;
-	$columns = min( 6, max( 2, $columns ) );
+	$layout     = isset( $attributes['layout'] ) ? sanitize_key( (string) $attributes['layout'] ) : 'grid';
+	$layout     = in_array( $layout, array( 'grid', 'scroll', 'list', 'chart', 'feature', 'slider' ), true ) ? $layout : 'grid';
+	$shape      = isset( $attributes['imageShape'] ) ? sanitize_key( (string) $attributes['imageShape'] ) : 'square';
+	$shape      = in_array( $shape, array( 'square', 'landscape', 'portrait', 'circle' ), true ) ? $shape : 'square';
+	$columns    = isset( $attributes['columns'] ) ? absint( $attributes['columns'] ) : 4;
+	$columns    = min( 6, max( 2, $columns ) );
+	$card_style = isset( $attributes['cardStyle'] ) ? sanitize_key( (string) $attributes['cardStyle'] ) : 'classic';
+	$card_style = in_array( $card_style, array( 'classic', 'wave' ), true ) ? $card_style : 'classic';
 
 	// Resolve section copy before rendering any cards. Feature layout has its
 	// own renderer; returning here prevents the generic card loop from doing
@@ -1697,52 +1710,31 @@ function musicwave_render_release_shelf( array $attributes ): string {
 
 	$action_label = isset( $attributes['actionLabel'] ) ? sanitize_text_field( (string) $attributes['actionLabel'] ) : '';
 	$action_label = '' !== $action_label ? $action_label : __( 'باز کردن انتشار', 'musicwave' );
-	$show_artwork = ! isset( $attributes['showArtwork'] ) || false !== $attributes['showArtwork'];
-	$show_play    = ! isset( $attributes['showPlayButton'] ) || false !== $attributes['showPlayButton'];
-	$cards        = array();
+	$options      = array(
+		'layout'       => $layout,
+		'shape'        => $shape,
+		'card_style'   => $card_style,
+		'action_label' => $action_label,
+		'show_artwork' => ! isset( $attributes['showArtwork'] ) || false !== $attributes['showArtwork'],
+		'show_play'    => ! isset( $attributes['showPlayButton'] ) || false !== $attributes['showPlayButton'],
+		'show_artist'  => ! isset( $attributes['showArtist'] ) || false !== $attributes['showArtist'],
+		'show_date'    => ! empty( $attributes['showDate'] ),
+		'show_excerpt' => ! empty( $attributes['showExcerpt'] ),
+		'show_action'  => ! isset( $attributes['showAction'] ) || false !== $attributes['showAction'],
+		'show_badge'   => ! isset( $attributes['showBadge'] ) || false !== $attributes['showBadge'],
+		'show_meta'    => ! isset( $attributes['showMeta'] ) || false !== $attributes['showMeta'],
+		'show_rank'    => ! empty( $attributes['showRank'] ),
+		'show_views'   => ! empty( $attributes['showViews'] ),
+	);
 
+	$cards = array();
 	foreach ( $ids as $idx => $release_id ) {
-		$item = musicwave_release_presentation_data( absint( $release_id ) );
-		if ( empty( $item ) ) {
-			continue;
+		$card = 'chart' === $layout
+			? musicwave_release_chart_row( absint( $release_id ), (int) $idx, $options )
+			: musicwave_release_card( absint( $release_id ), (int) $idx, $options );
+		if ( '' !== $card ) {
+			$cards[] = $card;
 		}
-
-		$release_id = (int) $item['id'];
-		$link       = (string) $item['link'];
-		$card_title = (string) $item['title'];
-		$artist     = (string) $item['artist'];
-		$is_first   = $idx < 2;
-		$thumbnail  = get_the_post_thumbnail(
-			$release_id,
-			'medium_large',
-			array(
-				'class'         => 'mw-release-shelf__image',
-				'alt'           => '',
-				'loading'       => $is_first ? 'eager' : 'lazy',
-				'fetchpriority' => $is_first ? 'high' : 'low',
-				'decoding'      => 'async',
-			)
-		);
-		$initial    = (string) $item['initial'];
-		/* translators: %s: music release title. */
-		$open_label  = sprintf( __( 'باز کردن %s', 'musicwave' ), $card_title );
-		$play_button = '';
-		if ( $show_play ) {
-			$play_button = apply_filters( 'music_wave_card_play_button', '', $release_id, 'mw-release-shelf__play' );
-			$play_button = is_string( $play_button ) && '' !== $play_button ? $play_button : '<span class="mw-release-shelf__play" aria-hidden="true">&#9654;</span>';
-		}
-		$art            = $show_artwork
-			? '<div class="mw-release-shelf__artwrap"><a class="mw-release-shelf__art mw-release-shelf__art--' . esc_attr( $shape ) . '" href="' . esc_url( $link ) . '" aria-label="' . esc_attr( $open_label ) . '">' . ( '' !== $thumbnail ? $thumbnail : '<span class="mw-release-shelf__placeholder" aria-hidden="true">' . esc_html( $initial ) . '</span>' ) . '</a>' . $play_button . '</div>'
-			: '';
-		$artist_markup  = ( ! isset( $attributes['showArtist'] ) || false !== $attributes['showArtist'] ) && '' !== $artist ? '<span class="mw-release-shelf__artist">' . esc_html( $artist ) . '</span>' : '';
-		$date_markup    = ! empty( $attributes['showDate'] ) ? '<time datetime="' . esc_attr( get_the_date( 'c', $release_id ) ) . '">' . esc_html( get_the_date( '', $release_id ) ) . '</time>' : '';
-		$excerpt_markup = '';
-		if ( ! empty( $attributes['showExcerpt'] ) ) {
-			$excerpt        = get_the_excerpt( $release_id );
-			$excerpt_markup = '' !== $excerpt ? '<p>' . esc_html( wp_trim_words( $excerpt, 18 ) ) . '</p>' : '';
-		}
-		$action  = ! isset( $attributes['showAction'] ) || false !== $attributes['showAction'] ? '<a class="mw-release-shelf__action" href="' . esc_url( $link ) . '">' . esc_html( $action_label ) . '</a>' : '';
-		$cards[] = '<article class="mw-release-shelf__item">' . $art . '<div class="mw-release-shelf__body"><h3><a href="' . esc_url( $link ) . '">' . esc_html( $card_title ) . '</a></h3>' . $artist_markup . $date_markup . $excerpt_markup . $action . '</div></article>';
 	}
 	if ( empty( $cards ) ) {
 		return '';
@@ -1752,7 +1744,216 @@ function musicwave_render_release_shelf( array $attributes ): string {
 
 	$nav = musicwave_shelf_nav_markup( $layout );
 
-	return '<section ' . get_block_wrapper_attributes( array( 'class' => 'mw-release-shelf mw-release-shelf--' . $layout . ' mw-release-shelf--columns-' . $columns ) ) . '>' . $header . $nav . '<div class="mw-release-shelf__items" data-mw-shelf-viewport>' . implode( '', $cards ) . '</div></section>';
+	$classes = 'mw-release-shelf mw-release-shelf--' . $layout . ' mw-release-shelf--columns-' . $columns . ' mw-release-shelf--cards-' . $card_style;
+
+	if ( 'chart' === $layout ) {
+		$chart_header = '<div class="mw-release-shelf__chart-header" aria-hidden="true">'
+			. '<span>#</span>'
+			. '<span>' . esc_html__( 'عنوان', 'musicwave' ) . '</span>'
+			. '<span class="mw-release-shelf__chart-genre">' . esc_html__( 'سبک', 'musicwave' ) . '</span>'
+			. '<span class="mw-release-shelf__chart-time">' . esc_html__( 'زمان', 'musicwave' ) . '</span>'
+			. '</div>';
+
+		return '<section ' . get_block_wrapper_attributes( array( 'class' => $classes ) ) . '>' . $header . '<div class="mw-release-shelf__chart">' . $chart_header . '<ol class="mw-release-shelf__rows">' . implode( '', $cards ) . '</ol></div></section>';
+	}
+
+	return '<section ' . get_block_wrapper_attributes( array( 'class' => $classes ) ) . '>' . $header . $nav . '<div class="mw-release-shelf__items" data-mw-shelf-viewport>' . implode( '', $cards ) . '</div></section>';
+}
+
+/**
+ * Resolve the public quality badge markup for a release card.
+ *
+ * The plugin owns the signal (see `ReleaseBadge`): the theme only asks
+ * through the shared filter and renders nothing when no plugin answers.
+ *
+ * @param int $release_id Release post ID.
+ */
+function musicwave_release_badge( int $release_id ): string {
+	$badge = apply_filters( 'music_wave_release_badge', array(), $release_id );
+	if ( ! is_array( $badge ) || empty( $badge['label'] ) || ! is_scalar( $badge['label'] ) ) {
+		return '';
+	}
+	$tone = isset( $badge['tone'] ) && in_array( $badge['tone'], array( 'accent', 'premium' ), true ) ? ' mw-badge--' . $badge['tone'] : '';
+
+	return '<span class="mw-badge' . $tone . ' mw-release-shelf__badge">' . esc_html( (string) $badge['label'] ) . '</span>';
+}
+
+/**
+ * Compact factual line for WAVE cards: "Album · 2025" with the primary
+ * genre appended when the type is missing. Mirrors the reference card meta.
+ *
+ * @param int $release_id Release post ID.
+ */
+function musicwave_release_meta_line( int $release_id ): string {
+	/**
+	 * Short-circuit the card meta line (music-wave-core supplies the same
+	 * "Type · Year" string through ReleaseBadge::meta_line so both agree).
+	 *
+	 * @param string|null $line       Pre-computed line, or null to compute here.
+	 * @param int         $release_id Release post ID.
+	 */
+	$pre = apply_filters( 'music_wave_release_meta_line', null, $release_id );
+	if ( is_string( $pre ) ) {
+		return $pre;
+	}
+
+	$parts = array();
+	$types = wp_get_post_terms( $release_id, 'mw_release_type', array( 'fields' => 'names' ) );
+	if ( is_array( $types ) && ! empty( $types[0] ) ) {
+		$parts[] = (string) $types[0];
+	} else {
+		$genres = wp_get_post_terms( $release_id, 'mw_genre', array( 'fields' => 'names' ) );
+		if ( is_array( $genres ) && ! empty( $genres[0] ) ) {
+			$parts[] = (string) $genres[0];
+		}
+	}
+	$year = (string) get_the_date( 'Y', $release_id );
+	if ( '' !== $year ) {
+		$parts[] = $year;
+	}
+
+	return implode( " \u{00B7} ", $parts );
+}
+
+/**
+ * Build one release card for the grid, scroll and list layouts.
+ *
+ * The `wave` card style wraps the same semantic structure in the reference
+ * card surface (padded tile, format badge, play button sliding in on
+ * hover, quiet meta line); CSS modifiers do the rest so both styles stay
+ * one implementation.
+ *
+ * @param int                  $release_id Release post ID.
+ * @param int                  $index      Zero-based card index (drives LCP hints).
+ * @param array<string, mixed> $options    Resolved shelf options.
+ */
+function musicwave_release_card( int $release_id, int $index, array $options ): string {
+	$item = musicwave_release_presentation_data( $release_id );
+	if ( empty( $item ) ) {
+		return '';
+	}
+
+	$release_id = (int) $item['id'];
+	$link       = (string) $item['link'];
+	$card_title = (string) $item['title'];
+	$artist     = (string) $item['artist'];
+	$is_first   = $index < 2;
+	$is_wave    = 'wave' === ( $options['card_style'] ?? 'classic' );
+	$thumbnail  = get_the_post_thumbnail(
+		$release_id,
+		'medium_large',
+		array(
+			'class'         => 'mw-release-shelf__image',
+			'alt'           => '',
+			'loading'       => $is_first ? 'eager' : 'lazy',
+			'fetchpriority' => $is_first ? 'high' : 'low',
+			'decoding'      => 'async',
+		)
+	);
+	$initial    = (string) $item['initial'];
+	/* translators: %s: music release title. */
+	$open_label  = sprintf( __( 'باز کردن %s', 'musicwave' ), $card_title );
+	$play_button = '';
+	if ( ! empty( $options['show_play'] ) ) {
+		$play_button = apply_filters( 'music_wave_card_play_button', '', $release_id, 'mw-release-shelf__play' );
+		$play_button = is_string( $play_button ) && '' !== $play_button ? $play_button : '<span class="mw-release-shelf__play" aria-hidden="true">&#9654;</span>';
+	}
+	$badge = $is_wave && ! empty( $options['show_badge'] ) ? musicwave_release_badge( $release_id ) : '';
+	$art   = ! empty( $options['show_artwork'] )
+		? '<div class="mw-release-shelf__artwrap"><a class="mw-release-shelf__art mw-release-shelf__art--' . esc_attr( (string) $options['shape'] ) . '" href="' . esc_url( $link ) . '" aria-label="' . esc_attr( $open_label ) . '">' . ( '' !== $thumbnail ? $thumbnail : '<span class="mw-release-shelf__placeholder" aria-hidden="true">' . esc_html( $initial ) . '</span>' ) . '</a>' . $badge . $play_button . '</div>'
+		: '';
+
+	$meta_markup = '';
+	if ( $is_wave && ! empty( $options['show_meta'] ) ) {
+		$meta_line = musicwave_release_meta_line( $release_id );
+		if ( '' !== $meta_line ) {
+			$meta_markup = '<span class="mw-release-shelf__meta">' . esc_html( $meta_line ) . '</span>';
+		}
+	}
+	$artist_markup  = ! empty( $options['show_artist'] ) && '' !== $artist ? '<span class="mw-release-shelf__artist">' . esc_html( $artist ) . '</span>' : '';
+	$date_markup    = ! empty( $options['show_date'] ) ? '<time datetime="' . esc_attr( get_the_date( 'c', $release_id ) ) . '">' . esc_html( get_the_date( '', $release_id ) ) . '</time>' : '';
+	$excerpt_markup = '';
+	if ( ! empty( $options['show_excerpt'] ) ) {
+		$excerpt        = get_the_excerpt( $release_id );
+		$excerpt_markup = '' !== $excerpt ? '<p>' . esc_html( wp_trim_words( $excerpt, 18 ) ) . '</p>' : '';
+	}
+	$action = ! empty( $options['show_action'] ) ? '<a class="mw-release-shelf__action" href="' . esc_url( $link ) . '">' . esc_html( (string) $options['action_label'] ) . '</a>' : '';
+
+	return '<article class="mw-release-shelf__item">' . $art . '<div class="mw-release-shelf__body">' . $meta_markup . '<h3><a href="' . esc_url( $link ) . '">' . esc_html( $card_title ) . '</a></h3>' . $artist_markup . $date_markup . $excerpt_markup . $action . '</div></article>';
+}
+
+/**
+ * Build one row of the "chart" layout (WAVE Top 100 table).
+ *
+ * Columns: rank (swapped for the equalizer while the row is playing),
+ * 40px artwork, title + artist, primary genre, duration. The play trigger
+ * lives on the artwork so the whole row stays a plain link target.
+ *
+ * @param int                  $release_id Release post ID.
+ * @param int                  $index      Zero-based row index (rank = index + 1).
+ * @param array<string, mixed> $options    Resolved shelf options.
+ */
+function musicwave_release_chart_row( int $release_id, int $index, array $options ): string {
+	$item = musicwave_release_presentation_data( $release_id );
+	if ( empty( $item ) ) {
+		return '';
+	}
+
+	$release_id = (int) $item['id'];
+	$link       = (string) $item['link'];
+	$title      = (string) $item['title'];
+	$rank       = $index + 1;
+	/* translators: %s: music release title. */
+	$open_label = sprintf( __( 'باز کردن %s', 'musicwave' ), $title );
+
+	$thumbnail = get_the_post_thumbnail(
+		$release_id,
+		'thumbnail',
+		array(
+			'class'    => 'mw-release-shelf__image',
+			'alt'      => '',
+			'loading'  => 'lazy',
+			'decoding' => 'async',
+		)
+	);
+	$art       = ! empty( $options['show_artwork'] )
+		? '<span class="mw-release-shelf__row-art">' . ( '' !== $thumbnail ? $thumbnail : '<span class="mw-release-shelf__placeholder" aria-hidden="true">' . esc_html( (string) $item['initial'] ) . '</span>' ) . '</span>'
+		: '';
+
+	$play = '';
+	if ( ! empty( $options['show_play'] ) ) {
+		$play = apply_filters( 'music_wave_card_play_button', '', $release_id, 'mw-release-shelf__row-play' );
+		$play = is_string( $play ) ? $play : '';
+	}
+
+	$artist = ! empty( $options['show_artist'] ) && '' !== (string) $item['artist'] ? '<span class="mw-release-shelf__artist">' . esc_html( (string) $item['artist'] ) . '</span>' : '';
+	$badge  = ! empty( $options['show_badge'] ) ? musicwave_release_badge( $release_id ) : '';
+
+	$genre  = '';
+	$genres = wp_get_post_terms( $release_id, 'mw_genre', array( 'fields' => 'names' ) );
+	if ( is_array( $genres ) && ! empty( $genres[0] ) ) {
+		$genre = (string) $genres[0];
+	}
+
+	$duration = absint( get_post_meta( $release_id, 'mw_duration', true ) );
+	$time     = $duration > 0 ? ( $duration >= 3600 ? gmdate( 'G:i:s', $duration ) : gmdate( 'i:s', $duration ) ) : '';
+
+	$views = '';
+	if ( ! empty( $options['show_views'] ) ) {
+		$count = absint( get_post_meta( $release_id, 'mw_views', true ) );
+		if ( $count > 0 ) {
+			/* translators: %s: formatted view count. */
+			$views = '<span class="mw-release-shelf__row-views">' . esc_html( sprintf( __( '%s پخش', 'musicwave' ), number_format_i18n( $count ) ) ) . '</span>';
+		}
+	}
+
+	return '<li class="mw-release-shelf__row">'
+		. '<span class="mw-release-shelf__rank"><span class="mw-release-shelf__rank-num">' . esc_html( (string) $rank ) . '</span><span class="mw-equalizer" aria-hidden="true"><i></i><i></i><i></i><i></i></span></span>'
+		. '<span class="mw-release-shelf__row-media">' . $art . $play . '</span>'
+		. '<span class="mw-release-shelf__row-body"><a class="mw-release-shelf__row-title" href="' . esc_url( $link ) . '" aria-label="' . esc_attr( $open_label ) . '">' . esc_html( $title ) . '</a>' . $badge . $artist . '</span>'
+		. '<span class="mw-release-shelf__row-genre">' . ( '' !== $genre ? esc_html( $genre ) : '' ) . $views . '</span>'
+		. '<span class="mw-release-shelf__row-time">' . ( '' !== $time ? esc_html( $time ) : '<span aria-hidden="true">—</span>' ) . '</span>'
+		. '</li>';
 }
 
 /**
@@ -1939,6 +2140,11 @@ function musicwave_render_hero_slider( array $attributes, array $ids, string $ey
 	$action_label = isset( $attributes['actionLabel'] ) ? sanitize_text_field( (string) $attributes['actionLabel'] ) : '';
 	$action_label = '' !== $action_label ? $action_label : __( 'باز کردن انتشار', 'musicwave' );
 	$show_play    = ! isset( $attributes['showPlayButton'] ) || false !== $attributes['showPlayButton'];
+	$hero_style   = isset( $attributes['heroStyle'] ) ? sanitize_key( (string) $attributes['heroStyle'] ) : 'cinematic';
+	$hero_style   = in_array( $hero_style, array( 'cinematic', 'editorial' ), true ) ? $hero_style : 'cinematic';
+	$is_editorial = 'editorial' === $hero_style;
+	$show_badge   = $is_editorial && ( ! isset( $attributes['showBadge'] ) || false !== $attributes['showBadge'] );
+	$show_meta    = ! isset( $attributes['showMeta'] ) || false !== $attributes['showMeta'];
 
 	$data = array();
 	foreach ( $ids as $idx => $release_id ) {
@@ -2008,15 +2214,59 @@ function musicwave_render_hero_slider( array $attributes, array $ids, string $ey
 				: '<span class="mw-hero-slide__play mw-hero-slide__play--static" aria-hidden="true">&#9654;</span>';
 		}
 
+		// Editorial style: the reference splits the title in two lines with
+		// the second one in the accent gradient. Split on the last word gap
+		// of the first half so short titles stay on one line.
+		$title_html = esc_html( (string) $item['title'] );
+		if ( $is_editorial ) {
+			$words = preg_split( '/\s+/u', trim( (string) $item['title'] ) );
+			if ( is_array( $words ) && count( $words ) >= 2 ) {
+				$split      = (int) ceil( count( $words ) / 2 );
+				$title_html = esc_html( implode( ' ', array_slice( $words, 0, $split ) ) )
+					. ' <span class="mw-hero-slide__title-accent">' . esc_html( implode( ' ', array_slice( $words, $split ) ) ) . '</span>';
+			}
+		}
+
+		$excerpt = '';
+		if ( $is_editorial && ! empty( $attributes['showExcerpt'] ) ) {
+			$raw     = get_the_excerpt( $release_id );
+			$excerpt = '' !== $raw ? wp_trim_words( $raw, 28 ) : '';
+		}
+
+		$facts = array();
+		if ( $show_meta ) {
+			$badge_data = $show_badge ? apply_filters( 'music_wave_release_badge', array(), $release_id ) : array();
+			if ( is_array( $badge_data ) && ! empty( $badge_data['label'] ) && is_scalar( $badge_data['label'] ) ) {
+				$facts[] = (string) $badge_data['label'];
+			}
+			$track_count = 0;
+			$children    = get_post_meta( $release_id, 'mw_collection_items', true );
+			if ( is_array( $children ) ) {
+				$track_count = count( $children );
+			}
+			if ( $track_count > 0 ) {
+				/* translators: %d: number of tracks. */
+				$facts[] = sprintf( _n( '%d قطعه', '%d قطعه', $track_count, 'musicwave' ), $track_count );
+			}
+			if ( '' !== $genre ) {
+				$facts[] = $genre;
+			}
+		}
+
 		$data[] = array(
+			'id'         => $release_id,
 			'link'       => (string) $item['link'],
 			'title'      => (string) $item['title'],
+			'title_html' => $title_html,
 			'artist'     => (string) $item['artist'],
 			'open_label' => $open_label,
 			'backdrop'   => $backdrop,
 			'art'        => $art,
 			'kicker'     => $kicker,
-			'meta'       => implode( ' \u{00B7} ', $meta_parts ),
+			'meta'       => implode( " \u{00B7} ", $meta_parts ),
+			'facts'      => $facts,
+			'excerpt'    => $excerpt,
+			'badge'      => $show_badge ? musicwave_release_badge( $release_id ) : '',
 			'play'       => $play_button,
 		);
 	}
@@ -2029,6 +2279,40 @@ function musicwave_render_hero_slider( array $attributes, array $ids, string $ey
 		$is_active = 0 === $i;
 		/* translators: 1: slide index, 2: music release title. */
 		$slide_label = sprintf( __( 'اسلاید %1$d: %2$s', 'musicwave' ), $i + 1, $slide['title'] );
+
+		if ( $is_editorial ) {
+			$kicker = '<span class="mw-hero-slide__kicker mw-hero-slide__kicker--editorial"><span class="mw-ping" aria-hidden="true"></span>'
+				. esc_html( '' !== $eyebrow ? $eyebrow : __( 'منتخب سرمقاله', 'musicwave' ) )
+				. '</span>'
+				. ( '' !== $slide['kicker'] ? '<span class="mw-hero-slide__issue">' . esc_html( $slide['kicker'] ) . '</span>' : '' );
+
+			$facts_html = '';
+			if ( ! empty( $slide['facts'] ) ) {
+				$facts_html = '<ul class="mw-hero-slide__facts">';
+				foreach ( $slide['facts'] as $fact ) {
+					$facts_html .= '<li>' . esc_html( (string) $fact ) . '</li>';
+				}
+				$facts_html .= '</ul>';
+			}
+
+			$slides[] = '<article class="mw-hero-slide' . ( $is_active ? ' is-active' : '' ) . '" role="group" aria-label="' . esc_attr( $slide_label ) . '"' . ( $is_active ? '' : ' aria-hidden="true"' ) . '>'
+				. $slide['backdrop']
+				. '<div class="mw-hero-slide__scrim" aria-hidden="true"></div>'
+				. '<div class="mw-hero-slide__glow" aria-hidden="true"></div>'
+				. '<div class="mw-hero-slide__content">'
+				. '<div class="mw-hero-slide__kickers">' . $kicker . '</div>'
+				. ( '' !== $slide['artist'] ? '<span class="mw-hero-slide__artist">' . esc_html( $slide['artist'] ) . '</span>' : '' )
+				. '<h3 class="mw-hero-slide__title"><a href="' . esc_url( $slide['link'] ) . '">' . $slide['title_html'] . '</a></h3>'
+				. ( '' !== $slide['excerpt'] ? '<p class="mw-hero-slide__excerpt">' . esc_html( $slide['excerpt'] ) . '</p>' : ( '' !== $slide['meta'] ? '<p class="mw-hero-slide__meta">' . esc_html( $slide['meta'] ) . '</p>' : '' ) )
+				. '<div class="mw-hero-slide__actions">' . $slide['play'] . '<a class="mw-hero-slide__open" href="' . esc_url( $slide['link'] ) . '">' . esc_html( $action_label ) . '</a></div>'
+				. $facts_html
+				. '</div>'
+				. '<div class="mw-hero-slide__stage mw-vinyl-stack"><span class="mw-vinyl" aria-hidden="true"></span>'
+				. '<a class="mw-hero-slide__art" href="' . esc_url( $slide['link'] ) . '" aria-label="' . esc_attr( $slide['open_label'] ) . '">' . $slide['art'] . $slide['badge'] . '</a>'
+				. '</div>'
+				. '</article>';
+			continue;
+		}
 
 		$slides[] = '<article class="mw-hero-slide' . ( $is_active ? ' is-active' : '' ) . '" role="group" aria-label="' . esc_attr( $slide_label ) . '"' . ( $is_active ? '' : ' aria-hidden="true"' ) . '>'
 			. $slide['backdrop']
@@ -2055,18 +2339,20 @@ function musicwave_render_hero_slider( array $attributes, array $ids, string $ey
 
 	$dot_buttons = '';
 	foreach ( $data as $i => $slide ) {
-		$dot_buttons .= '<button type="button" class="mw-hero-slider__dot' . ( 0 === $i ? ' is-active' : '' ) . '" data-mw-hero-dot="' . (string) $i . '" aria-label="' . esc_attr( sprintf( /* translators: %d: slide index. */ __( 'رفتن به اسلاید %d', 'musicwave' ), $i + 1 ) ) . '"' . ( 0 === $i ? ' aria-current="true"' : '' ) . '"></button>';
+		$dot_buttons .= '<button type="button" class="mw-hero-slider__dot' . ( 0 === $i ? ' is-active' : '' ) . '" data-mw-hero-dot="' . (string) $i . '" aria-label="' . esc_attr( sprintf( /* translators: %d: slide index. */ __( 'رفتن به اسلاید %d', 'musicwave' ), $i + 1 ) ) . '"' . ( 0 === $i ? ' aria-current="true"' : '' ) . '></button>';
 	}
 	$dot_container = $show_dots
 		? '<div class="mw-hero-slider__dots" data-mw-hero-dots role="group" aria-label="' . esc_attr__( 'صفحهبندی اسلایدر', 'musicwave' ) . '">' . $dot_buttons . '</div>'
 		: '';
 
 	$region_label = '' !== $title ? $title : __( 'اسلایدر انتشارها', 'musicwave' );
-	$header       = musicwave_render_shelf_header( $eyebrow, $title, $description, $section_url, $section_link_label );
+	// The editorial style prints the eyebrow inside each slide as the
+	// spotlight pill, so the section header only carries the title.
+	$header = musicwave_render_shelf_header( $is_editorial ? '' : $eyebrow, $title, $description, $section_url, $section_link_label );
 
-	return '<section ' . get_block_wrapper_attributes( array( 'class' => 'mw-release-shelf mw-release-shelf--slider' ) ) . '>'
+	return '<section ' . get_block_wrapper_attributes( array( 'class' => 'mw-release-shelf mw-release-shelf--slider mw-release-shelf--hero-' . $hero_style ) ) . '>'
 		. $header
-		. '<div id="' . esc_attr( $id ) . '" class="mw-hero-slider" data-mw-hero-slider data-autoplay="' . esc_attr( $autoplay ? '1' : '0' ) . '" data-pause-hover="1" data-interval="' . esc_attr( (string) $interval ) . '">'
+		. '<div id="' . esc_attr( $id ) . '" class="mw-hero-slider mw-hero-slider--' . esc_attr( $hero_style ) . '" data-mw-hero-slider data-autoplay="' . esc_attr( $autoplay ? '1' : '0' ) . '" data-pause-hover="1" data-interval="' . esc_attr( (string) $interval ) . '">'
 		. '<div class="mw-hero-slider__viewport" tabindex="0" role="region" aria-roledescription="' . esc_attr__( 'اسلایدر', 'musicwave' ) . '" aria-label="' . esc_attr( $region_label ) . '">'
 		. implode( '', $slides )
 		. '</div>'

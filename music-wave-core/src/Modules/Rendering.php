@@ -15,6 +15,7 @@ use ManaCore\MusicWave\Core\Blocks\ArtistShelfBlock;
 use ManaCore\MusicWave\Core\Blocks\BlockMetadata;
 use ManaCore\MusicWave\Core\Blocks\BlockSupport;
 use ManaCore\MusicWave\Core\Blocks\PreviewPlayer;
+use ManaCore\MusicWave\Core\Blocks\ReleaseBadge;
 use ManaCore\MusicWave\Core\Blocks\TaxonomyShelfBlock;
 use ManaCore\MusicWave\Core\Blocks\TermHeroBlock;
 use ManaCore\MusicWave\Core\Blocks\ShareButtonBlock;
@@ -54,8 +55,12 @@ final class Rendering implements Module {
 	/** @var ReleaseRestVisibilityPolicy|null */
 	private $rest_visibility;
 
-	public function __construct( ReleaseBlocks $blocks, ?ArtistProfileBlock $artist_profile = null, ?PreviewPlayer $preview_player = null, ?PlaybackQueueRoutes $playback_queue = null, ?ReleaseRestVisibilityPolicy $rest_visibility = null, ?ArtistShelfBlock $artist_shelf = null, ?TaxonomyShelfBlock $taxonomy_shelf = null, ?TermHeroBlock $term_hero = null, ?ShareButtonBlock $share_button = null, ?ShuffleButtonBlock $shuffle_button = null ) {
+	/** @var ReleaseBadge|null */
+	private $release_badge;
+
+	public function __construct( ReleaseBlocks $blocks, ?ArtistProfileBlock $artist_profile = null, ?PreviewPlayer $preview_player = null, ?PlaybackQueueRoutes $playback_queue = null, ?ReleaseRestVisibilityPolicy $rest_visibility = null, ?ArtistShelfBlock $artist_shelf = null, ?TaxonomyShelfBlock $taxonomy_shelf = null, ?TermHeroBlock $term_hero = null, ?ShareButtonBlock $share_button = null, ?ShuffleButtonBlock $shuffle_button = null, ?ReleaseBadge $release_badge = null ) {
 		$this->blocks          = $blocks;
+		$this->release_badge   = $release_badge;
 		$this->artist_profile  = $artist_profile;
 		$this->artist_shelf    = $artist_shelf;
 		$this->taxonomy_shelf  = $taxonomy_shelf;
@@ -95,6 +100,10 @@ final class Rendering implements Module {
 		}
 		if ( null !== $this->rest_visibility ) {
 			$this->rest_visibility->register();
+		}
+		if ( null !== $this->release_badge ) {
+			// Registered eagerly: theme shelves may render before `init` 20.
+			$this->release_badge->register();
 		}
 		add_action( 'init', array( $this, 'register_block_styles' ), 30 );
 		add_filter( 'block_categories_all', array( $this, 'register_block_category' ) );
@@ -153,6 +162,21 @@ final class Rendering implements Module {
 					'name'  => 'ghost',
 					'label' => __( 'بی‌زمینه', 'music-wave-core' ),
 				),
+				array(
+					'name'  => 'glow',
+					'label' => __( 'درخشان (WAVE)', 'music-wave-core' ),
+				),
+			),
+			'music-wave/collection-list'   => array(
+				array(
+					'name'       => 'default',
+					'label'      => __( 'پیش‌فرض (ردیف‌های باز)', 'music-wave-core' ),
+					'is_default' => true,
+				),
+				array(
+					'name'  => 'wave',
+					'label' => __( 'WAVE (کارت جدولی)', 'music-wave-core' ),
+				),
 			),
 			'music-wave/account-dashboard' => array(
 				array(
@@ -173,6 +197,10 @@ final class Rendering implements Module {
 				array(
 					'name'  => 'ghost',
 					'label' => __( 'بی‌زمینه', 'music-wave-core' ),
+				),
+				array(
+					'name'  => 'glow',
+					'label' => __( 'درخشان (WAVE)', 'music-wave-core' ),
 				),
 			),
 			'music-wave/release-meta'      => array(
@@ -667,6 +695,18 @@ final class Rendering implements Module {
 					'type'    => 'string',
 					'default' => 'grid',
 				),
+				'cardStyle'         => array(
+					'type'    => 'string',
+					'default' => 'classic',
+				),
+				'showBadge'         => array(
+					'type'    => 'boolean',
+					'default' => true,
+				),
+				'showMeta'          => array(
+					'type'    => 'boolean',
+					'default' => true,
+				),
 				'columns'           => array(
 					'type'    => 'integer',
 					'default' => 4,
@@ -832,6 +872,10 @@ final class Rendering implements Module {
 			'layout'           => array(
 				'type'    => 'string',
 				'default' => 'grid',
+			),
+			'cardStyle'        => array(
+				'type'    => 'string',
+				'default' => 'classic',
 			),
 			'imageShape'       => array(
 				'type'    => 'string',
@@ -1575,6 +1619,18 @@ final class Rendering implements Module {
 					'layout'             => array(
 						'type'    => 'string',
 						'default' => 'scroll',
+					),
+					'cardStyle'          => array(
+						'type'    => 'string',
+						'default' => 'classic',
+					),
+					'showBadge'          => array(
+						'type'    => 'boolean',
+						'default' => true,
+					),
+					'showMeta'           => array(
+						'type'    => 'boolean',
+						'default' => true,
 					),
 					'imageShape'         => array(
 						'type'    => 'string',

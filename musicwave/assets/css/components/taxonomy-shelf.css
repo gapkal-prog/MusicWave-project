@@ -1,7 +1,7 @@
 /* ================================================================
    Taxonomy shelf block (genres, moods, labels)
    Layouts: grid | horizontal rail | list rows
-   Tiles: colorful (curated hue cycle) | plain (quiet surface)
+   Tiles: colorful (curated hue cycle) | plain (quiet surface) | mood (WAVE)
    Reuses the shared .mw-release-shelf chrome; logical properties
    only, so every variant is RTL-safe.
    ================================================================ */
@@ -39,28 +39,35 @@
 	opacity: .82;
 }
 
-/* ---- Colorful curated hues (deterministic cycle) ---- */
-.mw-terms-shelf__tile--style-colorful.mw-terms-shelf__tile--hue-1 {
+/* ---- Colorful curated hues (deterministic cycle; mood tiles without a
+   term image fall back to the same hue under their scrim) ---- */
+.mw-terms-shelf__tile--style-colorful.mw-terms-shelf__tile--hue-1,
+.mw-terms-shelf__tile--style-mood:not(.has-backdrop).mw-terms-shelf__tile--hue-1 {
 	background: linear-gradient(135deg, color-mix(in srgb, var(--wp--preset--color--accent, #1db954) 82%, #000), var(--wp--preset--color--accent, #1db954));
 }
 
-.mw-terms-shelf__tile--style-colorful.mw-terms-shelf__tile--hue-2 {
+.mw-terms-shelf__tile--style-colorful.mw-terms-shelf__tile--hue-2,
+.mw-terms-shelf__tile--style-mood:not(.has-backdrop).mw-terms-shelf__tile--hue-2 {
 	background: linear-gradient(135deg, color-mix(in srgb, var(--wp--preset--color--editorial, #fa2d48) 82%, #000), var(--wp--preset--color--editorial, #fa2d48));
 }
 
-.mw-terms-shelf__tile--style-colorful.mw-terms-shelf__tile--hue-3 {
+.mw-terms-shelf__tile--style-colorful.mw-terms-shelf__tile--hue-3,
+.mw-terms-shelf__tile--style-mood:not(.has-backdrop).mw-terms-shelf__tile--hue-3 {
 	background: linear-gradient(135deg, #2743b8, #4f7cf7);
 }
 
-.mw-terms-shelf__tile--style-colorful.mw-terms-shelf__tile--hue-4 {
+.mw-terms-shelf__tile--style-colorful.mw-terms-shelf__tile--hue-4,
+.mw-terms-shelf__tile--style-mood:not(.has-backdrop).mw-terms-shelf__tile--hue-4 {
 	background: linear-gradient(135deg, #6c2bb0, #a55ee8);
 }
 
-.mw-terms-shelf__tile--style-colorful.mw-terms-shelf__tile--hue-5 {
+.mw-terms-shelf__tile--style-colorful.mw-terms-shelf__tile--hue-5,
+.mw-terms-shelf__tile--style-mood:not(.has-backdrop).mw-terms-shelf__tile--hue-5 {
 	background: linear-gradient(135deg, #a05a12, #e8933a);
 }
 
-.mw-terms-shelf__tile--style-colorful.mw-terms-shelf__tile--hue-6 {
+.mw-terms-shelf__tile--style-colorful.mw-terms-shelf__tile--hue-6,
+.mw-terms-shelf__tile--style-mood:not(.has-backdrop).mw-terms-shelf__tile--hue-6 {
 	background: linear-gradient(135deg, #0f766e, #2cbfae);
 }
 
@@ -69,6 +76,111 @@
 	background: var(--mw-color-surface-raised, #1d2330);
 	border-color: var(--mw-color-border, rgb(255 255 255 / 12%));
 	min-block-size: auto;
+}
+
+/* ---- WAVE mood tile (cardStyle: mood) ----
+   Reference "Moods & Sanctuaries": a tall 2xl card, backdrop image at 60%
+   (or the curated hue when the term has no image) under a bottom-up canvas
+   gradient, a blurred pill on top and name + description at the bottom. */
+.mw-terms-shelf__tile--style-mood {
+	align-items: stretch;
+	border-radius: var(--mw-radius-lg, 1rem);
+	box-shadow: 0 .75rem 2rem rgb(0 0 0 / 22%);
+	isolation: isolate;
+	justify-content: space-between;
+	min-block-size: clamp(10rem, 18vw, 12rem);
+	overflow: hidden;
+}
+
+.mw-terms-shelf__tile--style-mood.has-backdrop {
+	background: var(--mw-color-surface, #181818);
+}
+
+.mw-terms-shelf__backdrop {
+	block-size: 100%;
+	inline-size: 100%;
+	inset: 0;
+	object-fit: cover;
+	opacity: .6;
+	position: absolute;
+	transition: transform .7s var(--mw-ease-snap, ease);
+	z-index: -2;
+}
+
+.mw-terms-shelf__tile--style-mood:is(:hover, :focus-visible) .mw-terms-shelf__backdrop {
+	transform: scale(1.05);
+}
+
+.mw-terms-shelf__scrim {
+	background: linear-gradient(to top, var(--mw-color-canvas, #0e0f12), color-mix(in srgb, var(--mw-color-canvas, #0e0f12) 40%, transparent) 55%, transparent);
+	inset: 0;
+	position: absolute;
+	z-index: -1;
+}
+
+.mw-terms-shelf__tile--style-mood:not(.has-backdrop) .mw-terms-shelf__scrim {
+	opacity: .75;
+}
+
+.mw-terms-shelf__pill {
+	align-self: flex-start;
+	backdrop-filter: blur(8px);
+	background: color-mix(in srgb, var(--mw-color-surface, #181818) 80%, transparent);
+	border-color: transparent;
+	color: var(--mw-color-text, #fff);
+	font-size: .625rem;
+	font-weight: 700;
+	letter-spacing: .06em;
+	padding: .3rem .7rem;
+	text-transform: uppercase;
+}
+
+.mw-terms-shelf__tile--style-mood.mw-terms-shelf__tile--hue-2 .mw-terms-shelf__pill {
+	background: color-mix(in srgb, var(--mw-color-accent, #fa2d65) 80%, transparent);
+}
+
+.mw-terms-shelf__tile--style-mood.mw-terms-shelf__tile--hue-5 .mw-terms-shelf__pill {
+	background: color-mix(in srgb, var(--mw-color-premium, #e5b868) 85%, transparent);
+	color: var(--mw-color-on-premium, #0e0f12);
+}
+
+.mw-terms-shelf__tile--style-mood .mw-terms-shelf__body {
+	display: grid;
+	gap: .15rem;
+}
+
+.mw-terms-shelf__tile--style-mood .mw-terms-shelf__name {
+	font-size: 1.125rem;
+	transition: color .2s ease;
+}
+
+.mw-terms-shelf__tile--style-mood:is(:hover, :focus-visible) .mw-terms-shelf__name {
+	color: var(--mw-color-accent, #fa2d65);
+}
+
+.mw-terms-shelf__description {
+	color: var(--mw-color-text-muted, #a0a0a0);
+	display: -webkit-box;
+	-webkit-box-orient: vertical;
+	-webkit-line-clamp: 2;
+	font-size: .8125rem;
+	line-height: 1.45;
+	overflow: hidden;
+}
+
+.mw-terms-shelf__tile--style-mood .mw-terms-shelf__count {
+	font-size: .6875rem;
+	letter-spacing: .04em;
+	opacity: .7;
+	text-transform: uppercase;
+}
+
+.mw-release-shelf--list .mw-terms-shelf__tile--style-mood {
+	min-block-size: 0;
+}
+
+.mw-release-shelf--list .mw-terms-shelf__tile--style-mood .mw-terms-shelf__pill {
+	align-self: center;
 }
 
 /* ---- List rows layout ---- */
@@ -103,7 +215,8 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-	.mw-terms-shelf__tile {
+	.mw-terms-shelf__tile,
+	.mw-terms-shelf__backdrop {
 		transition: none;
 	}
 }

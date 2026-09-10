@@ -980,6 +980,10 @@ final class ReleaseBlocks {
 			return '';
 		}
 
+		// Editor style variation → modifier class, like the other renderers,
+		// so the wave table card works in both the editor and the front end.
+		$style = BlockSupport::style_variation( $attributes, array( 'wave' ) );
+
 		$options = array(
 			'show_position' => BlockSupport::bool_attribute( $attributes, 'showPosition', true ),
 			'show_artwork'  => BlockSupport::bool_attribute( $attributes, 'showArtwork', false ),
@@ -1025,7 +1029,7 @@ final class ReleaseBlocks {
 			$total_html = '<p class="mw-collection-list__total">' . esc_html( sprintf( __( 'طول کل: %s', 'music-wave-core' ), $this->format_duration( $total_duration ) ) ) . '</p>';
 		}
 
-		return '<section ' . BlockSupport::wrapper_attributes( 'mw-collection-list' ) . ' data-mw-collection-list' . $aria_label . '>' . $heading_html . $list_markup . $total_html . '</section>';
+		return '<section ' . BlockSupport::wrapper_attributes( 'mw-collection-list' . ( '' !== $style ? ' mw-collection-list--' . $style : '' ) ) . ' data-mw-collection-list' . $aria_label . '>' . $heading_html . $list_markup . $total_html . '</section>';
 	}
 
 	/**
@@ -1449,8 +1453,8 @@ final class ReleaseBlocks {
 		$limit     = $limit >= 10 && $limit <= 120 ? $limit : 30;
 		$label     = isset( $attributes['label'] ) ? sanitize_text_field( (string) $attributes['label'] ) : '';
 		$label     = '' !== $label ? $label : __( 'پخش پیش‌نمایش', 'music-wave-core' );
-		$style     = BlockSupport::key_attribute( $attributes, 'style', array( 'solid', 'outline', 'ghost' ), 'solid' );
-		$variation = BlockSupport::style_variation( $attributes, array( 'outline', 'ghost' ) );
+		$style     = BlockSupport::key_attribute( $attributes, 'style', array( 'solid', 'outline', 'ghost', 'glow' ), 'solid' );
+		$variation = BlockSupport::style_variation( $attributes, array( 'outline', 'ghost', 'glow' ) );
 		if ( '' !== $variation ) {
 			$style = $variation;
 		}
@@ -1777,9 +1781,12 @@ final class ReleaseBlocks {
 	private function related_card_options( array $attributes ): array {
 		return array(
 			'layout'       => BlockSupport::key_attribute( $attributes, 'layout', array( 'grid', 'scroll', 'list' ), 'grid' ),
+			'card_style'   => BlockSupport::key_attribute( $attributes, 'cardStyle', array( 'classic', 'wave' ), 'classic' ),
 			'columns'      => BlockSupport::range_attribute( $attributes, 'columns', 2, 6, 4 ),
 			'shape'        => BlockSupport::key_attribute( $attributes, 'imageShape', array( 'square', 'landscape', 'portrait', 'circle' ), 'square' ),
 			'show_artwork' => BlockSupport::bool_attribute( $attributes, 'showArtwork', true ),
+			'show_badge'   => BlockSupport::bool_attribute( $attributes, 'showBadge', true ),
+			'show_meta'    => BlockSupport::bool_attribute( $attributes, 'showMeta', true ),
 			'show_artist'  => BlockSupport::bool_attribute( $attributes, 'showArtist', true ),
 			'show_date'    => BlockSupport::bool_attribute( $attributes, 'showDate', false ),
 			'show_excerpt' => BlockSupport::bool_attribute( $attributes, 'showExcerpt', false ),
@@ -1894,7 +1901,7 @@ final class ReleaseBlocks {
 			$more = '<a class="mw-related-releases__more" href="' . esc_url( $section_url ) . '">' . esc_html( $section_link_label ) . '<span aria-hidden="true">&rarr;</span></a>';
 		}
 
-		$shelf_class = 'mw-release-shelf mw-release-shelf--' . $options['layout'];
+		$shelf_class = 'mw-release-shelf mw-release-shelf--' . $options['layout'] . ' mw-release-shelf--cards-' . $options['card_style'];
 		if ( 'grid' === $options['layout'] ) {
 			$shelf_class .= ' mw-release-shelf--columns-' . $options['columns'];
 		}
@@ -1913,6 +1920,7 @@ final class ReleaseBlocks {
 		if ( ! is_string( $link ) || '' === $link ) {
 			return '';
 		}
+		$is_wave = 'wave' === ( $options['card_style'] ?? 'classic' );
 
 		$art = '';
 		if ( $options['show_artwork'] ) {
@@ -1935,8 +1943,11 @@ final class ReleaseBlocks {
 					$overlay = '<span class="mw-release-shelf__play" aria-hidden="true">&#9654;</span>';
 				}
 			}
-			$art = '<div class="mw-release-shelf__artwrap"><a class="mw-release-shelf__art mw-release-shelf__art--' . esc_attr( (string) $options['shape'] ) . '" href="' . esc_url( $link ) . '" aria-label="' . esc_attr( $open_label ) . '">' . ( '' !== $image ? $image : '<span class="mw-release-shelf__placeholder" aria-hidden="true">' . esc_html( $initial ) . '</span>' ) . '</a>' . $overlay . '</div>';
+			$badge = $is_wave && $options['show_badge'] ? ReleaseBadge::for_release( $release_id ) : '';
+			$art   = '<div class="mw-release-shelf__artwrap"><a class="mw-release-shelf__art mw-release-shelf__art--' . esc_attr( (string) $options['shape'] ) . '" href="' . esc_url( $link ) . '" aria-label="' . esc_attr( $open_label ) . '">' . ( '' !== $image ? $image : '<span class="mw-release-shelf__placeholder" aria-hidden="true">' . esc_html( $initial ) . '</span>' ) . '</a>' . $badge . $overlay . '</div>';
 		}
+
+		$meta = $is_wave && $options['show_meta'] ? ReleaseBadge::meta_markup( $release_id ) : '';
 
 		$artist = '';
 		if ( $options['show_artist'] ) {
@@ -1964,7 +1975,7 @@ final class ReleaseBlocks {
 			? '<a class="mw-release-shelf__action" href="' . esc_url( $link ) . '">' . esc_html( (string) $options['action_label'] ) . '</a>'
 			: '';
 
-		return '<article class="mw-release-shelf__item">' . $art . '<div class="mw-release-shelf__body"><h3><a href="' . esc_url( $link ) . '">' . esc_html( $title ) . '</a></h3>' . $artist . $date . $excerpt . $preview . $action . '</div></article>';
+		return '<article class="mw-release-shelf__item">' . $art . '<div class="mw-release-shelf__body">' . $meta . '<h3><a href="' . esc_url( $link ) . '">' . esc_html( $title ) . '</a></h3>' . $artist . $date . $excerpt . $preview . $action . '</div></article>';
 	}
 
 	/**

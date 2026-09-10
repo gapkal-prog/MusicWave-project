@@ -69,6 +69,18 @@
       "type": "string",
       "default": "grid"
     },
+    "cardStyle": {
+      "type": "string",
+      "default": "classic"
+    },
+    "showBadge": {
+      "type": "boolean",
+      "default": true
+    },
+    "showMeta": {
+      "type": "boolean",
+      "default": true
+    },
     "columns": {
       "type": "integer",
       "default": 4

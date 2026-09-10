@@ -586,6 +586,10 @@
 									'ghost',
 									__( 'بی‌زمینه', 'music-wave-core' ),
 								],
+								[
+									'glow',
+									__( 'درخشان (WAVE)', 'music-wave-core' ),
+								],
 							],
 							__(
 								'همین گزینه‌ها در پنل سبک‌های بلوک نیز در دسترس هستند.',
@@ -845,6 +849,22 @@
 							],
 						],
 						[
+							'select',
+							'cardStyle',
+							__( 'سبک کارت', 'music-wave-core' ),
+							[
+								[ 'classic', __( 'کلاسیک', 'music-wave-core' ) ],
+								[
+									'wave',
+									__( 'WAVE (کاشی سرمقاله)', 'music-wave-core' ),
+								],
+							],
+							__(
+								'سبک WAVE کارت‌ها را روی سطح پدینگ‌دار با نشان کیفیت و خط متا نمایش می‌دهد.',
+								'music-wave-core'
+							),
+						],
+						[
 							'range',
 							'columns',
 							__( 'ستون‌های شبکه', 'music-wave-core' ),
@@ -880,6 +900,20 @@
 							'showArtwork',
 							__( 'نمایش آثار هنری', 'music-wave-core' ),
 							true,
+						],
+						[
+							'toggle',
+							'showBadge',
+							__( 'نمایش نشان کیفیت (Hi-Res/FLAC)', 'music-wave-core' ),
+							true,
+							__( 'فقط در سبک کارت WAVE.', 'music-wave-core' ),
+						],
+						[
+							'toggle',
+							'showMeta',
+							__( 'نمایش خط متا (نوع · سال)', 'music-wave-core' ),
+							true,
+							__( 'فقط در سبک کارت WAVE.', 'music-wave-core' ),
 						],
 						[
 							'toggle',
@@ -942,6 +976,10 @@
 								[
 									'ghost',
 									__( 'بی‌زمینه', 'music-wave-core' ),
+								],
+								[
+									'glow',
+									__( 'درخشان (WAVE)', 'music-wave-core' ),
 								],
 							],
 							__(
@@ -1601,6 +1639,22 @@
 							),
 						],
 						[
+							'select',
+							'cardStyle',
+							__( 'سبک کارت', 'music-wave-core' ),
+							[
+								[ 'classic', __( 'کلاسیک', 'music-wave-core' ) ],
+								[
+									'wave',
+									__( 'WAVE (کاشی با حلقهٔ آواتار)', 'music-wave-core' ),
+								],
+							],
+							__(
+								'سبک WAVE هر هنرمند را روی کاشی سطح‌دار با حلقهٔ رنگی آواتار و دکمهٔ دنبال‌کردن خطی نشان می‌دهد.',
+								'music-wave-core'
+							),
+						],
+						[
 							'range',
 							'columns',
 							__( 'ستون‌های شبکه', 'music-wave-core' ),
@@ -1860,6 +1914,10 @@
 								[
 									'plain',
 									__( 'ساده (سطح آرام)', 'music-wave-core' ),
+								],
+								[
+									'mood',
+									__( 'حال‌وهوا (WAVE، کارت بلند با پس‌زمینه)', 'music-wave-core' ),
 								],
 							],
 						],
@@ -2791,6 +2849,22 @@
 							),
 						],
 						[
+							'select',
+							'cardStyle',
+							__( 'سبک کارت', 'music-wave-core' ),
+							[
+								[ 'classic', __( 'کلاسیک', 'music-wave-core' ) ],
+								[
+									'wave',
+									__( 'WAVE (کاشی سرمقاله)', 'music-wave-core' ),
+								],
+							],
+							__(
+								'سبک WAVE کارت‌ها را روی سطح پدینگ‌دار با نشان کیفیت و خط متا نمایش می‌دهد.',
+								'music-wave-core'
+							),
+						],
+						[
 							'range',
 							'columns',
 							__( 'ستون‌های شبکه', 'music-wave-core' ),
@@ -2830,6 +2904,20 @@
 							'showArtwork',
 							__( 'نمایش آثار هنری', 'music-wave-core' ),
 							true,
+						],
+						[
+							'toggle',
+							'showBadge',
+							__( 'نمایش نشان کیفیت (Hi-Res/FLAC)', 'music-wave-core' ),
+							true,
+							__( 'فقط در سبک کارت WAVE.', 'music-wave-core' ),
+						],
+						[
+							'toggle',
+							'showMeta',
+							__( 'نمایش خط متا (نوع · سال)', 'music-wave-core' ),
+							true,
+							__( 'فقط در سبک کارت WAVE.', 'music-wave-core' ),
 						],
 						[
 							'toggle',

@@ -111,7 +111,9 @@ final class TaxonomyShelfBlock {
 		$layout = in_array( $layout, array( 'grid', 'scroll', 'list' ), true ) ? $layout : 'grid';
 
 		$card_style = isset( $attributes['cardStyle'] ) ? sanitize_key( (string) $attributes['cardStyle'] ) : 'colorful';
-		$card_style = in_array( $card_style, array( 'colorful', 'plain' ), true ) ? $card_style : 'colorful';
+		// `mood` is the reference "Moods & Sanctuaries" tile: a tall card with
+		// a photographic/hue backdrop, a pill on top and the description below.
+		$card_style = in_array( $card_style, array( 'colorful', 'plain', 'mood' ), true ) ? $card_style : 'colorful';
 
 		$items = isset( $attributes['itemsToShow'] ) ? absint( $attributes['itemsToShow'] ) : 0;
 		$items = min( self::MAX_ITEMS, max( 1, $items > 0 ? $items : 8 ) );
@@ -268,12 +270,64 @@ final class TaxonomyShelfBlock {
 
 		$hue = ( $index % 6 ) + 1;
 
+		if ( 'mood' === $options['card_style'] ) {
+			return $this->mood_tile( $term, $options, $link, $name, $count_html, $open_label, $hue );
+		}
+
 		return '<a class="mw-terms-shelf__tile'
 			. ' mw-terms-shelf__tile--hue-' . absint( $hue )
 			. ' mw-terms-shelf__tile--style-' . esc_attr( (string) $options['card_style'] )
 			. '" href="' . esc_url( $link ) . '" aria-label="' . esc_attr( $open_label ) . '">'
 			. '<span class="mw-terms-shelf__name">' . esc_html( $name ) . '</span>'
 			. $count_html
+			. '</a>';
+	}
+
+	/**
+	 * The WAVE mood tile: backdrop (term image when the taxonomy carries one,
+	 * curated hue otherwise), a taxonomy pill on top, name + description and
+	 * the release count at the bottom.
+	 *
+	 * @param WP_Term              $term       Term.
+	 * @param array<string, mixed> $options    Resolved options.
+	 * @param string               $link       Term archive URL.
+	 * @param string               $name       Display name.
+	 * @param string               $count_html Count markup, possibly empty.
+	 * @param string               $open_label Accessible label.
+	 * @param int                  $hue        Deterministic hue index.
+	 */
+	private function mood_tile( WP_Term $term, array $options, string $link, string $name, string $count_html, string $open_label, int $hue ): string {
+		$image_id = absint( get_term_meta( $term->term_id, 'mw_artist_image_id', true ) );
+		$backdrop = $image_id > 0
+			? wp_get_attachment_image(
+				$image_id,
+				'medium_large',
+				false,
+				array(
+					'class'    => 'mw-terms-shelf__backdrop',
+					'alt'      => '',
+					'loading'  => 'lazy',
+					'decoding' => 'async',
+				)
+			)
+			: '';
+
+		$taxonomy = get_taxonomy( $term->taxonomy );
+		$pill     = is_object( $taxonomy ) && isset( $taxonomy->labels->singular_name ) ? (string) $taxonomy->labels->singular_name : '';
+
+		$description = trim( wp_strip_all_tags( (string) $term->description ) );
+		$description = '' !== $description ? wp_trim_words( $description, 12 ) : '';
+
+		return '<a class="mw-terms-shelf__tile mw-terms-shelf__tile--style-mood mw-terms-shelf__tile--hue-' . absint( $hue ) . ( '' !== $backdrop ? ' has-backdrop' : '' )
+			. '" href="' . esc_url( $link ) . '" aria-label="' . esc_attr( $open_label ) . '">'
+			. $backdrop
+			. '<span class="mw-terms-shelf__scrim" aria-hidden="true"></span>'
+			. ( '' !== $pill ? '<span class="mw-terms-shelf__pill mw-pill">' . esc_html( $pill ) . '</span>' : '' )
+			. '<span class="mw-terms-shelf__body">'
+			. '<span class="mw-terms-shelf__name">' . esc_html( $name ) . '</span>'
+			. ( '' !== $description ? '<span class="mw-terms-shelf__description">' . esc_html( $description ) . '</span>' : '' )
+			. $count_html
+			. '</span>'
 			. '</a>';
 	}
 

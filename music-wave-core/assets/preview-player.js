@@ -327,9 +327,11 @@
 				} );
 			// Now-playing rows: flag the list item that owns the active
 			// trigger so the theme can light up an equalizer (CSS-only).
+			// Collection rows are flagged on the <li> (the hover/active
+			// surface); chart rows and queue items are their own surface.
 			document
 				.querySelectorAll(
-					'.mw-collection-list__item, .mw-global-player__queue-item'
+					'.mw-collection-list li, .mw-release-shelf__row, .mw-global-player__queue-item'
 				)
 				.forEach( function ( row ) {
 					var trigger = row.querySelector(

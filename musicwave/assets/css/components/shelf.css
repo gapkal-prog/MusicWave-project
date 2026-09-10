@@ -685,3 +685,300 @@ html[dir="rtl"] .mw-release-shelf__nav-button svg {
 .mw-release-shelf--playlists .mw-release-shelf__items {
 	gap: clamp(1rem, 2vw, 1.35rem);
 }
+
+/* -------------------------------------------------------------------------
+ * WAVE card style (cardStyle: wave)
+ * Reference: home "Jump Back In" / "New Releases" cards — a padded surface
+ * tile that lifts and tints on hover, a tiny format badge on the artwork
+ * corner, the play button sliding in from below, and a quiet meta line.
+ * Shared by release-shelf (theme), related-releases and continue-listening
+ * (plugin) through the same `.mw-release-shelf--cards-wave` modifier.
+ * ---------------------------------------------------------------------- */
+.mw-release-shelf--cards-wave .mw-release-shelf__item {
+	background: var(--mw-color-surface);
+	border: 1px solid transparent;
+	border-radius: var(--mw-radius-md, .75rem);
+	padding: .75rem;
+	transition:
+		background-color var(--mw-speed-normal, 300ms) var(--mw-ease-snap, ease),
+		border-color var(--mw-speed-normal, 300ms) var(--mw-ease-snap, ease),
+		transform var(--mw-speed-normal, 300ms) var(--mw-ease-snap, ease);
+}
+
+.mw-release-shelf--cards-wave .mw-release-shelf__item:is(:hover, :focus-within) {
+	background: var(--mw-color-surface-raised);
+	border-color: var(--mw-color-border-subtle, transparent);
+	transform: translateY(-.2rem);
+}
+
+.mw-release-shelf--cards-wave .mw-release-shelf__art {
+	border-radius: var(--mw-radius-sm, .5rem);
+	box-shadow: 0 .5rem 1.5rem rgb(0 0 0 / 28%);
+}
+
+.mw-release-shelf--cards-wave .mw-release-shelf__art--circle {
+	border-radius: 50%;
+}
+
+.mw-release-shelf--cards-wave .mw-release-shelf__badge {
+	inset-block-start: .5rem;
+	inset-inline-start: .5rem;
+	position: absolute;
+	z-index: 1;
+}
+
+.mw-release-shelf--cards-wave .mw-release-shelf__play {
+	block-size: 2.5rem;
+	inline-size: 2.5rem;
+	inset-block-end: .5rem;
+	inset-inline-end: .5rem;
+	transform: translateY(.75rem);
+}
+
+.mw-release-shelf--cards-wave .mw-release-shelf__body {
+	gap: .15rem;
+	padding-block-start: .85rem;
+}
+
+.mw-release-shelf__meta {
+	color: var(--mw-color-accent);
+	display: block;
+	font-size: .625rem;
+	font-weight: 800;
+	letter-spacing: .08em;
+	margin-block-end: .2rem;
+	text-transform: uppercase;
+}
+
+.mw-release-shelf--cards-wave .mw-release-shelf__body h3 {
+	font-size: .9375rem;
+	font-weight: 700;
+	letter-spacing: -.01em;
+}
+
+.mw-release-shelf--cards-wave.mw-release-shelf--list .mw-release-shelf__item {
+	border-block-end: 0;
+	border-radius: var(--mw-radius-md, .75rem);
+	grid-template-columns: 3.5rem minmax(0, 1fr);
+	padding: .5rem .75rem;
+}
+
+.mw-release-shelf--cards-wave.mw-release-shelf--list .mw-release-shelf__item:is(:hover, :focus-within) {
+	transform: none;
+}
+
+.mw-release-shelf--cards-wave.mw-release-shelf--list .mw-release-shelf__badge {
+	display: none;
+}
+
+.mw-release-shelf--cards-wave.mw-release-shelf--list .mw-release-shelf__body {
+	padding: 0;
+}
+
+/* -------------------------------------------------------------------------
+ * Chart layout (layout: chart)
+ * Reference: "WAVE Top 100 Recommended" — a ranked table inside a surface
+ * card: rank / 40px art / title + artist / genre / time. The rank swaps for
+ * the equalizer while the row is playing (data-mw-playing is synced by
+ * preview-player.js); the artwork hosts the play trigger.
+ * ---------------------------------------------------------------------- */
+.mw-release-shelf__chart {
+	background: var(--mw-color-surface);
+	border: 1px solid var(--mw-color-border-subtle, transparent);
+	border-radius: var(--mw-radius-lg, 1rem);
+	overflow: hidden;
+	padding: .5rem;
+}
+
+.mw-release-shelf__chart-header,
+.mw-release-shelf__row {
+	align-items: center;
+	display: grid;
+	gap: .85rem;
+	grid-template-columns: 2.25rem 2.5rem minmax(0, 1fr) minmax(0, 10rem) 3.5rem;
+}
+
+.mw-release-shelf__chart-header {
+	color: var(--mw-color-text-muted);
+	font-size: .625rem;
+	font-weight: 800;
+	letter-spacing: .1em;
+	padding: .5rem .85rem .65rem;
+	text-transform: uppercase;
+}
+
+/* Header columns: rank spans rank+art so labels align with the title. */
+.mw-release-shelf__chart-header > span:first-child { grid-column: 1 / 3; }
+.mw-release-shelf__chart-header > span:nth-child(2) { grid-column: 3; }
+.mw-release-shelf__chart-genre { grid-column: 4; }
+.mw-release-shelf__chart-time { grid-column: 5; text-align: end; }
+
+.mw-release-shelf__rows {
+	display: grid;
+	gap: .15rem;
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+.mw-release-shelf__row {
+	border-radius: var(--mw-radius-md, .75rem);
+	padding: .55rem .85rem;
+	position: relative;
+	transition: background-color var(--mw-speed-fast, 150ms) ease;
+}
+
+.mw-release-shelf__row:is(:hover, :focus-within) {
+	background: var(--mw-color-surface-raised);
+}
+
+.mw-release-shelf__row[data-mw-playing] {
+	background: color-mix(in srgb, var(--mw-color-accent) 12%, var(--mw-color-surface-raised));
+}
+
+.mw-release-shelf__rank {
+	color: var(--mw-color-text-muted);
+	display: inline-grid;
+	font-size: .8125rem;
+	font-variant-numeric: tabular-nums;
+	font-weight: 700;
+	place-items: center;
+}
+
+.mw-release-shelf__rank .mw-equalizer {
+	color: var(--mw-color-accent);
+	display: none;
+}
+
+.mw-release-shelf__row[data-mw-playing] .mw-release-shelf__rank-num { display: none; }
+.mw-release-shelf__row[data-mw-playing] .mw-release-shelf__rank .mw-equalizer { display: inline-flex; }
+
+.mw-release-shelf__row-media {
+	block-size: 2.5rem;
+	display: block;
+	inline-size: 2.5rem;
+	position: relative;
+}
+
+.mw-release-shelf__row-art {
+	background: var(--mw-color-surface-raised);
+	block-size: 100%;
+	border-radius: var(--mw-radius-sm, .5rem);
+	display: block;
+	inline-size: 100%;
+	overflow: hidden;
+}
+
+.mw-release-shelf__row-art .mw-release-shelf__image {
+	block-size: 100%;
+	inline-size: 100%;
+	object-fit: cover;
+}
+
+.mw-release-shelf__row-art .mw-release-shelf__placeholder {
+	font-size: 1rem;
+}
+
+.mw-release-shelf__row-play {
+	align-items: center;
+	background: rgb(0 0 0 / 55%);
+	border: 0;
+	border-radius: var(--mw-radius-sm, .5rem);
+	color: #fff;
+	cursor: pointer;
+	display: flex;
+	font-size: .75rem;
+	inset: 0;
+	justify-content: center;
+	opacity: 0;
+	padding: 0;
+	position: absolute;
+	transition: opacity var(--mw-speed-fast, 150ms) ease;
+}
+
+.mw-release-shelf__row:is(:hover, :focus-within) .mw-release-shelf__row-play,
+.mw-release-shelf__row-play[aria-pressed="true"],
+.mw-release-shelf__row-play:focus-visible {
+	opacity: 1;
+}
+
+.mw-release-shelf__row-body {
+	display: grid;
+	gap: .1rem;
+	min-inline-size: 0;
+}
+
+.mw-release-shelf__row-title {
+	color: inherit;
+	font-size: .9375rem;
+	font-weight: 700;
+	overflow: hidden;
+	text-decoration: none;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.mw-release-shelf__row-title:is(:hover, :focus-visible),
+.mw-release-shelf__row[data-mw-playing] .mw-release-shelf__row-title {
+	color: var(--mw-color-accent);
+}
+
+.mw-release-shelf__row-body .mw-release-shelf__badge {
+	inline-size: fit-content;
+	margin-block: .1rem;
+}
+
+.mw-release-shelf__row-body .mw-release-shelf__artist {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.mw-release-shelf__row-genre,
+.mw-release-shelf__row-time {
+	color: var(--mw-color-text-muted);
+	font-size: .8125rem;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.mw-release-shelf__row-genre {
+	display: grid;
+	gap: .1rem;
+}
+
+.mw-release-shelf__row-views {
+	font-size: .6875rem;
+}
+
+.mw-release-shelf__row-time {
+	font-variant-numeric: tabular-nums;
+	text-align: end;
+}
+
+.mw-release-shelf__row[data-mw-playing] .mw-release-shelf__row-time {
+	color: var(--mw-color-accent);
+}
+
+@container (max-width: 40rem) {
+	.mw-release-shelf__chart-header,
+	.mw-release-shelf__row {
+		grid-template-columns: 1.75rem 2.5rem minmax(0, 1fr) 3rem;
+	}
+
+	.mw-release-shelf__chart-genre,
+	.mw-release-shelf__row-genre {
+		display: none;
+	}
+
+	.mw-release-shelf__chart-time { grid-column: 4; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.mw-release-shelf--cards-wave .mw-release-shelf__item,
+	.mw-release-shelf__row,
+	.mw-release-shelf__row-play {
+		transition: none;
+	}
+}

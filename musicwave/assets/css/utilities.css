@@ -8,3 +8,165 @@
 	border-radius: var(--mw-radius-lg);
 	box-shadow: var(--mw-shadow-card);
 }
+
+/* -------------------------------------------------------------------------
+ * WAVE primitives — shared by every "wave" block style.
+ * One implementation each; components only position them. Colours come
+ * from the semantic tokens so every style variation and both schemes work.
+ * ---------------------------------------------------------------------- */
+
+/* Tiny uppercase format badge ("FLAC", "Hi-Res", "24-bit") over artwork. */
+.mw-badge {
+	align-items: center;
+	backdrop-filter: blur(8px);
+	background: color-mix(in srgb, var(--mw-color-canvas) 72%, transparent);
+	border: 1px solid color-mix(in srgb, var(--mw-color-text) 12%, transparent);
+	border-radius: var(--mw-radius-sm, .5rem);
+	color: var(--mw-color-text);
+	display: inline-flex;
+	font-size: .5625rem;
+	font-weight: 800;
+	gap: .3em;
+	letter-spacing: .08em;
+	line-height: 1;
+	padding: .3rem .45rem;
+	text-transform: uppercase;
+	white-space: nowrap;
+}
+
+.mw-badge--accent {
+	background: var(--mw-color-accent);
+	border-color: transparent;
+	color: var(--mw-color-on-accent);
+}
+
+.mw-badge--premium {
+	background: var(--mw-color-premium);
+	border-color: transparent;
+	color: var(--mw-color-on-premium);
+}
+
+/* Eyebrow label above a section heading (crimson label-xs in the reference). */
+.mw-eyebrow {
+	color: var(--mw-color-accent);
+	display: block;
+	font-size: .6875rem;
+	font-weight: 800;
+	letter-spacing: .1em;
+	text-transform: uppercase;
+}
+
+/* Rounded chip: quiet surface by default, accent when `is-active`. */
+.mw-pill {
+	align-items: center;
+	background: var(--mw-color-surface-raised);
+	border: 1px solid transparent;
+	border-radius: var(--mw-radius-pill, 999px);
+	color: var(--mw-color-text-muted);
+	display: inline-flex;
+	font-size: .75rem;
+	font-weight: 700;
+	gap: .4rem;
+	line-height: 1;
+	padding: .45rem .85rem;
+	text-decoration: none;
+	transition:
+		background-color var(--mw-speed-fast, 150ms) ease,
+		color var(--mw-speed-fast, 150ms) ease;
+}
+
+.mw-pill:is(:hover, :focus-visible) {
+	background: var(--mw-color-surface-strong);
+	color: var(--mw-color-text);
+}
+
+.mw-pill.is-active,
+.mw-pill--accent {
+	background: var(--mw-color-accent);
+	color: var(--mw-color-on-accent);
+}
+
+.mw-pill--outline {
+	background: transparent;
+	border-color: var(--mw-color-border);
+}
+
+/* Ping dot used inside editorial eyebrows/pills. */
+.mw-ping {
+	background: currentColor;
+	block-size: .4rem;
+	border-radius: 50%;
+	box-shadow: 0 0 0 0 currentColor;
+	display: inline-block;
+	inline-size: .4rem;
+	animation: mw-ping 1.8s var(--mw-ease-out, ease-out) infinite;
+}
+
+@keyframes mw-ping {
+	0% { box-shadow: 0 0 0 0 color-mix(in srgb, currentColor 60%, transparent); }
+	100% { box-shadow: 0 0 0 .5rem transparent; }
+}
+
+/*
+ * CSS-only vinyl disc. Sits behind a square jacket and slides out along
+ * the inline axis on hover of the parent `.mw-vinyl-stack`. The label
+ * gradient uses the accent so the disc matches the active palette.
+ */
+:root {
+	--mw-vinyl-surface:
+		radial-gradient(circle at center, var(--mw-color-accent) 0 14%, #111 15% 17%, transparent 18%),
+		repeating-radial-gradient(circle at center, #0b0b0d 0 2px, #161618 3px 4px);
+	--mw-vinyl-shadow: 0 1rem 2.5rem rgb(0 0 0 / 55%), inset 0 0 0 1px rgb(255 255 255 / 6%);
+}
+
+.mw-vinyl-stack {
+	display: grid;
+	position: relative;
+}
+
+.mw-vinyl-stack > * {
+	grid-area: 1 / 1;
+}
+
+.mw-vinyl {
+	aspect-ratio: 1;
+	align-self: center;
+	background: var(--mw-vinyl-surface);
+	border-radius: 50%;
+	box-shadow: var(--mw-vinyl-shadow);
+	inline-size: 72%;
+	justify-self: end;
+	pointer-events: none;
+	position: relative;
+	transition: transform var(--mw-speed-normal, 300ms) var(--mw-ease-out, ease);
+	z-index: 0;
+}
+
+.mw-vinyl::after {
+	background: #050506;
+	block-size: 6%;
+	border-radius: 50%;
+	content: "";
+	inline-size: 6%;
+	inset: 47%;
+	position: absolute;
+}
+
+.mw-vinyl-stack > :not(.mw-vinyl) {
+	inline-size: 78%;
+	position: relative;
+	z-index: 1;
+}
+
+.mw-vinyl-stack:is(:hover, :focus-within) .mw-vinyl {
+	transform: translateX(10%) rotate(20deg);
+}
+
+html[dir="rtl"] .mw-vinyl-stack:is(:hover, :focus-within) .mw-vinyl {
+	transform: translateX(-10%) rotate(-20deg);
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.mw-ping { animation: none; }
+	.mw-vinyl { transition: none; }
+}

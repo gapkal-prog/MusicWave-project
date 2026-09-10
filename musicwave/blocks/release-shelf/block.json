@@ -62,6 +62,30 @@
       "type": "string",
       "default": "grid"
     },
+    "cardStyle": {
+      "type": "string",
+      "enum": [
+        "classic",
+        "wave"
+      ],
+      "default": "classic"
+    },
+    "heroStyle": {
+      "type": "string",
+      "enum": [
+        "cinematic",
+        "editorial"
+      ],
+      "default": "cinematic"
+    },
+    "showBadge": {
+      "type": "boolean",
+      "default": true
+    },
+    "showMeta": {
+      "type": "boolean",
+      "default": true
+    },
     "autoplay": {
       "type": "boolean",
       "default": true

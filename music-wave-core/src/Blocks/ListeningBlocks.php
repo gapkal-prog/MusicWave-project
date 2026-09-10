@@ -157,9 +157,12 @@ final class ListeningBlocks {
 
 		$options = array(
 			'layout'       => BlockSupport::key_attribute( $attributes, 'layout', array( 'grid', 'scroll', 'list' ), 'scroll' ),
+			'card_style'   => BlockSupport::key_attribute( $attributes, 'cardStyle', array( 'classic', 'wave' ), 'classic' ),
 			'columns'      => BlockSupport::range_attribute( $attributes, 'columns', 2, 6, 4 ),
 			'shape'        => BlockSupport::key_attribute( $attributes, 'imageShape', array( 'square', 'circle', 'landscape', 'portrait' ), 'square' ),
 			'show_artwork' => ! isset( $attributes['showArtwork'] ) || false !== $attributes['showArtwork'],
+			'show_badge'   => BlockSupport::bool_attribute( $attributes, 'showBadge', true ),
+			'show_meta'    => BlockSupport::bool_attribute( $attributes, 'showMeta', true ),
 			'show_artist'  => ! isset( $attributes['showArtist'] ) || false !== $attributes['showArtist'],
 			'show_when'    => ! isset( $attributes['showWhen'] ) || false !== $attributes['showWhen'],
 			'show_preview' => ! isset( $attributes['showPreview'] ) || false !== $attributes['showPreview'],
@@ -193,7 +196,7 @@ final class ListeningBlocks {
 
 		// The items wrapper reuses the theme's release-shelf chrome so grid,
 		// scroll, and list rails match every other shelf on the site.
-		$shelf_class = 'mw-release-shelf mw-release-shelf--' . $options['layout'];
+		$shelf_class = 'mw-release-shelf mw-release-shelf--' . $options['layout'] . ' mw-release-shelf--cards-' . $options['card_style'];
 		if ( 'grid' === $options['layout'] ) {
 			$shelf_class .= ' mw-release-shelf--columns-' . $options['columns'];
 		}
@@ -218,7 +221,8 @@ final class ListeningBlocks {
 		if ( $release_id < 1 || ! is_string( $link ) || '' === $link ) {
 			return '';
 		}
-		$title = '' !== $title ? $title : __( 'انتشار بدون عنوان', 'music-wave-core' );
+		$title   = '' !== $title ? $title : __( 'انتشار بدون عنوان', 'music-wave-core' );
+		$is_wave = 'wave' === ( $options['card_style'] ?? 'classic' );
 
 		$art = '';
 		if ( $options['show_artwork'] ) {
@@ -241,8 +245,11 @@ final class ListeningBlocks {
 				$filtered = apply_filters( 'music_wave_card_play_button', '', $release_id, 'mw-release-shelf__play' );
 				$overlay  = is_string( $filtered ) ? $filtered : '';
 			}
-			$art = '<div class="mw-release-shelf__artwrap"><a class="mw-release-shelf__art mw-release-shelf__art--' . esc_attr( (string) $options['shape'] ) . '" href="' . esc_url( $link ) . '" aria-label="' . esc_attr( $open_label ) . '">' . ( '' !== $image ? $image : '<span class="mw-release-shelf__placeholder" aria-hidden="true">' . esc_html( $initial ) . '</span>' ) . '</a>' . $overlay . '</div>';
+			$badge = $is_wave && $options['show_badge'] ? ReleaseBadge::for_release( $release_id ) : '';
+			$art   = '<div class="mw-release-shelf__artwrap"><a class="mw-release-shelf__art mw-release-shelf__art--' . esc_attr( (string) $options['shape'] ) . '" href="' . esc_url( $link ) . '" aria-label="' . esc_attr( $open_label ) . '">' . ( '' !== $image ? $image : '<span class="mw-release-shelf__placeholder" aria-hidden="true">' . esc_html( $initial ) . '</span>' ) . '</a>' . $badge . $overlay . '</div>';
 		}
+
+		$meta = $is_wave && $options['show_meta'] ? ReleaseBadge::meta_markup( $release_id ) : '';
 
 		$artist = '';
 		if ( $options['show_artist'] ) {
@@ -258,7 +265,7 @@ final class ListeningBlocks {
 		}
 
 		return '<article class="mw-release-shelf__item mw-continue-listening__item">' . $art
-			. '<div class="mw-release-shelf__body"><h3><a href="' . esc_url( $link ) . '">' . esc_html( $title ) . '</a></h3>' . $artist . $when . '</div>'
+			. '<div class="mw-release-shelf__body">' . $meta . '<h3><a href="' . esc_url( $link ) . '">' . esc_html( $title ) . '</a></h3>' . $artist . $when . '</div>'
 			. '</article>';
 	}
 

@@ -5207,3 +5207,45 @@ msgstr "What song do you want?"
 
 msgid "یادداشت حریم خصوصی"
 msgstr "Privacy note"
+
+msgid "Hi-Res"
+msgstr "Hi-Res"
+
+msgid "WAVE (کارت جدولی)"
+msgstr "WAVE (table card)"
+
+msgid "WAVE (کاشی با حلقهٔ آواتار)"
+msgstr "WAVE (tile with avatar ring)"
+
+msgid "WAVE (کاشی سرمقاله)"
+msgstr "WAVE (editorial tile)"
+
+msgid "حال‌وهوا (WAVE، کارت بلند با پس‌زمینه)"
+msgstr "Mood (WAVE, tall card with backdrop)"
+
+msgid "درخشان (WAVE)"
+msgstr "Glow (WAVE)"
+
+msgid "سبک WAVE هر هنرمند را روی کاشی سطح‌دار با حلقهٔ رنگی آواتار و دکمهٔ دنبال‌کردن خطی نشان می‌دهد."
+msgstr "The WAVE style shows each artist on a surface tile with an accent avatar ring and an outline follow button."
+
+msgid "سبک WAVE کارت‌ها را روی سطح پدینگ‌دار با نشان کیفیت و خط متا نمایش می‌دهد."
+msgstr "The WAVE style renders cards on a padded surface with a quality badge and a meta line."
+
+msgid "سبک کارت"
+msgstr "Card style"
+
+msgid "فقط در سبک کارت WAVE."
+msgstr "WAVE card style only."
+
+msgid "نمایش خط متا (نوع · سال)"
+msgstr "Show meta line (type · year)"
+
+msgid "نمایش نشان کیفیت (Hi-Res/FLAC)"
+msgstr "Show quality badge (Hi-Res/FLAC)"
+
+msgid "پیش‌فرض (ردیف‌های باز)"
+msgstr "Default (open rows)"
+
+msgid "کلاسیک"
+msgstr "Classic"

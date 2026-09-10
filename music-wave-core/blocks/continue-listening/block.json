@@ -43,6 +43,18 @@
       "type": "string",
       "default": "scroll"
     },
+    "cardStyle": {
+      "type": "string",
+      "default": "classic"
+    },
+    "showBadge": {
+      "type": "boolean",
+      "default": true
+    },
+    "showMeta": {
+      "type": "boolean",
+      "default": true
+    },
     "imageShape": {
       "type": "string",
       "default": "square"

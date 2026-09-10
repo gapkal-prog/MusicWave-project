@@ -49,8 +49,20 @@
 	);
 	/* Saved-to-library "love" state, intentionally independent of the accent. */
 	--mw-color-heart: #ff2d55;
+	/*
+	 * WAVE editorial signals. `premium` is the gold used for VIP / Hi-Res /
+	 * "Master Tape Cut" badges; `accent-alt` is the violet counterpoint used
+	 * for the second glow blob behind hero cards. Both can be overridden per
+	 * style variation through theme.json `settings.custom.wave.*`.
+	 */
+	--mw-color-premium: var(--wp--custom--wave--premium, #e5b868);
+	--mw-color-on-premium: var(--wp--custom--wave--on-premium, #1a1404);
+	--mw-color-accent-alt: var(--wp--custom--wave--accent-alt, #6c5ce7);
+	/* Soft accent tint used by WAVE chips, active rows and the play glow. */
+	--mw-color-accent-dim: color-mix(in srgb, var(--mw-color-accent) 15%, transparent);
 	/* Semantic states referenced across components. */
 	--mw-color-danger: #f87171;
+	--mw-color-success: #10b981;
 	--mw-color-surface-strong: color-mix(in srgb, var(--mw-color-surface-raised) 82%, black);
 	--mw-shadow-card: var(--wp--preset--shadow--card, 0 18px 50px rgb(0 0 0 / 24%));
 	--mw-shadow-floating: var(--wp--preset--shadow--floating, 0 24px 70px rgb(0 0 0 / 40%));
@@ -178,6 +190,7 @@ html[data-mw-scheme="light"],
 html[data-mw-theme="light"] {
 	color-scheme: light;
 	--mw-color-danger: #b91c1c;
+	--mw-color-success: #047857;
 	--mw-color-border: color-mix(in srgb, var(--mw-color-text) 14%, transparent);
 	--mw-color-border-strong: color-mix(in srgb, var(--mw-color-text) 24%, transparent);
 	--mw-color-surface-strong: color-mix(in srgb, var(--mw-color-surface-raised) 92%, black);
@@ -208,6 +221,7 @@ html[data-mw-theme="light"][data-mw-scheme="dark"] {
 html[data-mw-theme="dark"] {
 	color-scheme: dark;
 	--mw-color-danger: #f87171;
+	--mw-color-success: #10b981;
 	--mw-color-border: color-mix(in srgb, var(--mw-color-text) 20%, transparent);
 	--mw-color-border-strong: color-mix(in srgb, var(--mw-color-text) 32%, transparent);
 	--mw-color-surface-strong: color-mix(in srgb, var(--mw-color-surface-raised) 82%, black);

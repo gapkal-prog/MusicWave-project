@@ -1139,3 +1139,48 @@ msgstr "Stream page (side rail)"
 
 msgid "همکاری"
 msgstr "Collaboration"
+
+msgid "%s پخش"
+msgstr "%s plays"
+
+msgid "WAVE (کاشی سرمقاله)"
+msgstr "WAVE (editorial tile)"
+
+msgid "جدول برترین‌ها (چارت)"
+msgstr "Top chart (table)"
+
+msgid "زمان"
+msgstr "Time"
+
+msgid "سبک WAVE کارت‌ها را روی سطح پدینگ‌دار با نشان کیفیت و خط متا نمایش می‌دهد."
+msgstr "The WAVE style renders cards on a padded surface with a quality badge and a meta line."
+
+msgid "سبک هیرو"
+msgstr "Hero style"
+
+msgid "سبک کارت"
+msgstr "Card style"
+
+msgid "سرمقاله (کارت + وینیل)"
+msgstr "Editorial (card + vinyl)"
+
+msgid "سینمایی (تمام‌عرض)"
+msgstr "Cinematic (full-bleed)"
+
+msgid "منتخب سرمقاله"
+msgstr "Editor's pick"
+
+msgid "نمایش خط متا (نوع · سال)"
+msgstr "Show meta line (type · year)"
+
+msgid "نمایش نشان کیفیت (Hi-Res/FLAC)"
+msgstr "Show quality badge (Hi-Res/FLAC)"
+
+msgid "هیرو کارتی (WAVE)"
+msgstr "Card hero (WAVE)"
+
+msgid "هیرو کارتی با وینیل (WAVE)"
+msgstr "Card hero with vinyl (WAVE)"
+
+msgid "کلاسیک"
+msgstr "Classic"

@@ -879,3 +879,103 @@ mw_assert_same(
 	false !== strpos( $theme_editor_script, "'slider'" ),
 	'The release shelf editor must expose the hero slider layout option.'
 );
+
+// ---- WAVE presentation layer (editorial reference parity) ----
+// Every WAVE variant is a selectable option on its block: block.json must
+// declare the attribute, the editor must expose it, the theme must style it,
+// and the bundled pattern/template must be able to compose it.
+foreach ( array( 'cardStyle', 'heroStyle', 'showBadge', 'showMeta' ) as $wave_attribute ) {
+	mw_assert_same(
+		true,
+		isset( $release_shelf_attrs[ $wave_attribute ] ),
+		'The release shelf block.json must declare the ' . $wave_attribute . ' attribute for the WAVE card/hero styles.'
+	);
+}
+mw_assert_same(
+	'classic',
+	$release_shelf_attrs['cardStyle']['default'] ?? null,
+	'The release shelf must default to the classic card style so existing sites do not change on upgrade.'
+);
+foreach ( array( "'chart'", "'wave'", "'editorial'", 'showBadge', 'showMeta' ) as $wave_editor_token ) {
+	mw_assert_same(
+		true,
+		false !== strpos( $theme_editor_script, $wave_editor_token ),
+		'The release shelf editor must expose the WAVE option ' . $wave_editor_token . '.'
+	);
+}
+$shelf_css       = (string) file_get_contents( $theme_directory . '/assets/css/components/shelf.css' );
+$hero_slider_css = (string) file_get_contents( $theme_directory . '/assets/css/components/hero-slider.css' );
+foreach ( array( '.mw-release-shelf--cards-wave', '.mw-release-shelf__badge', '.mw-release-shelf__meta', '.mw-release-shelf__chart', '.mw-release-shelf__row[data-mw-playing]' ) as $wave_shelf_selector ) {
+	mw_assert_same(
+		true,
+		false !== strpos( $shelf_css, $wave_shelf_selector ),
+		'The theme must style the WAVE shelf surface ' . $wave_shelf_selector . '.'
+	);
+}
+foreach ( array( '.mw-hero-slider--editorial', '.mw-hero-slide__stage', '.mw-hero-slide__facts' ) as $wave_hero_selector ) {
+	mw_assert_same(
+		true,
+		false !== strpos( $hero_slider_css, $wave_hero_selector ),
+		'The theme must style the editorial hero ' . $wave_hero_selector . '.'
+	);
+}
+$utilities_css = (string) file_get_contents( $theme_directory . '/assets/css/utilities.css' );
+foreach ( array( '.mw-badge--premium', '.mw-eyebrow', '.mw-ping', '.mw-vinyl' ) as $wave_utility ) {
+	mw_assert_same(
+		true,
+		false !== strpos( $utilities_css, $wave_utility ),
+		'utilities.css must ship the shared WAVE primitive ' . $wave_utility . ' so components do not re-implement it.'
+	);
+}
+$tokens_css = (string) file_get_contents( $theme_directory . '/assets/css/tokens.css' );
+foreach ( array( '--mw-color-premium', '--mw-color-on-premium', '--mw-color-accent-alt' ) as $wave_token ) {
+	mw_assert_same(
+		true,
+		false !== strpos( $tokens_css, $wave_token . ':' ),
+		'tokens.css must define the WAVE token ' . $wave_token . '.'
+	);
+}
+$wave_variation = json_decode( (string) file_get_contents( $theme_directory . '/styles/wave.json' ), true );
+mw_assert_same(
+	true,
+	is_array( $wave_variation ) && isset( $wave_variation['settings']['custom']['wave']['premium'], $wave_variation['settings']['custom']['scheme']['dark'] ),
+	'styles/wave.json must be a valid style variation that carries the WAVE premium token and a dark/light scheme.'
+);
+mw_assert_same(
+	true,
+	in_array( 'musicwave/wave-home-layout', $registered_patterns, true ),
+	'The theme must ship the wave-home-layout pattern so editors can compose the reference home page in one insert.'
+);
+$wave_home_pattern = (string) file_get_contents( $theme_directory . '/patterns/wave-home-layout.php' );
+foreach ( array( '"heroStyle":"editorial"', '"layout":"chart"', '"cardStyle":"wave"', '"cardStyle":"mood"', 'wp:music-wave/continue-listening', 'wp:music-wave/artists-shelf', 'wp:music-wave/taxonomy-shelf' ) as $wave_pattern_token ) {
+	mw_assert_same(
+		true,
+		false !== strpos( $wave_home_pattern, $wave_pattern_token ),
+		'wave-home-layout must compose the reference sections through block options (' . $wave_pattern_token . ').'
+	);
+}
+$single_release_source = (string) file_get_contents( $theme_directory . '/templates/single-mw_release.html' );
+foreach ( array( 'is-style-mw-hero-vinyl', 'is-style-glow', 'is-style-wave', '"cardStyle":"wave"' ) as $wave_single_token ) {
+	mw_assert_same(
+		true,
+		false !== strpos( $single_release_source, $wave_single_token ),
+		'single-mw_release.html must opt into the WAVE album-page styles via block styles/attributes (' . $wave_single_token . ').'
+	);
+}
+foreach ( array( 'mw-hero-card', 'mw-hero-vinyl' ) as $wave_group_style ) {
+	mw_assert_same(
+		true,
+		false !== strpos( $functions_source, "'name'  => '" . $wave_group_style . "'" ),
+		'functions.php must register the ' . $wave_group_style . ' group style so the WAVE hero is selectable in the Site Editor.'
+	);
+}
+$block_styles_css = (string) file_get_contents( $theme_directory . '/assets/css/components/block-styles.css' );
+foreach ( array( '.is-style-mw-hero-card', '.is-style-mw-hero-vinyl' ) as $wave_group_selector ) {
+	mw_assert_same(
+		true,
+		false !== strpos( $block_styles_css, $wave_group_selector ),
+		'block-styles.css must style the group variation ' . $wave_group_selector . '.'
+	);
+}
+
+echo "Template integrity checks passed.\n";

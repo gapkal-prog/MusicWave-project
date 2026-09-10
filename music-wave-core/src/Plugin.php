@@ -24,6 +24,7 @@ use ManaCore\MusicWave\Core\Blocks\LibraryBlocks;
 use ManaCore\MusicWave\Core\Blocks\TaxonomyShelfBlock;
 use ManaCore\MusicWave\Core\Blocks\TermHeroBlock;
 use ManaCore\MusicWave\Core\Blocks\PreviewPlayer;
+use ManaCore\MusicWave\Core\Blocks\ReleaseBadge;
 use ManaCore\MusicWave\Core\Blocks\ShareButtonBlock;
 use ManaCore\MusicWave\Core\Blocks\ShuffleButtonBlock;
 use ManaCore\MusicWave\Core\Admin\ReleaseMetaBox;
@@ -211,7 +212,7 @@ final class Plugin {
 		);
 		$playlist_forms = new PlaylistFormHandler( $playlists );
 		$registry->add( new \ManaCore\MusicWave\Core\Modules\Playlists( $playlists, new PlaylistRoutes( $playlists, $policy, $releases ), $playlist_forms, new PlaylistBlocks( $playlists, $playlist_forms ) ) );
-		$registry->add( new Rendering( new ReleaseBlocks( $policy, $releases ), new ArtistProfileBlock(), new PreviewPlayer( $releases, $policy ), new PlaybackQueueRoutes( $policy, $releases ), new ReleaseRestVisibilityPolicy( $policy ), new ArtistShelfBlock(), new TaxonomyShelfBlock(), new TermHeroBlock(), new ShareButtonBlock(), new ShuffleButtonBlock() ) );
+		$registry->add( new Rendering( new ReleaseBlocks( $policy, $releases ), new ArtistProfileBlock(), new PreviewPlayer( $releases, $policy ), new PlaybackQueueRoutes( $policy, $releases ), new ReleaseRestVisibilityPolicy( $policy ), new ArtistShelfBlock(), new TaxonomyShelfBlock(), new TermHeroBlock(), new ShareButtonBlock(), new ShuffleButtonBlock(), new ReleaseBadge( $releases ) ) );
 		$registry->add( new Downloads( new DownloadRoutes( $downloads ), new DownloadAssetRoutes( $releases ), $replay_store, $ticket_store ) );
 		$registry->add( new Diagnostics( new DiagnosticsPage( new DemoContentImporter( $releases ) ), new SiteHealth() ) );
 		$queue_forms = new \ManaCore\MusicWave\Core\Listening\QueueFormHandler( $listening_repository );
