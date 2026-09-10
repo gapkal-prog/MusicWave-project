@@ -1,0 +1,31 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "music-wave/lyrics-panel",
+  "title": "متن ترانه",
+  "category": "music-wave",
+  "description": "متن ساده و همگام ترانه را از متای واقعی انتشار نمایش می‌دهد.",
+  "keywords": ["ترانه", "متن", "lyrics", "همگام"],
+  "textdomain": "music-wave-core",
+  "icon": "format-status",
+  "attributes": {
+    "releaseId": { "type": "integer", "default": 0 },
+    "heading": { "type": "string", "default": "" },
+    "showHeading": { "type": "boolean", "default": true },
+    "showPlain": { "type": "boolean", "default": true },
+    "showSynced": { "type": "boolean", "default": true },
+    "maxLines": { "type": "integer", "default": 0 },
+    "showEmpty": { "type": "boolean", "default": false },
+    "emptyMessage": { "type": "string", "default": "" }
+  },
+  "usesContext": ["postId", "postType"],
+  "supports": {
+    "anchor": true,
+    "align": ["wide", "full"],
+    "border": { "color": true, "radius": true, "style": true, "width": true },
+    "color": { "background": true, "link": true, "text": true },
+    "spacing": { "blockGap": true, "margin": true, "padding": true },
+    "typography": { "fontSize": true, "lineHeight": true }
+  },
+  "example": { "attributes": { "showHeading": true, "showSynced": true } }
+}

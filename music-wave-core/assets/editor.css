@@ -70,9 +70,21 @@
 .mw-block-editor-shell > .wp-block-music-wave-related-releases,
 .mw-block-editor-shell > .wp-block-music-wave-artist-profile,
 .mw-block-editor-shell > .wp-block-music-wave-account-dashboard,
-.mw-block-editor-shell > .wp-block-music-wave-membership-panel {
+.mw-block-editor-shell > .wp-block-music-wave-membership-panel,
+.mw-block-editor-shell > .wp-block-music-wave-request-form {
 	margin-top: 0;
 	margin-bottom: 0;
+}
+
+/* The request form is a server-rendered form: inside the canvas it must
+ * look exactly like the front end but never submit or steal focus. */
+.mw-block-editor-shell > .wp-block-music-wave-request-form .mw-request-form__form {
+	pointer-events: none;
+}
+
+.mw-block-editor-shell > .wp-block-music-wave-request-form .mw-request-form__form :is(input, textarea, select, button) {
+	pointer-events: none;
+	user-select: none;
 }
 
 /* Inspector color field wrapper for the artist profile accent. */

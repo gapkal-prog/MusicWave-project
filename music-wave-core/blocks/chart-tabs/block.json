@@ -1,0 +1,36 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "music-wave/chart-tabs",
+  "title": "چارت تب‌دار موزیک‌ویو",
+  "category": "music-wave",
+  "description": "تب‌های پرتکرارها / پیشنهادی / تازه‌ها با داده واقعی کاتالوگ. تب‌ها را فعال، غیرفعال، مرتب و ویرایش کنید.",
+  "keywords": ["چارت", "تاپ", "پرتکرار", "پیشنهادی", "تب"],
+  "textdomain": "music-wave-core",
+  "icon": "chart-bar",
+  "attributes": {
+    "eyebrow": { "type": "string", "default": "" },
+    "heading": { "type": "string", "default": "" },
+    "showHeading": { "type": "boolean", "default": true },
+    "itemsToShow": { "type": "integer", "default": 10 },
+    "defaultTab": { "type": "string", "default": "top" },
+    "showTop": { "type": "boolean", "default": true },
+    "showRecommended": { "type": "boolean", "default": true },
+    "showNew": { "type": "boolean", "default": true },
+    "topLabel": { "type": "string", "default": "" },
+    "recommendedLabel": { "type": "string", "default": "" },
+    "newLabel": { "type": "string", "default": "" },
+    "showRank": { "type": "boolean", "default": true },
+    "showBadges": { "type": "boolean", "default": true },
+    "showPreview": { "type": "boolean", "default": true }
+  },
+  "supports": {
+    "anchor": true,
+    "align": ["wide", "full"],
+    "border": { "color": true, "radius": true, "style": true, "width": true },
+    "color": { "background": true, "link": true, "text": true },
+    "spacing": { "blockGap": true, "margin": true, "padding": true },
+    "typography": { "fontSize": true, "lineHeight": true }
+  },
+  "example": { "attributes": { "heading": "WAVE Top 100", "itemsToShow": 10 } }
+}

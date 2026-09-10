@@ -1,0 +1,344 @@
+/* -------------------------------------------------------------------------
+ * MusicWave Showcase — Editorial / Chart / Vinyl / Glass / Lyrics / Tabs
+ * Non-destructive: only .is-style-* and .mw-release-shelf--* hooks.
+ * Tokens only, logical properties, RTL-safe, reduced-motion aware.
+ * ---------------------------------------------------------------------- */
+
+/* ---------- Shared badges (richer than core fallback) ---------- */
+.mw-badges {
+	display: inline-flex;
+	flex-wrap: wrap;
+	gap: 0.375rem;
+	margin-block-start: 0.55rem;
+}
+.mw-badge {
+	align-items: center;
+	border: 1px solid var(--mw-color-border);
+	border-radius: var(--mw-radius-pill, 999px);
+	display: inline-flex;
+	font-size: 0.6875rem;
+	font-weight: 800;
+	letter-spacing: 0.05em;
+	line-height: 1;
+	padding: 0.32rem 0.65rem;
+	text-transform: uppercase;
+	white-space: nowrap;
+}
+.mw-badge--preview {
+	background: color-mix(in srgb, var(--wp--preset--color--accent, #1db954) 14%, transparent);
+	border-color: color-mix(in srgb, var(--wp--preset--color--accent, #1db954) 45%, transparent);
+	color: var(--wp--preset--color--accent-strong, #1ed760);
+}
+.mw-badge--hires {
+	background: linear-gradient(135deg, rgb(229 184 104 / 24%), rgb(250 45 101 / 16%));
+	border-color: rgb(229 184 104 / 60%);
+	color: #e8bd6d;
+}
+.mw-badge--quality {
+	background: color-mix(in srgb, #6c5ce7 16%, transparent);
+	border-color: color-mix(in srgb, #6c5ce7 50%, transparent);
+	color: #b3a8ff;
+}
+.mw-badge--access {
+	background: rgb(255 255 255 / 6%);
+}
+.mw-badge--explicit {
+	border-radius: 0.3rem;
+	font-size: 0.625rem;
+	opacity: 0.9;
+	padding: 0.18rem 0.4rem;
+}
+.mw-release-shelf__duration {
+	color: var(--mw-color-text-muted);
+	font-size: 0.8125rem;
+	font-variant-numeric: tabular-nums;
+}
+.mw-release-meta__badges {
+	margin-block-end: 1rem;
+}
+.mw-release-meta__badges .mw-badges {
+	margin-block-start: 0;
+}
+
+/* ---------- Editorial style ---------- */
+.is-style-editorial .mw-release-shelf__header,
+.mw-release-shelf--editorial .mw-release-shelf__header,
+.mw-related-releases .is-style-editorial .mw-related-releases__section-header {
+	max-width: 56rem;
+}
+.is-style-editorial .mw-release-shelf__header h2,
+.mw-release-shelf--editorial .mw-release-shelf__header h2 {
+	font-size: clamp(2rem, 4.5vw, 3.25rem);
+}
+.is-style-editorial .mw-release-shelf__item > .mw-release-card,
+.is-style-editorial.mw-release-shelf__item > .mw-release-card,
+.mw-release-shelf--editorial .mw-release-shelf__item > .mw-release-card {
+	background: linear-gradient(180deg, rgb(255 255 255 / 5%), transparent 60%);
+	border: 1px solid rgb(255 255 255 / 8%);
+	border-radius: var(--mw-radius-lg, 1rem);
+	padding: 1rem;
+}
+
+/* ---------- Chart style (numbered rows) ---------- */
+.is-style-chart .mw-release-shelf__items,
+.mw-release-shelf--chart .mw-release-shelf__items {
+	display: grid;
+	gap: 0.5rem;
+	grid-template-columns: 1fr;
+}
+.is-style-chart .mw-release-shelf__item,
+.mw-release-shelf--chart .mw-release-shelf__item {
+	counter-increment: mw-chart;
+}
+.is-style-chart .mw-release-shelf__item > .mw-release-card,
+.mw-release-shelf--chart .mw-release-shelf__item > .mw-release-card {
+	align-items: center;
+	display: flex;
+	gap: 1rem;
+}
+.is-style-chart .mw-release-shelf__body::before,
+.mw-release-shelf--chart .mw-release-shelf__body::before {
+	color: var(--mw-color-text-muted);
+	content: counter(mw-chart, decimal-leading-zero);
+	font-variant-numeric: tabular-nums;
+	font-weight: 800;
+	font-size: 1.25rem;
+}
+.is-style-chart .mw-release-shelf__items,
+.mw-release-shelf--chart .mw-release-shelf__items {
+	counter-reset: mw-chart;
+}
+
+/* ---------- Vinyl style ---------- */
+.is-style-vinyl .mw-release-shelf__art,
+.mw-release-shelf--vinyl .mw-release-shelf__art {
+	border-radius: 50%;
+}
+.is-style-vinyl .mw-release-shelf__artwrap::after,
+.mw-release-shelf--vinyl .mw-release-shelf__artwrap::after {
+	background: radial-gradient(circle, rgb(0 0 0 / 55%) 28%, transparent 29%, transparent 62%, rgb(255 255 255 / 8%) 63%, transparent 70%);
+	border-radius: 50%;
+	content: "";
+	inset: 0;
+	pointer-events: none;
+	position: absolute;
+}
+
+/* ---------- Glass style ---------- */
+.is-style-glass .mw-release-shelf__item > .mw-release-card,
+.mw-release-shelf--glass .mw-release-shelf__item > .mw-release-card,
+.is-style-glass.mw-release-shelf,
+.mw-chart-tabs--glass .mw-chart-tabs__row {
+	backdrop-filter: blur(14px);
+	background: rgb(255 255 255 / 6%);
+	border: 1px solid rgb(255 255 255 / 12%);
+}
+
+/* ---------- Cinematic (collection + lyrics + hero) ---------- */
+.is-style-cinematic .mw-collection-list__item,
+.mw-lyrics--cinematic,
+.mw-chart-tabs--chart .mw-chart-tabs__row:first-child {
+	background:
+		radial-gradient(circle at 80% 10%, rgb(124 58 237 / 22%), transparent 45%),
+		linear-gradient(180deg, #1a1d26, #0b0d12);
+	border: 1px solid rgb(255 255 255 / 10%);
+}
+.mw-lyrics--cinematic {
+	border-radius: var(--mw-radius-lg, 1rem);
+	padding: clamp(1.25rem, 3vw, 2.25rem);
+}
+.mw-lyrics--card {
+	background: var(--mw-color-surface);
+	border: 1px solid var(--mw-color-border);
+	border-radius: var(--mw-radius-lg, 1rem);
+	box-shadow: var(--mw-shadow-card);
+	padding: clamp(1.25rem, 3vw, 2rem);
+}
+.mw-lyrics--minimal {
+	background: transparent;
+	border: 0;
+	padding: 0;
+}
+.mw-lyrics__synced .mw-lyrics__line.is-active {
+	background: color-mix(in srgb, var(--wp--preset--color--accent, #1db954) 12%, transparent);
+}
+
+/* ---------- Chart tabs showcase ---------- */
+.mw-chart-tabs--chart .mw-chart-tabs__row {
+	transition: transform 150ms ease, background-color 150ms ease;
+}
+.mw-chart-tabs--chart .mw-chart-tabs__row:hover {
+	transform: translateY(-1px);
+}
+.mw-chart-tabs--cards .mw-chart-tabs__rows {
+	grid-template-columns: repeat(auto-fill, minmax(min(100%, 16rem), 1fr));
+}
+.mw-chart-tabs--cards .mw-chart-tabs__row {
+	display: grid;
+	justify-items: start;
+}
+.mw-chart-tabs--minimal .mw-chart-tabs__row {
+	background: transparent;
+	border: 0;
+	border-block-end: 1px solid var(--mw-color-border);
+	border-radius: 0;
+}
+
+/* ---------- Editorial hero (term-hero / artist-profile) ---------- */
+.is-style-editorial.mw-term-hero,
+.is-style-editorial.mw-artist-profile,
+.mw-term-hero.is-style-cinematic,
+.mw-term-hero.is-style-editorial {
+	background:
+		radial-gradient(circle at 15% 20%, rgb(250 45 72 / 22%), transparent 50%),
+		radial-gradient(circle at 80% 10%, rgb(108 92 231 / 26%), transparent 45%),
+		linear-gradient(180deg, #232b3d, #0b0d12);
+	border: 1px solid rgb(255 255 255 / 10%);
+	border-radius: var(--mw-radius-lg, 1rem);
+	overflow: clip;
+	padding: clamp(1.5rem, 4vw, 3rem);
+}
+.is-style-centered-vinyl .mw-artist-profile__image,
+.mw-artist-profile.is-style-centered-vinyl {
+	text-align: center;
+}
+.is-style-centered-vinyl .mw-artist-profile__image img {
+	border-radius: 50%;
+}
+
+/* ---------- Side-rail stream layout ---------- */
+.mw-stream-rail {
+	container-type: inline-size;
+	display: grid;
+	gap: 1.5rem;
+	grid-template-columns: 1fr;
+}
+@media (min-width: 64rem) {
+	.mw-stream-rail {
+		grid-template-columns: 15.5rem minmax(0, 1fr);
+	}
+	.mw-stream-rail--end {
+		grid-template-columns: minmax(0, 1fr) 15.5rem;
+	}
+	.mw-stream-rail--end .mw-stream-rail__nav {
+		order: 2;
+	}
+}
+.mw-stream-rail__nav {
+	background: var(--mw-color-surface);
+	border: 1px solid var(--mw-color-border);
+	border-radius: var(--mw-radius-lg, 1rem);
+	block-size: fit-content;
+	inset-block-start: 1rem;
+	padding: 1rem;
+	position: sticky;
+}
+.mw-stream-rail__content {
+	min-inline-size: 0;
+}
+
+/* ---------- Moods & stations (taxonomy-shelf colorful) ---------- */
+.mw-moods-grid .mw-taxonomy-shelf__items {
+	display: grid;
+	gap: 1rem;
+	grid-template-columns: repeat(auto-fill, minmax(min(100%, 13rem), 1fr));
+}
+.mw-moods-grid .mw-taxonomy-shelf__tile {
+	border-radius: var(--mw-radius-lg, 1rem);
+	padding: 1.25rem;
+}
+
+/* ---------- Motion + touch + contrast ---------- */
+@media (prefers-reduced-motion: reduce) {
+	.is-style-chart .mw-release-shelf__item > .mw-release-card,
+	.mw-chart-tabs--chart .mw-chart-tabs__row {
+		transition: none;
+	}
+}
+@media (pointer: coarse) {
+	.mw-chart-tabs__tab {
+		min-block-size: 2.75rem;
+	}
+}
+
+/* ---------- Single release hero (cinematic, HTML-inspired) ---------- */
+.mw-release-hero.is-style-cinematic {
+	background:
+		radial-gradient(circle at 12% 10%, rgb(250 45 101 / 14%), transparent 46%),
+		radial-gradient(circle at 85% 12%, rgb(108 92 231 / 16%), transparent 44%),
+		linear-gradient(180deg, var(--mw-color-surface-raised), var(--mw-color-canvas));
+	border: 1px solid rgb(255 255 255 / 9%);
+	border-radius: var(--mw-radius-lg, 1rem);
+	overflow: clip;
+	padding: clamp(1.25rem, 3.5vw, 2.5rem);
+}
+.mw-release-hero__kicker {
+	color: var(--wp--preset--color--accent-strong, #1ed760);
+	font-size: 0.75rem;
+	font-weight: 800;
+	letter-spacing: 0.09em;
+	text-transform: uppercase;
+}
+.mw-release-hero__cover .wp-block-post-featured-image img {
+	border-radius: var(--mw-radius-lg, 1rem);
+	box-shadow: 0 1rem 2.5rem rgb(0 0 0 / 45%);
+}
+.mw-release-actions {
+	gap: 0.6rem;
+	margin-block: 1.25rem;
+}
+.mw-collection-list__disc {
+	margin-block-end: 1rem;
+}
+.mw-collection-list__disc-heading {
+	font-size: 1rem;
+	letter-spacing: 0.06em;
+	text-transform: uppercase;
+	color: var(--mw-color-text-muted);
+	margin: 0 0 0.6rem;
+}
+
+/* ---------- Articles: byline, author card, post nav ---------- */
+.mw-post-byline {
+	align-items: center;
+	color: var(--mw-color-text-muted);
+	font-size: 0.875rem;
+	gap: 0.6rem;
+}
+.mw-post-byline__avatar img,
+.mw-author-card__avatar img,
+.mw-comment__avatar img {
+	border-radius: 50%;
+	object-fit: cover;
+}
+.mw-author-card {
+	background: var(--mw-color-surface);
+	border: 1px solid var(--mw-color-border);
+	border-radius: var(--mw-radius-lg, 1rem);
+	gap: 1rem;
+	margin-block: clamp(1.5rem, 4vw, 2.5rem);
+	padding: clamp(1rem, 3vw, 1.5rem);
+}
+.mw-author-card__name {
+	font-weight: 800;
+	margin: 0 0 0.25rem;
+}
+.mw-author-card__bio {
+	color: var(--mw-color-text-muted);
+	margin: 0;
+}
+.mw-post-nav {
+	margin-block: clamp(1.5rem, 4vw, 2.5rem);
+}
+
+/* ---------- Stream topbar account chip + rail footer ---------- */
+.mw-header-actions .mw-account-chip {
+	border-color: var(--mw-color-border);
+}
+.mw-rail__footer {
+	inline-size: 100%;
+}
+.mw-podcast-show {
+	display: grid;
+	gap: clamp(1.25rem, 3vw, 2rem);
+}

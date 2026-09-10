@@ -120,6 +120,20 @@
 	/* Reserved by the global player while a track is loaded (see global-player.css). */
 	--mw-player-offset: 0px;
 	/*
+	 * Stream rail (parts/header-stream.html, components/rail.css). The rail is
+	 * fixed at the inline-start edge; --mw-rail-width is the space it reserves
+	 * (0 on narrow viewports where it becomes a bottom tab bar) and
+	 * --mw-rail-active is the highlight of the current destination — a warm
+	 * signal colour that stays legible on both schemes and never collides
+	 * with the accent used for playback controls.
+	 */
+	--mw-rail-width: 0px;
+	--mw-rail-width-collapsed: 4.5rem;
+	--mw-rail-width-expanded: 15.5rem;
+	--mw-rail-tabbar-height: calc(3.75rem + env(safe-area-inset-bottom, 0px));
+	--mw-rail-active: #f5c518;
+	--mw-rail-on-active: #1a1400;
+	/*
 	 * Signature SonicStream gradients. The accent wash fades a page-level
 	 * hero from the accent colour into the canvas; the progress bar keeps the
 	 * green-to-green glow of the reference player.

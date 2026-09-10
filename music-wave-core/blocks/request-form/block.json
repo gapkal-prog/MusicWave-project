@@ -4,11 +4,44 @@
   "name": "music-wave/request-form",
   "title": "فرم درخواست آهنگ و همکاری",
   "category": "music-wave",
-  "description": "فرم عمومی سفارش آهنگ اختصاصی و پیشنهاد همکاری برای خواننده‌ها، برندها و مخاطبان؛ بدون نیاز به جاوااسکریپت کار می‌کند و درخواست‌ها در بخش «درخواست‌ها و همکاری» مدیریت می‌شوند.",
-  "keywords": ["درخواست", "همکاری", "سفارش آهنگ", "collaboration", "request", "تماس"],
+  "description": "فرم عمومی سفارش آهنگ اختصاصی و پیشنهاد همکاری برای خواننده‌ها، برندها و مخاطبان؛ با حالت ترکیبی یا اختصاصی (فقط سفارش آهنگ / فقط همکاری)، بدون نیاز به جاوااسکریپت کار می‌کند و درخواست‌ها در بخش «درخواست‌ها و همکاری» مدیریت می‌شوند.",
+  "keywords": [
+    "درخواست",
+    "همکاری",
+    "سفارش آهنگ",
+    "collaboration",
+    "request",
+    "تماس",
+    "آهنگ اختصاصی"
+  ],
   "textdomain": "music-wave-core",
-  "icon": "email-alt",
+  "icon": "microphone",
   "attributes": {
+    "mode": {
+      "type": "string",
+      "enum": [
+        "both",
+        "song",
+        "collab"
+      ],
+      "default": "both"
+    },
+    "defaultType": {
+      "type": "string",
+      "default": ""
+    },
+    "showTypeChips": {
+      "type": "boolean",
+      "default": true
+    },
+    "showRoles": {
+      "type": "boolean",
+      "default": true
+    },
+    "defaultRole": {
+      "type": "string",
+      "default": ""
+    },
     "eyebrow": {
       "type": "string",
       "default": ""
@@ -33,6 +66,46 @@
       "type": "boolean",
       "default": true
     },
+    "highlight1Title": {
+      "type": "string",
+      "default": ""
+    },
+    "highlight1Text": {
+      "type": "string",
+      "default": ""
+    },
+    "highlight2Title": {
+      "type": "string",
+      "default": ""
+    },
+    "highlight2Text": {
+      "type": "string",
+      "default": ""
+    },
+    "highlight3Title": {
+      "type": "string",
+      "default": ""
+    },
+    "highlight3Text": {
+      "type": "string",
+      "default": ""
+    },
+    "step1": {
+      "type": "string",
+      "default": ""
+    },
+    "step2": {
+      "type": "string",
+      "default": ""
+    },
+    "step3": {
+      "type": "string",
+      "default": ""
+    },
+    "privacyNote": {
+      "type": "string",
+      "default": ""
+    },
     "showBudget": {
       "type": "boolean",
       "default": true
@@ -55,12 +128,19 @@
     },
     "layout": {
       "type": "string",
+      "enum": [
+        "split",
+        "stacked"
+      ],
       "default": "split"
     }
   },
   "supports": {
     "anchor": true,
-    "align": ["wide", "full"],
+    "align": [
+      "wide",
+      "full"
+    ],
     "color": {
       "background": true,
       "link": true,
@@ -77,8 +157,11 @@
   },
   "example": {
     "attributes": {
+      "mode": "both",
       "heading": "آهنگ اختصاصی یا همکاری می‌خواهید؟",
       "layout": "split"
     }
-  }
+  },
+  "style": "music-wave-request-form",
+  "editorStyle": "music-wave-request-form"
 }

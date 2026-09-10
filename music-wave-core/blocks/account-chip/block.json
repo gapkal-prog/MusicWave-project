@@ -1,0 +1,24 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "music-wave/account-chip",
+  "title": "چیپ حساب کاربر",
+  "category": "music-wave",
+  "description": "عکس پروفایل و نام کاربر واردشده با پیوند به حساب؛ برای مهمان دکمه ورود.",
+  "keywords": ["حساب", "پروفایل", "آواتار", "کاربر"],
+  "textdomain": "music-wave-core",
+  "icon": "admin-users",
+  "attributes": {
+    "showAvatar": { "type": "boolean", "default": true },
+    "showName": { "type": "boolean", "default": true },
+    "avatarSize": { "type": "integer", "default": 40 },
+    "loginLabel": { "type": "string", "default": "" }
+  },
+  "supports": {
+    "anchor": true,
+    "color": { "background": true, "link": true, "text": true },
+    "spacing": { "margin": true, "padding": true },
+    "typography": { "fontSize": true, "lineHeight": true }
+  },
+  "example": { "attributes": { "showAvatar": true, "showName": true } }
+}

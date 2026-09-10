@@ -100,6 +100,7 @@ final class Rendering implements Module {
 		add_filter( 'block_categories_all', array( $this, 'register_block_category' ) );
 		add_filter( 'the_content', array( $this->blocks, 'filter_content' ), 20 );
 		add_action( 'enqueue_block_editor_assets', array( $this, 'enqueue_editor_blocks' ) );
+		add_action( 'enqueue_block_assets', array( $this, 'enqueue_editor_canvas_styles' ) );
 	}
 
 	/**
@@ -236,6 +237,57 @@ final class Rendering implements Module {
 			'musicWaveDynamicBlocks',
 			$this->editor_blocks()
 		);
+	}
+
+	/**
+	 * Inserter icon for the request form: a studio microphone with a plus.
+	 *
+	 * Sent as path data; blocks.js turns it into an SVG element, so the icon
+	 * follows the editor's current text colour like core icons do.
+	 *
+	 * @return array{viewBox: string, paths: array<int, array<string, string>>}
+	 */
+	private static function request_form_icon(): array {
+		return array(
+			'viewBox' => '0 0 24 24',
+			'paths'   => array(
+				array(
+					'd'    => 'M12 2.5a3.25 3.25 0 0 1 3.25 3.25v5.5a3.25 3.25 0 0 1-6.5 0v-5.5A3.25 3.25 0 0 1 12 2.5Z',
+					'fill' => 'currentColor',
+				),
+				array(
+					'd'           => 'M6.25 10.75a5.75 5.75 0 0 0 11.5 0M12 16.5v3.75M8.75 20.25h6.5',
+					'fill'        => 'none',
+					'stroke'      => 'currentColor',
+					'strokeWidth' => '1.7',
+				),
+				array(
+					'd'           => 'M19.25 2.75v4M17.25 4.75h4',
+					'fill'        => 'none',
+					'stroke'      => 'currentColor',
+					'strokeWidth' => '1.7',
+				),
+			),
+		);
+	}
+
+	/**
+	 * Load the preview stylesheet inside the iframed editor canvas.
+	 *
+	 * Since WordPress 6.3 the Site Editor (and the post editor for API v3
+	 * blocks) renders the content in an iframe that only receives assets
+	 * enqueued on `enqueue_block_assets`; `enqueue_block_editor_assets` styles
+	 * stay in the parent document. Per-block stylesheets travel through
+	 * block.json `style`/`editorStyle` handles; this shared sheet covers the
+	 * preview shell around them. The `is_admin()` guard keeps it off the
+	 * front end, where the same action also fires.
+	 *
+	 * @return void
+	 */
+	public function enqueue_editor_canvas_styles(): void {
+		if ( ! is_admin() ) {
+			return;
+		}
 		wp_enqueue_style(
 			'music-wave-editor',
 			MUSIC_WAVE_CORE_URL . 'assets/editor.css',
@@ -1604,56 +1656,118 @@ final class Rendering implements Module {
 			array(
 				'name'        => 'music-wave/request-form',
 				'title'       => __( 'فرم درخواست آهنگ و همکاری', 'music-wave-core' ),
-				'description' => __( 'فرم عمومی سفارش آهنگ اختصاصی و پیشنهاد همکاری؛ درخواست‌ها در بخش «درخواست‌ها و همکاری» مدیریت می‌شوند.', 'music-wave-core' ),
-				'icon'        => 'email-alt',
-				'keywords'    => array( __( 'درخواست', 'music-wave-core' ), __( 'همکاری', 'music-wave-core' ), __( 'سفارش آهنگ', 'music-wave-core' ) ),
+				'description' => __( 'فرم عمومی سفارش آهنگ اختصاصی و پیشنهاد همکاری؛ با حالت ترکیبی یا اختصاصی (فقط سفارش آهنگ / فقط همکاری). درخواست‌ها در بخش «درخواست‌ها و همکاری» مدیریت می‌شوند.', 'music-wave-core' ),
+				'icon'        => self::request_form_icon(),
+				'keywords'    => array( __( 'درخواست', 'music-wave-core' ), __( 'همکاری', 'music-wave-core' ), __( 'سفارش آهنگ', 'music-wave-core' ), __( 'آهنگ اختصاصی', 'music-wave-core' ) ),
 				'attributes'  => array(
-					'eyebrow'        => array(
+					'mode'            => array(
+						'type'    => 'string',
+						'enum'    => array( 'both', 'song', 'collab' ),
+						'default' => 'both',
+					),
+					'defaultType'     => array(
 						'type'    => 'string',
 						'default' => '',
 					),
-					'heading'        => array(
+					'showTypeChips'   => array(
+						'type'    => 'boolean',
+						'default' => true,
+					),
+					'showRoles'       => array(
+						'type'    => 'boolean',
+						'default' => true,
+					),
+					'defaultRole'     => array(
 						'type'    => 'string',
 						'default' => '',
 					),
-					'intro'          => array(
+					'eyebrow'         => array(
 						'type'    => 'string',
 						'default' => '',
 					),
-					'showHeading'    => array(
-						'type'    => 'boolean',
-						'default' => true,
-					),
-					'showSteps'      => array(
-						'type'    => 'boolean',
-						'default' => true,
-					),
-					'showHighlights' => array(
-						'type'    => 'boolean',
-						'default' => true,
-					),
-					'showBudget'     => array(
-						'type'    => 'boolean',
-						'default' => true,
-					),
-					'showDeadline'   => array(
-						'type'    => 'boolean',
-						'default' => true,
-					),
-					'showPhone'      => array(
-						'type'    => 'boolean',
-						'default' => true,
-					),
-					'showLinks'      => array(
-						'type'    => 'boolean',
-						'default' => true,
-					),
-					'submitLabel'    => array(
+					'heading'         => array(
 						'type'    => 'string',
 						'default' => '',
 					),
-					'layout'         => array(
+					'intro'           => array(
 						'type'    => 'string',
+						'default' => '',
+					),
+					'showHeading'     => array(
+						'type'    => 'boolean',
+						'default' => true,
+					),
+					'showSteps'       => array(
+						'type'    => 'boolean',
+						'default' => true,
+					),
+					'showHighlights'  => array(
+						'type'    => 'boolean',
+						'default' => true,
+					),
+					'highlight1Title' => array(
+						'type'    => 'string',
+						'default' => '',
+					),
+					'highlight1Text'  => array(
+						'type'    => 'string',
+						'default' => '',
+					),
+					'highlight2Title' => array(
+						'type'    => 'string',
+						'default' => '',
+					),
+					'highlight2Text'  => array(
+						'type'    => 'string',
+						'default' => '',
+					),
+					'highlight3Title' => array(
+						'type'    => 'string',
+						'default' => '',
+					),
+					'highlight3Text'  => array(
+						'type'    => 'string',
+						'default' => '',
+					),
+					'step1'           => array(
+						'type'    => 'string',
+						'default' => '',
+					),
+					'step2'           => array(
+						'type'    => 'string',
+						'default' => '',
+					),
+					'step3'           => array(
+						'type'    => 'string',
+						'default' => '',
+					),
+					'privacyNote'     => array(
+						'type'    => 'string',
+						'default' => '',
+					),
+					'showBudget'      => array(
+						'type'    => 'boolean',
+						'default' => true,
+					),
+					'showDeadline'    => array(
+						'type'    => 'boolean',
+						'default' => true,
+					),
+					'showPhone'       => array(
+						'type'    => 'boolean',
+						'default' => true,
+					),
+					'showLinks'       => array(
+						'type'    => 'boolean',
+						'default' => true,
+					),
+					'submitLabel'     => array(
+						'type'    => 'string',
+						'default' => '',
+					),
+					'layout'          => array(
+						'type'    => 'string',
+						'enum'    => array( 'split', 'stacked' ),
 						'default' => 'split',
 					),
 				),

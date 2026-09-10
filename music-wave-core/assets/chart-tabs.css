@@ -1,0 +1,117 @@
+/* MusicWave chart tabs — core fallback (theme showcase enriches it). */
+.mw-chart-tabs__header {
+	margin-block-end: 1rem;
+	max-width: 48rem;
+}
+.mw-chart-tabs__eyebrow {
+	color: var(--wp--preset--color--accent, #1db954);
+	display: block;
+	font-size: 0.75rem;
+	font-weight: 750;
+	letter-spacing: 0.09em;
+	margin-block-end: 0.35rem;
+	text-transform: uppercase;
+}
+.mw-chart-tabs__title {
+	font-size: clamp(1.5rem, 3.3vw, 2.35rem);
+	letter-spacing: -0.02em;
+	line-height: 1.08;
+	margin: 0;
+}
+.mw-chart-tabs__tablist {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.5rem;
+	margin-block-end: 1rem;
+}
+.mw-chart-tabs__tab {
+	background: transparent;
+	border: 1px solid var(--mw-color-border, rgb(255 255 255 / 14%));
+	border-radius: 999px;
+	color: inherit;
+	cursor: pointer;
+	font-weight: 700;
+	padding: 0.55rem 1.1rem;
+}
+.mw-chart-tabs__tab.is-active {
+	background: var(--wp--preset--color--accent, #1db954);
+	border-color: transparent;
+	color: var(--wp--preset--color--on-accent, #052e16);
+}
+.mw-chart-tabs__tab:focus-visible {
+	outline: 2px solid var(--wp--preset--color--accent-strong, #1ed760);
+	outline-offset: 2px;
+}
+.mw-chart-tabs__rows {
+	display: grid;
+	gap: 0.5rem;
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+.mw-chart-tabs__row {
+	align-items: center;
+	background: rgb(255 255 255 / 3%);
+	border: 1px solid transparent;
+	border-radius: 0.9rem;
+	display: flex;
+	gap: 0.75rem;
+	padding: 0.6rem 0.75rem;
+}
+.mw-chart-tabs__row:hover {
+	background: var(--mw-color-surface, #181818);
+}
+.mw-chart-tabs__rank {
+	font-variant-numeric: tabular-nums;
+	font-weight: 800;
+	min-inline-size: 2.25rem;
+	opacity: 0.85;
+	text-align: center;
+}
+.mw-chart-tabs__thumb {
+	block-size: 3rem;
+	border-radius: 0.65rem;
+	flex: 0 0 auto;
+	inline-size: 3rem;
+	overflow: hidden;
+}
+.mw-chart-tabs__thumb img,
+.mw-chart-tabs__art {
+	block-size: 100%;
+	inline-size: 100%;
+	object-fit: cover;
+}
+.mw-chart-tabs__placeholder {
+	align-items: center;
+	background: rgb(255 255 255 / 8%);
+	display: flex;
+	inline-size: 100%;
+	block-size: 100%;
+	justify-content: center;
+}
+.mw-chart-tabs__main {
+	align-items: center;
+	display: flex;
+	flex: 1;
+	gap: 0.75rem;
+	min-inline-size: 0;
+	text-decoration: none;
+}
+.mw-chart-tabs__titles {
+	display: grid;
+	gap: 0.2rem;
+	min-inline-size: 0;
+}
+.mw-chart-tabs__title {
+	font-weight: 750;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+.mw-chart-tabs__artist {
+	color: var(--mw-color-text-muted, #a0a0a0);
+	font-size: 0.875rem;
+}
+.mw-chart-tabs__play {
+	flex: 0 0 auto;
+}

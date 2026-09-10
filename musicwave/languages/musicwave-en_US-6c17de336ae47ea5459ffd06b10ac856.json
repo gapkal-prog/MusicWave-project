@@ -1030,6 +1030,21 @@
             ],
             "پخش خودکار اسلایدها": [
                 "Autoplay slides"
+            ],
+            "بازکردن منو": [
+                "Expand menu"
+            ],
+            "جمع‌کردن منو": [
+                "Collapse menu"
+            ],
+            "سفارش آهنگ اختصاصی": [
+                "Custom song order"
+            ],
+            "صفحهٔ استریم (نوار کناری)": [
+                "Stream page (side rail)"
+            ],
+            "همکاری": [
+                "Collaboration"
             ]
         }
     }

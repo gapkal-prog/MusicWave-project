@@ -5051,3 +5051,159 @@ msgstr "Collaboration requests"
 msgctxt "post type singular name"
 msgid "درخواست"
 msgstr "Request"
+
+msgid "آهنگی که فقط برای شما ساخته می‌شود"
+msgstr "A song made only for you"
+
+msgid "اجرای استودیویی، میکس و مستر آمادهٔ انتشار."
+msgstr "Studio performance, mix and release-ready master."
+
+msgid "ارسال پیشنهاد همکاری"
+msgstr "Send collaboration proposal"
+
+msgid "از ایدهٔ اولیه تا ترانه، ملودی و تنظیم نهایی."
+msgstr "From the first idea to lyrics, melody and the final arrangement."
+
+msgid "انتخاب نقش درخواست‌دهنده"
+msgstr "Requester role picker"
+
+msgid "انتخاب نوع درخواست"
+msgstr "Request kind picker"
+
+msgid "اولین نوع مجاز"
+msgstr "First allowed kind"
+
+msgid "ایده، نقش خودتان و نمونه‌کارهایتان را معرفی کنید."
+msgstr "Introduce the idea, your role and your portfolio."
+
+msgid "این نوع درخواست در این فرم پذیرفته نمی‌شود."
+msgstr "This kind of request is not accepted on this form."
+
+msgid "با خاموش‌کردن، نوع پیش‌فرض به‌صورت ثابت ارسال می‌شود."
+msgstr "When off, the default kind is submitted as a fixed value."
+
+msgid "برای استفاده از متن‌های پیش‌فرض ترجمه‌شدهٔ هر حالت خالی بگذارید."
+msgstr "Leave blank to use the translated defaults of each mode."
+
+msgid "برای خودتان، برندتان یا یک مناسبت خاص قطعه‌ای اختصاصی سفارش دهید. حال‌وهوا، مدت و محل استفاده را بنویسید؛ ما با پیشنهاد، زمان‌بندی و برآورد هزینه پاسخ می‌دهیم."
+msgstr "Order a bespoke piece for yourself, your brand or a special occasion. Describe the mood, length and where it will be used; we reply with a proposal, a schedule and a cost estimate."
+
+msgid "برای صفحه‌های جداگانه، یک بلوک با حالت «سفارش آهنگ» و یکی با حالت «همکاری» قرار دهید. انواع فعال در MusicWave → درخواست‌ها → تنظیمات تعیین می‌شوند و در سرور نیز اعمال می‌شوند."
+msgstr "For separate pages, place one block in \"custom song\" mode and one in \"collaboration\" mode. Enabled kinds are set under MusicWave → Requests → Settings and enforced on the server as well."
+
+msgid "برنامهٔ اجرای زنده، جشنواره‌ها و رویدادهای خصوصی."
+msgstr "Live shows, festivals and private events."
+
+msgid "برند و تبلیغات"
+msgstr "Brand & advertising"
+
+msgid "بیایید با هم چیزی تازه بسازیم"
+msgstr "Let's build something new together"
+
+msgid "ترانه و ملودی"
+msgstr "Lyrics & melody"
+
+msgid "ترکیبی (سفارش آهنگ + همکاری)"
+msgstr "Combined (custom song + collaboration)"
+
+msgid "تیم ما بررسی می‌کند و برای گفت‌وگو با شما تماس می‌گیرد."
+msgstr "Our team reviews it and gets in touch to talk."
+
+msgid "ثبت سفارش آهنگ"
+msgstr "Place song order"
+
+msgid "حالت"
+msgstr "Mode"
+
+msgid "حالت فرم"
+msgstr "Form mode"
+
+msgid "حال‌وهوا، سبک و محل استفادهٔ قطعه را بنویسید."
+msgstr "Describe the mood, style and where the piece will be used."
+
+msgid "حقوق استفاده"
+msgstr "Usage rights"
+
+msgid "خدمت ۱ — توضیح"
+msgstr "Service 1 — description"
+
+msgid "خدمت ۱ — عنوان"
+msgstr "Service 1 — title"
+
+msgid "خدمت ۲ — توضیح"
+msgstr "Service 2 — description"
+
+msgid "خدمت ۲ — عنوان"
+msgstr "Service 2 — title"
+
+msgid "خدمت ۳ — توضیح"
+msgstr "Service 3 — description"
+
+msgid "خدمت ۳ — عنوان"
+msgstr "Service 3 — title"
+
+msgid "خواننده‌ها، تهیه‌کننده‌ها، برندها و برگزارکنندگان رویداد می‌توانند از همین‌جا پیشنهاد همکاری بدهند: فیچرینگ، تولید مشترک، موسیقی تبلیغاتی یا اجرای زنده."
+msgstr "Singers, producers, brands and event organisers can propose a collaboration right here: featuring, co-production, advertising music or live performance."
+
+msgid "ضبط و مسترینگ"
+msgstr "Recording & mastering"
+
+msgid "فرم عمومی سفارش آهنگ اختصاصی و پیشنهاد همکاری برای خواننده‌ها، برندها و مخاطبان؛ با حالت ترکیبی یا اختصاصی (فقط سفارش آهنگ / فقط همکاری)، بدون نیاز به جاوااسکریپت کار می‌کند و درخواست‌ها در بخش «درخواست‌ها و همکاری» مدیریت می‌شوند."
+msgstr "Public custom-song and collaboration request form for singers, brands and audiences; runs in a combined or dedicated mode (song only / collaboration only), works without JavaScript, and requests are managed under \"Requests & collaboration\"."
+
+msgid "فرم عمومی سفارش آهنگ اختصاصی و پیشنهاد همکاری؛ با حالت ترکیبی یا اختصاصی (فقط سفارش آهنگ / فقط همکاری). درخواست‌ها در بخش «درخواست‌ها و همکاری» مدیریت می‌شوند."
+msgstr "Public custom-song and collaboration request form; combined or dedicated mode (song only / collaboration only). Requests are managed under \"Requests & collaboration\"."
+
+msgid "فقط سفارش آهنگ اختصاصی"
+msgstr "Custom song only"
+
+msgid "فقط همکاری (هنری، برند، رویداد)"
+msgstr "Collaboration only (artistic, brand, event)"
+
+msgid "قرارداد شفاف برای استفادهٔ شخصی، تجاری یا تبلیغاتی."
+msgstr "A clear agreement for personal, commercial or advertising use."
+
+msgid "متن خدمات"
+msgstr "Service copy"
+
+msgid "متن مراحل"
+msgstr "Step copy"
+
+msgid "مثلاً: فیچرینگ برای تک‌آهنگ بعدی"
+msgstr "e.g. featuring on the next single"
+
+msgid "مرحلهٔ ۱"
+msgstr "Step 1"
+
+msgid "مرحلهٔ ۲"
+msgstr "Step 2"
+
+msgid "مرحلهٔ ۳"
+msgstr "Step 3"
+
+msgid "موسیقی تبلیغاتی، جینگل و ساند‌برندینگ برای کمپین‌ها."
+msgstr "Advertising music, jingles and sound branding for campaigns."
+
+msgid "نقش پیش‌فرض"
+msgstr "Default role"
+
+msgid "نوع پیش‌فرض"
+msgstr "Default kind"
+
+msgid "هر مورد خالی، متن پیش‌فرض همان حالت را نشان می‌دهد."
+msgstr "Every blank item shows the default copy of the active mode."
+
+msgid "پیشنهاد شما چیست؟"
+msgstr "What is your proposal?"
+
+msgid "پیشنهاد، زمان‌بندی و برآورد هزینه برایتان ارسال می‌شود."
+msgstr "A proposal, a schedule and a cost estimate are sent to you."
+
+msgid "پیش‌فرض حالت"
+msgstr "Mode default"
+
+msgid "چه آهنگی می‌خواهید؟"
+msgstr "What song do you want?"
+
+msgid "یادداشت حریم خصوصی"
+msgstr "Privacy note"

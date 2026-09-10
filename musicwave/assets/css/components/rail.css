@@ -1,0 +1,549 @@
+/**
+ * MusicWave stream rail — parts/header-stream.html
+ *
+ * A streaming-app shell: a vertical rail at the inline-start edge (the right
+ * side in RTL) with the brand and the primary destinations, plus a slim top
+ * bar with the search field and the account link. The rail collapses to an
+ * icon-only strip; rail.js adds the toggle, remembers the choice and sets
+ * `data-mw-rail` on <html>. Without JavaScript the rail is simply expanded.
+ *
+ * Below the desktop breakpoint the same markup becomes a bottom tab bar,
+ * docked above the global player when a track is loaded.
+ *
+ * Markup: .mw-site-header--stream > aside.mw-rail (brand + navigation)
+ *         + .mw-stream-topbar > .mw-site-header__inner (brand / search / actions)
+ *
+ * Tokens: --mw-rail-width (space reserved for the rail; set here per state),
+ *         --mw-rail-width-collapsed / --mw-rail-width-expanded,
+ *         --mw-rail-active / --mw-rail-on-active (tokens.css).
+ */
+
+/* -------------------------------------------------------------------------
+ * Shared: icons, items, active state
+ * ---------------------------------------------------------------------- */
+
+.mw-site-header--stream {
+	--mw-rail-icon-size: 1.4rem;
+	background: var(--mw-color-canvas);
+	border-block-end: 0;
+}
+
+.mw-rail {
+	box-sizing: border-box;
+	color: var(--mw-color-text);
+	background: var(--mw-color-surface);
+}
+
+.mw-rail .wp-block-navigation {
+	inline-size: 100%;
+	min-inline-size: 0;
+}
+
+.mw-rail .wp-block-navigation__container {
+	inline-size: 100%;
+	gap: 0.25rem;
+}
+
+.mw-rail .wp-block-navigation-item {
+	inline-size: 100%;
+	min-inline-size: 0;
+}
+
+.mw-rail .wp-block-navigation-item__content {
+	position: relative;
+	display: flex;
+	align-items: center;
+	gap: 0.85rem;
+	box-sizing: border-box;
+	inline-size: 100%;
+	min-block-size: 2.75rem;
+	padding: 0.55rem 0.7rem;
+	color: var(--mw-color-text-muted);
+	font-size: 0.92rem;
+	font-weight: 600;
+	line-height: 1.2;
+	text-decoration: none;
+	border-radius: var(--mw-radius-md);
+	transition: background-color var(--mw-speed-fast, 150ms) ease, color var(--mw-speed-fast, 150ms) ease;
+}
+
+.mw-rail .wp-block-navigation-item__content::before {
+	content: "";
+	flex: 0 0 auto;
+	inline-size: var(--mw-rail-icon-size);
+	block-size: var(--mw-rail-icon-size);
+	background: currentColor;
+	-webkit-mask: var(--mw-rail-icon) center / contain no-repeat;
+	mask: var(--mw-rail-icon) center / contain no-repeat;
+}
+
+.mw-rail .wp-block-navigation-item__label {
+	min-inline-size: 0;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.mw-rail .wp-block-navigation-item__content:hover,
+.mw-rail .wp-block-navigation-item__content:focus-visible {
+	color: var(--mw-color-text);
+	background: color-mix(in srgb, var(--mw-color-text) 7%, transparent);
+}
+
+.mw-rail .wp-block-navigation-item__content:focus-visible {
+	outline: 2px solid var(--mw-rail-active);
+	outline-offset: 2px;
+}
+
+/* Current destination: warm highlight with an edge marker. */
+.mw-rail .current-menu-item > .wp-block-navigation-item__content,
+.mw-rail .wp-block-navigation-item__content[aria-current="page"] {
+	color: var(--mw-rail-active);
+	background: color-mix(in srgb, var(--mw-rail-active) 14%, transparent);
+	font-weight: 700;
+}
+
+.mw-rail .current-menu-item > .wp-block-navigation-item__content::after,
+.mw-rail .wp-block-navigation-item__content[aria-current="page"]::after {
+	content: "";
+	position: absolute;
+	inset-block: 0.6rem;
+	inset-inline-start: -0.75rem;
+	inline-size: 0.2rem;
+	background: var(--mw-rail-active);
+	border-radius: 0 var(--mw-radius-pill) var(--mw-radius-pill) 0;
+}
+
+[dir="rtl"] .mw-rail .current-menu-item > .wp-block-navigation-item__content::after,
+[dir="rtl"] .mw-rail .wp-block-navigation-item__content[aria-current="page"]::after {
+	border-radius: var(--mw-radius-pill) 0 0 var(--mw-radius-pill);
+}
+
+/* Destination glyphs (mask alpha only; colour comes from currentColor). */
+.mw-rail .wp-block-navigation-item__content {
+	--mw-rail-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='3.5'/%3E%3C/svg%3E");
+}
+
+.mw-rail .mw-rail__item--home > .wp-block-navigation-item__content {
+	--mw-rail-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 11.5 12 4.5l8 7'/%3E%3Cpath d='M6.5 10v9.5h4v-5h3v5h4V10'/%3E%3C/svg%3E");
+}
+
+.mw-rail .mw-rail__item--discover > .wp-block-navigation-item__content {
+	--mw-rail-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='8.5'/%3E%3Cpath d='m15.2 8.8-1.8 4.6-4.6 1.8 1.8-4.6z'/%3E%3C/svg%3E");
+}
+
+.mw-rail .mw-rail__item--search > .wp-block-navigation-item__content {
+	--mw-rail-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='6.5'/%3E%3Cpath d='m16 16 4.5 4.5'/%3E%3C/svg%3E");
+}
+
+.mw-rail .mw-rail__item--library > .wp-block-navigation-item__content {
+	--mw-rail-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4.5 5v14M8.5 5v14M12.5 5.6 18.6 19'/%3E%3C/svg%3E");
+}
+
+/* Brand row inside the rail. */
+.mw-rail__brand {
+	inline-size: 100%;
+	min-block-size: 2.75rem;
+}
+
+.mw-rail__brand .wp-block-site-logo img {
+	inline-size: 2.25rem;
+	block-size: 2.25rem;
+	object-fit: cover;
+	border-radius: var(--mw-radius-sm);
+}
+
+/* Toggle (inserted by rail.js). */
+.mw-rail__toggle {
+	display: inline-grid;
+	flex: 0 0 auto;
+	place-items: center;
+	inline-size: 2.75rem;
+	block-size: 2.75rem;
+	margin-inline-start: auto;
+	padding: 0;
+	color: var(--mw-color-text-muted);
+	background: transparent;
+	border: 1px solid transparent;
+	border-radius: var(--mw-radius-md);
+	box-shadow: none;
+	cursor: pointer;
+	transition: background-color var(--mw-speed-fast, 150ms) ease, color var(--mw-speed-fast, 150ms) ease;
+}
+
+.mw-rail__toggle:hover,
+.mw-rail__toggle:focus-visible {
+	color: var(--mw-color-text);
+	background: color-mix(in srgb, var(--mw-color-text) 7%, transparent);
+}
+
+.mw-rail__toggle:focus-visible {
+	outline: 2px solid var(--mw-rail-active);
+	outline-offset: 2px;
+}
+
+.mw-rail__toggle svg {
+	inline-size: 1.25rem;
+	block-size: 1.25rem;
+}
+
+[dir="rtl"] .mw-rail__toggle svg {
+	transform: scaleX(-1);
+}
+
+/* -------------------------------------------------------------------------
+ * Top bar: brand (small screens) / search / actions
+ * ---------------------------------------------------------------------- */
+
+.mw-stream-topbar {
+	position: relative;
+	z-index: 1;
+	background: color-mix(in srgb, var(--mw-color-canvas) 94%, transparent);
+	border-block-end: 1px solid var(--mw-color-border);
+}
+
+.mw-stream-topbar .mw-site-header__inner {
+	gap: var(--wp--preset--spacing--20, 0.75rem);
+}
+
+.mw-stream-topbar .mw-stream-search {
+	flex: 1 1 auto;
+	min-inline-size: 0;
+	max-inline-size: 38rem;
+	margin: 0 auto;
+}
+
+.mw-stream-topbar .mw-stream-search .wp-block-search__inside-wrapper {
+	align-items: center;
+	padding: 0.2rem 0.2rem 0.2rem 0.4rem;
+	color: var(--mw-color-text);
+	background: var(--mw-color-surface-raised);
+	border: 1px solid var(--mw-color-border);
+	border-radius: var(--mw-radius-pill);
+	transition: border-color var(--mw-speed-fast, 150ms) ease, box-shadow var(--mw-speed-fast, 150ms) ease;
+}
+
+[dir="rtl"] .mw-stream-topbar .mw-stream-search .wp-block-search__inside-wrapper {
+	padding: 0.2rem 0.4rem 0.2rem 0.2rem;
+}
+
+.mw-stream-topbar .mw-stream-search .wp-block-search__inside-wrapper:focus-within {
+	border-color: var(--mw-rail-active);
+	box-shadow: 0 0 0 3px color-mix(in srgb, var(--mw-rail-active) 28%, transparent);
+}
+
+.mw-stream-topbar .mw-stream-search .wp-block-search__input {
+	min-inline-size: 0;
+	block-size: 2.4rem;
+	padding-inline: 0.85rem;
+	color: inherit;
+	font-size: 0.95rem;
+	background: transparent;
+	border: 0;
+	outline: none;
+	box-shadow: none;
+}
+
+.mw-stream-topbar .mw-stream-search .wp-block-search__input::placeholder {
+	color: var(--mw-color-text-muted);
+}
+
+.mw-stream-topbar .mw-stream-search .wp-block-search__button {
+	display: grid;
+	flex: 0 0 auto;
+	place-items: center;
+	inline-size: 2.4rem;
+	block-size: 2.4rem;
+	margin: 0;
+	padding: 0;
+	color: var(--mw-color-on-accent);
+	background: var(--mw-color-accent);
+	border: 0;
+	border-radius: 50%;
+	box-shadow: none;
+	transition: background-color var(--mw-speed-fast, 150ms) ease, transform var(--mw-speed-fast, 150ms) var(--mw-ease-out);
+}
+
+.mw-stream-topbar .mw-stream-search .wp-block-search__button:hover,
+.mw-stream-topbar .mw-stream-search .wp-block-search__button:focus-visible {
+	background: var(--mw-color-accent-strong);
+	transform: scale(1.04);
+}
+
+.mw-stream-topbar .mw-stream-search .wp-block-search__button svg {
+	inline-size: 1.15rem;
+	block-size: 1.15rem;
+	fill: currentColor;
+}
+
+/* Account: a round avatar button; the label stays for assistive tech. */
+.mw-stream-account .wp-block-navigation__container {
+	gap: 0;
+}
+
+.mw-stream-account .wp-block-navigation-item__content {
+	position: relative;
+	display: inline-grid;
+	place-items: center;
+	box-sizing: border-box;
+	inline-size: 2.75rem;
+	block-size: 2.75rem;
+	padding: 0;
+	color: var(--mw-color-text);
+	background: var(--mw-color-surface-raised);
+	border: 1px solid var(--mw-color-border);
+	border-radius: 50%;
+	transition: background-color var(--mw-speed-fast, 150ms) ease, border-color var(--mw-speed-fast, 150ms) ease, color var(--mw-speed-fast, 150ms) ease;
+}
+
+.mw-stream-account .wp-block-navigation-item__content::before {
+	content: "";
+	inline-size: 1.3rem;
+	block-size: 1.3rem;
+	background: currentColor;
+	-webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='8.5' r='3.75'/%3E%3Cpath d='M4.75 20a7.25 7.25 0 0 1 14.5 0'/%3E%3C/svg%3E") center / contain no-repeat;
+	mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='8.5' r='3.75'/%3E%3Cpath d='M4.75 20a7.25 7.25 0 0 1 14.5 0'/%3E%3C/svg%3E") center / contain no-repeat;
+}
+
+.mw-stream-account .wp-block-navigation-item__label {
+	position: absolute;
+	inline-size: 1px;
+	block-size: 1px;
+	margin: -1px;
+	padding: 0;
+	overflow: hidden;
+	clip: rect(0 0 0 0);
+	clip-path: inset(50%);
+	white-space: nowrap;
+	border: 0;
+}
+
+.mw-stream-account .wp-block-navigation-item__content:hover,
+.mw-stream-account .wp-block-navigation-item__content:focus-visible,
+.mw-stream-account .current-menu-item > .wp-block-navigation-item__content {
+	color: var(--mw-rail-on-active);
+	background: var(--mw-rail-active);
+	border-color: var(--mw-rail-active);
+}
+
+.mw-stream-account .wp-block-navigation-item__content:focus-visible {
+	outline: 2px solid var(--mw-rail-active);
+	outline-offset: 2px;
+}
+
+/* -------------------------------------------------------------------------
+ * Desktop: fixed side rail, collapsible
+ * ---------------------------------------------------------------------- */
+
+@media (min-width: 64rem) {
+	/* Reserve the rail width on the page; the state attribute wins over the
+	 * no-JS default (expanded). Both selectors carry the same specificity,
+	 * so source order decides. */
+	html:has(.mw-site-header--stream) {
+		--mw-rail-width: var(--mw-rail-width-expanded);
+	}
+
+	html[data-mw-rail="collapsed"]:has(.mw-site-header--stream) {
+		--mw-rail-width: var(--mw-rail-width-collapsed);
+	}
+
+	/* A margin (not padding) keeps the root padding and the alignfull
+	 * negative-margin maths of .has-global-padding intact. */
+	html:has(.mw-site-header--stream) .wp-site-blocks {
+		margin-inline-start: var(--mw-rail-width);
+		transition: margin var(--mw-speed-normal, 300ms) var(--mw-ease-out);
+	}
+
+	/* The global player centres inside the remaining canvas. */
+	html:has(.mw-site-header--stream) .mw-global-player {
+		inset-inline-start: var(--mw-rail-width);
+		inline-size: min(72rem, calc(100% - var(--mw-rail-width) - 2 * max(1rem, env(safe-area-inset-left, 0px))));
+	}
+
+	.mw-rail {
+		position: fixed;
+		inset-block-start: var(--mw-admin-bar-offset);
+		inset-inline-start: 0;
+		z-index: 70;
+		display: flex;
+		flex-direction: column;
+		gap: 1rem;
+		inline-size: var(--mw-rail-width);
+		block-size: calc(100dvh - var(--mw-admin-bar-offset));
+		padding: 0.75rem;
+		overflow: hidden auto;
+		overscroll-behavior: contain;
+		border-inline-end: 1px solid var(--mw-color-border);
+		transition: inline-size var(--mw-speed-normal, 300ms) var(--mw-ease-out);
+	}
+
+	.mw-rail__brand {
+		flex-wrap: wrap;
+		padding-inline: 0.35rem;
+	}
+
+	.mw-rail__brand .wp-block-site-title {
+		flex: 1 1 auto;
+	}
+
+	.mw-rail__brand .wp-block-site-title a {
+		max-inline-size: 12ch;
+		font-size: 1.15rem;
+	}
+
+	/* Collapsed: icon strip. Labels stay in the tree for assistive tech
+	 * (rail.js also mirrors them into title tooltips); the brand stacks
+	 * logo + toggle. */
+	html[data-mw-rail="collapsed"] .mw-rail__brand {
+		flex-direction: column;
+		align-items: center;
+		padding-inline: 0;
+	}
+
+	html[data-mw-rail="collapsed"] .mw-rail__brand .wp-block-site-title,
+	html[data-mw-rail="collapsed"] .mw-rail__brand .wp-block-site-tagline {
+		display: none;
+	}
+
+	html[data-mw-rail="collapsed"] .mw-rail__toggle {
+		margin-inline-start: 0;
+	}
+
+	html[data-mw-rail="collapsed"] .mw-rail .wp-block-navigation-item__content {
+		justify-content: center;
+		padding-inline: 0;
+	}
+
+	html[data-mw-rail="collapsed"] .mw-rail .wp-block-navigation-item__label {
+		position: absolute;
+		inline-size: 1px;
+		block-size: 1px;
+		margin: -1px;
+		padding: 0;
+		overflow: hidden;
+		clip: rect(0 0 0 0);
+		clip-path: inset(50%);
+		border: 0;
+	}
+
+	html[data-mw-rail="collapsed"] .mw-rail .current-menu-item > .wp-block-navigation-item__content,
+	html[data-mw-rail="collapsed"] .mw-rail .wp-block-navigation-item__content[aria-current="page"] {
+		color: var(--mw-rail-on-active);
+		background: var(--mw-rail-active);
+	}
+
+	html[data-mw-rail="collapsed"] .mw-rail .current-menu-item > .wp-block-navigation-item__content::after,
+	html[data-mw-rail="collapsed"] .mw-rail .wp-block-navigation-item__content[aria-current="page"]::after {
+		display: none;
+	}
+
+	/* The top bar loses its brand: the rail carries it. */
+	.mw-stream-topbar__brand {
+		display: none;
+	}
+
+	.mw-stream-topbar .mw-stream-search {
+		margin-inline-start: 0;
+	}
+}
+
+/* -------------------------------------------------------------------------
+ * Small screens: bottom tab bar
+ * ---------------------------------------------------------------------- */
+
+@media (max-width: 63.99rem) {
+	/* The player's measured footprint already includes its bottom inset
+	 * (the tab bar) once a track is loaded, so the larger value wins. */
+	html:has(.mw-site-header--stream) .wp-site-blocks {
+		padding-block-end: max(var(--mw-player-offset, 0px), var(--mw-rail-tabbar-height, 3.75rem));
+	}
+
+	/* The player docks above the tab bar instead of the screen edge. */
+	html:has(.mw-site-header--stream) .mw-global-player {
+		inset-block-end: var(--mw-rail-tabbar-height, 3.75rem);
+	}
+
+	.mw-rail {
+		position: fixed;
+		inset-inline: 0;
+		inset-block-end: 0;
+		z-index: 90;
+		block-size: var(--mw-rail-tabbar-height);
+		padding: 0.3rem max(0.5rem, env(safe-area-inset-right, 0px)) env(safe-area-inset-bottom, 0px) max(0.5rem, env(safe-area-inset-left, 0px));
+		background: color-mix(in srgb, var(--mw-color-surface) 92%, transparent);
+		border-block-start: 1px solid var(--mw-color-border);
+		backdrop-filter: blur(18px) saturate(1.2);
+		-webkit-backdrop-filter: blur(18px) saturate(1.2);
+	}
+
+	.mw-rail__brand,
+	.mw-rail__toggle {
+		display: none;
+	}
+
+	.mw-rail .wp-block-navigation__container {
+		flex-direction: row;
+		flex-wrap: nowrap;
+		justify-content: space-around;
+		gap: 0;
+	}
+
+	.mw-rail .wp-block-navigation-item {
+		flex: 1 1 0;
+	}
+
+	.mw-rail .wp-block-navigation-item__content {
+		flex-direction: column;
+		justify-content: center;
+		gap: 0.2rem;
+		min-block-size: 3.1rem;
+		padding: 0.3rem 0.2rem;
+		font-size: 0.68rem;
+	}
+
+	.mw-rail .wp-block-navigation-item__content::before {
+		inline-size: 1.45rem;
+		block-size: 1.45rem;
+	}
+
+	.mw-rail .current-menu-item > .wp-block-navigation-item__content::after,
+	.mw-rail .wp-block-navigation-item__content[aria-current="page"]::after {
+		inset-block: auto 0;
+		inset-inline: 30%;
+		block-size: 0.2rem;
+		inline-size: auto;
+		border-radius: var(--mw-radius-pill) var(--mw-radius-pill) 0 0;
+	}
+
+	.mw-stream-topbar .mw-brand .wp-block-site-title a {
+		max-inline-size: 10ch;
+	}
+}
+
+@media (max-width: 40rem) {
+	.mw-stream-topbar .mw-brand .wp-block-site-title {
+		display: none;
+	}
+
+	.mw-stream-topbar .mw-header-actions .mw-theme-toggle {
+		display: none;
+	}
+}
+
+/* Print: no fixed chrome. */
+@media print {
+	.mw-rail,
+	.mw-stream-topbar {
+		display: none;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.mw-rail,
+	html:has(.mw-site-header--stream) .wp-site-blocks,
+	.mw-rail .wp-block-navigation-item__content,
+	.mw-rail__toggle,
+	.mw-stream-topbar .mw-stream-search .wp-block-search__button {
+		transition: none;
+	}
+}

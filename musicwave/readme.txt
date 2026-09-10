@@ -4,13 +4,17 @@ Tags: block-theme, music, woocommerce, rtl, accessibility
 Requires at least: 6.6
 Tested up to: 6.8
 Requires PHP: 7.4
-Stable tag: 0.8.2
+Stable tag: 0.9.0
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
 MusicWave is a block theme for music catalogs and stores. It uses MusicWave Core for catalog data and supports WooCommerce plus MusicWave VIP protected downloads.
 
 == Changelog ==
+
+= 0.9.0 =
+* Feature: the "سربرگ (استریم)" template part (`header-stream`) becomes a streaming-app shell: a vertical side rail at the inline-start edge (right in RTL) with the brand and four destinations (خانه، پیشنهادی، جستجو، موسیقی من) rendered as core navigation blocks with mask icons, plus a slim top bar with the "جستجو در سانگ سرا" search field, the theme toggle and a round account link. The rail collapses to a 72px icon strip with a warm highlight for the current destination; `assets/rail.js` adds the toggle (`aria-expanded`, `aria-controls`), stores the choice in `localStorage` (`musicwave-rail`), preloads it before paint to avoid layout shift, marks custom destinations (search, account) as current, and survives the persistent-player soft navigation. Without JavaScript the rail is simply expanded. Below 64rem the same markup docks as a bottom tab bar above the global player. New tokens `--mw-rail-width*`, `--mw-rail-active`, `--mw-rail-on-active`; new module `components/rail.css`; editor styles keep the rail as an ordinary row in the canvas.
+* Feature: new page templates "سفارش آهنگ اختصاصی" (`page-request-song`) and "همکاری" (`page-request-collab`) that compose the Core request form in its dedicated modes (Core 0.14.0+) with a matching FAQ, and "صفحهٔ استریم (نوار کناری)" (`page-stream`) that uses the rail header and opens with an "آلوم جدید" release shelf ("نمایش بیشتر" link) followed by new singles and most-played shelves. All three are repaired automatically on existing installs.
 
 = 0.8.2 =
 * New page template "درخواست آهنگ و همکاری" (`page-requests`) composed of the Core request form block plus an FAQ, and a `musicwave/request-cta` pattern for promoting song requests and collaborations on any page. The template is repaired automatically on existing installs like the other custom templates.

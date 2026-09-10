@@ -4814,6 +4814,162 @@
             ],
             "post type singular name\u0004درخواست": [
                 "Request"
+            ],
+            "آهنگی که فقط برای شما ساخته می‌شود": [
+                "A song made only for you"
+            ],
+            "اجرای استودیویی، میکس و مستر آمادهٔ انتشار.": [
+                "Studio performance, mix and release-ready master."
+            ],
+            "ارسال پیشنهاد همکاری": [
+                "Send collaboration proposal"
+            ],
+            "از ایدهٔ اولیه تا ترانه، ملودی و تنظیم نهایی.": [
+                "From the first idea to lyrics, melody and the final arrangement."
+            ],
+            "انتخاب نقش درخواست‌دهنده": [
+                "Requester role picker"
+            ],
+            "انتخاب نوع درخواست": [
+                "Request kind picker"
+            ],
+            "اولین نوع مجاز": [
+                "First allowed kind"
+            ],
+            "ایده، نقش خودتان و نمونه‌کارهایتان را معرفی کنید.": [
+                "Introduce the idea, your role and your portfolio."
+            ],
+            "این نوع درخواست در این فرم پذیرفته نمی‌شود.": [
+                "This kind of request is not accepted on this form."
+            ],
+            "با خاموش‌کردن، نوع پیش‌فرض به‌صورت ثابت ارسال می‌شود.": [
+                "When off, the default kind is submitted as a fixed value."
+            ],
+            "برای استفاده از متن‌های پیش‌فرض ترجمه‌شدهٔ هر حالت خالی بگذارید.": [
+                "Leave blank to use the translated defaults of each mode."
+            ],
+            "برای خودتان، برندتان یا یک مناسبت خاص قطعه‌ای اختصاصی سفارش دهید. حال‌وهوا، مدت و محل استفاده را بنویسید؛ ما با پیشنهاد، زمان‌بندی و برآورد هزینه پاسخ می‌دهیم.": [
+                "Order a bespoke piece for yourself, your brand or a special occasion. Describe the mood, length and where it will be used; we reply with a proposal, a schedule and a cost estimate."
+            ],
+            "برای صفحه‌های جداگانه، یک بلوک با حالت «سفارش آهنگ» و یکی با حالت «همکاری» قرار دهید. انواع فعال در MusicWave → درخواست‌ها → تنظیمات تعیین می‌شوند و در سرور نیز اعمال می‌شوند.": [
+                "For separate pages, place one block in \"custom song\" mode and one in \"collaboration\" mode. Enabled kinds are set under MusicWave → Requests → Settings and enforced on the server as well."
+            ],
+            "برنامهٔ اجرای زنده، جشنواره‌ها و رویدادهای خصوصی.": [
+                "Live shows, festivals and private events."
+            ],
+            "برند و تبلیغات": [
+                "Brand & advertising"
+            ],
+            "بیایید با هم چیزی تازه بسازیم": [
+                "Let's build something new together"
+            ],
+            "ترانه و ملودی": [
+                "Lyrics & melody"
+            ],
+            "ترکیبی (سفارش آهنگ + همکاری)": [
+                "Combined (custom song + collaboration)"
+            ],
+            "تیم ما بررسی می‌کند و برای گفت‌وگو با شما تماس می‌گیرد.": [
+                "Our team reviews it and gets in touch to talk."
+            ],
+            "ثبت سفارش آهنگ": [
+                "Place song order"
+            ],
+            "حالت": [
+                "Mode"
+            ],
+            "حالت فرم": [
+                "Form mode"
+            ],
+            "حال‌وهوا، سبک و محل استفادهٔ قطعه را بنویسید.": [
+                "Describe the mood, style and where the piece will be used."
+            ],
+            "حقوق استفاده": [
+                "Usage rights"
+            ],
+            "خدمت ۱ — توضیح": [
+                "Service 1 — description"
+            ],
+            "خدمت ۱ — عنوان": [
+                "Service 1 — title"
+            ],
+            "خدمت ۲ — توضیح": [
+                "Service 2 — description"
+            ],
+            "خدمت ۲ — عنوان": [
+                "Service 2 — title"
+            ],
+            "خدمت ۳ — توضیح": [
+                "Service 3 — description"
+            ],
+            "خدمت ۳ — عنوان": [
+                "Service 3 — title"
+            ],
+            "خواننده‌ها، تهیه‌کننده‌ها، برندها و برگزارکنندگان رویداد می‌توانند از همین‌جا پیشنهاد همکاری بدهند: فیچرینگ، تولید مشترک، موسیقی تبلیغاتی یا اجرای زنده.": [
+                "Singers, producers, brands and event organisers can propose a collaboration right here: featuring, co-production, advertising music or live performance."
+            ],
+            "ضبط و مسترینگ": [
+                "Recording & mastering"
+            ],
+            "فرم عمومی سفارش آهنگ اختصاصی و پیشنهاد همکاری برای خواننده‌ها، برندها و مخاطبان؛ با حالت ترکیبی یا اختصاصی (فقط سفارش آهنگ / فقط همکاری)، بدون نیاز به جاوااسکریپت کار می‌کند و درخواست‌ها در بخش «درخواست‌ها و همکاری» مدیریت می‌شوند.": [
+                "Public custom-song and collaboration request form for singers, brands and audiences; runs in a combined or dedicated mode (song only / collaboration only), works without JavaScript, and requests are managed under \"Requests & collaboration\"."
+            ],
+            "فرم عمومی سفارش آهنگ اختصاصی و پیشنهاد همکاری؛ با حالت ترکیبی یا اختصاصی (فقط سفارش آهنگ / فقط همکاری). درخواست‌ها در بخش «درخواست‌ها و همکاری» مدیریت می‌شوند.": [
+                "Public custom-song and collaboration request form; combined or dedicated mode (song only / collaboration only). Requests are managed under \"Requests & collaboration\"."
+            ],
+            "فقط سفارش آهنگ اختصاصی": [
+                "Custom song only"
+            ],
+            "فقط همکاری (هنری، برند، رویداد)": [
+                "Collaboration only (artistic, brand, event)"
+            ],
+            "قرارداد شفاف برای استفادهٔ شخصی، تجاری یا تبلیغاتی.": [
+                "A clear agreement for personal, commercial or advertising use."
+            ],
+            "متن خدمات": [
+                "Service copy"
+            ],
+            "متن مراحل": [
+                "Step copy"
+            ],
+            "مثلاً: فیچرینگ برای تک‌آهنگ بعدی": [
+                "e.g. featuring on the next single"
+            ],
+            "مرحلهٔ ۱": [
+                "Step 1"
+            ],
+            "مرحلهٔ ۲": [
+                "Step 2"
+            ],
+            "مرحلهٔ ۳": [
+                "Step 3"
+            ],
+            "موسیقی تبلیغاتی، جینگل و ساند‌برندینگ برای کمپین‌ها.": [
+                "Advertising music, jingles and sound branding for campaigns."
+            ],
+            "نقش پیش‌فرض": [
+                "Default role"
+            ],
+            "نوع پیش‌فرض": [
+                "Default kind"
+            ],
+            "هر مورد خالی، متن پیش‌فرض همان حالت را نشان می‌دهد.": [
+                "Every blank item shows the default copy of the active mode."
+            ],
+            "پیشنهاد شما چیست؟": [
+                "What is your proposal?"
+            ],
+            "پیشنهاد، زمان‌بندی و برآورد هزینه برایتان ارسال می‌شود.": [
+                "A proposal, a schedule and a cost estimate are sent to you."
+            ],
+            "پیش‌فرض حالت": [
+                "Mode default"
+            ],
+            "چه آهنگی می‌خواهید؟": [
+                "What song do you want?"
+            ],
+            "یادداشت حریم خصوصی": [
+                "Privacy note"
             ]
         }
     }

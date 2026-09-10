@@ -31,3 +31,55 @@
 		display: block;
 	}
 }
+
+/* Stream rail (parts/header-stream.html): fixed chrome on the front end,
+ * an ordinary editable row inside the canvas so nothing overlaps the
+ * blocks being edited. */
+.editor-styles-wrapper .mw-site-header--stream .mw-rail {
+	position: relative;
+	inset: auto;
+	z-index: auto;
+	inline-size: 100%;
+	block-size: auto;
+	padding: 0.75rem;
+	border: 0;
+	border-block-end: 1px solid var(--mw-color-border);
+	background: var(--mw-color-surface);
+	backdrop-filter: none;
+	-webkit-backdrop-filter: none;
+}
+
+.editor-styles-wrapper .mw-site-header--stream .mw-rail .wp-block-navigation__container {
+	flex-direction: row;
+	flex-wrap: wrap;
+	justify-content: flex-start;
+	gap: 0.25rem;
+}
+
+.editor-styles-wrapper .mw-site-header--stream .mw-rail .wp-block-navigation-item {
+	inline-size: auto;
+	flex: 0 0 auto;
+}
+
+.editor-styles-wrapper .mw-site-header--stream .mw-rail .wp-block-navigation-item__content {
+	flex-direction: row;
+	min-block-size: 2.5rem;
+	padding: 0.45rem 0.7rem;
+	font-size: 0.9rem;
+}
+
+.editor-styles-wrapper .mw-site-header--stream .mw-rail__brand,
+.editor-styles-wrapper .mw-site-header--stream .mw-stream-topbar__brand {
+	display: flex;
+}
+
+.editor-styles-wrapper .mw-site-header--stream .mw-rail__toggle {
+	display: none;
+}
+
+/* The canvas never reserves room for the fixed rail (it is a normal row
+ * there) and has no global player to dock above. */
+html .editor-styles-wrapper .wp-site-blocks {
+	margin-inline-start: 0;
+	padding-block-end: 0;
+}

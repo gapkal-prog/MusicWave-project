@@ -495,6 +495,21 @@
       "postTypes": ["page"]
     },
     {
+      "name": "page-request-song",
+      "title": "سفارش آهنگ اختصاصی",
+      "postTypes": ["page"]
+    },
+    {
+      "name": "page-request-collab",
+      "title": "همکاری",
+      "postTypes": ["page"]
+    },
+    {
+      "name": "page-stream",
+      "title": "صفحهٔ استریم (نوار کناری)",
+      "postTypes": ["page"]
+    },
+    {
       "name": "page-cart",
       "title": "سبد خرید",
       "postTypes": ["page"]

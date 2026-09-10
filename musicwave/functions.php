@@ -57,6 +57,10 @@ function musicwave_style_modules(): array {
 			'file'         => 'assets/css/components/navigation.css',
 			'dependencies' => array( 'musicwave-layout' ),
 		),
+		'musicwave-rail'            => array(
+			'file'         => 'assets/css/components/rail.css',
+			'dependencies' => array( 'musicwave-navigation' ),
+		),
 		'musicwave-utilities'       => array(
 			'file'         => 'assets/css/utilities.css',
 			'dependencies' => array( 'musicwave-base' ),
@@ -225,6 +229,26 @@ function musicwave_enqueue_assets(): void {
 	if ( function_exists( 'wp_set_script_translations' ) ) {
 		wp_set_script_translations( 'musicwave-theme-preference', 'musicwave', get_template_directory() . '/languages' );
 	}
+	// Stream rail toggle (parts/header-stream.html). Tiny, dependency-free,
+	// and a no-op on pages without the rail, so it ships with every route
+	// rather than being tied to a block render.
+	wp_enqueue_script(
+		'musicwave-rail',
+		get_template_directory_uri() . '/assets/rail.js',
+		array(),
+		$version,
+		true
+	);
+	wp_localize_script(
+		'musicwave-rail',
+		'musicwaveRail',
+		array(
+			'labels' => array(
+				'collapse' => __( 'جمع‌کردن منو', 'musicwave' ),
+				'expand'   => __( 'بازکردن منو', 'musicwave' ),
+			),
+		)
+	);
 	// Registered only: the slider script enqueues at render time of the
 	// music-wave/release-slider block, so routes without a slider ship no
 	// slider bytes (PROJECT_PLAN.md Stage 4 deliverable 4).
@@ -305,7 +329,7 @@ add_action( 'wp_enqueue_scripts', 'musicwave_enqueue_assets' );
  * @return void
  */
 function musicwave_preload_theme_preference(): void {
-	echo "<script>(function(){try{var t=window.localStorage.getItem('musicwave-theme');if('light'===t||'dark'===t){document.documentElement.setAttribute('data-mw-theme',t);}}catch(e){}}());</script>\n";
+	echo "<script>(function(){try{var t=window.localStorage.getItem('musicwave-theme');if('light'===t||'dark'===t){document.documentElement.setAttribute('data-mw-theme',t);}var r=window.localStorage.getItem('musicwave-rail');if('collapsed'===r||'expanded'===r){document.documentElement.setAttribute('data-mw-rail',r);}}catch(e){}}());</script>\n";
 }
 add_action( 'wp_head', 'musicwave_preload_theme_preference', 0 );
 
@@ -417,7 +441,7 @@ add_filter( 'wp_resource_hints', 'musicwave_resource_hints', 10, 2 );
  * @return string
  */
 function musicwave_filter_script_tag( string $tag, string $handle ): string {
-	$defer = array( 'musicwave-theme-preference', 'musicwave-slider', 'music-wave-playlists', 'music-wave-preview-player' );
+	$defer = array( 'musicwave-theme-preference', 'musicwave-rail', 'musicwave-slider', 'music-wave-playlists', 'music-wave-preview-player' );
 	// WordPress 6.3+ may already add `defer` via the script strategy API (data-wp-strategy="defer").
 	// Avoid double-defer and respect an existing strategy attribute.
 	if ( in_array( $handle, $defer, true ) && false === strpos( $tag, ' defer' ) && false === strpos( $tag, 'data-wp-strategy' ) ) {
@@ -834,6 +858,9 @@ function musicwave_repairable_template_slugs(): array {
 			'page-browse',
 			'page-playlists',
 			'page-requests',
+			'page-request-song',
+			'page-request-collab',
+			'page-stream',
 			'page-cart',
 			'page-checkout',
 			'page-music-home',
@@ -961,8 +988,11 @@ add_filter( 'get_block_templates', 'musicwave_alias_account_templates_in_query',
  */
 function musicwave_template_titles(): array {
 	return array(
-		'page-playlists' => __( 'فهرست‌های پخش عمومی', 'musicwave' ),
-		'page-requests'  => __( 'درخواست آهنگ و همکاری', 'musicwave' ),
+		'page-playlists'      => __( 'فهرست‌های پخش عمومی', 'musicwave' ),
+		'page-requests'       => __( 'درخواست آهنگ و همکاری', 'musicwave' ),
+		'page-request-song'   => __( 'سفارش آهنگ اختصاصی', 'musicwave' ),
+		'page-request-collab' => __( 'همکاری', 'musicwave' ),
+		'page-stream'         => __( 'صفحهٔ استریم (نوار کناری)', 'musicwave' ),
 	);
 }
 

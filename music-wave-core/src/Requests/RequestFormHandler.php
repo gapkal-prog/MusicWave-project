@@ -25,6 +25,7 @@ final class RequestFormHandler {
 	public const TOKEN_ARG  = 'mw-request-token';
 	public const HONEYPOT   = 'mw_request_website';
 	public const TIMER      = 'mw_request_opened';
+	public const KINDS      = 'mw_request_kinds';
 	public const MIN_FILL   = 3;
 
 	/** @var RequestRepository */
@@ -65,14 +66,15 @@ final class RequestFormHandler {
 		// with a bare "link expired" screen, which is the wrong experience for
 		// a visitor whose form sat in a page cache. They get a notice instead.
 		$nonce = isset( $_POST['_wpnonce'] ) && is_scalar( $_POST['_wpnonce'] ) ? sanitize_text_field( wp_unslash( (string) $_POST['_wpnonce'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Missing -- this is the verification.
-		if ( '' === $nonce || false === wp_verify_nonce( $nonce, self::NONCE ) ) {
+		$kinds = isset( $_POST[ self::KINDS ] ) && is_scalar( $_POST[ self::KINDS ] ) ? self::parse_kinds( sanitize_text_field( wp_unslash( (string) $_POST[ self::KINDS ] ) ) ) : array(); // phpcs:ignore WordPress.Security.NonceVerification.Missing -- bound into the nonce action verified next.
+		if ( '' === $nonce || false === wp_verify_nonce( $nonce, self::nonce_action( $kinds ) ) ) {
 			$this->redirect( $redirect, 'invalid' );
 
 			return;
 		}
 
 		$input = array();
-		foreach ( array_merge( RequestSubmission::fields(), array( self::HONEYPOT, self::TIMER ) ) as $field ) {
+		foreach ( array_merge( RequestSubmission::fields(), array( self::HONEYPOT, self::TIMER, self::KINDS ) ) as $field ) {
 			if ( ! isset( $_POST[ $field ] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Missing -- verified by check_admin_referer() above.
 				continue;
 			}
@@ -108,7 +110,7 @@ final class RequestFormHandler {
 			return $this->outcome( 'throttled' );
 		}
 
-		$validated = RequestSubmission::validate( $input, $now );
+		$validated = RequestSubmission::validate( $input, $now, $this->allowed_types( $input ) );
 		if ( array() !== $validated['errors'] ) {
 			return $this->outcome( 'errors', '', 0, $validated['errors'], $validated['data'] );
 		}
@@ -133,6 +135,67 @@ final class RequestFormHandler {
 		}
 
 		return $this->outcome( 'sent', '', $request_id );
+	}
+
+	/**
+	 * Nonce action for a form that offers the given request kinds.
+	 *
+	 * Binding the kinds into the action means a dedicated page (song-only,
+	 * collaboration-only) issues nonces that are only valid for its own list;
+	 * a POST claiming a wider list fails verification. Forms without a kinds
+	 * field (cached pages from before this field existed) keep the bare
+	 * action.
+	 *
+	 * @param array<int, string> $kinds Request kinds offered by the form.
+	 */
+	public static function nonce_action( array $kinds ): string {
+		$kinds = self::parse_kinds( implode( ',', $kinds ) );
+		if ( array() === $kinds ) {
+			return self::NONCE;
+		}
+		sort( $kinds );
+
+		return self::NONCE . ':' . implode( ',', $kinds );
+	}
+
+	/**
+	 * Request kinds this submission may file.
+	 *
+	 * Always a subset of the kinds the manager enabled; when the form sent
+	 * its own (nonce-bound) list, that list narrows it further. An empty
+	 * intersection falls back to the manager's list so an outdated form can
+	 * never lock visitors out entirely.
+	 *
+	 * @param array<string, mixed> $input Unslashed form values.
+	 * @return array<int, string>
+	 */
+	public function allowed_types( array $input ): array {
+		$enabled = array_map( 'strval', array_keys( $this->settings->enabled_types() ) );
+		$kinds   = isset( $input[ self::KINDS ] ) && is_scalar( $input[ self::KINDS ] ) ? self::parse_kinds( (string) $input[ self::KINDS ] ) : array();
+		if ( array() === $kinds ) {
+			return $enabled;
+		}
+		$allowed = array_values( array_intersect( $enabled, $kinds ) );
+
+		return array() !== $allowed ? $allowed : $enabled;
+	}
+
+	/**
+	 * Parse a comma-separated kinds list into known, unique request kinds.
+	 *
+	 * @return array<int, string>
+	 */
+	private static function parse_kinds( string $raw ): array {
+		$known = array_keys( RequestPostType::type_labels() );
+		$kinds = array();
+		foreach ( explode( ',', strtolower( $raw ) ) as $kind ) {
+			$kind = (string) preg_replace( '/[^a-z0-9_\-]/', '', trim( $kind ) );
+			if ( '' !== $kind && in_array( $kind, $known, true ) && ! in_array( $kind, $kinds, true ) ) {
+				$kinds[] = $kind;
+			}
+		}
+
+		return $kinds;
 	}
 
 	/**

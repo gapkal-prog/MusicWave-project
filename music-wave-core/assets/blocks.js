@@ -2141,6 +2141,138 @@
 		'music-wave/request-form': {
 			groups: [
 				{
+					title: __( 'حالت فرم', 'music-wave-core' ),
+					controls: [
+						[
+							'select',
+							'mode',
+							__( 'حالت', 'music-wave-core' ),
+							[
+								[
+									'both',
+									__(
+										'ترکیبی (سفارش آهنگ + همکاری)',
+										'music-wave-core'
+									),
+								],
+								[
+									'song',
+									__(
+										'فقط سفارش آهنگ اختصاصی',
+										'music-wave-core'
+									),
+								],
+								[
+									'collab',
+									__(
+										'فقط همکاری (هنری، برند، رویداد)',
+										'music-wave-core'
+									),
+								],
+							],
+							__(
+								'برای صفحه‌های جداگانه، یک بلوک با حالت «سفارش آهنگ» و یکی با حالت «همکاری» قرار دهید. انواع فعال در MusicWave → درخواست‌ها → تنظیمات تعیین می‌شوند و در سرور نیز اعمال می‌شوند.',
+								'music-wave-core'
+							),
+						],
+						[
+							'toggle',
+							'showTypeChips',
+							__( 'انتخاب نوع درخواست', 'music-wave-core' ),
+							true,
+							__(
+								'با خاموش‌کردن، نوع پیش‌فرض به‌صورت ثابت ارسال می‌شود.',
+								'music-wave-core'
+							),
+						],
+						[
+							'select',
+							'defaultType',
+							__( 'نوع پیش‌فرض', 'music-wave-core' ),
+							[
+								[
+									'',
+									__( 'اولین نوع مجاز', 'music-wave-core' ),
+								],
+								[
+									'song',
+									__(
+										'سفارش آهنگ اختصاصی',
+										'music-wave-core'
+									),
+								],
+								[
+									'collab',
+									__( 'همکاری هنری', 'music-wave-core' ),
+								],
+								[
+									'advertising',
+									__( 'تبلیغات و برند', 'music-wave-core' ),
+								],
+								[
+									'event',
+									__( 'اجرا و رویداد', 'music-wave-core' ),
+								],
+								[
+									'other',
+									__( 'موضوع دیگر', 'music-wave-core' ),
+								],
+							],
+						],
+						[
+							'toggle',
+							'showRoles',
+							__( 'انتخاب نقش درخواست‌دهنده', 'music-wave-core' ),
+							true,
+						],
+						[
+							'select',
+							'defaultRole',
+							__( 'نقش پیش‌فرض', 'music-wave-core' ),
+							[
+								[ '', __( 'پیش‌فرض حالت', 'music-wave-core' ) ],
+								[
+									'singer',
+									__( 'خواننده', 'music-wave-core' ),
+								],
+								[
+									'producer',
+									__(
+										'تهیه‌کننده / آهنگساز',
+										'music-wave-core'
+									),
+								],
+								[
+									'band',
+									__( 'گروه موسیقی', 'music-wave-core' ),
+								],
+								[
+									'advertiser',
+									__(
+										'برند / آژانس تبلیغاتی',
+										'music-wave-core'
+									),
+								],
+								[
+									'business',
+									__(
+										'کسب‌وکار / رویداد',
+										'music-wave-core'
+									),
+								],
+								[
+									'fan',
+									__(
+										'شنونده و علاقه‌مند',
+										'music-wave-core'
+									),
+								],
+								[ 'other', __( 'سایر', 'music-wave-core' ) ],
+							],
+						],
+					],
+				},
+				{
 					title: __( 'سربرگ', 'music-wave-core' ),
 					controls: [
 						[
@@ -2162,7 +2294,7 @@
 						],
 					],
 					help: __(
-						'برای استفاده از متن‌های پیش‌فرض ترجمه‌شده خالی بگذارید.',
+						'برای استفاده از متن‌های پیش‌فرض ترجمه‌شدهٔ هر حالت خالی بگذارید.',
 						'music-wave-core'
 					),
 				},
@@ -2198,6 +2330,70 @@
 							'showSteps',
 							__( 'نمایش مراحل', 'music-wave-core' ),
 							true,
+						],
+						[
+							'text',
+							'privacyNote',
+							__( 'یادداشت حریم خصوصی', 'music-wave-core' ),
+						],
+					],
+				},
+				{
+					title: __( 'متن خدمات', 'music-wave-core' ),
+					controls: [
+						[
+							'text',
+							'highlight1Title',
+							__( 'خدمت ۱ — عنوان', 'music-wave-core' ),
+						],
+						[
+							'text',
+							'highlight1Text',
+							__( 'خدمت ۱ — توضیح', 'music-wave-core' ),
+						],
+						[
+							'text',
+							'highlight2Title',
+							__( 'خدمت ۲ — عنوان', 'music-wave-core' ),
+						],
+						[
+							'text',
+							'highlight2Text',
+							__( 'خدمت ۲ — توضیح', 'music-wave-core' ),
+						],
+						[
+							'text',
+							'highlight3Title',
+							__( 'خدمت ۳ — عنوان', 'music-wave-core' ),
+						],
+						[
+							'text',
+							'highlight3Text',
+							__( 'خدمت ۳ — توضیح', 'music-wave-core' ),
+						],
+					],
+					help: __(
+						'هر مورد خالی، متن پیش‌فرض همان حالت را نشان می‌دهد.',
+						'music-wave-core'
+					),
+				},
+				{
+					title: __( 'متن مراحل', 'music-wave-core' ),
+					controls: [
+						[
+							'text',
+							'step1',
+							__( 'مرحلهٔ ۱', 'music-wave-core' ),
+						],
+						[
+							'text',
+							'step2',
+							__( 'مرحلهٔ ۲', 'music-wave-core' ),
+						],
+						[
+							'text',
+							'step3',
+							__( 'مرحلهٔ ۳', 'music-wave-core' ),
 						],
 					],
 				},
@@ -3431,6 +3627,42 @@
 		);
 	}
 
+	// Icons arrive either as a Dashicon slug or as path data (see
+	// Rendering::request_form_icon()); path data becomes an inline SVG so
+	// the icon inherits the editor's current colour like core icons do.
+	function blockIcon( icon ) {
+		if ( ! icon || 'string' === typeof icon ) {
+			return icon || 'album';
+		}
+		if ( ! Array.isArray( icon.paths ) ) {
+			return 'album';
+		}
+		return createElement(
+			'svg',
+			{
+				xmlns: 'http://www.w3.org/2000/svg',
+				viewBox: icon.viewBox || '0 0 24 24',
+				width: 24,
+				height: 24,
+				'aria-hidden': 'true',
+				focusable: 'false',
+			},
+			icon.paths.map( function ( path, index ) {
+				return createElement(
+					'path',
+					Object.assign(
+						{
+							key: 'p' + index,
+							strokeLinecap: 'round',
+							strokeLinejoin: 'round',
+						},
+						path
+					)
+				);
+			} )
+		);
+	}
+
 	dynamicBlocks.forEach( function ( block ) {
 		var existing = blocks.getBlockType( block.name );
 		if ( existing ) {
@@ -3468,7 +3700,7 @@
 			description:
 				( existing && existing.description ) || block.description,
 			category: ( existing && existing.category ) || 'music-wave',
-			icon: block.icon || ( existing && existing.icon ) || 'album',
+			icon: blockIcon( block.icon || ( existing && existing.icon ) ),
 			keywords: block.keywords || [],
 			attributes: Object.assign(
 				{},

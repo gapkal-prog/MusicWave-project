@@ -7,8 +7,18 @@
  * `admin-post.php` without JavaScript. Validation errors and the previous
  * values come back through the form handler's one-shot stash, so the page
  * never re-renders user input from the URL. A tiny enhancement script adds
- * a live character counter and the role/type chips; everything works
- * without it.
+ * a live character counter; everything works without it.
+ *
+ * The block has three modes so one site can run a combined page or two
+ * dedicated pages ("custom song" / "collaboration"):
+ *
+ * - `both`   every request kind the manager enabled, chosen with chips;
+ * - `song`   only the custom-song kind (chips hidden, kind fixed);
+ * - `collab` only collaboration / partnership kinds.
+ *
+ * The mode is enforced twice: the form renders only the allowed kinds, and
+ * the submission handler refuses any kind outside the list the block sent,
+ * so a crafted POST cannot file a "collaboration" through a song-only page.
  *
  * @package ManaCore\MusicWave\Core
  */
@@ -24,6 +34,23 @@ use ManaCore\MusicWave\Core\Requests\RequestSubmission;
 
 final class RequestFormBlock {
 	public const NAME = 'music-wave/request-form';
+
+	/** Shared handle for the public stylesheet and the enhancement script. */
+	public const ASSET_HANDLE = 'music-wave-request-form';
+
+	/** Block modes and the request kinds each one accepts. */
+	private const MODES = array(
+		'both'   => array(),
+		'song'   => array( 'song' ),
+		'collab' => array( 'collab', 'advertising', 'event' ),
+	);
+
+	/** Default role chip per mode. */
+	private const DEFAULT_ROLES = array(
+		'both'   => 'singer',
+		'song'   => 'singer',
+		'collab' => 'producer',
+	);
 
 	/** @var RequestFormHandler */
 	private $forms;
@@ -44,6 +71,8 @@ final class RequestFormBlock {
 			return;
 		}
 
+		$this->register_assets();
+
 		BlockSupport::register_dynamic(
 			self::NAME,
 			function ( $attributes ): string {
@@ -57,25 +86,56 @@ final class RequestFormBlock {
 	}
 
 	/**
+	 * Supported block modes.
+	 *
+	 * @return array<int, string>
+	 */
+	public static function modes(): array {
+		return array_keys( self::MODES );
+	}
+
+	/**
+	 * Request kinds a mode may offer, ordered like the manager sees them.
+	 *
+	 * `both` returns every enabled kind; a restricted mode returns the
+	 * intersection of its list and the enabled kinds. An empty result means
+	 * the manager switched this kind off, and the block shows the closed
+	 * notice instead of a form that could never be submitted.
+	 *
+	 * @return array<string, string> Kind => label.
+	 */
+	public function kinds_for_mode( string $mode ): array {
+		$enabled = $this->settings->enabled_types();
+		$allowed = isset( self::MODES[ $mode ] ) ? self::MODES[ $mode ] : array();
+		if ( array() === $allowed ) {
+			return $enabled;
+		}
+
+		return array_intersect_key( $enabled, array_flip( $allowed ) );
+	}
+
+	/**
 	 * Render the block.
 	 *
 	 * @param array<string, mixed> $attributes Block attributes.
 	 */
 	public function render( array $attributes ): string {
+		$mode     = BlockSupport::key_attribute( $attributes, 'mode', self::modes(), 'both' );
 		$layout   = BlockSupport::key_attribute( $attributes, 'layout', array( 'split', 'stacked' ), 'split' );
-		$eyebrow  = BlockSupport::text_attribute( $attributes, 'eyebrow', __( 'سفارش و همکاری', 'music-wave-core' ) );
-		$heading  = BlockSupport::text_attribute( $attributes, 'heading', __( 'آهنگ اختصاصی می‌خواهید یا ایدهٔ همکاری دارید؟', 'music-wave-core' ) );
-		$intro    = BlockSupport::text_attribute( $attributes, 'intro', __( 'خواننده‌ها، تهیه‌کننده‌ها، برندها و حتی شنونده‌ها می‌توانند از همین‌جا درخواست بدهند. فرم را پر کنید؛ ما آن را می‌خوانیم و با پیشنهاد و زمان‌بندی پاسخ می‌دهیم.', 'music-wave-core' ) );
+		$copy     = $this->copy( $mode );
+		$eyebrow  = BlockSupport::text_attribute( $attributes, 'eyebrow', $copy['eyebrow'] );
+		$heading  = BlockSupport::text_attribute( $attributes, 'heading', $copy['heading'] );
+		$intro    = BlockSupport::text_attribute( $attributes, 'intro', $copy['intro'] );
 		$notice   = $this->requested_notice();
 		$stash    = $this->forms->stashed( $this->requested_token() );
 		$errors   = $stash['errors'];
 		$values   = $stash['values'];
-		$open     = $this->settings->form_enabled();
+		$open     = $this->settings->form_enabled() && array() !== $this->kinds_for_mode( $mode );
 		$has_side = BlockSupport::bool_attribute( $attributes, 'showSteps', true ) || BlockSupport::bool_attribute( $attributes, 'showHighlights', true );
 
-		$class = 'mw-request-form mw-request-form--' . $layout . ( $has_side ? '' : ' mw-request-form--form-only' );
+		$class = 'mw-request-form mw-request-form--' . $layout . ' mw-request-form--mode-' . $mode . ( $has_side ? '' : ' mw-request-form--form-only' );
 
-		$html  = '<section ' . BlockSupport::wrapper_attributes( $class ) . ' id="mw-request-form">';
+		$html  = '<section ' . BlockSupport::wrapper_attributes( $class ) . ' id="mw-request-form" data-mw-request-mode="' . esc_attr( $mode ) . '">';
 		$html .= '<div class="mw-request-form__glow" aria-hidden="true"></div>';
 
 		if ( BlockSupport::bool_attribute( $attributes, 'showHeading', true ) ) {
@@ -88,7 +148,7 @@ final class RequestFormBlock {
 
 		$html .= '<div class="mw-request-form__layout">';
 		if ( $has_side ) {
-			$html .= $this->side_markup( $attributes );
+			$html .= $this->side_markup( $attributes, $mode );
 		}
 		$html .= '<div class="mw-request-form__panel">';
 		$html .= $this->notice_markup( $notice );
@@ -97,7 +157,7 @@ final class RequestFormBlock {
 		} elseif ( ! $open ) {
 			$html .= '<p class="mw-request-form__closed" role="status">' . esc_html( $this->forms->notice_message( 'closed' ) ) . '</p>';
 		} else {
-			$html .= $this->form_markup( $attributes, $errors, $values );
+			$html .= $this->form_markup( $attributes, $mode, $errors, $values );
 		}
 		$html .= '</div></div></section>';
 
@@ -107,37 +167,97 @@ final class RequestFormBlock {
 	}
 
 	/**
-	 * Pitch column: what can be requested and how the process works.
+	 * Translated default copy per mode; block attributes override each piece.
 	 *
-	 * @param array<string, mixed> $attributes Block attributes.
+	 * @return array{eyebrow: string, heading: string, intro: string, submit: string, highlights: array<int, array{0: string, 1: string, 2: string}>, steps: array<int, string>}
 	 */
-	private function side_markup( array $attributes ): string {
-		$html = '<aside class="mw-request-form__side">';
-		if ( BlockSupport::bool_attribute( $attributes, 'showHighlights', true ) ) {
-			$highlights = array(
+	private function copy( string $mode ): array {
+		switch ( $mode ) {
+			case 'song':
+				return array(
+					'eyebrow'    => __( 'سفارش آهنگ اختصاصی', 'music-wave-core' ),
+					'heading'    => __( 'آهنگی که فقط برای شما ساخته می‌شود', 'music-wave-core' ),
+					'intro'      => __( 'برای خودتان، برندتان یا یک مناسبت خاص قطعه‌ای اختصاصی سفارش دهید. حال‌وهوا، مدت و محل استفاده را بنویسید؛ ما با پیشنهاد، زمان‌بندی و برآورد هزینه پاسخ می‌دهیم.', 'music-wave-core' ),
+					'submit'     => __( 'ثبت سفارش آهنگ', 'music-wave-core' ),
+					'highlights' => array(
+						array( '♪', __( 'ترانه و ملودی', 'music-wave-core' ), __( 'از ایدهٔ اولیه تا ترانه، ملودی و تنظیم نهایی.', 'music-wave-core' ) ),
+						array( '◎', __( 'ضبط و مسترینگ', 'music-wave-core' ), __( 'اجرای استودیویی، میکس و مستر آمادهٔ انتشار.', 'music-wave-core' ) ),
+						array( '✦', __( 'حقوق استفاده', 'music-wave-core' ), __( 'قرارداد شفاف برای استفادهٔ شخصی، تجاری یا تبلیغاتی.', 'music-wave-core' ) ),
+					),
+					'steps'      => array(
+						__( 'حال‌وهوا، سبک و محل استفادهٔ قطعه را بنویسید.', 'music-wave-core' ),
+						__( 'ایمیل تأیید با شمارهٔ پیگیری دریافت می‌کنید.', 'music-wave-core' ),
+						__( 'پیشنهاد، زمان‌بندی و برآورد هزینه برایتان ارسال می‌شود.', 'music-wave-core' ),
+					),
+				);
+			case 'collab':
+				return array(
+					'eyebrow'    => __( 'همکاری', 'music-wave-core' ),
+					'heading'    => __( 'بیایید با هم چیزی تازه بسازیم', 'music-wave-core' ),
+					'intro'      => __( 'خواننده‌ها، تهیه‌کننده‌ها، برندها و برگزارکنندگان رویداد می‌توانند از همین‌جا پیشنهاد همکاری بدهند: فیچرینگ، تولید مشترک، موسیقی تبلیغاتی یا اجرای زنده.', 'music-wave-core' ),
+					'submit'     => __( 'ارسال پیشنهاد همکاری', 'music-wave-core' ),
+					'highlights' => array(
+						array( '✦', __( 'همکاری هنری', 'music-wave-core' ), __( 'فیچرینگ، تولید مشترک، ریمیکس یا اجرای زنده با هنرمندان ما.', 'music-wave-core' ) ),
+						array( '◎', __( 'برند و تبلیغات', 'music-wave-core' ), __( 'موسیقی تبلیغاتی، جینگل و ساند‌برندینگ برای کمپین‌ها.', 'music-wave-core' ) ),
+						array( '♪', __( 'اجرا و رویداد', 'music-wave-core' ), __( 'برنامهٔ اجرای زنده، جشنواره‌ها و رویدادهای خصوصی.', 'music-wave-core' ) ),
+					),
+					'steps'      => array(
+						__( 'ایده، نقش خودتان و نمونه‌کارهایتان را معرفی کنید.', 'music-wave-core' ),
+						__( 'ایمیل تأیید با شمارهٔ پیگیری دریافت می‌کنید.', 'music-wave-core' ),
+						__( 'تیم ما بررسی می‌کند و برای گفت‌وگو با شما تماس می‌گیرد.', 'music-wave-core' ),
+					),
+				);
+		}
+
+		return array(
+			'eyebrow'    => __( 'سفارش و همکاری', 'music-wave-core' ),
+			'heading'    => __( 'آهنگ اختصاصی می‌خواهید یا ایدهٔ همکاری دارید؟', 'music-wave-core' ),
+			'intro'      => __( 'خواننده‌ها، تهیه‌کننده‌ها، برندها و حتی شنونده‌ها می‌توانند از همین‌جا درخواست بدهند. فرم را پر کنید؛ ما آن را می‌خوانیم و با پیشنهاد و زمان‌بندی پاسخ می‌دهیم.', 'music-wave-core' ),
+			'submit'     => __( 'ارسال درخواست', 'music-wave-core' ),
+			'highlights' => array(
 				array( '♪', __( 'آهنگ اختصاصی', 'music-wave-core' ), __( 'ترانه، ملودی و تنظیم برای شما یا برندتان؛ از ایده تا مسترینگ.', 'music-wave-core' ) ),
 				array( '✦', __( 'همکاری هنری', 'music-wave-core' ), __( 'فیچرینگ، تولید مشترک، ریمیکس یا اجرای زنده با هنرمندان ما.', 'music-wave-core' ) ),
 				array( '◎', __( 'تبلیغات و رویداد', 'music-wave-core' ), __( 'موسیقی تبلیغاتی، جینگل، ساند‌برندینگ و برنامهٔ رویدادها.', 'music-wave-core' ) ),
-			);
-			$html      .= '<ul class="mw-request-form__highlights">';
-			foreach ( $highlights as $item ) {
-				$html .= '<li class="mw-request-form__highlight"><span class="mw-request-form__highlight-icon" aria-hidden="true">' . esc_html( $item[0] ) . '</span><div><strong>' . esc_html( $item[1] ) . '</strong><span>' . esc_html( $item[2] ) . '</span></div></li>';
+			),
+			'steps'      => array(
+				__( 'فرم را پر کنید؛ کمتر از دو دقیقه طول می‌کشد.', 'music-wave-core' ),
+				__( 'ایمیل تأیید با شمارهٔ پیگیری دریافت می‌کنید.', 'music-wave-core' ),
+				__( 'تیم ما بررسی می‌کند و با پیشنهاد و زمان‌بندی پاسخ می‌دهد.', 'music-wave-core' ),
+			),
+		);
+	}
+
+	/**
+	 * Pitch column: what can be requested and how the process works.
+	 *
+	 * Editors may replace the highlight cards and the steps line by line
+	 * (`highlightN` / `stepN` attributes); blank attributes keep the
+	 * translated defaults of the active mode.
+	 *
+	 * @param array<string, mixed> $attributes Block attributes.
+	 */
+	private function side_markup( array $attributes, string $mode ): string {
+		$copy = $this->copy( $mode );
+		$html = '<aside class="mw-request-form__side">';
+		if ( BlockSupport::bool_attribute( $attributes, 'showHighlights', true ) ) {
+			$html .= '<ul class="mw-request-form__highlights">';
+			foreach ( $copy['highlights'] as $index => $item ) {
+				$title = BlockSupport::text_attribute( $attributes, 'highlight' . ( $index + 1 ) . 'Title', $item[1] );
+				$text  = BlockSupport::text_attribute( $attributes, 'highlight' . ( $index + 1 ) . 'Text', $item[2] );
+				$html .= '<li class="mw-request-form__highlight"><span class="mw-request-form__highlight-icon" aria-hidden="true">' . esc_html( $item[0] ) . '</span><div><strong>' . esc_html( $title ) . '</strong><span>' . esc_html( $text ) . '</span></div></li>';
 			}
 			$html .= '</ul>';
 		}
 		if ( BlockSupport::bool_attribute( $attributes, 'showSteps', true ) ) {
-			$steps = array(
-				__( 'فرم را پر کنید؛ کمتر از دو دقیقه طول می‌کشد.', 'music-wave-core' ),
-				__( 'ایمیل تأیید با شمارهٔ پیگیری دریافت می‌کنید.', 'music-wave-core' ),
-				__( 'تیم ما بررسی می‌کند و با پیشنهاد و زمان‌بندی پاسخ می‌دهد.', 'music-wave-core' ),
-			);
 			$html .= '<ol class="mw-request-form__steps">';
-			foreach ( $steps as $index => $step ) {
-				$html .= '<li><span class="mw-request-form__step-number" aria-hidden="true">' . esc_html( number_format_i18n( $index + 1 ) ) . '</span><span>' . esc_html( $step ) . '</span></li>';
+			foreach ( $copy['steps'] as $index => $step ) {
+				$text  = BlockSupport::text_attribute( $attributes, 'step' . ( $index + 1 ), $step );
+				$html .= '<li><span class="mw-request-form__step-number" aria-hidden="true">' . esc_html( number_format_i18n( $index + 1 ) ) . '</span><span>' . esc_html( $text ) . '</span></li>';
 			}
 			$html .= '</ol>';
 		}
-		$html .= '<p class="mw-request-form__privacy">' . esc_html__( 'اطلاعات تماس شما فقط برای پاسخ به همین درخواست استفاده می‌شود.', 'music-wave-core' ) . '</p>';
+		$privacy = BlockSupport::text_attribute( $attributes, 'privacyNote', __( 'اطلاعات تماس شما فقط برای پاسخ به همین درخواست استفاده می‌شود.', 'music-wave-core' ) );
+		$html   .= '<p class="mw-request-form__privacy">' . esc_html( $privacy ) . '</p>';
 
 		return $html . '</aside>';
 	}
@@ -149,7 +269,7 @@ final class RequestFormBlock {
 	 * @param array<string, string> $errors     Field errors.
 	 * @param array<string, mixed>  $values     Previous values.
 	 */
-	private function form_markup( array $attributes, array $errors, array $values ): string {
+	private function form_markup( array $attributes, string $mode, array $errors, array $values ): string {
 		$value = static function ( string $key ) use ( $values ): string {
 			if ( ! isset( $values[ $key ] ) ) {
 				return '';
@@ -158,29 +278,51 @@ final class RequestFormBlock {
 			return is_array( $values[ $key ] ) ? implode( "\n", array_map( 'strval', $values[ $key ] ) ) : (string) $values[ $key ];
 		};
 
-		$submit = BlockSupport::text_attribute( $attributes, 'submitLabel', __( 'ارسال درخواست', 'music-wave-core' ) );
-		$types  = $this->settings->enabled_types();
-		$type   = '' !== $value( 'type' ) ? $value( 'type' ) : (string) array_key_first( $types );
-		$role   = '' !== $value( 'role' ) ? $value( 'role' ) : 'singer';
+		$copy       = $this->copy( $mode );
+		$submit     = BlockSupport::text_attribute( $attributes, 'submitLabel', $copy['submit'] );
+		$types      = $this->kinds_for_mode( $mode );
+		$type_keys  = array_map( 'strval', array_keys( $types ) );
+		$default    = BlockSupport::key_attribute( $attributes, 'defaultType', $type_keys, (string) $type_keys[0] );
+		$type       = in_array( $value( 'type' ), $type_keys, true ) ? $value( 'type' ) : $default;
+		$show_chips = count( $types ) > 1 && BlockSupport::bool_attribute( $attributes, 'showTypeChips', true );
+		$role_keys  = array_map( 'strval', array_keys( RequestPostType::role_labels() ) );
+		$role_start = BlockSupport::key_attribute( $attributes, 'defaultRole', $role_keys, self::DEFAULT_ROLES[ $mode ] );
+		$role       = in_array( $value( 'role' ), $role_keys, true ) ? $value( 'role' ) : $role_start;
 
-		$html  = '<form class="mw-request-form__form" method="post" action="' . esc_url( admin_url( 'admin-post.php' ) ) . '" novalidate data-mw-request-form>';
-		$html .= wp_nonce_field( RequestFormHandler::NONCE, '_wpnonce', true, false );
+		$html = '<form class="mw-request-form__form" method="post" action="' . esc_url( admin_url( 'admin-post.php' ) ) . '" novalidate data-mw-request-form>';
+		// The kinds this form offers are part of the nonce action, so a
+		// crafted POST can neither widen the list nor file a kind this page
+		// never offered (see RequestFormHandler::allowed_types()).
+		$html .= wp_nonce_field( RequestFormHandler::nonce_action( $type_keys ), '_wpnonce', true, false );
 		$html .= '<input type="hidden" name="action" value="' . esc_attr( RequestFormHandler::ACTION ) . '">';
 		$html .= '<input type="hidden" name="mw_redirect" value="' . esc_attr( BlockSupport::current_url() ) . '">';
 		$html .= '<input type="hidden" name="' . esc_attr( RequestFormHandler::TIMER ) . '" value="' . esc_attr( (string) time() ) . '">';
+		$html .= '<input type="hidden" name="' . esc_attr( RequestFormHandler::KINDS ) . '" value="' . esc_attr( implode( ',', $type_keys ) ) . '">';
 		// Honeypot: visually hidden, ignored by assistive tech, must stay empty.
 		$html .= '<div class="mw-request-form__hp" aria-hidden="true"><label for="mw-request-website">' . esc_html__( 'وب‌سایت', 'music-wave-core' ) . '</label><input type="text" id="mw-request-website" name="' . esc_attr( RequestFormHandler::HONEYPOT ) . '" value="" tabindex="-1" autocomplete="off"></div>';
 
 		// Step 1: what.
-		$html .= '<fieldset class="mw-request-form__group"><legend class="mw-request-form__legend"><span class="mw-request-form__legend-index" aria-hidden="true">۱</span>' . esc_html__( 'چه چیزی می‌خواهید؟', 'music-wave-core' ) . '</legend>';
-		$html .= '<div class="mw-request-form__chips" role="radiogroup" aria-label="' . esc_attr__( 'نوع درخواست', 'music-wave-core' ) . '">';
-		foreach ( $types as $key => $label ) {
-			$html .= '<label class="mw-request-form__chip"><input type="radio" name="type" value="' . esc_attr( (string) $key ) . '"' . checked( $type, (string) $key, false ) . '><span>' . esc_html( $label ) . '</span></label>';
+		$legend = 'song' === $mode ? __( 'چه آهنگی می‌خواهید؟', 'music-wave-core' ) : ( 'collab' === $mode ? __( 'پیشنهاد شما چیست؟', 'music-wave-core' ) : __( 'چه چیزی می‌خواهید؟', 'music-wave-core' ) );
+		$html  .= '<fieldset class="mw-request-form__group"><legend class="mw-request-form__legend"><span class="mw-request-form__legend-index" aria-hidden="true">۱</span>' . esc_html( $legend ) . '</legend>';
+		if ( $show_chips ) {
+			$html .= '<div class="mw-request-form__chips" role="radiogroup" aria-label="' . esc_attr__( 'نوع درخواست', 'music-wave-core' ) . '">';
+			foreach ( $types as $key => $label ) {
+				$html .= '<label class="mw-request-form__chip"><input type="radio" name="type" value="' . esc_attr( (string) $key ) . '"' . checked( $type, (string) $key, false ) . '><span>' . esc_html( $label ) . '</span></label>';
+			}
+			$html .= '</div>';
+		} else {
+			$html .= '<input type="hidden" name="type" value="' . esc_attr( $type ) . '">';
+			if ( count( $types ) > 1 ) {
+				$html .= '<p class="mw-request-form__kind">' . esc_html( $types[ $type ] ) . '</p>';
+			}
 		}
-		$html    .= '</div>';
-		$html    .= $this->field( 'subject', __( 'عنوان درخواست', 'music-wave-core' ), '<input type="text" id="mw-request-subject" name="subject" value="' . esc_attr( $value( 'subject' ) ) . '" maxlength="' . (int) RequestSubmission::MAX_SUBJECT . '" required placeholder="' . esc_attr__( 'مثلاً: قطعهٔ پاپ برای تیزر تبلیغاتی', 'music-wave-core' ) . '"' . $this->described( 'subject', $errors ) . '>', $errors );
-		$html    .= $this->field( 'message', __( 'توضیحات', 'music-wave-core' ), '<textarea id="mw-request-message" name="message" rows="6" minlength="' . (int) RequestSubmission::MIN_MESSAGE . '" maxlength="' . (int) RequestSubmission::MAX_MESSAGE . '" required placeholder="' . esc_attr__( 'سبک و حال‌وهوا، مدت زمان، نمونه‌های الهام‌بخش، محل استفاده…', 'music-wave-core' ) . '" data-mw-counter' . $this->described( 'message', $errors ) . '>' . esc_textarea( $value( 'message' ) ) . '</textarea><span class="mw-request-form__counter" data-mw-counter-output aria-live="polite"></span>', $errors, __( 'هرچه دقیق‌تر بنویسید، پاسخ سریع‌تر و دقیق‌تری می‌گیرید.', 'music-wave-core' ) );
-		$optional = array();
+		if ( isset( $errors['type'] ) ) {
+			$html .= '<span class="mw-request-form__error" id="mw-request-type-error">' . esc_html( $errors['type'] ) . '</span>';
+		}
+		$subject_hint = 'song' === $mode ? __( 'مثلاً: قطعهٔ پاپ برای تیزر تبلیغاتی', 'music-wave-core' ) : ( 'collab' === $mode ? __( 'مثلاً: فیچرینگ برای تک‌آهنگ بعدی', 'music-wave-core' ) : __( 'مثلاً: قطعهٔ پاپ برای تیزر تبلیغاتی', 'music-wave-core' ) );
+		$html        .= $this->field( 'subject', __( 'عنوان درخواست', 'music-wave-core' ), '<input type="text" id="mw-request-subject" name="subject" value="' . esc_attr( $value( 'subject' ) ) . '" maxlength="' . (int) RequestSubmission::MAX_SUBJECT . '" required placeholder="' . esc_attr( $subject_hint ) . '"' . $this->described( 'subject', $errors ) . '>', $errors );
+		$html        .= $this->field( 'message', __( 'توضیحات', 'music-wave-core' ), '<textarea id="mw-request-message" name="message" rows="6" minlength="' . (int) RequestSubmission::MIN_MESSAGE . '" maxlength="' . (int) RequestSubmission::MAX_MESSAGE . '" required placeholder="' . esc_attr__( 'سبک و حال‌وهوا، مدت زمان، نمونه‌های الهام‌بخش، محل استفاده…', 'music-wave-core' ) . '" data-mw-counter' . $this->described( 'message', $errors ) . '>' . esc_textarea( $value( 'message' ) ) . '</textarea><span class="mw-request-form__counter" data-mw-counter-output aria-live="polite"></span>', $errors, __( 'هرچه دقیق‌تر بنویسید، پاسخ سریع‌تر و دقیق‌تری می‌گیرید.', 'music-wave-core' ) );
+		$optional     = array();
 		if ( BlockSupport::bool_attribute( $attributes, 'showBudget', true ) ) {
 			$options = '';
 			foreach ( RequestPostType::budget_labels() as $key => $label ) {
@@ -201,11 +343,15 @@ final class RequestFormBlock {
 
 		// Step 2: who.
 		$html .= '<fieldset class="mw-request-form__group"><legend class="mw-request-form__legend"><span class="mw-request-form__legend-index" aria-hidden="true">۲</span>' . esc_html__( 'شما که هستید؟', 'music-wave-core' ) . '</legend>';
-		$html .= '<div class="mw-request-form__chips mw-request-form__chips--soft" role="radiogroup" aria-label="' . esc_attr__( 'نقش شما', 'music-wave-core' ) . '">';
-		foreach ( RequestPostType::role_labels() as $key => $label ) {
-			$html .= '<label class="mw-request-form__chip"><input type="radio" name="role" value="' . esc_attr( (string) $key ) . '"' . checked( $role, (string) $key, false ) . '><span>' . esc_html( $label ) . '</span></label>';
+		if ( BlockSupport::bool_attribute( $attributes, 'showRoles', true ) ) {
+			$html .= '<div class="mw-request-form__chips mw-request-form__chips--soft" role="radiogroup" aria-label="' . esc_attr__( 'نقش شما', 'music-wave-core' ) . '">';
+			foreach ( RequestPostType::role_labels() as $key => $label ) {
+				$html .= '<label class="mw-request-form__chip"><input type="radio" name="role" value="' . esc_attr( (string) $key ) . '"' . checked( $role, (string) $key, false ) . '><span>' . esc_html( $label ) . '</span></label>';
+			}
+			$html .= '</div>';
+		} else {
+			$html .= '<input type="hidden" name="role" value="' . esc_attr( $role ) . '">';
 		}
-		$html .= '</div>';
 		$html .= '<div class="mw-request-form__row">';
 		$html .= $this->field( 'name', __( 'نام و نام خانوادگی', 'music-wave-core' ), '<input type="text" id="mw-request-name" name="name" value="' . esc_attr( $value( 'name' ) ) . '" maxlength="' . (int) RequestSubmission::MAX_NAME . '" autocomplete="name" required' . $this->described( 'name', $errors ) . '>', $errors );
 		$html .= $this->field( 'email', __( 'ایمیل', 'music-wave-core' ), '<input type="email" id="mw-request-email" name="email" value="' . esc_attr( $value( 'email' ) ) . '" autocomplete="email" inputmode="email" dir="ltr" required' . $this->described( 'email', $errors ) . '>', $errors );
@@ -283,18 +429,22 @@ final class RequestFormBlock {
 	}
 
 	/**
-	 * Front-end style + enhancement script (registered once, enqueued on use).
+	 * Register the public stylesheet and script once.
+	 *
+	 * block.json names the same handle as `style`/`editorStyle`, so WordPress
+	 * enqueues the stylesheet wherever the block renders — including the
+	 * Site Editor canvas (an iframe that never receives plain admin styles).
 	 *
 	 * @return void
 	 */
-	private function enqueue_assets(): void {
-		if ( is_admin() || ! function_exists( 'wp_enqueue_style' ) ) {
+	private function register_assets(): void {
+		if ( ! function_exists( 'wp_register_style' ) || ! function_exists( 'wp_register_script' ) ) {
 			return;
 		}
-		wp_enqueue_style( 'music-wave-request-form', MUSIC_WAVE_CORE_URL . 'assets/request-form.css', array(), MUSIC_WAVE_CORE_VERSION );
-		wp_enqueue_script( 'music-wave-request-form', MUSIC_WAVE_CORE_URL . 'assets/request-form.js', array(), MUSIC_WAVE_CORE_VERSION, true );
+		wp_register_style( self::ASSET_HANDLE, MUSIC_WAVE_CORE_URL . 'assets/request-form.css', array(), MUSIC_WAVE_CORE_VERSION );
+		wp_register_script( self::ASSET_HANDLE, MUSIC_WAVE_CORE_URL . 'assets/request-form.js', array(), MUSIC_WAVE_CORE_VERSION, true );
 		wp_localize_script(
-			'music-wave-request-form',
+			self::ASSET_HANDLE,
 			'musicWaveRequestForm',
 			array(
 				/* translators: 1: characters typed, 2: maximum characters. */
@@ -306,5 +456,22 @@ final class RequestFormBlock {
 				),
 			)
 		);
+	}
+
+	/**
+	 * Front-end style + enhancement script, enqueued on use only.
+	 *
+	 * Editor previews render through the REST API (an admin context): the
+	 * stylesheet reaches the canvas via block.json, and the script is not
+	 * needed there.
+	 *
+	 * @return void
+	 */
+	private function enqueue_assets(): void {
+		if ( is_admin() || ! function_exists( 'wp_enqueue_style' ) ) {
+			return;
+		}
+		wp_enqueue_style( self::ASSET_HANDLE );
+		wp_enqueue_script( self::ASSET_HANDLE );
 	}
 }

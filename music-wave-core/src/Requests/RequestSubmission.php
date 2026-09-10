@@ -35,11 +35,12 @@ final class RequestSubmission {
 	/**
 	 * Validate raw input.
 	 *
-	 * @param array<string, mixed> $input Raw form values (already unslashed).
-	 * @param int                  $today Unix timestamp used for the deadline check.
+	 * @param array<string, mixed> $input         Raw form values (already unslashed).
+	 * @param int                  $today         Unix timestamp used for the deadline check.
+	 * @param array<int, string>   $allowed_types Request kinds accepted by the caller; empty means every known kind.
 	 * @return array{data: array<string, mixed>, errors: array<string, string>}
 	 */
-	public static function validate( array $input, int $today = 0 ): array {
+	public static function validate( array $input, int $today = 0, array $allowed_types = array() ): array {
 		$errors = array();
 		$data   = array();
 
@@ -66,7 +67,13 @@ final class RequestSubmission {
 		$data['phone'] = $phone;
 
 		$data['role'] = self::choice( $input, 'role', array_keys( RequestPostType::role_labels() ), 'other' );
-		$data['type'] = self::choice( $input, 'type', array_keys( RequestPostType::type_labels() ), 'song' );
+		$known        = array_keys( RequestPostType::type_labels() );
+		$data['type'] = self::choice( $input, 'type', $known, 'song' );
+		$allowed      = array_values( array_intersect( $known, array_map( 'strval', $allowed_types ) ) );
+		if ( array() !== $allowed && ! in_array( $data['type'], $allowed, true ) ) {
+			$errors['type'] = __( 'این نوع درخواست در این فرم پذیرفته نمی‌شود.', 'music-wave-core' );
+			$data['type']   = $allowed[0];
+		}
 
 		$subject = self::text( $input, 'subject' );
 		if ( mb_strlen( $subject ) < 3 ) {

@@ -4,13 +4,19 @@ Tags: music, catalog, releases, woocommerce, downloads
 Requires at least: 6.6
 Tested up to: 6.8
 Requires PHP: 7.4
-Stable tag: 0.13.0
+Stable tag: 0.14.0
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
 MusicWave Core provides catalog data, release relationships, WooCommerce mapping, customer music library, access decisions, secure-download contracts, onboarding, and diagnostics for the MusicWave theme.
 
 == Changelog ==
+
+= 0.14.0 =
+* Feature: the `music-wave/request-form` block gains a `mode` (`both` | `song` | `collab`) so one site can run a combined page or two dedicated pages ("custom song" / "collaboration"). Each mode ships its own translated eyebrow, heading, intro, submit label, service highlights and process steps; editors can override every line (`highlight1Title` … `step3`, `privacyNote`), preset or hide the kind picker (`showTypeChips`, `defaultType`) and the role picker (`showRoles`, `defaultRole`). Existing blocks keep their behaviour (`mode` defaults to `both`).
+* Security: the kinds a form offers travel with the submission (`mw_request_kinds`) and are bound into the nonce action; the handler intersects them with the kinds enabled in Settings and `RequestSubmission::validate()` refuses any other kind, so a crafted POST cannot file a collaboration through a song-only page. A dedicated page whose kind the manager disabled shows the closed notice instead of an unsendable form.
+* Fix: the block preview inside the Site Editor and post editor canvas is now styled. The stylesheet is registered on `init` and referenced from block.json (`style`/`editorStyle`), which is the only route into the iframed canvas; the shared preview shell stylesheet moves to `enqueue_block_assets`. Preview forms are inert (no submit, no focus steal).
+* Improvement: custom inserter icon for the request form (studio microphone), delivered as path data and rendered as an inline SVG so it follows the editor colour.
 
 = 0.13.0 =
 * Fix: site search now finds Persian and Arabic-script content regardless of the keyboard used. Every search word is expanded into its equivalent spellings (Arabic vs Persian ye/kaf, zero-width non-joiner vs space, Persian/Arabic/Latin digits, diacritics, kashida, heh variants) at the SQL layer, artist/genre/mood/label/type term names and descriptive release metadata (album, catalog number, ISRC, credits) are matched through bounded sub-queries, and the header autocomplete applies the same normalization. Latin-only phrases keep core behaviour. Filters: `music_wave_script_aware_search`, `music_wave_search_taxonomies`, `music_wave_search_meta_keys`; query vars `mw_script_search`, `mw_search_taxonomies`, `mw_search_meta_keys`.

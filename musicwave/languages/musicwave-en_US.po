@@ -1124,3 +1124,18 @@ msgstr "Editorial feature"
 
 msgid "پخش خودکار اسلایدها"
 msgstr "Autoplay slides"
+
+msgid "بازکردن منو"
+msgstr "Expand menu"
+
+msgid "جمع‌کردن منو"
+msgstr "Collapse menu"
+
+msgid "سفارش آهنگ اختصاصی"
+msgstr "Custom song order"
+
+msgid "صفحهٔ استریم (نوار کناری)"
+msgstr "Stream page (side rail)"
+
+msgid "همکاری"
+msgstr "Collaboration"

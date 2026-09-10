@@ -339,11 +339,39 @@
 	min-width: 0;
 }
 
+/* Fixed kind (dedicated pages): a quiet tag in place of the chips. */
+.mw-request-form__kind {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.45rem;
+	margin: 0 0 1rem;
+	padding: 0.3rem 0.85rem;
+	color: var(--mw-rf-accent-strong);
+	font-size: 0.82rem;
+	font-weight: 700;
+	background: color-mix(in srgb, var(--mw-rf-accent) 14%, transparent);
+	border-radius: var(--mw-radius-pill, 999px);
+}
+
+.mw-request-form__kind::before {
+	content: "";
+	width: 0.45rem;
+	height: 0.45rem;
+	background: currentColor;
+	border-radius: 50%;
+}
+
 .mw-request-form__field + .mw-request-form__field,
 .mw-request-form__row + .mw-request-form__field,
 .mw-request-form__field + .mw-request-form__row,
-.mw-request-form__chips + .mw-request-form__field {
+.mw-request-form__chips + .mw-request-form__field,
+.mw-request-form__kind + .mw-request-form__field,
+#mw-request-type-error + .mw-request-form__field {
 	margin-block-start: 1rem;
+}
+
+#mw-request-type-error {
+	margin-block-start: -0.5rem;
 }
 
 .mw-request-form__row .mw-request-form__field + .mw-request-form__field {
