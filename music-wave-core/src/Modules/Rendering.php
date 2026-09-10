@@ -153,6 +153,14 @@ final class Rendering implements Module {
 					'name'  => 'ghost',
 					'label' => __( 'بی‌زمینه', 'music-wave-core' ),
 				),
+				array(
+					'name'  => 'glass',
+					'label' => __( 'شیشه‌ای', 'music-wave-core' ),
+				),
+				array(
+					'name'  => 'minimal',
+					'label' => __( 'مینیمال بی‌حاشیه', 'music-wave-core' ),
+				),
 			),
 			'music-wave/account-dashboard' => array(
 				array(
@@ -174,6 +182,10 @@ final class Rendering implements Module {
 					'name'  => 'ghost',
 					'label' => __( 'بی‌زمینه', 'music-wave-core' ),
 				),
+				array(
+					'name'  => 'minimal',
+					'label' => __( 'مینیمال حاشیه‌دار', 'music-wave-core' ),
+				),
 			),
 			'music-wave/release-meta'      => array(
 				array(
@@ -184,11 +196,31 @@ final class Rendering implements Module {
 					'name'  => 'stack',
 					'label' => __( 'ردیف‌های انباشته', 'music-wave-core' ),
 				),
+				array(
+					'name'  => 'glass',
+					'label' => __( 'شیشه‌ای (SonicStream)', 'music-wave-core' ),
+				),
+				array(
+					'name'  => 'minimal',
+					'label' => __( 'مینیمال بی‌حاشیه', 'music-wave-core' ),
+				),
+				array(
+					'name'  => 'bordered',
+					'label' => __( 'کادر خطی', 'music-wave-core' ),
+				),
 			),
 			'music-wave/catalog-filters'   => array(
 				array(
 					'name'  => 'stacked',
 					'label' => __( 'انباشته شده', 'music-wave-core' ),
+				),
+				array(
+					'name'  => 'pills',
+					'label' => __( 'قرصی شناور', 'music-wave-core' ),
+				),
+				array(
+					'name'  => 'glass',
+					'label' => __( 'شیشه‌ای', 'music-wave-core' ),
 				),
 			),
 			'music-wave/public-playlists'  => array(
@@ -200,6 +232,150 @@ final class Rendering implements Module {
 				array(
 					'name'  => 'minimal',
 					'label' => __( 'حداقل (بدون سطح)', 'music-wave-core' ),
+				),
+				array(
+					'name'  => 'glass',
+					'label' => __( 'شیشه‌ای', 'music-wave-core' ),
+				),
+				array(
+					'name'  => 'list',
+					'label' => __( 'فهرست ردیفی', 'music-wave-core' ),
+				),
+			),
+			'music-wave/collection-list'   => array(
+				array(
+					'name'  => 'striped',
+					'label' => __( 'راه‌راه', 'music-wave-core' ),
+				),
+				array(
+					'name'  => 'card',
+					'label' => __( 'کارت', 'music-wave-core' ),
+				),
+				array(
+					'name'  => 'compact',
+					'label' => __( 'فشرده', 'music-wave-core' ),
+				),
+			),
+			'music-wave/release-credits'   => array(
+				array(
+					'name'  => 'card',
+					'label' => __( 'کارت', 'music-wave-core' ),
+				),
+				array(
+					'name'  => 'pills',
+					'label' => __( 'قرصی', 'music-wave-core' ),
+				),
+				array(
+					'name'  => 'minimal',
+					'label' => __( 'مینیمال', 'music-wave-core' ),
+				),
+			),
+			'music-wave/artist-profile'    => array(
+				array(
+					'name'  => 'hero',
+					'label' => __( 'هیرو گرادیانی', 'music-wave-core' ),
+				),
+				array(
+					'name'  => 'card',
+					'label' => __( 'کارت', 'music-wave-core' ),
+				),
+				array(
+					'name'  => 'compact',
+					'label' => __( 'فشرده', 'music-wave-core' ),
+				),
+			),
+			'music-wave/artists-shelf'     => array(
+				array(
+					'name'  => 'glass',
+					'label' => __( 'شیشه‌ای', 'music-wave-core' ),
+				),
+				array(
+					'name'  => 'minimal',
+					'label' => __( 'مینیمال', 'music-wave-core' ),
+				),
+				array(
+					'name'  => 'muted',
+					'label' => __( 'کم‌رنگ', 'music-wave-core' ),
+				),
+			),
+			'music-wave/taxonomy-shelf'    => array(
+				array(
+					'name'  => 'glass',
+					'label' => __( 'شیشه‌ای', 'music-wave-core' ),
+				),
+				array(
+					'name'  => 'minimal',
+					'label' => __( 'مینیمال', 'music-wave-core' ),
+				),
+				array(
+					'name'  => 'muted',
+					'label' => __( 'کم‌رنگ', 'music-wave-core' ),
+				),
+			),
+			'music-wave/term-hero'         => array(
+				array(
+					'name'  => 'cover',
+					'label' => __( 'کاور تمام‌قد', 'music-wave-core' ),
+				),
+				array(
+					'name'  => 'compact',
+					'label' => __( 'فشرده', 'music-wave-core' ),
+				),
+				array(
+					'name'  => 'glass',
+					'label' => __( 'پنل شیشه‌ای', 'music-wave-core' ),
+				),
+			),
+			'music-wave/playback-queue'    => array(
+				array(
+					'name'  => 'card',
+					'label' => __( 'کارت', 'music-wave-core' ),
+				),
+				array(
+					'name'  => 'minimal',
+					'label' => __( 'مینیمال', 'music-wave-core' ),
+				),
+			),
+			'music-wave/continue-listening' => array(
+				array(
+					'name'  => 'card',
+					'label' => __( 'کارت', 'music-wave-core' ),
+				),
+				array(
+					'name'  => 'minimal',
+					'label' => __( 'مینیمال', 'music-wave-core' ),
+				),
+			),
+			'music-wave/access-panel'      => array(
+				array(
+					'name'  => 'glass',
+					'label' => __( 'شیشه‌ای', 'music-wave-core' ),
+				),
+				array(
+					'name'  => 'minimal',
+					'label' => __( 'مینیمال', 'music-wave-core' ),
+				),
+			),
+			'music-wave/related-releases'  => array(
+				array(
+					'name'  => 'minimal',
+					'label' => __( 'مینیمال', 'music-wave-core' ),
+				),
+			),
+			'music-wave/music-library'     => array(
+				array(
+					'name'  => 'card',
+					'label' => __( 'کارت', 'music-wave-core' ),
+				),
+				array(
+					'name'  => 'minimal',
+					'label' => __( 'مینیمال', 'music-wave-core' ),
+				),
+			),
+			'music-wave/download-button'   => array(
+				array(
+					'name'  => 'outline',
+					'label' => __( 'کادر دور', 'music-wave-core' ),
 				),
 			),
 		);

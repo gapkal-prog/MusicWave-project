@@ -267,7 +267,39 @@
   text-transform: uppercase;
 }
 
+/* SonicStream Pro — inline waveform for playing row + heart burst + striped/card/compact handled by block-styles */
+.mw-collection-list li .mw-waveform {
+	display: none;
+	align-items: center;
+	gap: 2px;
+	height: 0.85rem;
+	flex: 0 0 auto;
+}
+.mw-collection-list li[data-mw-playing] .mw-waveform { display: inline-flex; }
+.mw-collection-list li[data-mw-playing] .mw-waveform i { background: var(--mw-waveform-active); }
+.mw-collection-list__row-waveform {
+	display: inline-flex;
+	gap: 2px;
+	align-items: end;
+	height: 0.85rem;
+	opacity: 0;
+	transition: opacity var(--mw-speed-fast) var(--mw-ease-snap);
+}
+.mw-collection-list li:hover .mw-collection-list__row-waveform { opacity: 0.7; }
+.mw-collection-list li[data-mw-playing] .mw-collection-list__row-waveform { opacity: 1; }
+
+/* Compact density: already in block-styles, ensure no layout break */
+.mw-collection-list.is-style-compact .mw-collection-list__duration,
+.mw-collection-list.is-style-compact .mw-collection-list__quality { font-size: 0.75rem; }
+
+/* Striped via block-styles — add subtle border between rows */
+.mw-collection-list.is-style-striped li + li { border-block-start: 1px solid var(--mw-color-border-subtle); }
+
 @media (prefers-reduced-motion: reduce) {
   .mw-collection-list li,
   .mw-release-credits__list li { transition: none; }
+  .mw-collection-list li .mw-waveform i { animation: none; }
 }
+
+/* Empty state refinement */
+.mw-collection-list__empty.mw-empty { margin-block: var(--wp--preset--spacing--30); }

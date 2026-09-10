@@ -249,6 +249,17 @@ function musicwave_enqueue_assets(): void {
 			),
 		)
 	);
+	// SonicStream Pro — toast + waveform + micro-interactions (global, tiny, no dependencies)
+	wp_enqueue_script(
+		'musicwave-toast',
+		get_template_directory_uri() . '/assets/mw-toast.js',
+		array(),
+		$version,
+		true
+	);
+	if ( function_exists( 'wp_set_script_translations' ) ) {
+		wp_set_script_translations( 'musicwave-toast', 'musicwave', get_template_directory() . '/languages' );
+	}
 	// Registered only: the slider script enqueues at render time of the
 	// music-wave/release-slider block, so routes without a slider ship no
 	// slider bytes (PROJECT_PLAN.md Stage 4 deliverable 4).
@@ -569,6 +580,32 @@ function musicwave_register_block_styles(): void {
 			'block' => 'core/list',
 			'name'  => 'mw-checklist',
 			'label' => __( 'چک‌لیست', 'musicwave' ),
+		),
+		// SonicStream Pro — MusicWave presentation blocks
+		array(
+			'block' => 'music-wave/release-shelf',
+			'name'  => 'glass',
+			'label' => __( 'شیشه‌ای', 'musicwave' ),
+		),
+		array(
+			'block' => 'music-wave/release-shelf',
+			'name'  => 'minimal',
+			'label' => __( 'مینیمال بی‌حاشیه', 'musicwave' ),
+		),
+		array(
+			'block' => 'music-wave/release-shelf',
+			'name'  => 'compact',
+			'label' => __( 'فشرده', 'musicwave' ),
+		),
+		array(
+			'block' => 'music-wave/release-slider',
+			'name'  => 'glass',
+			'label' => __( 'شیشه‌ای', 'musicwave' ),
+		),
+		array(
+			'block' => 'music-wave/release-slider',
+			'name'  => 'minimal',
+			'label' => __( 'مینیمال', 'musicwave' ),
 		),
 	);
 	foreach ( $styles as $style ) {

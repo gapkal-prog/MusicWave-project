@@ -685,3 +685,98 @@ html[dir="rtl"] .mw-release-shelf__nav-button svg {
 .mw-release-shelf--playlists .mw-release-shelf__items {
 	gap: clamp(1rem, 2vw, 1.35rem);
 }
+
+/* -------------------------------------------------------------------------
+ * SonicStream Pro — style variations for release-shelf + release-slider
+ * Admin selects these in the Styles panel (is-style-*).
+ * ---------------------------------------------------------------------- */
+
+/* Glass: soft frosted shelf on top of canvas. */
+.mw-release-shelf.is-style-glass {
+	background: var(--mw-gradient-glass);
+	backdrop-filter: blur(var(--mw-blur-glass)) saturate(1.2);
+	-webkit-backdrop-filter: blur(var(--mw-blur-glass)) saturate(1.2);
+	border: 1px solid var(--mw-color-glass-border);
+	border-radius: var(--mw-radius-xl);
+	box-shadow: var(--mw-shadow-glass);
+	padding: clamp(1rem, 2.5vw, 1.75rem);
+}
+.mw-release-shelf.is-style-glass .mw-release-shelf__header { max-width: none; }
+
+/* Minimal: remove card chrome, keep only typography + art. */
+.mw-release-shelf.is-style-minimal .mw-release-shelf__item > .mw-release-card,
+.mw-release-shelf.is-style-minimal .mw-release-shelf__item > .wp-block-post {
+	background: transparent;
+	border: 0;
+	box-shadow: none;
+	padding: 0.35rem;
+}
+.mw-release-shelf.is-style-minimal .mw-release-shelf__item:is(:hover, :focus-within) > .mw-release-card,
+.mw-release-shelf.is-style-minimal .mw-release-shelf__item:is(:hover, :focus-within) > .wp-block-post {
+	background: color-mix(in srgb, var(--mw-color-surface) 62%, transparent);
+	transform: none;
+}
+
+/* Compact: tighter grid + smaller art radius. */
+.mw-release-shelf.is-style-compact .mw-release-shelf__items {
+	gap: 0.65rem;
+}
+.mw-release-shelf.is-style-compact .mw-release-shelf__art {
+	border-radius: var(--mw-radius-md);
+}
+.mw-release-shelf.is-style-compact .mw-release-shelf__body { padding-block-start: 0.5rem; }
+.mw-release-shelf.is-style-compact .mw-release-shelf__body h3 { font-size: 0.875rem; }
+
+/* Slider glass/minimal — mirror shelf treatments for hero slider wrapper. */
+.mw-release-shelf--slider.is-style-glass,
+.mw-hero-slider.is-style-glass {
+	background: var(--mw-gradient-glass);
+	backdrop-filter: blur(var(--mw-blur-glass)) saturate(1.2);
+	border: 1px solid var(--mw-color-glass-border);
+	border-radius: var(--mw-radius-xl);
+	box-shadow: var(--mw-shadow-glass);
+	padding: clamp(0.75rem, 2vw, 1.25rem);
+}
+.mw-release-shelf--slider.is-style-minimal {
+	background: transparent;
+	border: 0;
+	box-shadow: none;
+	padding: 0;
+}
+
+/* Hover lift refinement — spring easing for SonicStream feel. */
+.mw-release-shelf__item > .mw-release-card,
+.mw-release-shelf__item > .wp-block-post {
+	transition:
+		background-color var(--mw-speed-normal) var(--mw-ease-snap),
+		transform var(--mw-speed-normal) var(--mw-ease-spring),
+		box-shadow var(--mw-speed-normal) var(--mw-ease-snap);
+}
+.mw-release-shelf__play {
+	transition:
+		opacity var(--mw-speed-normal) var(--mw-ease-snap),
+		transform var(--mw-speed-normal) var(--mw-ease-spring),
+		background-color var(--mw-speed-fast) ease,
+		scale var(--mw-speed-fast) var(--mw-ease-spring);
+}
+
+/* Skeleton state for async shelf loading (catalog-filters.js adds data-busy). */
+.mw-release-shelf[data-mw-busy="true"] .mw-release-shelf__items {
+	position: relative;
+	pointer-events: none;
+	opacity: 0.9;
+}
+.mw-release-shelf[data-mw-busy="true"] .mw-release-shelf__art {
+	background: var(--mw-skeleton-bg);
+}
+.mw-release-shelf[data-mw-busy="true"] .mw-release-shelf__art::after {
+	content: "";
+	position: absolute;
+	inset: 0;
+	background: linear-gradient(100deg, transparent 30%, var(--mw-skeleton-shimmer) 50%, transparent 70%);
+	transform: translateX(-100%);
+	animation: mw-skeleton-shimmer 1.2s ease-in-out infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+	.mw-release-shelf[data-mw-busy="true"] .mw-release-shelf__art::after { animation: none; }
+}

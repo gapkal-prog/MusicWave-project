@@ -150,6 +150,43 @@
 		color-mix(in srgb, var(--mw-color-accent) 20%, transparent),
 		color-mix(in srgb, var(--mw-color-accent) 5%, transparent)
 	);
+
+	/* ---------------------------------------------------------------------
+	 * SonicStream Pro — extended design language (2026-09)
+	 * Glass, skeleton, waveform, toast, and micro-motion tokens.
+	 * Every new component below consumes these so an admin who re-colours
+	 * the palette in the Site Editor still gets coherent glass/shimmer.
+	 * ------------------------------------------------------------------ */
+	--mw-color-glass: color-mix(in srgb, var(--mw-color-surface) 86%, transparent);
+	--mw-color-glass-strong: color-mix(in srgb, var(--mw-color-surface-raised) 92%, transparent);
+	--mw-color-glass-border: color-mix(in srgb, var(--mw-color-text) 10%, transparent);
+	--mw-blur-glass: 20px;
+	--mw-blur-glass-strong: 28px;
+	--mw-shadow-glass: 0 8px 32px rgb(0 0 0 / 12%), 0 2px 8px rgb(0 0 0 / 08%);
+	--mw-shadow-glass-strong: 0 18px 50px rgb(0 0 0 / 18%), 0 8px 24px rgb(0 0 0 / 12%);
+	--mw-gradient-glass: linear-gradient(
+		135deg,
+		color-mix(in srgb, var(--mw-color-surface) 92%, transparent),
+		color-mix(in srgb, var(--mw-color-surface-raised) 76%, transparent)
+	);
+	--mw-gradient-glass-accent: linear-gradient(
+		135deg,
+		color-mix(in srgb, var(--mw-color-accent) 14%, var(--mw-color-glass)),
+		color-mix(in srgb, var(--mw-color-accent) 04%, transparent)
+	);
+	--mw-skeleton-bg: color-mix(in srgb, var(--mw-color-text) 06%, transparent);
+	--mw-skeleton-shimmer: color-mix(in srgb, var(--mw-color-text) 10%, transparent);
+	--mw-toast-bg: color-mix(in srgb, var(--mw-color-surface-raised) 96%, var(--mw-color-canvas));
+	--mw-toast-border: color-mix(in srgb, var(--mw-color-text) 10%, transparent);
+	--mw-waveform-bar: color-mix(in srgb, var(--mw-color-text) 22%, transparent);
+	--mw-waveform-active: var(--mw-color-accent);
+	--mw-waveform-bg: color-mix(in srgb, var(--mw-color-text) 05%, transparent);
+	--mw-ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+	--mw-ease-smooth: cubic-bezier(0.2, 0, 0, 1);
+	--mw-ease-emphasized: cubic-bezier(0.2, 0, 0, 1);
+	--mw-speed-micro: 100ms;
+	--mw-speed-entrance: 400ms;
+	--mw-radius-card: var(--mw-radius-lg);
 }
 
 @media screen and (max-width: 600px) {
@@ -183,6 +220,8 @@ html[data-mw-theme="light"] {
 	--mw-color-surface-strong: color-mix(in srgb, var(--mw-color-surface-raised) 92%, black);
 	--mw-shadow-card: var(--mw-light-shadow-card);
 	--mw-shadow-floating: var(--mw-light-shadow-floating);
+	--mw-shadow-glass: 0 8px 32px rgb(20 24 35 / 10%), 0 2px 8px rgb(20 24 35 / 06%);
+	--mw-shadow-glass-strong: 0 18px 50px rgb(20 24 35 / 12%), 0 8px 24px rgb(20 24 35 / 08%);
 	--mw-gradient-hero: linear-gradient(
 		180deg,
 		color-mix(in srgb, var(--mw-color-accent) 14%, transparent) 0%,

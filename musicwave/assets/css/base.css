@@ -31,3 +31,179 @@ textarea:focus-visible {
 	outline: 2px solid var(--mw-color-accent, #1db954);
 	outline-offset: 2px;
 }
+
+/* -------------------------------------------------------------------------
+ * SonicStream Pro — global micro-interactions & helpers
+ * ---------------------------------------------------------------------- */
+
+/* Smooth theme transition — respects reduced motion. */
+@media (prefers-reduced-motion: no-preference) {
+	html,
+	body,
+	.mw-release-card,
+	.mw-site-header,
+	.mw-global-player {
+		transition: background-color var(--mw-speed-normal) var(--mw-ease-smooth),
+			color var(--mw-speed-normal) var(--mw-ease-smooth),
+			border-color var(--mw-speed-normal) var(--mw-ease-smooth);
+	}
+}
+
+/* Skeleton loading — used by shelves, catalog, collection list. */
+.mw-skeleton {
+	position: relative;
+	overflow: hidden;
+	background: var(--mw-skeleton-bg);
+	border-radius: var(--mw-radius-md);
+}
+
+.mw-skeleton::after {
+	content: "";
+	position: absolute;
+	inset: 0;
+	background: linear-gradient(
+		100deg,
+		transparent 30%,
+		var(--mw-skeleton-shimmer) 50%,
+		transparent 70%
+	);
+	transform: translateX(-100%);
+	animation: mw-skeleton-shimmer 1.4s ease-in-out infinite;
+}
+
+html[dir="rtl"] .mw-skeleton::after {
+	transform: translateX(100%);
+	animation-name: mw-skeleton-shimmer-rtl;
+}
+
+@keyframes mw-skeleton-shimmer {
+	to { transform: translateX(100%); }
+}
+@keyframes mw-skeleton-shimmer-rtl {
+	to { transform: translateX(-100%); }
+}
+@media (prefers-reduced-motion: reduce) {
+	.mw-skeleton::after { animation: none; }
+}
+
+.mw-skeleton--card { aspect-ratio: 1; min-height: 12rem; }
+.mw-skeleton--text { height: 0.85rem; border-radius: var(--mw-radius-pill); }
+.mw-skeleton--title { height: 1.1rem; width: 72%; }
+.mw-skeleton--avatar { border-radius: 50%; aspect-ratio: 1; }
+
+/* Waveform bars — inline preview for track rows & shelf cards. */
+.mw-waveform {
+	display: inline-flex;
+	align-items: center;
+	gap: 2px;
+	height: 1rem;
+}
+.mw-waveform i {
+	display: block;
+	width: 3px;
+	background: var(--mw-waveform-bar);
+	border-radius: var(--mw-radius-pill);
+	animation: mw-waveform 700ms var(--mw-ease-snap) infinite alternate;
+}
+.mw-waveform i:nth-child(1) { height: 0.45rem; animation-delay: 0ms; }
+.mw-waveform i:nth-child(2) { height: 0.9rem; animation-delay: 90ms; }
+.mw-waveform i:nth-child(3) { height: 0.65rem; animation-delay: 180ms; }
+.mw-waveform i:nth-child(4) { height: 1rem; animation-delay: 270ms; }
+.mw-waveform i:nth-child(5) { height: 0.55rem; animation-delay: 360ms; }
+.mw-waveform--active i { background: var(--mw-waveform-active); }
+.mw-waveform--paused i { animation-play-state: paused; opacity: 0.5; }
+@keyframes mw-waveform {
+	from { transform: scaleY(0.6); }
+	to { transform: scaleY(1); }
+}
+@media (prefers-reduced-motion: reduce) {
+	.mw-waveform i { animation: none; }
+}
+
+/* Heart burst — library button love state. */
+@keyframes mw-heart-burst {
+	0% { transform: scale(1); }
+	30% { transform: scale(1.35); }
+	60% { transform: scale(0.95); }
+	100% { transform: scale(1); }
+}
+.mw-library-button--heart[aria-pressed="true"] svg,
+.mw-library-button--heart.is-loved svg {
+	animation: mw-heart-burst 360ms var(--mw-ease-spring);
+}
+@media (prefers-reduced-motion: reduce) {
+	.mw-library-button--heart[aria-pressed="true"] svg { animation: none; }
+}
+
+/* Toast stack — bottom-start, above global player. */
+.mw-toast-stack {
+	position: fixed;
+	inset-inline-start: max(1rem, env(safe-area-inset-left));
+	inset-block-end: calc(var(--mw-player-offset, 0px) + max(1rem, env(safe-area-inset-bottom)));
+	z-index: 120;
+	display: grid;
+	gap: 0.5rem;
+	pointer-events: none;
+}
+.mw-toast {
+	display: flex;
+	align-items: center;
+	gap: 0.65rem;
+	min-width: min(22rem, calc(100vw - 2rem));
+	max-width: 28rem;
+	padding: 0.75rem 1rem;
+	color: var(--mw-color-text);
+	background: var(--mw-toast-bg);
+	border: 1px solid var(--mw-toast-border);
+	border-radius: var(--mw-radius-md);
+	box-shadow: var(--mw-shadow-floating);
+	backdrop-filter: blur(var(--mw-blur-glass)) saturate(1.2);
+	-webkit-backdrop-filter: blur(var(--mw-blur-glass)) saturate(1.2);
+	font-size: 0.875rem;
+	font-weight: 600;
+	line-height: 1.4;
+	pointer-events: auto;
+	animation: mw-toast-in 360ms var(--mw-ease-out);
+}
+.mw-toast--success { border-inline-start: 3px solid var(--mw-color-accent); }
+.mw-toast--error { border-inline-start: 3px solid var(--mw-color-danger); }
+.mw-toast--info { border-inline-start: 3px solid var(--mw-color-text-muted); }
+.mw-toast__icon { flex: 0 0 auto; inline-size: 1.1rem; block-size: 1.1rem; }
+@keyframes mw-toast-in {
+	from { opacity: 0; transform: translateY(0.5rem) scale(0.98); }
+	to { opacity: 1; transform: none; }
+}
+@keyframes mw-toast-out {
+	to { opacity: 0; transform: translateY(0.35rem) scale(0.98); }
+}
+
+/* Empty state illustration wrapper. */
+.mw-empty {
+	display: grid;
+	place-items: center;
+	gap: 0.9rem;
+	padding: clamp(2rem, 6vw, 3.5rem) var(--wp--preset--spacing--30);
+	text-align: center;
+	color: var(--mw-color-text-muted);
+	background: var(--mw-color-surface);
+	border: 1px dashed var(--mw-color-border);
+	border-radius: var(--mw-radius-lg);
+}
+.mw-empty__icon {
+	inline-size: 3rem;
+	block-size: 3rem;
+	display: grid;
+	place-items: center;
+	color: var(--mw-color-text-muted);
+	background: color-mix(in srgb, var(--mw-color-text) 06%, transparent);
+	border-radius: 50%;
+}
+.mw-empty__title {
+	margin: 0;
+	color: var(--mw-color-text);
+	font-size: 1rem;
+	font-weight: 700;
+}
+.mw-empty__action {
+	margin-top: 0.35rem;
+}

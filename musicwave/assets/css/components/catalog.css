@@ -1063,8 +1063,82 @@ a.mw-release-meta__chip:focus-visible {
 	}
 }
 
+/* SonicStream Pro — skeleton cards while filtering */
+.mw-catalog-skeleton {
+	display: grid;
+	gap: clamp(1rem, 2vw, 1.5rem);
+	grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+@media (max-width: 52rem) { .mw-catalog-skeleton { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (max-width: 34rem) { .mw-catalog-skeleton { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.mw-catalog-skeleton__card {
+	padding: 0.75rem;
+}
+.mw-catalog-skeleton__art {
+	aspect-ratio: 1;
+	background: var(--mw-skeleton-bg);
+	border-radius: var(--mw-radius-lg);
+	position: relative;
+	overflow: hidden;
+}
+.mw-catalog-skeleton__art::after {
+	content: "";
+	position: absolute;
+	inset: 0;
+	background: linear-gradient(100deg, transparent 30%, var(--mw-skeleton-shimmer) 50%, transparent 70%);
+	transform: translateX(-100%);
+	animation: mw-skeleton-shimmer 1.2s ease-in-out infinite;
+}
+.mw-catalog-skeleton__line {
+	height: 0.85rem;
+	background: var(--mw-skeleton-bg);
+	border-radius: var(--mw-radius-pill);
+	margin-block-start: 0.75rem;
+}
+.mw-catalog-skeleton__line--title { width: 78%; height: 1rem; }
+.mw-catalog-skeleton__line--meta { width: 52%; }
+
+/* Filter toolbar — glass/pills refinements */
+.mw-catalog-filters.is-style-pills {
+	background: transparent;
+	border: 0;
+	box-shadow: none;
+	padding: 0;
+}
+.mw-catalog-filters.is-style-glass {
+	background: var(--mw-gradient-glass);
+	backdrop-filter: blur(var(--mw-blur-glass)) saturate(1.25);
+	-webkit-backdrop-filter: blur(var(--mw-blur-glass)) saturate(1.25);
+	border: 1px solid var(--mw-color-glass-border);
+	box-shadow: var(--mw-shadow-glass);
+}
+
+/* Card micro-interaction — subtle lift + glow on hover */
+.mw-release-card {
+	transition: transform var(--mw-speed-normal) var(--mw-ease-spring), box-shadow var(--mw-speed-normal) var(--mw-ease-snap), border-color var(--mw-speed-fast) ease;
+}
+.mw-release-card:is(:hover, :focus-within) {
+	transform: translateY(-0.25rem);
+	box-shadow: var(--mw-shadow-card);
+	border-color: color-mix(in srgb, var(--mw-color-accent) 18%, var(--mw-color-border));
+}
+.mw-release-card__media .mw-waveform {
+	position: absolute;
+	inset-inline: 0.5rem;
+	inset-block-end: 0.5rem;
+	z-index: 2;
+	height: 0.65rem;
+	opacity: 0;
+	transition: opacity var(--mw-speed-fast) var(--mw-ease-snap);
+	pointer-events: none;
+}
+.mw-release-card:is(:hover, :focus-within) .mw-waveform { opacity: 0.9; }
+
 @media (prefers-reduced-motion: reduce) {
 	.mw-release-card__overlay {
 		transition: none;
 	}
+	.mw-catalog-skeleton__art::after,
+	.mw-catalog-skeleton__art::after { animation: none; }
+	.mw-release-card { transition: none; }
 }

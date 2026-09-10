@@ -986,3 +986,60 @@ html.mw-has-player {
 		transform: scaleY(0.65);
 	}
 }
+
+/* -------------------------------------------------------------------------
+ * SonicStream Pro — glass minimal, waveform strip, toast elevation
+ * ---------------------------------------------------------------------- */
+
+/* Glass variant — can be chosen via block Styles or auto on light theme */
+.mw-global-player.is-style-glass,
+html[data-mw-theme="light"] .mw-global-player {
+	background: var(--mw-color-glass);
+	backdrop-filter: blur(var(--mw-blur-glass-strong)) saturate(1.35);
+	-webkit-backdrop-filter: blur(var(--mw-blur-glass-strong)) saturate(1.35);
+	border-color: var(--mw-color-glass-border);
+	box-shadow: var(--mw-shadow-glass-strong);
+}
+
+/* Waveform strip above progress — 32 pseudo-bars via CSS grid */
+.mw-global-player__waveform {
+	display: none;
+	grid-template-columns: repeat(32, 1fr);
+	gap: 2px;
+	align-items: end;
+	height: 1.1rem;
+	opacity: 0.65;
+	transition: opacity var(--mw-speed-fast) var(--mw-ease-snap);
+}
+.mw-global-player[data-mw-waveform="on"] .mw-global-player__waveform { display: grid; }
+.mw-global-player__waveform i {
+	display: block;
+	background: var(--mw-waveform-bar);
+	border-radius: var(--mw-radius-pill);
+	height: var(--h, 0.5rem);
+	transition: background var(--mw-speed-fast) ease, height var(--mw-speed-fast) ease;
+}
+.mw-global-player[data-mw-state="playing"] .mw-global-player__waveform i.is-active {
+	background: var(--mw-waveform-active);
+}
+
+/* Mute morph — subtle icon crossfade */
+.mw-global-player__mute .mw-global-player__icon--volume,
+.mw-global-player__mute .mw-global-player__icon--muted {
+	transition: opacity var(--mw-speed-micro) var(--mw-ease-snap), transform var(--mw-speed-micro) var(--mw-ease-snap);
+}
+.mw-global-player[data-mw-volume="muted"] .mw-global-player__icon--volume { opacity: 0; transform: scale(0.8); }
+.mw-global-player[data-mw-volume="muted"] .mw-global-player__icon--muted { opacity: 1; transform: none; }
+.mw-global-player:not([data-mw-volume="muted"]) .mw-global-player__icon--muted { opacity: 0; position: absolute; transform: scale(0.8); }
+
+/* Keyboard hint — shown on focus-visible for a11y power users */
+.mw-global-player__hint {
+	display: none;
+	font-size: 0.65rem;
+	letter-spacing: 0.06em;
+	text-transform: uppercase;
+	color: var(--mw-color-text-muted);
+}
+@media (min-width: 64rem) {
+	.mw-global-player:focus-within .mw-global-player__hint { display: block; }
+}

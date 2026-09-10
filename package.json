@@ -1,6 +1,6 @@
 {
 	"name": "musicwave",
-	"version": "0.9.0",
+	"version": "0.10.0",
 	"private": true,
 	"description": "Development tooling for the MusicWave WordPress theme and companion plugins.",
 	"license": "GPL-2.0-or-later",

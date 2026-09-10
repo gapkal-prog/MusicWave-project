@@ -19,18 +19,29 @@
 		var status = button.parentElement
 			? button.parentElement.querySelector( '[data-mw-share-status]' )
 			: null;
-		if ( ! status ) {
-			return;
+		if ( status ) {
+			status.textContent = message || '';
+			status.hidden = ! message;
+			if ( message ) {
+				window.setTimeout( function () {
+					if ( status.textContent === message ) {
+						status.textContent = '';
+						status.hidden = true;
+					}
+				}, 3200 );
+			}
 		}
-		status.textContent = message || '';
-		status.hidden = ! message;
-		if ( message ) {
-			window.setTimeout( function () {
-				if ( status.textContent === message ) {
-					status.textContent = '';
-					status.hidden = true;
-				}
-			}, 3200 );
+		// SonicStream Pro — mirror as toast when helper is present
+		if ( message && window.mwToast ) {
+			var variant = /کپی|copy/i.test( message ) ? 'success' : 'info';
+			// Avoid duplicate toast for copy success (mw-toast.js also observes status)
+			if ( ! status || ! status.textContent ) {
+				window.mwToast( message, variant );
+			} else if ( window.mwToast._last !== message ) {
+				window.mwToast._last = message;
+				window.mwToast( message, variant );
+				window.setTimeout( function () { window.mwToast._last = null; }, 3500 );
+			}
 		}
 	}
 
