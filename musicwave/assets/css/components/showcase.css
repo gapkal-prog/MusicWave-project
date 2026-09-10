@@ -262,16 +262,6 @@
 }
 
 /* ---------- Single release hero (cinematic, HTML-inspired) ---------- */
-.mw-release-hero.is-style-cinematic {
-	background:
-		radial-gradient(circle at 12% 10%, rgb(250 45 101 / 14%), transparent 46%),
-		radial-gradient(circle at 85% 12%, rgb(108 92 231 / 16%), transparent 44%),
-		linear-gradient(180deg, var(--mw-color-surface-raised), var(--mw-color-canvas));
-	border: 1px solid rgb(255 255 255 / 9%);
-	border-radius: var(--mw-radius-lg, 1rem);
-	overflow: clip;
-	padding: clamp(1.25rem, 3.5vw, 2.5rem);
-}
 .mw-release-hero__kicker {
 	color: var(--wp--preset--color--accent-strong, #1ed760);
 	font-size: 0.75rem;
