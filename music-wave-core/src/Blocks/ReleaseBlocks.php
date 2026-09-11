@@ -719,7 +719,12 @@ final class ReleaseBlocks {
 			return '';
 		}
 
-		return '<section ' . BlockSupport::wrapper_attributes( 'mw-release-meta mw-release-meta--panel' ) . ' aria-label="' . esc_attr__( 'جزئیات انتشار', 'music-wave-core' ) . '">' . $body . '</section>';
+		// Editorial stamp variation: uppercase label/value pairs with hairline
+		// rules, driven entirely by the stylesheet.
+		$variation     = BlockSupport::style_variation( $attributes, array( 'stamp' ) );
+		$wrapper_class = 'mw-release-meta mw-release-meta--panel' . ( '' !== $variation ? ' mw-release-meta--' . $variation : '' );
+
+		return '<section ' . BlockSupport::wrapper_attributes( $wrapper_class ) . ' aria-label="' . esc_attr__( 'جزئیات انتشار', 'music-wave-core' ) . '">' . $body . '</section>';
 	}
 
 	/**
@@ -1025,7 +1030,13 @@ final class ReleaseBlocks {
 			$total_html = '<p class="mw-collection-list__total">' . esc_html( sprintf( __( 'طول کل: %s', 'music-wave-core' ), $this->format_duration( $total_duration ) ) ) . '</p>';
 		}
 
-		return '<section ' . BlockSupport::wrapper_attributes( 'mw-collection-list' ) . ' data-mw-collection-list' . $aria_label . '>' . $heading_html . $list_markup . $total_html . '</section>';
+		// Vinyl tracklist variation: keeps the table markup (and every hook the
+		// player relies on) and only appends a modifier class the stylesheet
+		// turns into the numbered, hairline-ruled listing of the album page.
+		$variation     = BlockSupport::style_variation( $attributes, array( 'tracklist' ) );
+		$wrapper_class = 'mw-collection-list' . ( '' !== $variation ? ' mw-collection-list--' . $variation : '' );
+
+		return '<section ' . BlockSupport::wrapper_attributes( $wrapper_class ) . ' data-mw-collection-list' . $aria_label . '>' . $heading_html . $list_markup . $total_html . '</section>';
 	}
 
 	/**
@@ -1278,7 +1289,7 @@ final class ReleaseBlocks {
 			foreach ( $terms as $term ) {
 				$options .= '<option value="' . esc_attr( $term->slug ) . '" ' . selected( $selected, $term->slug, false ) . '>' . esc_html( $term->name ) . '</option>';
 			}
-			$fields[] = '<label><span class="screen-reader-text">' . esc_html( $label ) . '</span><select name="' . esc_attr( $taxonomy ) . '">' . $options . '</select></label>';
+			$fields[] = '<label class="mw-catalog-filters__field"><span class="screen-reader-text">' . esc_html( $label ) . '</span><select name="' . esc_attr( $taxonomy ) . '">' . $options . '</select></label>';
 		}
 		if ( empty( $fields ) && ! $show_search && ! $show_sort ) {
 			return '';
@@ -1290,8 +1301,8 @@ final class ReleaseBlocks {
 			$placeholder = BlockSupport::text_attribute( $attributes, 'searchPlaceholder', __( 'جست‌وجوی انتشار', 'music-wave-core' ) );
 			// The field is a plain input for no-JS visitors; catalog-suggest.js
 			// upgrades it to an ARIA combobox in place.
-			$search_html = '<div class="mw-catalog-suggest">'
-				. '<label><span class="screen-reader-text">' . esc_html__( 'جست‌وجوی انتشار', 'music-wave-core' ) . '</span>'
+			$search_html = '<div class="mw-catalog-suggest mw-catalog-filters__search">'
+				. '<label class="mw-catalog-filters__field"><span class="screen-reader-text">' . esc_html__( 'جست‌وجوی انتشار', 'music-wave-core' ) . '</span>'
 				. '<input type="search" name="s" value="' . esc_attr( $search ) . '" placeholder="' . esc_attr( $placeholder ) . '"></label>'
 				. '<span class="screen-reader-text" role="status" aria-live="polite" data-mw-suggest-status></span>'
 				. '</div>';
@@ -1306,7 +1317,7 @@ final class ReleaseBlocks {
 			$has_sort    = isset( $_GET[ $sort_var ] ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			$raw_sort    = $has_sort && is_scalar( $_GET[ $sort_var ] ) ? sanitize_key( wp_unslash( (string) $_GET[ $sort_var ] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			$sort        = \ManaCore\MusicWave\Core\Catalog\ReleaseArchiveQuery::normalize_sort( $has_sort ? $raw_sort : Settings::get( 'archive_default_sort' ) );
-			$sort_markup = '<label class="mw-catalog-filters__sort"><span class="screen-reader-text">' . esc_html__( 'مرتب‌سازی انتشارات', 'music-wave-core' ) . '</span><select name="' . esc_attr( $sort_var ) . '">';
+			$sort_markup = '<label class="mw-catalog-filters__sort mw-catalog-filters__field"><span class="screen-reader-text">' . esc_html__( 'مرتب‌سازی انتشارات', 'music-wave-core' ) . '</span><select name="' . esc_attr( $sort_var ) . '">';
 			foreach ( $sort_options as $value => $label ) {
 				$sort_markup .= '<option value="' . esc_attr( $value ) . '" ' . selected( $sort, $value, false ) . '>' . esc_html( $label ) . '</option>';
 			}
@@ -1314,18 +1325,22 @@ final class ReleaseBlocks {
 		}
 
 		$submit_label = BlockSupport::text_attribute( $attributes, 'submitLabel', __( 'اعمال فیلتر', 'music-wave-core' ) );
-		$actions      = '<button type="submit">' . esc_html( $submit_label ) . '</button>';
+		$actions      = '<div class="mw-catalog-filters__actions"><button type="submit">' . esc_html( $submit_label ) . '</button>';
 		if ( $show_reset ) {
 			$reset_label = BlockSupport::text_attribute( $attributes, 'resetLabel', __( 'بازنشانی', 'music-wave-core' ) );
 			$actions    .= '<a href="' . esc_url( $archive_url ) . '">' . esc_html( $reset_label ) . '</a>';
 		}
+		$actions .= '</div>';
 
 		$layout    = BlockSupport::key_attribute( $attributes, 'layout', array( 'inline', 'stacked' ), 'inline' );
-		$variation = BlockSupport::style_variation( $attributes, array( 'stacked' ) );
-		if ( '' !== $variation ) {
+		$variation = BlockSupport::style_variation( $attributes, array( 'stacked', 'chips' ) );
+		if ( 'stacked' === $variation ) {
 			$layout = $variation;
 		}
 		$class = 'mw-catalog-filters' . ( 'stacked' === $layout ? ' mw-catalog-filters--stacked' : '' );
+		if ( 'chips' === $variation ) {
+			$class .= ' mw-catalog-filters--chips';
+		}
 
 		$this->enqueue_catalog_filter_assets();
 
@@ -1422,7 +1437,10 @@ final class ReleaseBlocks {
 		$chips      = $show_chips ? $this->active_catalog_filter_chips( $archive_url ) : array();
 		$chips_html = empty( $chips ) ? '' : '<ul class="mw-catalog-results__filters" aria-label="' . esc_attr__( 'فیلترهای کاتالوگ فعال', 'music-wave-core' ) . '">' . implode( '', $chips ) . '</ul>';
 
-		return '<div ' . BlockSupport::wrapper_attributes( 'mw-catalog-results' ) . ' role="status" aria-live="polite">' . $count_html . $chips_html . '</div>';
+		$variation     = BlockSupport::style_variation( $attributes, array( 'editorial' ) );
+		$wrapper_class = 'mw-catalog-results' . ( '' !== $variation ? ' mw-catalog-results--' . $variation : '' );
+
+		return '<div ' . BlockSupport::wrapper_attributes( $wrapper_class ) . ' role="status" aria-live="polite">' . $count_html . $chips_html . '</div>';
 	}
 
 	/** @param array<string, mixed> $attributes */
@@ -1449,8 +1467,8 @@ final class ReleaseBlocks {
 		$limit     = $limit >= 10 && $limit <= 120 ? $limit : 30;
 		$label     = isset( $attributes['label'] ) ? sanitize_text_field( (string) $attributes['label'] ) : '';
 		$label     = '' !== $label ? $label : __( 'پخش پیش‌نمایش', 'music-wave-core' );
-		$style     = BlockSupport::key_attribute( $attributes, 'style', array( 'solid', 'outline', 'ghost' ), 'solid' );
-		$variation = BlockSupport::style_variation( $attributes, array( 'outline', 'ghost' ) );
+		$style     = BlockSupport::key_attribute( $attributes, 'style', array( 'solid', 'outline', 'ghost', 'vinyl' ), 'solid' );
+		$variation = BlockSupport::style_variation( $attributes, array( 'outline', 'ghost', 'vinyl' ) );
 		if ( '' !== $variation ) {
 			$style = $variation;
 		}
@@ -1494,11 +1512,12 @@ final class ReleaseBlocks {
 			return '';
 		}
 
+		$visible = BlockSupport::text_attribute( $attributes, 'label', __( 'پخش الان', 'music-wave-core' ) );
 		/* translators: %s: release title. */
 		$label = sprintf( __( 'پخش %s', 'music-wave-core' ), get_the_title( $release_id ) );
-		$icon  = BlockSupport::bool_attribute( $attributes, 'showIcon', true ) ? '<span class="mw-card-play__icon" aria-hidden="true">&#9654;</span>' : '<span class="screen-reader-text">' . esc_html( $label ) . '</span>';
+		$icon  = BlockSupport::bool_attribute( $attributes, 'showIcon', true ) ? '<span class="mw-preview-button__icon" aria-hidden="true">&#9654;</span>' : '';
 
-		return '<section ' . BlockSupport::wrapper_attributes( 'mw-preview-player' ) . '><h2 class="screen-reader-text">' . esc_html__( 'پخش انتشار', 'music-wave-core' ) . '</h2><button class="mw-card-play mw-release-actions__play" type="button" data-mw-release-id="' . esc_attr( (string) $release_id ) . '" aria-label="' . esc_attr( $label ) . '" aria-pressed="false">' . $icon . '</button></section>';
+		return '<section ' . BlockSupport::wrapper_attributes( 'mw-preview-player' ) . '><h2 class="screen-reader-text">' . esc_html__( 'پخش انتشار', 'music-wave-core' ) . '</h2><button class="mw-preview-button" type="button" data-mw-release-id="' . esc_attr( (string) $release_id ) . '" aria-label="' . esc_attr( $label ) . '" aria-pressed="false">' . $icon . '<span>' . esc_html( $visible ) . '</span></button></section>';
 	}
 
 	/**
@@ -1765,7 +1784,10 @@ final class ReleaseBlocks {
 			}
 		}
 
-		return empty( $sections ) ? '' : '<div ' . BlockSupport::wrapper_attributes( 'mw-related-releases mw-related-releases--' . $options['layout'] ) . '>' . implode( '', $sections ) . '</div>';
+		$root_class = 'mw-related-releases mw-related-releases--' . $options['layout']
+			. ( '' !== $options['variation'] ? ' mw-related-releases--' . $options['variation'] : '' );
+
+		return empty( $sections ) ? '' : '<div ' . BlockSupport::wrapper_attributes( $root_class ) . '>' . implode( '', $sections ) . '</div>';
 	}
 
 	/**
@@ -1786,6 +1808,9 @@ final class ReleaseBlocks {
 			'show_preview' => BlockSupport::bool_attribute( $attributes, 'showPreview', true ),
 			'show_action'  => BlockSupport::bool_attribute( $attributes, 'showAction', false ),
 			'action_label' => BlockSupport::text_attribute( $attributes, 'actionLabel', __( 'انتشار را باز کنید', 'music-wave-core' ) ),
+			// Editorial / vinyl restyle of the shelf cards, resolved once for
+			// every section and for the block root.
+			'variation'    => BlockSupport::style_variation( $attributes, array( 'editorial', 'vinyl' ) ),
 		);
 	}
 
@@ -1895,6 +1920,9 @@ final class ReleaseBlocks {
 		}
 
 		$shelf_class = 'mw-release-shelf mw-release-shelf--' . $options['layout'];
+		if ( '' !== $options['variation'] ) {
+			$shelf_class .= ' mw-release-shelf--' . $options['variation'];
+		}
 		if ( 'grid' === $options['layout'] ) {
 			$shelf_class .= ' mw-release-shelf--columns-' . $options['columns'];
 		}

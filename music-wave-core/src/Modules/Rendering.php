@@ -143,6 +143,25 @@ final class Rendering implements Module {
 			return;
 		}
 
+		foreach ( self::style_variations() as $block_name => $variations ) {
+			foreach ( $variations as $variation ) {
+				register_block_style( $block_name, $variation );
+			}
+		}
+	}
+
+	/**
+	 * Style variations offered by the dynamic blocks.
+	 *
+	 * Single source of truth for two surfaces that must never drift: the
+	 * Site Editor "Styles" panel (`register_block_style`) and the appearance
+	 * select inside each block's MusicWave settings panel (`assets/blocks.js`).
+	 * Both write the same `is-style-<name>` class, so whichever surface the
+	 * admin uses, the other follows.
+	 *
+	 * @return array<string, array<int, array<string, mixed>>>
+	 */
+	public static function style_variations(): array {
 		$styles = array(
 			'music-wave/preview-player'    => array(
 				array(
@@ -174,6 +193,10 @@ final class Rendering implements Module {
 					'name'  => 'ghost',
 					'label' => __( 'بی‌زمینه', 'music-wave-core' ),
 				),
+				array(
+					'name'  => 'vinyl',
+					'label' => __( 'صفحهٔ وینیل (چرخان)', 'music-wave-core' ),
+				),
 			),
 			'music-wave/release-meta'      => array(
 				array(
@@ -184,11 +207,47 @@ final class Rendering implements Module {
 					'name'  => 'stack',
 					'label' => __( 'ردیف‌های انباشته', 'music-wave-core' ),
 				),
+				array(
+					'name'  => 'stamp',
+					'label' => __( 'مهر سرمقاله‌ای', 'music-wave-core' ),
+				),
 			),
 			'music-wave/catalog-filters'   => array(
 				array(
 					'name'  => 'stacked',
 					'label' => __( 'انباشته شده', 'music-wave-core' ),
+				),
+				array(
+					'name'  => 'chips',
+					'label' => __( 'چیپ‌های استریم', 'music-wave-core' ),
+				),
+			),
+			'music-wave/collection-list'   => array(
+				array(
+					'name'  => 'tracklist',
+					'label' => __( 'فهرست وینیل (شماره‌دار)', 'music-wave-core' ),
+				),
+			),
+			'music-wave/related-releases'  => array(
+				array(
+					'name'  => 'editorial',
+					'label' => __( 'سرمقاله‌ای', 'music-wave-core' ),
+				),
+				array(
+					'name'  => 'vinyl',
+					'label' => __( 'وینیل', 'music-wave-core' ),
+				),
+			),
+			'music-wave/catalog-results'   => array(
+				array(
+					'name'  => 'editorial',
+					'label' => __( 'سرمقاله‌ای', 'music-wave-core' ),
+				),
+			),
+			'music-wave/artist-profile'    => array(
+				array(
+					'name'  => 'spotlight',
+					'label' => __( 'نورافکن سرمقاله‌ای', 'music-wave-core' ),
 				),
 			),
 			'music-wave/public-playlists'  => array(
@@ -201,14 +260,18 @@ final class Rendering implements Module {
 					'name'  => 'minimal',
 					'label' => __( 'حداقل (بدون سطح)', 'music-wave-core' ),
 				),
+				array(
+					'name'  => 'vinyl',
+					'label' => __( 'ویترین صفحه (وینیل)', 'music-wave-core' ),
+				),
 			),
 		);
 
-		foreach ( $styles as $block_name => $variations ) {
-			foreach ( $variations as $variation ) {
-				register_block_style( $block_name, $variation );
-			}
-		}
+		/*
+		 * `is_default` marks the look a block already renders, so the editor can
+		 * label it as the default instead of offering it as an extra style.
+		 */
+		return $styles;
 	}
 
 	/**
@@ -236,6 +299,14 @@ final class Rendering implements Module {
 			'music-wave-dynamic-blocks',
 			'musicWaveDynamicBlocks',
 			$this->editor_blocks()
+		);
+		// The appearance select reads the same map `register_block_style()`
+		// builds, so a variation can never surface in one panel but not the
+		// other.
+		wp_localize_script(
+			'music-wave-dynamic-blocks',
+			'musicWaveBlockStyles',
+			self::style_variations()
 		);
 	}
 
