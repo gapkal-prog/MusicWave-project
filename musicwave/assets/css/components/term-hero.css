@@ -7,16 +7,20 @@
 
 .mw-term-hero {
 	position: relative;
+	isolation: isolate;
 	margin-block-end: var(--wp--preset--spacing--40);
 	overflow: hidden;
+	color: var(--mw-color-text);
+	background: var(--mw-color-surface, #16181d);
 	border-radius: var(--mw-radius-lg, 1.5rem);
+	box-shadow: 0 1.25rem 2.75rem rgb(0 0 0 / 28%);
 }
 
 .mw-term-hero__media {
-	inset-block-start: 0;
-	inline-size: 100%;
-	inset-inline-start: 0;
 	position: absolute;
+	inset: 0;
+	inline-size: 100%;
+	block-size: 100%;
 }
 
 .mw-term-hero--banner .mw-term-hero__media {
@@ -54,20 +58,25 @@
 	color: var(--mw-color-text, #fff);
 	display: flex;
 	flex-direction: column;
-	gap: 0.5rem;
+	gap: 0.55rem;
 	max-width: 48rem;
-	padding: clamp(1.25rem, 3vw, 2.5rem);
+	padding: clamp(1.35rem, 3.4vw, 2.75rem);
 	position: relative;
 	z-index: 1;
 }
 
 .mw-term-hero__eyebrow {
-	font-size: .75rem;
-	font-weight: 800;
-	letter-spacing: .12em;
+	display: inline-flex;
+	align-self: flex-start;
 	margin: 0;
-	opacity: .8;
+	padding: 0.22rem 0.7rem;
+	color: var(--mw-color-editorial, #fa2d65);
+	font-size: 0.7rem;
+	font-weight: 800;
+	letter-spacing: 0.12em;
 	text-transform: uppercase;
+	background: color-mix(in srgb, var(--mw-color-editorial, #fa2d65) 16%, transparent);
+	border-radius: 999px;
 }
 
 .mw-term-hero__name {
@@ -150,25 +159,28 @@
 	padding: clamp(1rem, 2.5vw, 1.5rem);
 }
 
-.mw-term-hero--compact .mw-term-hero__media,
+.mw-term-hero--compact .mw-term-hero__media {
+	position: relative;
+	inset: auto;
+	flex: 0 0 auto;
+	inline-size: clamp(5.5rem, 16vw, 8.25rem);
+	block-size: clamp(5.5rem, 16vw, 8.25rem);
+	overflow: hidden;
+	border-radius: var(--mw-radius-md, 1rem);
+	order: -1;
+}
+
 .mw-term-hero--compact .mw-term-hero__scrim {
 	display: none;
 }
 
-.mw-term-hero--compact::before {
-	align-self: stretch;
-	background:
-		radial-gradient(circle at 22% 18%, color-mix(in srgb, var(--mw-color-accent, #1db954) 38%, transparent), transparent 60%),
-		var(--mw-color-surface, #151922);
-	border-radius: var(--mw-radius-md, 1rem);
-	content: "";
-	flex: 0 0 auto;
-	inline-size: clamp(3.5rem, 8vw, 6rem);
-	order: -1;
+.mw-term-hero--compact.mw-term-hero--shape-circle .mw-term-hero__media {
+	border-radius: 50%;
 }
 
-.mw-term-hero--compact.mw-term-hero--shape-circle::before { border-radius: 50%; }
-.mw-term-hero--compact.mw-term-hero--shape-square::before { border-radius: 0; }
+.mw-term-hero--compact.mw-term-hero--shape-square .mw-term-hero__media {
+	border-radius: 0.35rem;
+}
 
 .mw-term-hero--compact .mw-term-hero__content {
 	padding: 0;

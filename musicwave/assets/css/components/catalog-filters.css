@@ -4,16 +4,36 @@
 .mw-catalog-filters {
 	display: flex;
 	flex-wrap: wrap;
-	align-items: center;
-	gap: var(--wp--preset--spacing--20);
+	align-items: flex-end;
+	gap: 0.75rem 0.85rem;
 	margin: var(--wp--preset--spacing--30) 0 var(--wp--preset--spacing--20);
-	padding: var(--wp--preset--spacing--20);
-	background: color-mix(in srgb, var(--mw-color-surface) 92%, transparent);
-	border: 1px solid var(--mw-color-border);
-	border-radius: var(--mw-radius-lg);
-	box-shadow: var(--mw-shadow-card);
-	backdrop-filter: blur(14px);
-	-webkit-backdrop-filter: blur(14px);
+	padding: clamp(0.9rem, 2vw, 1.25rem);
+	background: var(--mw-color-surface, #16181d);
+	border: 0;
+	border-radius: 1.15rem;
+	box-shadow: 0 1rem 2.4rem rgb(0 0 0 / 24%);
+}
+
+.mw-catalog-filters > label {
+	display: grid;
+	gap: 0.35rem;
+	min-inline-size: min(100%, 11rem);
+}
+
+.mw-catalog-filters > label > .screen-reader-text {
+	position: static;
+	overflow: visible;
+	clip: auto;
+	clip-path: none;
+	inline-size: auto;
+	block-size: auto;
+	margin: 0;
+	color: var(--mw-color-text-muted);
+	font-size: 0.68rem;
+	font-weight: 800;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+	white-space: nowrap;
 }
 
 .mw-catalog-filters input,
