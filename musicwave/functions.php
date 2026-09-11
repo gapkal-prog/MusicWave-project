@@ -587,6 +587,10 @@ function musicwave_presentation_style_variations(): array {
 				'label' => __( 'حداقلی', 'musicwave' ),
 				'hint'  => __( 'بدون سطح کارت؛ فقط خطوط و تایپوگرافی. مناسب چیدمان‌های فهرستی.', 'musicwave' ),
 			),
+			'stream'    => array(
+				'label' => __( 'استریم', 'musicwave' ),
+				'hint'  => __( 'کارت‌های نرم اسپاتیفای‌مانند با پخش شناور و عنوان فشرده.', 'musicwave' ),
+			),
 		),
 		'release-slider' => array(
 			'cinema'    => array(
@@ -596,6 +600,10 @@ function musicwave_presentation_style_variations(): array {
 			'editorial' => array(
 				'label' => __( 'سرمقاله‌ای', 'musicwave' ),
 				'hint'  => __( 'ستون متن با خط تأکیدی کنار محتوا.', 'musicwave' ),
+			),
+			'stream'    => array(
+				'label' => __( 'استریم', 'musicwave' ),
+				'hint'  => __( 'ریل افقی با جلد مربع، دکمه پخش و پیوند مشاهده همه.', 'musicwave' ),
 			),
 		),
 	);
@@ -2661,21 +2669,6 @@ function musicwave_inject_sidebar_widgets( string $content, array $block ): stri
 
 	$widgets = '';
 	if ( function_exists( 'is_active_sidebar' ) && is_active_sidebar( 'musicwave-sidebar' ) ) {
-		ob_start();
-		dynamic_sidebar( 'musicwave-sidebar' );
-		$widgets = trim( (string) ob_get_clean() );
-	}
-
-	if ( '' === $widgets ) {
-		return '';
-	}
-
-	return '<aside class="mw-sidebar"><div class="mw-sidebar__widgets">' . $widgets . '</div></aside>';
-}
-add_filter( 'render_block_core/template-part', 'musicwave_inject_sidebar_widgets', 10, 2 );
-
-require_once get_template_directory() . '/inc/site-header.php';
-usicwave-sidebar' ) ) {
 		ob_start();
 		dynamic_sidebar( 'musicwave-sidebar' );
 		$widgets = trim( (string) ob_get_clean() );
