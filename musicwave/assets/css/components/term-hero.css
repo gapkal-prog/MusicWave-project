@@ -90,15 +90,15 @@
 }
 
 .mw-term-hero__count {
+	display: inline-flex;
 	align-self: flex-start;
-	color: color-mix(in srgb, var(--mw-color-text) 72%, transparent);
-	font-size: .875rem;
-	font-weight: 600;
 	margin: .1rem 0 0;
-	padding: 0;
-	background: transparent;
-	border: 0;
-	border-radius: 0;
+	padding: 0.2rem 0.7rem;
+	color: color-mix(in srgb, var(--mw-color-text) 78%, transparent);
+	font-size: .8125rem;
+	font-weight: 650;
+	background: color-mix(in srgb, var(--mw-color-text) 10%, transparent);
+	border-radius: 999px;
 }
 
 .mw-term-hero__description,
@@ -139,7 +139,19 @@
 	block-size: auto;
 	display: flex;
 	align-items: flex-end;
-	min-block-size: clamp(14rem, 30vw, 24rem);
+	min-block-size: clamp(16rem, 34vw, 26rem);
+}
+
+.mw-term-hero--banner .mw-term-hero__name {
+	text-shadow: 0 0.4rem 1.6rem rgb(0 0 0 / 45%);
+}
+
+.mw-term-hero__count {
+	display: inline-flex;
+	align-self: flex-start;
+	padding: 0.2rem 0.7rem;
+	background: color-mix(in srgb, var(--mw-color-text) 10%, transparent);
+	border-radius: 999px;
 }
 
 .mw-term-hero--banner .mw-term-hero__content {

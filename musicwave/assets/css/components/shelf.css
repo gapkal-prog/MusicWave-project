@@ -14,10 +14,24 @@
 .mw-release-shelf__header {
 	align-items: end;
 	display: flex;
-	gap: 1rem;
+	flex-wrap: wrap;
+	gap: 0.85rem 1.25rem;
 	justify-content: space-between;
 	margin-block-end: clamp(1rem, 2.5vw, 1.75rem);
-	max-width: 48rem;
+	inline-size: 100%;
+}
+
+.mw-release-shelf__heading {
+	min-inline-size: min(100%, 12rem);
+	flex: 1 1 12rem;
+}
+
+.mw-release-shelf__tools {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 0.65rem;
+	margin-inline-start: auto;
 }
 
 .mw-release-shelf__header > span {
@@ -684,4 +698,30 @@ html[dir="rtl"] .mw-release-shelf__nav-button svg {
 
 .mw-release-shelf--playlists .mw-release-shelf__items {
 	gap: clamp(1rem, 2vw, 1.35rem);
+}
+
+/* Stream look — Spotify / Melon / Apple Music rail. */
+.mw-release-shelf--stream .mw-release-shelf__item > .mw-release-card,
+.mw-release-shelf--stream .mw-release-shelf__item {
+	padding: 0.55rem;
+	border-radius: 0.85rem;
+}
+
+.mw-release-shelf--stream .mw-release-shelf__art {
+	border-radius: 0.7rem;
+	box-shadow: 0 1rem 1.75rem rgb(0 0 0 / 28%);
+}
+
+.mw-release-shelf--stream .mw-release-shelf__body h3 {
+	font-size: 0.9rem;
+	font-weight: 700;
+}
+
+.mw-release-shelf--stream .mw-release-shelf__play {
+	opacity: 0;
+}
+
+.mw-release-shelf--stream .mw-release-shelf__item:is(:hover, :focus-within) .mw-release-shelf__play {
+	opacity: 1;
+	transform: none;
 }
