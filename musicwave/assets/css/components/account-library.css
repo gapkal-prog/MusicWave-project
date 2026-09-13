@@ -132,6 +132,32 @@
 	animation: mw-dashboard-reveal 240ms var(--mw-ease-out);
 }
 
+/*
+ * Stacked variation (`music-wave/account-dashboard` block style).
+ * The tab rail turns into an index and every panel stays open, so the
+ * dashboard reads as one page for visitors who prefer to scroll. The JS
+ * still toggles `hidden` on the panels; the override below keeps them
+ * visible without touching the script contract.
+ */
+.mw-user-dashboard--stacked .mw-user-dashboard__tabs {
+	grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
+}
+
+.mw-user-dashboard--stacked .mw-user-dashboard__panel[hidden] {
+	display: block;
+}
+
+.mw-user-dashboard--stacked .mw-user-dashboard__panel {
+	border-block-start-width: 1px;
+	border-inline-start: 3px solid var(--mw-color-accent);
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.mw-user-dashboard--stacked .mw-user-dashboard__panel.is-open {
+		animation: none;
+	}
+}
+
 @keyframes mw-dashboard-reveal {
 	from {
 		opacity: 0;

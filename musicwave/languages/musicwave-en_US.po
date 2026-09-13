@@ -1139,3 +1139,77 @@ msgstr "Stream page (side rail)"
 
 msgid "همکاری"
 msgstr "Collaboration"
+
+msgid "استایل و ظاهر"
+msgstr "Style and appearance"
+
+msgid "اسلاید تمام‌قاب با تیتر بزرگ و پردهٔ تیره‌تر."
+msgstr "Full-frame slide with an oversized title and a darker scrim."
+
+msgid "بدون سطح کارت؛ فقط خطوط و تایپوگرافی. مناسب چیدمان‌های فهرستی."
+msgstr ""
+"No card surfaces — rules and typography only. Best for list layouts."
+
+msgid "بنتو"
+msgstr "Bento"
+
+msgid "حداقلی"
+msgstr "Minimal"
+
+msgid "سبک نمایش"
+msgstr "Display style"
+
+msgid "ستون متن با خط تأکیدی کنار محتوا."
+msgstr "Text column with an accent rule beside the content."
+
+msgid "سرمقاله‌ای"
+msgstr "Editorial"
+
+msgid "سینمایی"
+msgstr "Cinema"
+
+msgid "شبکهٔ موزاییکی؛ اولین انتشار به‌صورت کارت شاخص بزرگ نمایش داده می‌شود."
+msgstr "Mosaic grid; the first release becomes a large anchor tile."
+
+msgid "غلاف آلبوم با صفحهٔ بیرون‌زننده که هنگام هاور از غلاف خارج می‌شود."
+msgstr "Album sleeve with a disc that slides out of the jacket on hover."
+
+msgid "همین گزینه‌ها در بخش «سبک‌ها» کنار تنظیمات بلوک هم هستند؛ انتخاب هرکدام بلافاصله در پیش‌نمایش دیده می‌شود."
+msgstr ""
+"The same options live in the Styles panel next to the block settings; "
+"picking one updates the preview right away."
+
+msgid "وینیل"
+msgstr "Vinyl"
+
+msgid "پیش‌فرض قالب"
+msgstr "Theme default"
+
+msgid "کارت مجله‌ای با خط تأکیدی، سطح شیشه‌ای و تیتر درشت."
+msgstr ""
+"Magazine card with an accent rule, a glass surface, and an oversized "
+"headline."
+
+msgid "برگهٔ مشخصات آلبوم (سرمقاله‌ای)"
+msgstr "برگهٔ مشخصات آلبوم (سرمقاله‌ای)"
+
+msgid "سال انتشار"
+msgstr "سال انتشار"
+
+msgid "غلاف را ورق بزنید: روی هر کارت، صفحه با هاور از داخل غلاف بیرون می‌آید."
+msgstr "غلاف را ورق بزنید: روی هر کارت، صفحه با هاور از داخل غلاف بیرون می‌آید."
+
+msgid "قفسهٔ صفحه‌ها"
+msgstr "قفسهٔ صفحه‌ها"
+
+msgid "ویترین وینیل با سرصفحهٔ سرمقاله‌ای"
+msgstr "ویترین وینیل با سرصفحهٔ سرمقاله‌ای"
+
+msgid "وینیل‌هایی که این هفته گذاشته‌ایم"
+msgstr "وینیل‌هایی که این هفته گذاشته‌ایم"
+
+msgid "ژانر"
+msgstr "ژانر"
+
+msgid "یادداشت انتشار"
+msgstr "یادداشت انتشار"

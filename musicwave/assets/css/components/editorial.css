@@ -1,0 +1,830 @@
+/*
+ * MusicWave editorial vocabulary.
+ *
+ * The SonicStream layer (shelf, catalog, player) owns playback; this file owns
+ * *editorial* chrome: magazine kickers, section rules, chip rails, spec strips,
+ * and liner notes. Every rule is token driven (assets/css/tokens.css) so the six
+ * style variations and both schemes keep working, and every selector is
+ * prefixed `mw-` so merchants can compose the same surfaces from the block
+ * editor without touching code. Each vocabulary class is emitted by at least
+ * one renderer or bundled pattern — see `musicwave/patterns/album-spec-sheet.php`
+ * for the chip rail, spec strip, and liner notes in use.
+ *
+ * Block style variations that borrow this vocabulary live here too, keyed to
+ * the modifier classes emitted by the renderers (for example
+ * `.mw-release-shelf--editorial`). Selectors use two classes so they win over
+ * the base component rules regardless of stylesheet order.
+ *
+ * RTL: logical properties only. Motion: every animation is listed in the
+ * `prefers-reduced-motion` block at the end of the file.
+ */
+
+/* -------------------------------------------------------------------------
+ * 1. Kicker / eyebrow
+ * ---------------------------------------------------------------------- */
+
+.mw-eyebrow {
+	align-items: center;
+	color: var(--mw-color-editorial, #fa2d48);
+	display: inline-flex;
+	font-size: 0.6875rem;
+	font-weight: 800;
+	gap: 0.45rem;
+	letter-spacing: var(--mw-eyebrow-tracking, 0.16em);
+	line-height: 1;
+	text-transform: uppercase;
+}
+
+.mw-eyebrow::before {
+	animation: mw-eyebrow-pulse 2.6s var(--mw-ease-out, ease) infinite;
+	background: currentColor;
+	block-size: 0.4rem;
+	border-radius: 50%;
+	content: "";
+	inline-size: 0.4rem;
+}
+
+.mw-eyebrow--accent {
+	color: var(--mw-color-accent, #1db954);
+}
+
+.mw-eyebrow--quiet {
+	color: var(--mw-color-text-muted, #a0a0a0);
+}
+
+.mw-eyebrow--quiet::before {
+	animation: none;
+	block-size: 0.28rem;
+	inline-size: 1.5rem;
+	border-radius: 999px;
+	opacity: 0.7;
+}
+
+@keyframes mw-eyebrow-pulse {
+	0%,
+	100% {
+		box-shadow: 0 0 0 0 var(--mw-color-editorial-soft, rgb(250 45 72 / 18%));
+	}
+
+	55% {
+		box-shadow: 0 0 0 0.4rem transparent;
+	}
+}
+
+/* -------------------------------------------------------------------------
+ * 2. Section head — the editorial header used by patterns and hero sections
+ * ---------------------------------------------------------------------- */
+
+.mw-section-head {
+	align-items: end;
+	display: flex;
+	flex-wrap: wrap;
+	gap: 1.25rem;
+	justify-content: space-between;
+	margin-block-end: clamp(1rem, 2.4vw, 1.75rem);
+}
+
+.mw-section-head__text {
+	display: grid;
+	gap: 0.4rem;
+	max-inline-size: 46rem;
+	min-inline-size: 0;
+}
+
+.mw-section-head h2 {
+	font-family: var(--wp--preset--font-family--display, "Syne", sans-serif);
+	font-size: clamp(1.55rem, 3.2vw, 2.5rem);
+	font-weight: 800;
+	letter-spacing: -0.025em;
+	line-height: 1.06;
+	margin: 0;
+}
+
+.mw-section-head p {
+	color: var(--mw-color-text-muted, #a0a0a0);
+	margin: 0;
+	max-inline-size: 42rem;
+}
+
+/* Gradient hairline that ties the header to the editorial accent. */
+.mw-section-head__rule {
+	background: var(--mw-gradient-editorial, linear-gradient(115deg, #fa2d48, #1db954));
+	block-size: 2px;
+	border-radius: 999px;
+	inline-size: 4.25rem;
+	order: 3;
+}
+
+.mw-section-head--center {
+	justify-content: center;
+	text-align: center;
+}
+
+.mw-section-head--center .mw-section-head__text {
+	justify-items: center;
+	margin-inline: auto;
+}
+
+.mw-section-head--center .mw-section-head__rule {
+	margin-inline: auto;
+}
+
+.mw-section-head--stack {
+	align-items: flex-start;
+	flex-direction: column;
+}
+
+/* Section head on a filled/spotlight surface flips to light-on-dark tokens. */
+.mw-section-head--invert h2,
+.mw-section-head--invert p {
+	color: #fff;
+}
+
+.mw-section-head--invert p {
+	opacity: 0.75;
+}
+
+/* -------------------------------------------------------------------------
+ * 3. Chip rail — filter pills, format badges, taxonomy terms
+ * ---------------------------------------------------------------------- */
+
+.mw-chip-rail {
+	align-items: center;
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.5rem;
+}
+
+/* Core's `post-terms` renders its links directly inside the rail wrapper, so
+   the rail is both a container and a chip factory: only the tokens differ. */
+.mw-chip,
+.mw-chip-rail > a {
+	align-items: center;
+	backdrop-filter: blur(10px);
+	background: var(--mw-chip-bg, var(--mw-color-glass, rgb(24 24 24 / 74%)));
+	border: 1px solid var(--mw-chip-border, var(--mw-color-glass-border, rgb(247 248 251 / 12%)));
+	border-radius: 999px;
+	color: var(--mw-chip-color, var(--mw-color-text, #f7f8fb));
+	display: inline-flex;
+	font-size: 0.75rem;
+	font-weight: 700;
+	gap: 0.35rem;
+	letter-spacing: 0.01em;
+	line-height: 1.2;
+	padding: 0.4rem 0.8rem;
+	text-decoration: none;
+	transition:
+		background-color var(--mw-speed-fast, 150ms) var(--mw-ease-snap, ease),
+		border-color var(--mw-speed-fast, 150ms) var(--mw-ease-snap, ease),
+		color var(--mw-speed-fast, 150ms) var(--mw-ease-snap, ease),
+		transform var(--mw-speed-fast, 150ms) var(--mw-ease-snap, ease);
+}
+
+a.mw-chip:is(:hover, :focus-visible),
+.mw-chip-rail > a:is(:hover, :focus-visible) {
+	border-color: var(--mw-chip-hover-border, var(--mw-color-accent, #1db954));
+	color: var(--mw-chip-hover-color, var(--mw-color-accent-strong, #1ed760));
+	transform: translateY(-1px);
+}
+
+/* Taxonomies are the usual rail contents; hide the comma separators because
+   the flex `gap` already spaces the chips. */
+.mw-chip-rail .wp-block-post-terms__separator {
+	display: none;
+}
+
+.mw-chip--accent {
+	--mw-chip-bg: var(--mw-color-editorial-soft, rgb(250 45 72 / 18%));
+	--mw-chip-border: var(--mw-color-editorial-line, rgb(250 45 72 / 42%));
+	--mw-chip-color: var(--mw-color-editorial, #fa2d48);
+	--mw-chip-hover-border: var(--mw-color-editorial, #fa2d48);
+	--mw-chip-hover-color: var(--mw-color-editorial, #fa2d48);
+}
+
+.mw-chip--solid {
+	--mw-chip-bg: var(--mw-color-accent, #1db954);
+	--mw-chip-border: transparent;
+	--mw-chip-color: var(--mw-color-on-accent, #052e16);
+	--mw-chip-hover-border: transparent;
+	--mw-chip-hover-color: var(--mw-color-on-accent, #052e16);
+}
+
+.mw-chip--gold {
+	--mw-chip-bg: color-mix(in srgb, var(--mw-color-gold, #e5b868) 20%, transparent);
+	--mw-chip-border: color-mix(in srgb, var(--mw-color-gold, #e5b868) 45%, transparent);
+	--mw-chip-color: var(--mw-color-gold, #e5b868);
+	--mw-chip-hover-border: var(--mw-color-gold, #e5b868);
+	--mw-chip-hover-color: var(--mw-color-gold, #e5b868);
+}
+
+.mw-chip--plain {
+	--mw-chip-bg: transparent;
+	--mw-chip-border: var(--mw-color-border, rgb(247 248 251 / 20%));
+	--mw-chip-color: var(--mw-color-text-muted, #a0a0a0);
+}
+
+.mw-chip__dot {
+	background: currentColor;
+	block-size: 0.35rem;
+	border-radius: 50%;
+	inline-size: 0.35rem;
+}
+
+/* -------------------------------------------------------------------------
+ * 4. Metabar — dot-separated metadata row (year · genre · runtime · quality)
+ * ---------------------------------------------------------------------- */
+
+.mw-metabar {
+	align-items: center;
+	color: var(--mw-color-text-muted, #a0a0a0);
+	display: flex;
+	flex-wrap: wrap;
+	font-size: 0.8125rem;
+	font-weight: 600;
+	gap: 0.55rem 0.6rem;
+	margin: 0;
+	padding: 0;
+}
+
+.mw-metabar__item {
+	align-items: center;
+	display: inline-flex;
+	gap: 0.35rem;
+}
+
+.mw-metabar__item + .mw-metabar__item::before {
+	background: currentColor;
+	block-size: 0.25rem;
+	border-radius: 50%;
+	content: "";
+	inline-size: 0.25rem;
+	opacity: 0.55;
+}
+
+.mw-metabar__value {
+	color: var(--mw-color-text, #f7f8fb);
+	font-variant-numeric: tabular-nums;
+}
+
+/* -------------------------------------------------------------------------
+ * 5. Spec strip — data cells for technical audio facts
+ * ---------------------------------------------------------------------- */
+
+.mw-spec-strip {
+	display: grid;
+	gap: 0.75rem;
+	grid-template-columns: repeat(auto-fit, minmax(8.5rem, 1fr));
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+.mw-spec-strip__cell {
+	background: var(--mw-color-glass, rgb(24 24 24 / 74%));
+	border: 1px solid var(--mw-color-glass-border, rgb(247 248 251 / 12%));
+	border-radius: var(--mw-radius-md, 0.75rem);
+	display: grid;
+	gap: 0.3rem;
+	padding: 0.85rem 1rem;
+}
+
+.mw-spec-strip__label {
+	color: var(--mw-color-text-muted, #a0a0a0);
+	font-size: 0.625rem;
+	font-weight: 800;
+	letter-spacing: var(--mw-eyebrow-tracking, 0.16em);
+	text-transform: uppercase;
+}
+
+.mw-spec-strip__value {
+	font-size: 1.0625rem;
+	font-weight: 800;
+	letter-spacing: -0.01em;
+	line-height: 1.2;
+}
+
+.mw-spec-strip__cell--accent .mw-spec-strip__value {
+	color: var(--mw-color-accent-strong, #1ed760);
+}
+
+.mw-spec-strip__cell--gold .mw-spec-strip__value {
+	color: var(--mw-color-gold, #e5b868);
+}
+
+/* -------------------------------------------------------------------------
+ * 6. Liner notes — the expandable editorial card of the reference album page
+ * ---------------------------------------------------------------------- */
+
+.mw-liner-notes {
+	background: linear-gradient(180deg, var(--mw-color-glass, rgb(24 24 24 / 74%)), transparent);
+	border: 1px solid var(--mw-color-glass-border, rgb(247 248 251 / 12%));
+	border-radius: var(--mw-radius-lg, 1rem);
+	display: grid;
+	gap: 0.85rem;
+	overflow: hidden;
+	padding: clamp(1.1rem, 2.2vw, 1.75rem);
+	position: relative;
+}
+
+.mw-liner-notes::before {
+	background: var(--mw-gradient-editorial, linear-gradient(115deg, #fa2d48, #1db954));
+	block-size: 100%;
+	content: "";
+	inline-size: 3px;
+	inset-block-start: 0;
+	inset-inline-start: 0;
+	position: absolute;
+}
+
+.mw-liner-notes__quote {
+	font-family: var(--wp--preset--font-family--serif, Georgia, serif);
+	font-size: clamp(1.02rem, 1.5vw, 1.28rem);
+	line-height: 1.75;
+	margin: 0;
+}
+
+.mw-liner-notes__byline {
+	color: var(--mw-color-text-muted, #a0a0a0);
+	font-size: 0.75rem;
+	font-weight: 700;
+	letter-spacing: 0.06em;
+	text-transform: uppercase;
+}
+
+/* Album fact sheet (`patterns/album-spec-sheet.php`) stacks the chips, the
+   spec strip, and the liner notes on one rhythm. */
+.mw-album-facts {
+	display: grid;
+	gap: clamp(1rem, 2vw, 1.5rem);
+	margin-block-start: clamp(1.25rem, 3vw, 2rem);
+}
+
+/* -------------------------------------------------------------------------
+ * 7. Shelf variations — editorial / minimal (vinyl lives in vinyl.css)
+ * ---------------------------------------------------------------------- */
+
+.mw-release-shelf.mw-release-shelf--editorial .mw-release-shelf__header {
+	max-width: none;
+}
+
+.mw-release-shelf.mw-release-shelf--editorial .mw-release-shelf__header > span {
+	align-items: center;
+	color: var(--mw-color-editorial, #fa2d48);
+	display: inline-flex;
+	font-size: 0.6875rem;
+	gap: 0.45rem;
+	letter-spacing: var(--mw-eyebrow-tracking, 0.16em);
+}
+
+.mw-release-shelf.mw-release-shelf--editorial .mw-release-shelf__header > span::after {
+	background: var(--mw-gradient-editorial, linear-gradient(115deg, #fa2d48, #1db954));
+	block-size: 2px;
+	border-radius: 999px;
+	content: "";
+	inline-size: 3rem;
+}
+
+.mw-release-shelf.mw-release-shelf--editorial .mw-release-shelf__item {
+	background: var(--mw-color-glass, rgb(24 24 24 / 74%));
+	border: 1px solid var(--mw-color-glass-border, rgb(247 248 251 / 12%));
+	border-radius: var(--mw-radius-lg, 1rem);
+	overflow: hidden;
+	padding: 0.75rem;
+	position: relative;
+	transition:
+		border-color var(--mw-speed-normal, 300ms) var(--mw-ease-snap, ease),
+		box-shadow var(--mw-speed-normal, 300ms) var(--mw-ease-out, ease),
+		transform var(--mw-speed-normal, 300ms) var(--mw-ease-out, ease);
+}
+
+.mw-release-shelf.mw-release-shelf--editorial .mw-release-shelf__item::before {
+	background: var(--mw-gradient-editorial, linear-gradient(115deg, #fa2d48, #1db954));
+	block-size: 2px;
+	content: "";
+	inline-size: 100%;
+	inset-block-start: 0;
+	inset-inline-start: 0;
+	opacity: 0;
+	position: absolute;
+	transition: opacity var(--mw-speed-normal, 300ms) var(--mw-ease-snap, ease);
+}
+
+.mw-release-shelf.mw-release-shelf--editorial .mw-release-shelf__item:is(:hover, :focus-within) {
+	border-color: var(--mw-color-editorial-line, rgb(250 45 72 / 42%));
+	box-shadow: var(--mw-shadow-lift, 0 1.5rem 3rem rgb(0 0 0 / 30%));
+	transform: translateY(-0.35rem);
+}
+
+.mw-release-shelf.mw-release-shelf--editorial .mw-release-shelf__item:is(:hover, :focus-within)::before {
+	opacity: 1;
+}
+
+.mw-release-shelf.mw-release-shelf--editorial .mw-release-shelf__art {
+	border-radius: var(--mw-radius-md, 0.75rem);
+	box-shadow: 0 0.5rem 1.5rem rgb(0 0 0 / 22%);
+}
+
+.mw-release-shelf.mw-release-shelf--editorial .mw-release-shelf__body h3 {
+	font-size: 1.0625rem;
+	line-height: 1.3;
+	margin-block-start: 0.15rem;
+}
+
+.mw-release-shelf.mw-release-shelf--editorial .mw-release-shelf__body h3 a {
+	background-image: var(--mw-gradient-editorial, linear-gradient(115deg, #fa2d48, #1db954));
+	background-position: 0 100%;
+	background-repeat: no-repeat;
+	background-size: 0 2px;
+	transition: background-size var(--mw-speed-normal, 300ms) var(--mw-ease-out, ease);
+}
+
+.mw-release-shelf.mw-release-shelf--editorial .mw-release-shelf__item:is(:hover, :focus-within) .mw-release-shelf__body h3 a {
+	background-size: 100% 2px;
+}
+
+.mw-release-shelf.mw-release-shelf--editorial .mw-release-shelf__action {
+	align-items: center;
+	background: color-mix(in srgb, var(--mw-color-text) 8%, transparent);
+	border-radius: 999px;
+	display: inline-flex;
+	font-size: 0.75rem;
+	font-weight: 700;
+	gap: 0.35rem;
+	margin-block-start: 0.5rem;
+	padding: 0.4rem 0.85rem;
+	text-decoration: none;
+}
+
+.mw-release-shelf.mw-release-shelf--editorial .mw-release-shelf__action::after {
+	content: "→";
+	transition: transform var(--mw-speed-fast, 150ms) var(--mw-ease-snap, ease);
+}
+
+.mw-release-shelf.mw-release-shelf--editorial .mw-release-shelf__action:is(:hover, :focus-visible) {
+	background: var(--mw-color-editorial, #fa2d48);
+	color: #fff;
+}
+
+.mw-release-shelf.mw-release-shelf--editorial .mw-release-shelf__action:is(:hover, :focus-visible)::after {
+	transform: translateX(0.2rem);
+}
+
+/* Minimal: no card surface at all — rules and typography carry the rhythm. */
+.mw-release-shelf.mw-release-shelf--minimal .mw-release-shelf__item {
+	background: transparent;
+	border: 0;
+	border-block-end: 1px solid var(--mw-color-border-subtle, rgb(247 248 251 / 6%));
+	border-radius: 0;
+	padding-block: 0.85rem;
+}
+
+.mw-release-shelf.mw-release-shelf--minimal .mw-release-shelf__item:is(:hover, :focus-within) {
+	background: transparent;
+	transform: none;
+}
+
+.mw-release-shelf.mw-release-shelf--minimal .mw-release-shelf__item:is(:hover, :focus-within) .mw-release-shelf__body h3 a {
+	color: var(--mw-color-editorial, #fa2d48);
+}
+
+.mw-release-shelf.mw-release-shelf--minimal .mw-release-shelf__art {
+	border-radius: var(--mw-radius-sm, 0.5rem);
+	box-shadow: none;
+}
+
+.mw-release-shelf.mw-release-shelf--minimal .mw-release-shelf__body h3 {
+	font-size: 0.9375rem;
+	letter-spacing: 0.01em;
+	text-transform: uppercase;
+}
+
+.mw-release-shelf.mw-release-shelf--minimal .mw-release-shelf__artist {
+	color: var(--mw-color-text-muted, #a0a0a0);
+	display: block;
+	font-size: 0.75rem;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+}
+
+/* Feature layout ("ویژه‌نامه"): the editorial look reaches the hero card so a
+   variation is never a no-op just because the block renders its feature
+   layout instead of the card grid. */
+.mw-release-shelf.mw-release-shelf--feature.mw-release-shelf--editorial .mw-feature__hero {
+	border-radius: var(--mw-radius-xl, 1.5rem);
+	box-shadow: var(--mw-shadow-lift, 0 1.5rem 3rem rgb(0 0 0 / 30%));
+}
+
+.mw-release-shelf.mw-release-shelf--feature.mw-release-shelf--editorial .mw-feature__eyebrow {
+	align-items: center;
+	color: var(--mw-color-editorial, #fa2d48);
+	display: inline-flex;
+	gap: 0.45rem;
+	letter-spacing: var(--mw-eyebrow-tracking, 0.16em);
+}
+
+.mw-release-shelf.mw-release-shelf--feature.mw-release-shelf--editorial .mw-feature__eyebrow::after {
+	background: var(--mw-gradient-editorial, linear-gradient(115deg, #fa2d48, #1db954));
+	block-size: 2px;
+	border-radius: 999px;
+	content: "";
+	inline-size: 3rem;
+}
+
+.mw-release-shelf.mw-release-shelf--feature.mw-release-shelf--editorial .mw-feature__title {
+	font-family: var(--wp--preset--font-family--display, "Syne", sans-serif);
+	letter-spacing: -0.02em;
+	text-transform: uppercase;
+}
+
+.mw-release-shelf.mw-release-shelf--feature.mw-release-shelf--editorial .mw-feature__aside {
+	border-inline-start: 1px solid var(--mw-color-editorial-line, rgb(250 45 72 / 42%));
+	padding-inline-start: clamp(0.85rem, 2vw, 1.5rem);
+}
+
+.mw-release-shelf.mw-release-shelf--feature.mw-release-shelf--minimal .mw-feature__hero {
+	border-radius: var(--mw-radius-sm, 0.5rem);
+}
+
+.mw-release-shelf.mw-release-shelf--feature.mw-release-shelf--minimal .mw-feature__title,
+.mw-release-shelf.mw-release-shelf--feature.mw-release-shelf--minimal .mw-feature__aside-title {
+	text-transform: uppercase;
+}
+
+/* -------------------------------------------------------------------------
+ * 8. Slider variations — cinema / editorial
+ *
+ * Two surfaces consume these slugs:
+ *   • music-wave/release-slider   → `.mw-release-slider--cinema|editorial`
+ *   • shelf block in slider layout → the shelf's own variation class, which
+ *     is why the hero-slide tweaks below stay scoped to `--slider`.
+ * ---------------------------------------------------------------------- */
+
+/* Cinema: artwork fills the frame and the copy rides on the scrim. */
+.mw-release-slider.mw-release-slider--cinema .mw-release-slider__slide {
+	position: relative;
+}
+
+.mw-release-slider.mw-release-slider--cinema .mw-release-slider__artwrap {
+	border-radius: var(--mw-radius-xl, 1.5rem);
+	overflow: hidden;
+}
+
+.mw-release-slider.mw-release-slider--cinema .mw-release-slider__artwrap::after {
+	background: linear-gradient(
+		180deg,
+		transparent 34%,
+		color-mix(in srgb, var(--mw-color-canvas) 88%, transparent)
+	);
+	content: "";
+	inset: 0;
+	pointer-events: none;
+	position: absolute;
+	z-index: 1;
+}
+
+.mw-release-slider.mw-release-slider--cinema .mw-release-slider__play {
+	inset-block-start: auto;
+	inset-block-end: 0.85rem;
+	inset-inline-end: 0.85rem;
+	z-index: 3;
+}
+
+.mw-release-slider.mw-release-slider--cinema .mw-release-slider__body {
+	background: none;
+	inset-block-end: clamp(0.9rem, 3vw, 1.75rem);
+	inset-inline: clamp(0.9rem, 3vw, 1.75rem);
+	padding: 0;
+	position: absolute;
+	z-index: 2;
+}
+
+.mw-release-slider.mw-release-slider--cinema .mw-release-slider__body h3 {
+	font-family: var(--wp--preset--font-family--display, "Syne", sans-serif);
+	font-size: clamp(1.25rem, 3.4vw, 2.15rem);
+	letter-spacing: -0.02em;
+	line-height: 1.05;
+	text-transform: uppercase;
+}
+
+.mw-release-slider.mw-release-slider--cinema .mw-release-slider__body p {
+	-webkit-box-orient: vertical;
+	-webkit-line-clamp: 2;
+	display: -webkit-box;
+	overflow: hidden;
+}
+
+.mw-release-slider.mw-release-slider--cinema .mw-release-slider__artist {
+	color: var(--mw-color-text, #f7f8fb);
+	font-size: 0.75rem;
+	letter-spacing: 0.12em;
+	opacity: 0.85;
+	text-transform: uppercase;
+}
+
+/* Editorial: the card stays in flow; a magazine rule anchors the copy. */
+.mw-release-slider.mw-release-slider--editorial .mw-release-slider__art {
+	border-radius: var(--mw-radius-sm, 0.5rem);
+}
+
+.mw-release-slider.mw-release-slider--editorial .mw-release-slider__body {
+	border-inline-start: 3px solid var(--mw-color-editorial, #fa2d48);
+	padding-inline-start: clamp(0.75rem, 1.6vw, 1.15rem);
+}
+
+.mw-release-slider.mw-release-slider--editorial .mw-release-slider__body h3 {
+	font-family: var(--wp--preset--font-family--display, "Syne", sans-serif);
+	letter-spacing: -0.01em;
+	text-transform: uppercase;
+}
+
+.mw-release-slider.mw-release-slider--cinema .mw-release-slider__eyebrow,
+.mw-release-slider.mw-release-slider--editorial .mw-release-slider__eyebrow {
+	color: var(--mw-color-editorial, #fa2d48);
+	letter-spacing: var(--mw-eyebrow-tracking, 0.16em);
+}
+
+/* Shelf in slider layout: the editorial variation turns the copy block into a
+   captioned column instead of a floating card body. */
+.mw-release-shelf.mw-release-shelf--slider.mw-release-shelf--editorial .mw-hero-slide__content {
+	border-inline-start: 3px solid var(--mw-color-editorial, #fa2d48);
+	padding-inline-start: clamp(0.9rem, 2vw, 1.5rem);
+}
+
+/* -------------------------------------------------------------------------
+ * 9. Core block variations — stamp, editorial results, spotlight
+ *
+ * The plugin renderers add one modifier class; every rule below is scoped
+ * with the component class, so removing the style in the block editor
+ * restores the base look untouched.
+ * ---------------------------------------------------------------------- */
+
+/* release-meta → stamp: letterpress key/value rows without card chrome. */
+.mw-release-meta.mw-release-meta--stamp {
+	background: none;
+	border: 0;
+	border-block-start: 2px solid var(--mw-color-editorial, #fa2d48);
+	border-radius: 0;
+	box-shadow: none;
+	gap: 0;
+	padding: clamp(0.6rem, 1.4vw, 1rem) 0 0;
+}
+
+.mw-release-meta.mw-release-meta--stamp .mw-release-meta__facts {
+	grid-template-columns: 1fr;
+}
+
+.mw-release-meta.mw-release-meta--stamp .mw-release-meta__item {
+	align-items: baseline;
+	border-block-end: 1px solid var(--mw-color-border-subtle, rgb(247 248 251 / 6%));
+	display: flex;
+	gap: 1rem;
+	justify-content: space-between;
+	padding-block: 0.5rem;
+}
+
+.mw-release-meta.mw-release-meta--stamp .mw-release-meta__item:last-child {
+	border-block-end: 0;
+}
+
+.mw-release-meta.mw-release-meta--stamp dt {
+	color: var(--mw-color-text-muted, #a0a0a0);
+	font-size: 0.6875rem;
+	font-weight: 700;
+	letter-spacing: var(--mw-eyebrow-tracking, 0.16em);
+	text-transform: uppercase;
+}
+
+.mw-release-meta.mw-release-meta--stamp dd {
+	font-variant-numeric: tabular-nums;
+	margin: 0;
+	text-align: end;
+}
+
+.mw-release-meta.mw-release-meta--stamp .mw-release-meta__chip {
+	background: none;
+	border: 0;
+	border-radius: 0;
+	color: var(--mw-color-editorial, #fa2d48);
+	font-size: 0.75rem;
+	letter-spacing: 0.08em;
+	padding: 0;
+	text-transform: uppercase;
+}
+
+.mw-release-meta.mw-release-meta--stamp a.mw-release-meta__chip:is(:hover, :focus-visible) {
+	background: none;
+	color: var(--mw-color-accent-strong);
+	transform: none;
+	text-decoration: underline;
+	text-underline-offset: 0.28em;
+}
+
+/* catalog-results → editorial: a magazine summary line under a hairline. */
+.mw-catalog-results.mw-catalog-results--editorial {
+	border-block-end: 1px solid var(--mw-color-border-subtle, rgb(247 248 251 / 6%));
+	padding-block-end: 0.75rem;
+}
+
+.mw-catalog-results.mw-catalog-results--editorial .mw-catalog-results__count {
+	color: var(--mw-color-text, #f7f8fb);
+	font-size: 0.75rem;
+	font-weight: 700;
+	letter-spacing: var(--mw-eyebrow-tracking, 0.16em);
+	text-transform: uppercase;
+}
+
+.mw-catalog-results.mw-catalog-results--editorial .mw-catalog-results__filters a {
+	background: none;
+	border-radius: 0;
+	color: var(--mw-color-editorial, #fa2d48);
+	font-size: 0.75rem;
+	letter-spacing: 0.08em;
+	padding: 0.2rem 0;
+	text-transform: uppercase;
+	text-underline-offset: 0.28em;
+}
+
+.mw-catalog-results.mw-catalog-results--editorial .mw-catalog-results__filters a:is(:hover, :focus-visible) {
+	text-decoration: underline;
+}
+
+.mw-catalog-results.mw-catalog-results--editorial .mw-catalog-results__filters a[aria-current="page"],
+.mw-catalog-results.mw-catalog-results--editorial .mw-catalog-results__filters a[aria-current="true"] {
+	background: none;
+	border-block-end: 2px solid var(--mw-color-editorial, #fa2d48);
+	color: var(--mw-color-text, #f7f8fb);
+	font-weight: 700;
+}
+
+/* related-releases → editorial / vinyl: the inner shelf carries the look, the
+   root only adds the section rhythm (and a record-store rule for vinyl). */
+.mw-related-releases.mw-related-releases--editorial > .mw-related-releases__section + .mw-related-releases__section,
+.mw-related-releases.mw-related-releases--vinyl > .mw-related-releases__section + .mw-related-releases__section {
+	border-block-start: 1px solid var(--mw-color-border-subtle, rgb(247 248 251 / 6%));
+	padding-block-start: clamp(1.25rem, 3vw, 2rem);
+}
+
+.mw-related-releases.mw-related-releases--editorial .mw-related-releases__section-header h2,
+.mw-related-releases.mw-related-releases--vinyl .mw-related-releases__section-header h2 {
+	font-family: var(--wp--preset--font-family--display, "Syne", sans-serif);
+	letter-spacing: -0.01em;
+	text-transform: uppercase;
+}
+
+.mw-related-releases.mw-related-releases--vinyl > .mw-related-releases__section {
+	border-inline-start: 1px solid var(--mw-color-editorial-line, rgb(250 45 72 / 42%));
+	padding-inline-start: clamp(0.85rem, 2vw, 1.5rem);
+}
+
+/* artist-profile → spotlight: oversized circular portrait on a glow. */
+.mw-artist-profile.mw-artist-profile--spotlight {
+	background:
+		radial-gradient(circle at 18% 14%, var(--mw-color-editorial-soft, rgb(250 45 72 / 18%)), transparent 56%),
+		var(--mw-color-surface, #181818);
+	border: 1px solid var(--mw-color-glass-border, rgb(247 248 251 / 12%));
+	border-radius: var(--mw-radius-xl, 1.5rem);
+	padding: clamp(1.25rem, 3vw, 2.25rem);
+}
+
+.mw-artist-profile.mw-artist-profile--spotlight .mw-artist-profile__image {
+	border-radius: 50%;
+	box-shadow: 0 0 0 1px var(--mw-color-glass-border, rgb(247 248 251 / 12%)), var(--mw-shadow-lift, 0 1.5rem 3rem rgb(0 0 0 / 30%));
+}
+
+.mw-artist-profile.mw-artist-profile--spotlight .mw-artist-profile__name {
+	font-family: var(--wp--preset--font-family--display, "Syne", sans-serif);
+	font-size: clamp(1.5rem, 3.4vw, 2.4rem);
+	letter-spacing: -0.02em;
+	text-transform: uppercase;
+}
+
+.mw-artist-profile.mw-artist-profile--spotlight .mw-artist-profile__count {
+	color: var(--mw-color-editorial, #fa2d48);
+	font-size: 0.6875rem;
+	letter-spacing: var(--mw-eyebrow-tracking, 0.16em);
+	text-transform: uppercase;
+}
+
+/* -------------------------------------------------------------------------
+ * 10. Motion budget
+ * ---------------------------------------------------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+	.mw-eyebrow::before {
+		animation: none;
+	}
+
+	.mw-catalog-results__filters a,
+	.mw-chip,
+	.mw-release-meta__chip,
+	.mw-release-shelf__action,
+	.mw-release-shelf__body h3 a,
+	.mw-release-shelf__item {
+		transition: none;
+	}
+
+	.mw-release-shelf.mw-release-shelf--editorial .mw-release-shelf__item:is(:hover, :focus-within),
+	a.mw-chip:is(:hover, :focus-visible) {
+		transform: none;
+	}
+}

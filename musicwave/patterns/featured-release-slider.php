@@ -9,4 +9,4 @@
  */
 
 ?>
-<!-- wp:music-wave/release-slider {"align":"wide","eyebrow":"<?php echo esc_attr__( 'ساخته‌شده برای شما', 'musicwave' ); ?>","title":"<?php echo esc_attr__( 'انتشارهای منتخب', 'musicwave' ); ?>"} /-->
+<!-- wp:music-wave/release-slider {"className":"is-style-cinema","align":"wide","eyebrow":"<?php echo esc_attr__( 'ساخته‌شده برای شما', 'musicwave' ); ?>","title":"<?php echo esc_attr__( 'انتشارهای منتخب', 'musicwave' ); ?>"} /-->

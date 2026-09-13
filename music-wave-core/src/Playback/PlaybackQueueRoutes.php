@@ -184,6 +184,7 @@ final class PlaybackQueueRoutes {
 		}
 		$link = get_permalink( $release_id );
 		$full = '' !== $quality;
+		$lrc  = (string) get_post_meta( $release_id, 'mw_lyrics_lrc', true );
 
 		return array(
 			'releaseId'    => $release_id,
@@ -196,6 +197,9 @@ final class PlaybackQueueRoutes {
 			'previewLimit' => $full ? 0 : $this->preview_limit( $release_id ),
 			'full'         => $full,
 			'quality'      => $quality,
+			'lyricsLrc'    => $lrc,
+			'lyricsOffset' => (int) get_post_meta( $release_id, 'mw_lyrics_offset', true ),
+			'hasLyrics'    => '' !== trim( $lrc ),
 		);
 	}
 

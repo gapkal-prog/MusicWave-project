@@ -176,6 +176,12 @@ mw_assert_same(
 );
 mw_assert_same(
 	true,
+	is_file( $theme_directory . '/inc/site-header.php' )
+		&& false !== strpos( (string) file_get_contents( $theme_directory . '/inc/site-header.php' ), 'musicwave_site_header_slug' ),
+	'The theme must expose a site-wide header chrome switch.'
+);
+mw_assert_same(
+	true,
 	false !== strpos( $functions_source, 'musicwave_register_legacy_presentation_block' )
 		&& false !== strpos( $functions_source, "'musicwave/' . \$dir" ),
 	'Theme registration must retain hidden musicwave/* compatibility aliases after the namespace migration.'
@@ -187,6 +193,7 @@ $expected_theme_blocks = array(
 	'music-wave/release-slider',
 	'music-wave/theme-text',
 	'music-wave/theme-toggle',
+	'music-wave/synced-lyrics',
 );
 $theme_block_names = array();
 foreach ( $theme_block_files as $theme_block_file ) {
@@ -218,7 +225,7 @@ mw_assert_same( 27, count( $core_names ), 'Core metadata inventory must contain 
 mw_assert_same( count( $core_names ), count( array_unique( $core_names ) ), 'Core metadata names must be unique.' );
 
 $theme_json_blocks = isset( $theme_json['settings']['blocks'] ) && is_array( $theme_json['settings']['blocks'] ) ? $theme_json['settings']['blocks'] : array();
-foreach ( array( 'music-wave/release-shelf', 'music-wave/release-slider', 'music-wave/theme-text', 'music-wave/theme-toggle' ) as $theme_block_name ) {
+foreach ( array( 'music-wave/release-shelf', 'music-wave/release-slider', 'music-wave/theme-text', 'music-wave/theme-toggle', 'music-wave/synced-lyrics' ) as $theme_block_name ) {
 	mw_assert_same( true, isset( $theme_json_blocks[ $theme_block_name ] ), 'theme.json settings must expose the canonical ' . $theme_block_name . ' block.' );
 }
 foreach ( array( 'musicwave/release-shelf', 'musicwave/release-slider', 'musicwave/theme-text', 'musicwave/theme-toggle' ) as $legacy_block_name ) {
@@ -879,3 +886,192 @@ mw_assert_same(
 	false !== strpos( $theme_editor_script, "'slider'" ),
 	'The release shelf editor must expose the hero slider layout option.'
 );
+
+/*
+ * Style-variation contract.
+ *
+ * Every look offered in the block editor must exist three times: in the
+ * registry (PHP), in the stylesheet (the modifier class the renderer emits),
+ * and in the editor surface the admin picks it from. Parsing the two
+ * registries keeps this assertion honest when a slug is added or renamed —
+ * a label can never ship without the CSS behind it.
+ */
+$theme_variations = array();
+$current_source   = '';
+$inside_registry  = false;
+$registry_indent  = '';
+foreach ( explode( "\n", $functions_source ) as $functions_line ) {
+	if ( false !== strpos( $functions_line, 'function musicwave_presentation_style_variations()' ) ) {
+		$inside_registry = true;
+		continue;
+	}
+	if ( ! $inside_registry ) {
+		continue;
+	}
+	if ( 0 === strpos( $functions_line, '}' ) ) {
+		break;
+	}
+	/*
+	 * The registry body uses one indentation level per nesting step. Reading
+	 * that step from the `return array(` line keeps the parser working when
+	 * the whole function is re-indented, instead of silently matching nothing.
+	 */
+	if ( '' === $registry_indent ) {
+		if ( preg_match( '/^(\t+)return array\($/', $functions_line, $indent_match ) ) {
+			$registry_indent = $indent_match[1];
+		}
+		continue;
+	}
+	if ( preg_match( '/^' . $registry_indent . "\t'([a-z0-9-]+)'\s*=>\s*array\(/", $functions_line, $source_match ) ) {
+		$current_source                      = $source_match[1];
+		$theme_variations[ $current_source ] = array();
+		continue;
+	}
+	if ( '' !== $current_source && preg_match( '/^' . $registry_indent . "\t\t'([a-z0-9-]+)'\s*=>\s*array\(/", $functions_line, $variation_match ) ) {
+		$theme_variations[ $current_source ][] = $variation_match[1];
+	}
+}
+
+mw_assert_same(
+	array( 'release-shelf', 'release-slider' ),
+	array_keys( $theme_variations ),
+	'functions.php must expose style variations for both theme presentation blocks.'
+);
+mw_assert_same( true, count( $theme_variations['release-shelf'] ) >= 4, 'The release shelf must offer at least four looks.' );
+mw_assert_same( true, count( $theme_variations['release-slider'] ) >= 2, 'The release slider must offer at least two looks.' );
+
+$component_css = '';
+foreach ( (array) glob( $theme_directory . '/assets/css/components/*.css' ) as $component_stylesheet ) {
+	$component_css .= (string) file_get_contents( $component_stylesheet );
+}
+foreach ( $theme_variations as $source => $variation_names ) {
+	foreach ( $variation_names as $variation_name ) {
+		mw_assert_same(
+			true,
+			false !== strpos( $component_css, 'mw-' . $source . '--' . $variation_name ),
+			'The ' . $source . ' variation "' . $variation_name . '" must have a stylesheet rule for mw-' . $source . '--' . $variation_name . '.'
+		);
+	}
+}
+
+mw_assert_same(
+	true,
+	substr_count( $functions_source, 'musicwave_style_variant_class(' ) >= 3,
+	'Both presentation renderers (and the playlist shelf) must resolve the chosen variation into a modifier class.'
+);
+foreach ( array( 'musicwave-editorial', 'musicwave-vinyl' ) as $style_module ) {
+	mw_assert_same(
+		true,
+		false !== strpos( $functions_source, "'" . $style_module . "'" ),
+		'functions.php must register the ' . $style_module . ' style module.'
+	);
+}
+
+// The two editor surfaces must both expose the picker: the Styles panel
+// (register_block_style) and the select inside the block settings panel.
+foreach ( array( 'musicwavePresentationVariations', 'is-style-', 'styleVariant' ) as $editor_marker ) {
+	mw_assert_same(
+		true,
+		false !== strpos( $theme_editor_script, $editor_marker ),
+		'The theme block editor must expose the appearance picker marker ' . $editor_marker . '.'
+	);
+}
+
+$core_rendering_source = (string) file_get_contents( dirname( __DIR__ ) . '/music-wave-core/src/Modules/Rendering.php' );
+$core_editor_script    = (string) file_get_contents( dirname( __DIR__ ) . '/music-wave-core/assets/blocks.js' );
+foreach ( array( 'public static function style_variations()', "'musicWaveBlockStyles'", 'styleVariationPanel' ) as $core_marker ) {
+	mw_assert_same(
+		true,
+		false !== strpos( $core_rendering_source . $core_editor_script, $core_marker ),
+		'The Core plugin must expose the shared style registry marker ' . $core_marker . '.'
+	);
+}
+
+/*
+ * Block name => the component classes the renderer can turn a variation into.
+ * Most blocks modify their own root; some (preview player, release meta)
+ * delegate the look to a sub-component, so both candidates are accepted.
+ */
+$core_style_components = array(
+	'music-wave/preview-player'    => array( 'mw-preview-button', 'mw-preview-player' ),
+	'music-wave/account-dashboard' => array( 'mw-user-dashboard' ),
+	'music-wave/preview-button'    => array( 'mw-preview-button' ),
+	'music-wave/release-meta'      => array( 'mw-release-meta__facts', 'mw-release-meta' ),
+	'music-wave/catalog-filters'   => array( 'mw-catalog-filters' ),
+	'music-wave/collection-list'   => array( 'mw-collection-list' ),
+	'music-wave/related-releases'  => array( 'mw-related-releases' ),
+	'music-wave/catalog-results'   => array( 'mw-catalog-results' ),
+	'music-wave/artist-profile'    => array( 'mw-artist-profile' ),
+	'music-wave/public-playlists'  => array( 'mw-public-playlists' ),
+);
+$core_style_block   = '';
+$core_style_chunk   = '';
+$core_variation_map = array();
+$inside_styles      = false;
+foreach ( explode( "\n", $core_rendering_source ) as $rendering_line ) {
+	if ( false !== strpos( $rendering_line, 'public static function style_variations(): array {' ) ) {
+		$inside_styles = true;
+		continue;
+	}
+	if ( ! $inside_styles ) {
+		continue;
+	}
+	if ( preg_match( '/^\t\}\s*$/', $rendering_line ) ) {
+		break;
+	}
+	if ( preg_match( "/^\s*'(music-wave\/[a-z0-9-]+)'\s*=>\s*array\(/", $rendering_line, $block_match ) ) {
+		if ( '' !== $core_style_block ) {
+			$core_variation_map[ $core_style_block ] = $core_style_chunk;
+		}
+		$core_style_block = $block_match[1];
+		$core_style_chunk = '';
+		continue;
+	}
+	$core_style_chunk .= $rendering_line . "\n";
+}
+if ( '' !== $core_style_block ) {
+	$core_variation_map[ $core_style_block ] = $core_style_chunk;
+}
+
+$core_style_blocks = array_keys( $core_variation_map );
+sort( $core_style_blocks );
+$core_style_expected = array_keys( $core_style_components );
+sort( $core_style_expected );
+mw_assert_same(
+	$core_style_expected,
+	$core_style_blocks,
+	'Rendering.php must register style variations for exactly the known dynamic blocks (the parser and the map must agree).'
+);
+foreach ( $core_variation_map as $core_style_block_name => $core_style_body ) {
+	// Read one entry per 'name' key: everything up to the next one.
+	preg_match_all( "/'name'\s*=>\s*'([a-z0-9-]+)'(.*?)(?='name'\s*=>|\z)/s", $core_style_body, $core_style_entries, PREG_SET_ORDER );
+	mw_assert_same( true, ! empty( $core_style_entries ), $core_style_block_name . ' must declare at least one style variation.' );
+	foreach ( $core_style_entries as $core_style_entry ) {
+		$core_style_name = $core_style_entry[1];
+		mw_assert_same(
+			true,
+			false !== strpos( $core_style_entry[2], "'label'" ),
+			$core_style_block_name . ' style variation "' . $core_style_name . '" must carry a translatable label.'
+		);
+		if ( false !== strpos( $core_style_entry[2], "'is_default'" ) ) {
+			// The default look is the component's own stylesheet.
+			continue;
+		}
+		$core_style_candidates = array();
+		foreach ( $core_style_components[ $core_style_block_name ] as $core_style_component ) {
+			$core_style_candidates[] = $core_style_component . '--' . $core_style_name;
+		}
+		$core_style_found = false;
+		foreach ( $core_style_candidates as $core_style_class ) {
+			if ( false !== strpos( $component_css, $core_style_class ) ) {
+				$core_style_found = true;
+				break;
+			}
+		}
+		mw_assert_same(
+			true,
+			$core_style_found,
+			'The registered variation ' . $core_style_block_name . ' "' . $core_style_name . '" must ship one of these stylesheet rules: ' . implode( ', ', $core_style_candidates ) . '.'
+		);
+	}
+}

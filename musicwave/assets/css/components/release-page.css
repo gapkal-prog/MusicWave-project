@@ -1,0 +1,433 @@
+/**
+ * Single release page — WAVE mockup closeness (album / track / podcast).
+ */
+
+.mw-release-page,
+.mw-release-hero {
+	box-sizing: border-box;
+	width: auto;
+	max-width: 100%;
+	margin-inline: auto;
+}
+
+.mw-release-hero {
+	--mw-color-vinyl-label: var(--mw-hero-cover, var(--mw-color-editorial, #fa2d65));
+	overflow: hidden;
+	padding: clamp(0.85rem, 2vw, 1.35rem);
+	background:
+		linear-gradient(
+			165deg,
+			color-mix(in srgb, var(--mw-hero-cover, var(--mw-color-editorial, #fa2d65)) 34%, transparent),
+			var(--mw-color-surface, #16181d) 58%
+		);
+	border-radius: 1.15rem;
+}
+
+.mw-release-hero__inner {
+	align-items: center;
+}
+
+.mw-release-hero__cover-stack {
+	position: relative;
+	isolation: isolate;
+	margin: 0;
+}
+
+.mw-release-hero__cover-stack .wp-block-post-featured-image {
+	margin: 0;
+	overflow: hidden;
+	border-radius: 0.9rem;
+	box-shadow: 0 1.25rem 2.75rem rgb(0 0 0 / 55%);
+}
+
+.mw-release-hero__cover-stack .wp-block-post-featured-image img {
+	display: block;
+	width: 100%;
+	aspect-ratio: 1;
+	object-fit: cover;
+}
+
+.mw-release-hero__cover-stack::after {
+	content: "Lossless";
+	position: absolute;
+	z-index: 2;
+	inset-block-start: 0.75rem;
+	inset-inline-start: 0.75rem;
+	padding: 0.28rem 0.55rem;
+	color: #e5b868;
+	font-size: 0.62rem;
+	font-weight: 800;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+	background: rgb(14 15 18 / 82%);
+	border-radius: 0.4rem;
+	backdrop-filter: blur(10px);
+	pointer-events: none;
+}
+
+.mw-release-hero__cover-stack .mw-release-hero__cover-play,
+.mw-release-hero__cover-stack .mw-preview-player,
+.mw-release-hero .mw-card-play.mw-release-actions__play {
+	display: none;
+}
+
+.mw-release-hero__info {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	gap: 0.85rem;
+	min-width: 0;
+}
+
+.mw-release-hero__overline {
+	gap: 0.45rem;
+}
+
+.mw-release-hero__overline .wp-block-post-terms {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.4rem;
+	margin: 0;
+}
+
+.mw-release-hero__overline .wp-block-post-terms a {
+	display: inline-flex;
+	align-items: center;
+	padding: 0.22rem 0.7rem;
+	font-size: 0.68rem;
+	font-weight: 700;
+	letter-spacing: 0.04em;
+	text-decoration: none;
+	border-radius: 999px;
+}
+
+.mw-release-hero__chip--type a {
+	color: #ffb2bb;
+	background: color-mix(in srgb, var(--mw-color-editorial, #fa2d65) 22%, transparent);
+}
+
+.mw-release-hero__chip--genre a {
+	color: #82faab;
+	background: color-mix(in srgb, #21a55f 22%, transparent);
+}
+
+.mw-release-hero__chip--mood a {
+	color: #65dd91;
+	background: color-mix(in srgb, #65dd91 16%, transparent);
+}
+
+.mw-release-hero__chip--label a {
+	color: #c6bfff;
+	background: color-mix(in srgb, #6c5ce7 22%, transparent);
+}
+
+.mw-release-hero__specs .mw-release-meta__chips {
+	display: none;
+}
+
+.mw-release-hero__artist {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 0.75rem;
+	margin: 0;
+	padding: 0;
+	max-width: 100%;
+	background: transparent;
+	border: 0;
+	box-shadow: none;
+}
+
+.mw-release-hero__artist .mw-artist-profile__row,
+.mw-release-hero__artist .mw-artist-profile__slider,
+.mw-release-hero__artist.mw-artist-profile--card {
+	display: flex;
+	align-items: center;
+	gap: 0.75rem;
+	width: 100%;
+}
+
+.mw-release-hero__artist .mw-artist-profile__image,
+.mw-release-hero__artist .mw-artist-profile__image img {
+	width: 2.5rem;
+	height: 2.5rem;
+	border-radius: 50%;
+	object-fit: cover;
+}
+
+.mw-release-hero__artist .mw-artist-profile__body {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 0.45rem 0.75rem;
+	min-width: 0;
+}
+
+.mw-release-hero__artist .mw-artist-profile__name {
+	margin: 0;
+	font-size: 0.95rem;
+	font-weight: 700;
+}
+
+.mw-release-hero__artist .mw-artist-profile__count {
+	margin: 0;
+	color: var(--mw-color-text-muted);
+	font-size: 0.78rem;
+}
+
+.mw-release-hero__artist .mw-artist-profile__library .mw-library-button {
+	min-height: 2rem;
+	padding: 0.35rem 0.85rem;
+	color: var(--mw-color-text);
+	font-size: 0.75rem;
+	font-weight: 700;
+	background: color-mix(in srgb, var(--mw-color-text) 10%, transparent);
+	border: 0;
+	border-radius: 999px;
+}
+
+.mw-release-hero__artist .mw-artist-profile__bio,
+.mw-release-hero__artist .mw-artist-profile__link {
+	display: none;
+}
+
+.mw-release-hero__specs {
+	margin: 0;
+	padding: 0;
+	background: transparent;
+	border: 0;
+	box-shadow: none;
+}
+
+.mw-release-hero__specs .mw-release-meta__facts,
+.mw-release-hero__specs .mw-release-meta__facts--inline {
+	display: grid;
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+	gap: 0.65rem 1rem;
+	width: 100%;
+	max-width: 22rem;
+}
+
+.mw-release-hero__specs .mw-release-meta__item {
+	margin: 0;
+	padding: 0;
+	background: transparent;
+	border: 0;
+}
+
+.mw-release-hero__specs .mw-release-meta__item dt {
+	margin: 0 0 0.15rem;
+	color: var(--mw-color-text-muted);
+	font-size: 0.62rem;
+	font-weight: 800;
+	letter-spacing: 0.1em;
+	text-transform: uppercase;
+}
+
+.mw-release-hero__specs .mw-release-meta__item dd {
+	margin: 0;
+	font-size: 0.95rem;
+	font-weight: 700;
+}
+
+.mw-release-hero__info .wp-block-post-title {
+	margin: 0;
+	font-size: clamp(1.85rem, 4.4vw, 2.75rem);
+	font-weight: 800;
+	letter-spacing: -0.03em;
+	line-height: 1.05;
+}
+
+.mw-release-stage .mw-collection-list__quality,
+.mw-release-stage .mw-collection-list__table-quality {
+	display: none;
+}
+
+.mw-release-actions {
+	margin-block: 0.35rem 0;
+	gap: 0.55rem;
+}
+
+.mw-release-actions .mw-preview-button,
+.mw-release-actions .mw-preview-player .mw-card-play {
+	width: auto;
+	min-height: 2.85rem;
+	height: auto;
+	padding: 0.65rem 1.35rem;
+	color: #fff;
+	font-size: 0.95rem;
+	font-weight: 800;
+	background: var(--mw-color-editorial, #fa2d65);
+	border-radius: 999px;
+	box-shadow: 0 8px 20px color-mix(in srgb, var(--mw-color-editorial, #fa2d65) 38%, transparent);
+}
+
+.mw-release-actions .mw-preview-button > span:not([class]) {
+	position: static;
+	width: auto;
+	height: auto;
+	overflow: visible;
+	clip-path: none;
+}
+
+.mw-release-actions .mw-library-button--heart,
+.mw-release-actions .mw-share-button,
+.mw-release-actions .mw-shuffle-button,
+.mw-release-actions .mw-playlist-picker__trigger {
+	width: 2.75rem;
+	height: 2.75rem;
+	color: var(--mw-color-text-muted);
+	background: color-mix(in srgb, var(--mw-color-text) 8%, transparent);
+	border: 0;
+	border-radius: 999px;
+}
+
+.mw-release-actions .mw-library-button--heart[aria-pressed="true"] {
+	color: var(--mw-color-editorial, #fa2d65);
+}
+
+.mw-release-type-single .mw-release-actions .mw-shuffle-button {
+	display: none;
+}
+
+.mw-lyrics__header {
+	align-items: center;
+}
+
+.mw-lyrics__heading {
+	display: grid;
+	gap: 0.2rem;
+}
+
+.mw-lyrics__modes {
+	display: inline-flex;
+	padding: 0.2rem;
+	background: color-mix(in srgb, var(--mw-color-canvas) 80%, transparent);
+	border-radius: 999px;
+}
+
+.mw-lyrics__mode {
+	min-height: 1.7rem;
+	padding: 0.2rem 0.75rem;
+	color: var(--mw-color-text-muted);
+	font-size: 0.7rem;
+	font-weight: 700;
+	background: transparent;
+	border: 0;
+	border-radius: 999px;
+	cursor: pointer;
+}
+
+.mw-lyrics__mode.is-active {
+	color: #fff;
+	background: var(--mw-color-editorial, #fa2d65);
+}
+
+.mw-release-stage__primary > .mw-collection-list > .mw-collection-list__heading {
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+}
+
+.mw-release-stage__primary > .mw-collection-list > .mw-collection-list__heading::after {
+	content: "Hi-Res";
+	padding: 0.15rem 0.45rem;
+	color: var(--mw-color-text-muted);
+	font-size: 0.62rem;
+	font-weight: 800;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+	background: color-mix(in srgb, var(--mw-color-text) 8%, transparent);
+	border-radius: 0.3rem;
+}
+
+.mw-release-stage {
+	align-items: start;
+	gap: clamp(1.25rem, 3vw, 2rem);
+	margin-block: 0 var(--wp--preset--spacing--50, 3rem);
+}
+
+.mw-release-stage__primary,
+.mw-release-stage__aside {
+	min-width: 0;
+}
+
+.mw-release-stage__primary > .mw-collection-list,
+.mw-release-stage__primary > .mw-lyrics,
+.mw-release-stage__primary > .mw-download-action,
+.mw-release-stage__aside > .wp-block-template-part,
+.mw-release-stage__aside > .mw-sidebar,
+.mw-release-stage__aside > .mw-release-credits,
+.mw-release-stage__aside > .mw-access-panel {
+	padding: clamp(1rem, 2.4vw, 1.5rem);
+	background: var(--mw-color-surface, #16181d);
+	border: 0;
+	border-radius: 1.15rem;
+	box-shadow: 0 1rem 2.4rem rgb(0 0 0 / 28%);
+}
+
+.mw-release-stage__aside {
+	display: grid;
+	gap: 1.25rem;
+}
+
+.mw-release-stage__aside > .wp-block-template-part:empty {
+	display: none;
+}
+
+.mw-release-stage:not(:has(.mw-sidebar)) > .mw-release-stage__primary,
+.mw-release-stage:not(:has(.mw-sidebar)) > .mw-release-stage__aside {
+	flex-basis: 100% !important;
+	max-inline-size: 100%;
+}
+
+.mw-release-stage__aside:not(:has(.mw-sidebar)):not(:has(.mw-release-credits)):not(:has(.mw-access-panel)) {
+	display: none;
+}
+
+.mw-collection-list.mw-collection-list--tracklist li[data-mw-playing] {
+	background: color-mix(in srgb, var(--mw-color-editorial, #fa2d65) 18%, transparent);
+	border-radius: 0.75rem;
+}
+
+.mw-collection-list.mw-collection-list--tracklist li[data-mw-playing] .mw-collection-list__title,
+.mw-collection-list.mw-collection-list--tracklist li[data-mw-playing] .mw-collection-list__duration {
+	color: var(--mw-color-editorial, #fa2d65);
+	font-weight: 800;
+}
+
+.mw-collection-list__quality {
+	padding: 0.15rem 0.45rem;
+	color: #65dd91;
+	font-size: 0.65rem;
+	font-weight: 800;
+	letter-spacing: 0.04em;
+	text-transform: uppercase;
+	background: color-mix(in srgb, #65dd91 12%, transparent);
+	border-radius: 0.35rem;
+}
+
+.mw-release-type-podcast .mw-release-hero__cover::before,
+.mw-release-type-single .mw-release-hero__cover::before {
+	opacity: 0.28;
+}
+
+@media (max-width: 48rem) {
+	.mw-release-stage > .wp-block-column {
+		flex-basis: 100% !important;
+	}
+
+	.mw-release-hero {
+		margin-inline: 0;
+		border-radius: 1.15rem;
+	}
+
+	.mw-release-hero__cover-stack {
+		max-width: 18rem;
+		margin-inline: auto;
+	}
+
+	.mw-release-actions {
+		justify-content: flex-start;
+	}
+}

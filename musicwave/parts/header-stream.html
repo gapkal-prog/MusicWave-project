@@ -1,27 +1,69 @@
 <!-- wp:group {"align":"full","className":"mw-site-header mw-site-header--stream","style":{"spacing":{"padding":{"top":"0","bottom":"0"}}},"layout":{"type":"default"}} -->
 <div class="wp-block-group alignfull mw-site-header mw-site-header--stream"><!-- wp:group {"tagName":"aside","anchor":"mw-rail","className":"mw-rail","layout":{"type":"flex","orientation":"vertical","justifyContent":"stretch"}} -->
-<aside class="wp-block-group mw-rail" id="mw-rail"><!-- wp:group {"className":"mw-rail__brand mw-brand","style":{"spacing":{"blockGap":"0.65rem"}},"layout":{"type":"flex","flexWrap":"nowrap","verticalAlignment":"center"}} -->
-<div class="wp-block-group mw-rail__brand mw-brand"><!-- wp:site-logo {"width":36,"shouldSyncIcon":true} /-->
+<aside class="wp-block-group mw-rail" id="mw-rail"><!-- wp:group {"className":"mw-rail__brand mw-brand","style":{"spacing":{"blockGap":"0.6rem"}},"layout":{"type":"flex","flexWrap":"nowrap","verticalAlignment":"center"}} -->
+<div class="wp-block-group mw-rail__brand mw-brand"><!-- wp:site-logo {"width":34,"shouldSyncIcon":true} /-->
 <!-- wp:site-title {"level":0,"className":"mw-rail__title","style":{"typography":{"fontWeight":"800","letterSpacing":"-0.03em"}},"fontSize":"medium"} /--></div>
 <!-- /wp:group -->
-<!-- wp:navigation {"overlayMenu":"never","className":"mw-rail__nav","layout":{"type":"flex","orientation":"vertical","justifyContent":"stretch","flexWrap":"nowrap"}} -->
-<!-- wp:home-link {"label":"خانه","className":"mw-rail__item mw-rail__item--home"} /-->
-<!-- wp:navigation-link {"label":"پیشنهادی","url":"/browse/","kind":"custom","className":"mw-rail__item mw-rail__item--discover"} /-->
-<!-- wp:navigation-link {"label":"جستجو","url":"/?s=","kind":"custom","className":"mw-rail__item mw-rail__item--search"} /-->
-<!-- wp:navigation-link {"label":"موسیقی من","url":"/account/","kind":"custom","className":"mw-rail__item mw-rail__item--library"} /-->
-<!-- /wp:navigation --></aside>
+
+<!-- wp:paragraph {"className":"mw-rail__label"} -->
+<p class="mw-rail__label">فیدهای کشف</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:navigation {"overlayMenu":"never","className":"mw-rail__nav mw-rail__nav--primary","layout":{"type":"flex","orientation":"vertical","justifyContent":"stretch","flexWrap":"nowrap"}} -->
+<!-- wp:home-link {"label":"خانه","className":"mw-icon-home"} /-->
+<!-- wp:navigation-link {"label":"کشف","url":"/discover/","kind":"custom","className":"mw-icon-discover"} /-->
+<!-- wp:navigation-link {"label":"مرور","url":"/browse/","kind":"custom","className":"mw-icon-browse"} /-->
+<!-- wp:navigation-link {"label":"قطعه‌ها","url":"/?post_type=mw_release","kind":"custom","className":"mw-icon-tracks"} /-->
+<!-- wp:navigation-link {"label":"آلبوم‌ها","url":"/albums/","kind":"custom","className":"mw-icon-albums"} /-->
+<!-- wp:navigation-link {"label":"هنرمندان","url":"/artists/","kind":"custom","className":"mw-icon-artists"} /-->
+<!-- wp:navigation-link {"label":"فهرست‌های پخش","url":"/playlists/","kind":"custom","className":"mw-icon-playlists"} /-->
+<!-- wp:navigation-link {"label":"پادکست‌ها","url":"/podcasts/","kind":"custom","className":"mw-icon-podcasts"} /-->
+<!-- /wp:navigation -->
+
+<!-- wp:paragraph {"className":"mw-rail__label"} -->
+<p class="mw-rail__label">گنجینهٔ من</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:navigation {"overlayMenu":"never","className":"mw-rail__nav mw-rail__nav--vault","layout":{"type":"flex","orientation":"vertical","justifyContent":"stretch","flexWrap":"nowrap"}} -->
+<!-- wp:navigation-link {"label":"کتابخانه","url":"/account/","kind":"custom","className":"mw-icon-library"} /-->
+<!-- wp:navigation-link {"label":"علاقه‌مندی‌ها","url":"/account/favorites/","kind":"custom","className":"mw-icon-favorites"} /-->
+<!-- wp:navigation-link {"label":"دانلودها","url":"/account/downloads/","kind":"custom","className":"mw-icon-downloads"} /-->
+<!-- wp:navigation-link {"label":"تاریخچه","url":"/account/history/","kind":"custom","className":"mw-icon-history"} /-->
+<!-- /wp:navigation -->
+
+<!-- wp:group {"className":"mw-rail__foot","layout":{"type":"flex","orientation":"vertical","justifyContent":"stretch"}} -->
+<div class="wp-block-group mw-rail__foot"><!-- wp:navigation {"overlayMenu":"never","className":"mw-rail__nav mw-rail__nav--settings","layout":{"type":"flex","orientation":"vertical","justifyContent":"stretch","flexWrap":"nowrap"}} -->
+<!-- wp:navigation-link {"label":"تنظیمات","url":"/account/settings/","kind":"custom","className":"mw-icon-settings"} /-->
+<!-- /wp:navigation -->
+<!-- wp:loginout {"className":"mw-rail__user"} /--></div>
+<!-- /wp:group --></aside>
 <!-- /wp:group -->
+
 <!-- wp:group {"className":"mw-stream-topbar","layout":{"type":"constrained"}} -->
-<div class="wp-block-group mw-stream-topbar"><!-- wp:group {"align":"wide","className":"mw-site-header__inner","style":{"spacing":{"padding":{"top":"var:preset|spacing|20","bottom":"var:preset|spacing|20"},"blockGap":"var:preset|spacing|20"}},"layout":{"type":"flex","flexWrap":"nowrap","justifyContent":"space-between","verticalAlignment":"center"}} -->
-<div class="wp-block-group alignwide mw-site-header__inner" style="padding-top:var(--wp--preset--spacing--20);padding-bottom:var(--wp--preset--spacing--20)"><!-- wp:group {"className":"mw-brand mw-stream-topbar__brand","style":{"spacing":{"blockGap":"0.65rem"}},"layout":{"type":"flex","flexWrap":"nowrap","verticalAlignment":"center"}} -->
-<div class="wp-block-group mw-brand mw-stream-topbar__brand"><!-- wp:site-logo {"width":32,"shouldSyncIcon":true} /-->
+<div class="wp-block-group mw-stream-topbar"><!-- wp:group {"align":"wide","className":"mw-site-header__inner","style":{"spacing":{"blockGap":"0.75rem"}},"layout":{"type":"flex","flexWrap":"nowrap","justifyContent":"space-between","verticalAlignment":"center"}} -->
+<div class="wp-block-group alignwide mw-site-header__inner"><!-- wp:group {"className":"mw-brand mw-stream-topbar__brand","style":{"spacing":{"blockGap":"0.6rem"}},"layout":{"type":"flex","flexWrap":"nowrap","verticalAlignment":"center"}} -->
+<div class="wp-block-group mw-brand mw-stream-topbar__brand"><!-- wp:site-logo {"width":30,"shouldSyncIcon":true} /-->
 <!-- wp:site-title {"level":0,"style":{"typography":{"fontWeight":"800","letterSpacing":"-0.03em"}},"fontSize":"medium"} /--></div>
 <!-- /wp:group -->
-<!-- wp:search {"label":"جستجو در سانگ سرا","showLabel":false,"placeholder":"جستجو در سانگ سرا","buttonText":"جستجو","buttonPosition":"button-inside","buttonUseIcon":true,"className":"mw-stream-search"} /-->
-<!-- wp:group {"className":"mw-header-actions","style":{"spacing":{"blockGap":"var:preset|spacing|20"}},"layout":{"type":"flex","flexWrap":"nowrap","justifyContent":"right","verticalAlignment":"center"}} -->
-<div class="wp-block-group mw-header-actions"><!-- wp:music-wave/theme-toggle /-->
+
+<!-- wp:search {"label":"جستجو","showLabel":false,"placeholder":"جستجوی قطعه، هنرمند یا آلبوم…","buttonText":"جستجو","buttonPosition":"button-inside","buttonUseIcon":true,"className":"mw-stream-search"} /-->
+
+<!-- wp:group {"className":"mw-header-actions","style":{"spacing":{"blockGap":"0.5rem"}},"layout":{"type":"flex","flexWrap":"nowrap","justifyContent":"right","verticalAlignment":"center"}} -->
+<div class="wp-block-group mw-header-actions"><!-- wp:paragraph {"className":"mw-topbar-badge"} -->
+<p class="mw-topbar-badge">FLAC بدون افت · 24bit/96kHz</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:buttons {"className":"mw-topbar-vip"} -->
+<div class="wp-block-buttons mw-topbar-vip"><!-- wp:button {"className":"mw-btn-vip","url":"/vip/"} -->
+<div class="wp-block-button mw-btn-vip"><a class="wp-block-button__link wp-element-button" href="/vip/">ارتقا به VIP</a></div>
+<!-- /wp:button --></div>
+<!-- /wp:buttons -->
+
+<!-- wp:music-wave/theme-toggle /-->
+
 <!-- wp:navigation {"overlayMenu":"never","className":"mw-stream-account","layout":{"type":"flex","flexWrap":"nowrap"}} -->
-<!-- wp:navigation-link {"label":"حساب کاربری","url":"/account/","kind":"custom","className":"mw-stream-account__item"} /-->
+<!-- wp:navigation-link {"label":"اعلان‌ها","url":"/account/notifications/","kind":"custom","className":"mw-icon-bell mw-stream-account__bell"} /-->
+<!-- wp:navigation-link {"label":"حساب کاربری","url":"/account/","kind":"custom","className":"mw-icon-account mw-stream-account__item"} /-->
 <!-- /wp:navigation --></div>
 <!-- /wp:group --></div>
 <!-- /wp:group --></div>

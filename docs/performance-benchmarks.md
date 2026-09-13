@@ -41,6 +41,11 @@ npx @wordpress/env run cli wp eval-file wp-content/mw-tools/benchmark-catalog.ph
   Library summaries, library counts, facet counts, related-release ranking, and
   recommendation genre signals all use it, replacing one query per release per
   taxonomy. Regression tests assert the batched call count directly.
+- **Batched release visibility.** `ReleaseVisibility::prime()` warms the post
+  cache (and post meta for summary rendering) for a whole candidate set in one
+  query, so library pages, playlist views, and facet scans evaluate their
+  releases from cache instead of one `get_post_type()`/`get_post_status()` read
+  per row. Callers that know their candidate IDs call it before the loop.
 - **Bounded scans.** Facets scan at most 200 published releases and report
   `approximate: true` instead of widening the query. Autocomplete asks for at
   most `limit * 3` candidates (hard cap 50) and 4 term hits per taxonomy.
@@ -68,3 +73,19 @@ index cannot leak unpublished releases.
 Paste the harness table into the Stage 5 evidence block in `PROJECT_PLAN.md`
 together with the WordPress/PHP versions and the dataset size. A budget change
 requires a note explaining what moved and why.
+
+### Recorded run — 2026-09-10 (CI, WordPress 6.8 / PHP 8.2, `seed=500`)
+
+| Scenario | Queries | Budget | ms | Budget | Detail |
+|---|---:|---:|---:|---:|---|
+| `catalog_archive` | 5 | 40 | 3.3 | 1500 | 24 of 500 releases |
+| `catalog_facets` | 9 | 25 | 10.1 | 2500 | 200 matched, approximate=yes |
+| `catalog_facets_hot` | 0 | 2 | 0.0 | 200 | 200 matched (cached) |
+| `catalog_suggest` | 18 | 20 | 7.0 | 1500 | 10 suggestions |
+| `library_page` | 29 | 40 | 24.9 | 1500 | 24 items on page 1 |
+| `playlist_view` | 5 | 40 | 4.0 | 1500 | 500 playlist items |
+| `recommendations` | 1 | 40 | 0.5 | 1500 | 12 recommendations |
+
+This run is the first fully green fixture job: before the visibility batching,
+`playlist_view` measured 280/40, `library_page` 77/40, and `catalog_facets`
+208/25 — one post read per candidate row on each of the three surfaces.

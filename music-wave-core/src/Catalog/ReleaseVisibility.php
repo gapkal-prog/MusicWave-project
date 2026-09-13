@@ -25,6 +25,37 @@ final class ReleaseVisibility {
 	}
 
 	/**
+	 * Warm the post cache for a batch of release IDs.
+	 *
+	 * Every check above reads post type and status, which costs one database
+	 * query per uncached post. Callers that already know their candidate set
+	 * (library pages, facet scans, playlist views) call this once so the
+	 * visibility loop reads a single batched query instead of N.
+	 *
+	 * @param array<int, mixed> $release_ids Candidate post IDs.
+	 * @param bool              $with_meta   Also warm post meta, for callers
+	 *                                       that render release summaries
+	 *                                       (release year, thumbnail id).
+	 * @return void
+	 */
+	public function prime( array $release_ids, bool $with_meta = false ): void {
+		$ids = array();
+		foreach ( $release_ids as $release_id ) {
+			$release_id = absint( $release_id );
+			if ( $release_id > 0 ) {
+				$ids[ $release_id ] = $release_id;
+			}
+		}
+
+		if ( array() === $ids ) {
+			return;
+		}
+
+		// Term caches stay for the callers that prime them per taxonomy.
+		_prime_post_caches( array_values( $ids ), false, $with_meta );
+	}
+
+	/**
 	 * Whether the current request actor may read the release record.
 	 *
 	 * Published releases are publicly readable. Non-published releases require

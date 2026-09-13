@@ -8,4 +8,4 @@
  * @package MusicWave
  */
 ?>
-<!-- wp:music-wave/release-shelf {"eyebrow":"ساخته‌شده برای شما","title":"بیشتر کشف کنید","orderBy":"rand","itemsToShow":12,"columns":5,"layout":"scroll","showArtwork":true,"showArtist":true,"showAction":false} /-->
+<!-- wp:music-wave/release-shelf {"className":"is-style-editorial","eyebrow":"ساخته‌شده برای شما","title":"بیشتر کشف کنید","orderBy":"rand","itemsToShow":12,"columns":5,"layout":"scroll","showArtwork":true,"showArtist":true,"showAction":false} /-->

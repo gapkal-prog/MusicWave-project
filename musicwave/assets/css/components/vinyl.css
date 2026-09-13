@@ -1,0 +1,379 @@
+/*
+ * MusicWave vinyl vocabulary.
+ *
+ * Physical-media chrome for the editorial pass: the sleeve treatment that turns
+ * the single-release cover into a record, and the block style variations that
+ * turn existing MusicWave surfaces into record-store displays (`--vinyl`),
+ * mosaic grids (`--bento`), or liner-note track listings (`--tracklist`).
+ *
+ * Only classes a renderer, template, or bundled pattern actually emits live
+ * here — the shared "now playing" equalizer stays in global-player.css
+ * (`.mw-equalizer`) so there is one implementation, not two.
+ *
+ * Everything is token driven (assets/css/tokens.css) so both schemes and all
+ * six style variations stay in sync, and every transform is guarded by the
+ * `prefers-reduced-motion` block at the end of the file.
+ *
+ * RTL: the disc slides *outward* — `--mw-vinyl-out` flips sign under
+ * `html[dir="rtl"]`, so no logical/physical property is hardcoded.
+ */
+
+/* -------------------------------------------------------------------------
+ * 1. Single release hero — the cover becomes a vinyl sleeve
+ *
+ * The disc lives on the cover column (behind the artwork), slides outward on
+ * hover/focus and turns while it is out. No template markup is required: the
+ * release template already renders the featured image inside
+ * `.mw-release-hero__cover`.
+ * ---------------------------------------------------------------------- */
+
+.mw-release-hero__cover {
+	isolation: isolate;
+	position: relative;
+}
+
+.mw-release-hero__cover::before {
+	aspect-ratio: 1;
+	background:
+		radial-gradient(circle at 50% 50%, var(--mw-color-vinyl-label, #fa2d48) 0 10%, transparent 10.5%),
+		repeating-radial-gradient(circle at 50% 50%, var(--mw-color-vinyl-groove, rgb(247 248 251 / 11%)) 0 1px, transparent 1px 3px),
+		radial-gradient(circle at 50% 50%, var(--mw-color-vinyl, #1f2024) 0 58%, var(--mw-color-vinyl-deep, #0c0d10) 100%);
+	border-radius: 50%;
+	box-shadow:
+		inset 0 0 0 1px var(--mw-color-glass-border, rgb(247 248 251 / 12%)),
+		0 1.25rem 2.25rem rgb(0 0 0 / 38%);
+	content: "";
+	inline-size: 88%;
+	inset-block-start: 6%;
+	inset-inline-end: -6%;
+	pointer-events: none;
+	position: absolute;
+	transition: translate var(--mw-speed-slow, 520ms) var(--mw-ease-out, ease);
+	translate: 0 0;
+	z-index: 0;
+}
+
+.mw-release-hero__cover > * {
+	position: relative;
+	z-index: 1;
+}
+
+.mw-release-hero__cover:is(:hover, :focus-within)::before {
+	translate: var(--mw-vinyl-out, 12%) 0;
+}
+
+html[dir="rtl"] .mw-release-hero__cover {
+	--mw-vinyl-out: -12%;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+	.mw-release-hero__cover:is(:hover, :focus-within)::before {
+		animation: mw-vinyl-spin 9s linear infinite;
+	}
+}
+
+
+/* -------------------------------------------------------------------------
+ * 2. Release shelf — vinyl card and mosaic variations
+ * ---------------------------------------------------------------------- */
+
+.mw-release-shelf.mw-release-shelf--vinyl .mw-release-shelf__artwrap::before {
+	aspect-ratio: 1;
+	background:
+		radial-gradient(circle at 50% 50%, var(--mw-color-vinyl-label, #fa2d48) 0 10%, transparent 10.5%),
+		repeating-radial-gradient(circle at 50% 50%, var(--mw-color-vinyl-groove, rgb(247 248 251 / 11%)) 0 1px, transparent 1px 3px),
+		radial-gradient(circle at 50% 50%, var(--mw-color-vinyl, #1f2024) 0 58%, var(--mw-color-vinyl-deep, #0c0d10) 100%);
+	border-radius: 50%;
+	box-shadow:
+		inset 0 0 0 1px var(--mw-color-glass-border, rgb(247 248 251 / 12%)),
+		0 0.9rem 1.75rem rgb(0 0 0 / 34%);
+	content: "";
+	inline-size: 82%;
+	inset-block-start: 8%;
+	inset-inline-end: -3%;
+	position: absolute;
+	transition:
+		rotate var(--mw-speed-slow, 520ms) var(--mw-ease-out, ease),
+		translate var(--mw-speed-slow, 520ms) var(--mw-ease-out, ease);
+	z-index: 0;
+}
+
+.mw-release-shelf.mw-release-shelf--vinyl .mw-release-shelf__art {
+	box-shadow: var(--mw-shadow-card, 0 18px 50px rgb(0 0 0 / 24%));
+	position: relative;
+	z-index: 1;
+}
+
+.mw-release-shelf.mw-release-shelf--vinyl .mw-release-shelf__item {
+	border-radius: var(--mw-radius-lg, 1rem);
+	padding: 0.35rem;
+	transition: transform var(--mw-speed-normal, 300ms) var(--mw-ease-out, ease);
+}
+
+.mw-release-shelf.mw-release-shelf--vinyl .mw-release-shelf__item:is(:hover, :focus-within) {
+	transform: translateY(-0.3rem);
+}
+
+.mw-release-shelf.mw-release-shelf--vinyl .mw-release-shelf__artwrap:is(:hover, :focus-within)::before {
+	rotate: 12deg;
+	translate: 18% 0;
+}
+
+html[dir="rtl"] .mw-release-shelf.mw-release-shelf--vinyl .mw-release-shelf__artwrap:is(:hover, :focus-within)::before {
+	translate: -18% 0;
+}
+
+.mw-release-shelf.mw-release-shelf--vinyl .mw-release-shelf__art {
+	border-radius: 0.35rem;
+}
+
+.mw-release-shelf.mw-release-shelf--vinyl .mw-release-shelf__body h3 {
+	font-family: var(--wp--preset--font-family--display, "Syne", sans-serif);
+	font-size: 1rem;
+	letter-spacing: -0.01em;
+}
+
+.mw-release-shelf.mw-release-shelf--vinyl .mw-release-shelf__artist {
+	color: var(--mw-color-text-muted, #a0a0a0);
+	display: inline-flex;
+	font-size: 0.75rem;
+	gap: 0.35rem;
+	letter-spacing: 0.06em;
+	text-transform: uppercase;
+}
+
+/* Feature layout: the hero becomes a framed sleeve with a record peeking out
+   behind the artwork, echoing the reference album page. */
+.mw-release-shelf.mw-release-shelf--feature.mw-release-shelf--vinyl .mw-feature__hero {
+	background: var(--mw-color-vinyl-deep, #0c0d10);
+	border: 1px solid var(--mw-color-glass-border, rgb(247 248 251 / 12%));
+	border-radius: 0.5rem;
+	box-shadow: var(--mw-shadow-lift, 0 1.5rem 3rem rgb(0 0 0 / 30%));
+}
+
+.mw-release-shelf.mw-release-shelf--feature.mw-release-shelf--vinyl .mw-feature__art {
+	inset-block: 0;
+	inset-inline: clamp(1.5rem, 5vw, 4rem) 0;
+	overflow: hidden;
+}
+
+.mw-release-shelf.mw-release-shelf--feature.mw-release-shelf--vinyl .mw-feature__art::before {
+	background:
+		repeating-radial-gradient(circle at 22% 50%, var(--mw-color-vinyl-groove, rgb(247 248 251 / 11%)) 0 1px, transparent 1px 3px),
+		radial-gradient(circle at 22% 50%, var(--mw-color-vinyl, #1f2024) 0 62%, var(--mw-color-vinyl-deep, #0c0d10) 100%);
+	content: "";
+	inset: 0;
+	position: absolute;
+}
+
+.mw-release-shelf.mw-release-shelf--feature.mw-release-shelf--vinyl .mw-feature__art-img {
+	position: relative;
+	z-index: 1;
+}
+
+.mw-release-shelf.mw-release-shelf--feature.mw-release-shelf--vinyl .mw-feature__eyebrow {
+	color: var(--mw-color-gold, #e5b868);
+	letter-spacing: var(--mw-eyebrow-tracking, 0.16em);
+}
+
+/* Bento mosaic: the first release becomes the anchor tile. */
+.mw-release-shelf.mw-release-shelf--bento .mw-release-shelf__items {
+	grid-auto-rows: minmax(9rem, auto);
+}
+
+.mw-release-shelf.mw-release-shelf--bento .mw-release-shelf__item {
+	background: var(--mw-color-glass, rgb(24 24 24 / 74%));
+	border: 1px solid var(--mw-color-glass-border, rgb(247 248 251 / 12%));
+	border-radius: var(--mw-radius-lg, 1rem);
+	padding: 0.65rem;
+}
+
+@container (min-width: 44rem) {
+	.mw-release-shelf.mw-release-shelf--bento .mw-release-shelf__item:first-child {
+		grid-column: span 2;
+		grid-row: span 2;
+	}
+
+	.mw-release-shelf.mw-release-shelf--bento .mw-release-shelf__item:first-child .mw-release-shelf__art {
+		aspect-ratio: 16 / 10;
+	}
+
+	.mw-release-shelf.mw-release-shelf--bento .mw-release-shelf__item:first-child .mw-release-shelf__body h3 {
+		font-size: 1.4rem;
+	}
+
+	.mw-release-shelf.mw-release-shelf--bento .mw-release-shelf__item:nth-child(4) {
+		grid-column: span 2;
+	}
+}
+
+/* -------------------------------------------------------------------------
+ * 3. Collection list — vinyl tracklist variation
+ * ---------------------------------------------------------------------- */
+
+.mw-collection-list.mw-collection-list--tracklist .mw-collection-list__table-header {
+	border-block-end-color: var(--mw-color-border-strong, rgb(247 248 251 / 32%));
+	letter-spacing: var(--mw-eyebrow-tracking, 0.16em);
+}
+
+.mw-collection-list.mw-collection-list--tracklist li {
+	border-block-end: 1px solid var(--mw-color-border-subtle, rgb(247 248 251 / 6%));
+	border-radius: 0;
+	padding-block: 0.2rem;
+}
+
+.mw-collection-list.mw-collection-list--tracklist li:is(:hover, :focus-within) {
+	background: color-mix(in srgb, var(--mw-color-text) 4%, transparent);
+}
+
+.mw-collection-list.mw-collection-list--tracklist li[data-mw-playing] {
+	background: color-mix(in srgb, var(--mw-color-accent) 10%, transparent);
+}
+
+.mw-collection-list.mw-collection-list--tracklist .mw-collection-list__position {
+	color: var(--mw-color-text-muted, #a0a0a0);
+	font-family: var(--wp--preset--font-family--display, "Syne", sans-serif);
+	font-size: 1rem;
+	font-weight: 800;
+}
+
+.mw-collection-list.mw-collection-list--tracklist .mw-collection-list__title {
+	font-size: 1rem;
+	font-weight: 700;
+}
+
+.mw-collection-list.mw-collection-list--tracklist .mw-collection-list__artwork {
+	block-size: 3rem;
+	flex-basis: 3rem;
+	inline-size: 3rem;
+}
+
+.mw-collection-list.mw-collection-list--tracklist .mw-collection-list__duration {
+	font-family: var(--wp--preset--font-family--mono, ui-monospace, monospace);
+}
+
+.mw-collection-list.mw-collection-list--tracklist .mw-collection-list__disc-heading {
+	align-items: center;
+	display: flex;
+	gap: 0.85rem;
+	letter-spacing: var(--mw-eyebrow-tracking, 0.16em);
+}
+
+.mw-collection-list.mw-collection-list--tracklist .mw-collection-list__disc-heading::before,
+.mw-collection-list.mw-collection-list--tracklist .mw-collection-list__disc-heading::after {
+	background: linear-gradient(90deg, transparent, var(--mw-color-border, rgb(247 248 251 / 20%)), transparent);
+	block-size: 1px;
+	content: "";
+	flex: 1 1 auto;
+}
+
+.mw-collection-list.mw-collection-list--tracklist .mw-collection-list__disc-heading::before {
+	flex: 0 0 1.75rem;
+}
+
+/* -------------------------------------------------------------------------
+ * 4. Preview button — spinning-disc variation
+ * ---------------------------------------------------------------------- */
+
+.mw-preview-button.mw-preview-button--vinyl {
+	aspect-ratio: 1;
+	background:
+		radial-gradient(circle at 50% 50%, var(--mw-color-vinyl-label, #fa2d48) 0 12%, transparent 12.5%),
+		repeating-radial-gradient(circle at 50% 50%, var(--mw-color-vinyl-groove, rgb(247 248 251 / 11%)) 0 1px, transparent 1px 3px),
+		radial-gradient(circle at 50% 50%, var(--mw-color-vinyl, #1f2024) 0 58%, var(--mw-color-vinyl-deep, #0c0d10) 100%);
+	border: 0;
+	block-size: 3rem;
+	box-shadow: 0 0.6rem 1.4rem rgb(0 0 0 / 34%);
+	color: var(--mw-color-text, #f7f8fb);
+	display: inline-grid;
+	inline-size: 3rem;
+	padding: 0;
+	place-items: center;
+}
+
+.mw-preview-button.mw-preview-button--vinyl > span:not(.mw-preview-button__icon) {
+	block-size: 1px;
+	clip-path: inset(50%);
+	inline-size: 1px;
+	overflow: hidden;
+	position: absolute;
+	white-space: nowrap;
+}
+
+.mw-preview-button.mw-preview-button--vinyl .mw-preview-button__icon {
+	background: var(--mw-color-canvas, #0a0a0a);
+	block-size: 1.15rem;
+	border-radius: 50%;
+	display: grid;
+	inline-size: 1.15rem;
+	place-items: center;
+}
+
+.mw-preview-button.mw-preview-button--vinyl .mw-preview-button__icon::before {
+	border-block: 0.24rem solid transparent;
+	border-inline-start: 0.4rem solid var(--mw-color-accent-strong, #1ed760);
+	block-size: 0;
+	content: "";
+	inline-size: 0;
+	margin-inline-start: 0.06rem;
+}
+
+.mw-preview-button.mw-preview-button--vinyl:is([aria-pressed="true"], .is-playing) {
+	animation: mw-vinyl-spin 6s linear infinite;
+}
+
+/* -------------------------------------------------------------------------
+ * 5. Public playlists — record-store variation
+ * ---------------------------------------------------------------------- */
+
+.mw-public-playlists.mw-public-playlists--vinyl .mw-public-playlists__art {
+	border-radius: var(--mw-radius-lg, 1rem);
+	box-shadow: var(--mw-shadow-card, 0 18px 50px rgb(0 0 0 / 24%));
+}
+
+.mw-public-playlists.mw-public-playlists--vinyl .mw-public-playlists__art::after {
+	aspect-ratio: 1;
+	background:
+		repeating-radial-gradient(circle at 50% 50%, var(--mw-color-vinyl-groove, rgb(247 248 251 / 11%)) 0 1px, transparent 1px 3px),
+		radial-gradient(circle at 50% 50%, var(--mw-color-vinyl, #1f2024) 0 58%, var(--mw-color-vinyl-deep, #0c0d10) 100%);
+	border-radius: 50%;
+	box-shadow: inset 0 0 0 1px var(--mw-color-glass-border, rgb(247 248 251 / 12%));
+	content: "";
+	inline-size: 72%;
+	inset-block-start: 12%;
+	inset-inline-end: -8%;
+	opacity: 0.55;
+	pointer-events: none;
+	position: absolute;
+	z-index: -1;
+}
+
+.mw-public-playlists.mw-public-playlists--vinyl .mw-public-playlists__card {
+	border-radius: var(--mw-radius-lg, 1rem);
+	transition: transform var(--mw-speed-normal, 300ms) var(--mw-ease-out, ease);
+}
+
+.mw-public-playlists.mw-public-playlists--vinyl .mw-public-playlists__card:is(:hover, :focus-within) {
+	transform: translateY(-0.25rem);
+}
+
+/* -------------------------------------------------------------------------
+ * 6. Motion budget
+ * ---------------------------------------------------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+	.mw-preview-button.mw-preview-button--vinyl:is([aria-pressed="true"], .is-playing) {
+		animation: none;
+	}
+
+	.mw-release-shelf.mw-release-shelf--vinyl .mw-release-shelf__item,
+	.mw-public-playlists.mw-public-playlists--vinyl .mw-public-playlists__card,
+	.mw-release-hero__cover::before {
+		transition: none;
+	}
+
+	.mw-release-shelf.mw-release-shelf--vinyl .mw-release-shelf__item:is(:hover, :focus-within),
+	.mw-public-playlists.mw-public-playlists--vinyl .mw-public-playlists__card:is(:hover, :focus-within) {
+		transform: none;
+	}
+}

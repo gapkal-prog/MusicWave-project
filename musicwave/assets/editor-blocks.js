@@ -149,6 +149,118 @@
 		);
 	}
 
+	/*
+	 * Appearance picker.
+	 *
+	 * The variations are registered as real block styles, so they also live in
+	 * the Site Editor "Styles" panel. This select mirrors that state instead of
+	 * duplicating it: it reads and writes the same `is-style-<slug>` class, so
+	 * whichever surface the admin uses, the other one follows. The
+	 * `styleVariant` attribute stays readable as a preset — patterns can ship a
+	 * look with it and the renderer accepts either source.
+	 */
+	function appearancePanel( props, slug ) {
+		var variations =
+			( window.musicwavePresentationVariations || {} )[ slug ] || {};
+		var names = Object.keys( variations );
+
+		if ( ! names.length ) {
+			return null;
+		}
+
+		var className = props.attributes.className || '';
+		var current = '';
+
+		names.some( function ( name ) {
+			if (
+				-1 !== className.split( /\s+/ ).indexOf( 'is-style-' + name )
+			) {
+				current = name;
+				return true;
+			}
+			return false;
+		} );
+
+		if (
+			! current &&
+			-1 !== names.indexOf( props.attributes.styleVariant )
+		) {
+			current = props.attributes.styleVariant;
+		}
+
+		var options = [
+			{
+				label: __( 'پیش‌فرض قالب', 'musicwave' ),
+				value: '',
+			},
+		];
+		names.forEach( function ( name ) {
+			options.push( {
+				label: variations[ name ].label,
+				value: name,
+			} );
+		} );
+
+		var hint = variations[ current ] ? variations[ current ].hint : '';
+
+		return createElement(
+			components.PanelBody,
+			{
+				title: __( 'استایل و ظاهر', 'musicwave' ),
+				initialOpen: false,
+			},
+			createElement( components.SelectControl, {
+				label: __( 'سبک نمایش', 'musicwave' ),
+				help: __(
+					'همین گزینه‌ها در بخش «سبک‌ها» کنار تنظیمات بلوک هم هستند؛ انتخاب هرکدام بلافاصله در پیش‌نمایش دیده می‌شود.',
+					'musicwave'
+				),
+				value: current,
+				options,
+				onChange( value ) {
+					// Remove only the variation classes this block owns so
+					// styles from other plugins survive untouched.
+					var kept = className
+						.split( /\s+/ )
+						.filter( function ( part ) {
+							if ( ! part ) {
+								return false;
+							}
+							if ( 0 !== part.indexOf( 'is-style-' ) ) {
+								return true;
+							}
+							return (
+								-1 ===
+								names.indexOf(
+									part.slice( 'is-style-'.length )
+								)
+							);
+						} );
+
+					if ( value ) {
+						kept.push( 'is-style-' + value );
+					}
+
+					props.setAttributes( {
+						className: kept.join( ' ' ),
+						// The class is the source of truth from here on; a
+						// preset attribute is only a starting point.
+						styleVariant: '',
+					} );
+				},
+			} ),
+			hint
+				? createElement(
+						'p',
+						{
+							className: 'components-base-control__help',
+						},
+						hint
+				  )
+				: null
+		);
+	}
+
 	function sliderInspector( props ) {
 		function select( key, label ) {
 			return createElement( components.SelectControl, {
@@ -167,6 +279,7 @@
 		return createElement(
 			blockEditor.InspectorControls,
 			null,
+			appearancePanel( props, 'release-slider' ),
 			createElement(
 				components.PanelBody,
 				{
@@ -276,6 +389,7 @@
 		return createElement(
 			blockEditor.InspectorControls,
 			null,
+			appearancePanel( props, 'release-shelf' ),
 			createElement(
 				components.PanelBody,
 				{
@@ -740,15 +854,33 @@
 						update( 'sectionUrl', value );
 					},
 				} ),
-				createElement( components.TextControl, {
-					label: __( 'برچسب مشاهده همه', 'musicwave' ),
-					value: props.attributes.sectionLinkLabel || '',
-					onChange( value ) {
-						update( 'sectionLinkLabel', value );
-					},
-				} )
-			)
-		);
+			createElement( components.TextControl, {
+				label: __( 'برچسب مشاهده همه', 'musicwave' ),
+				value: props.attributes.sectionLinkLabel || '',
+				onChange( value ) {
+					update( 'sectionLinkLabel', value );
+				},
+			} )
+		),
+		createElement(
+			components.PanelBody,
+			{
+				title: __( 'تب‌های فیلتر (Today / Week / سبک)', 'musicwave' ),
+				initialOpen: false,
+			},
+			createElement( components.TextareaControl, {
+				label: __( 'تب‌ها', 'musicwave' ),
+				help: __(
+					'هر خط یک تب: برچسب|orderBy:date یا برچسب|taxonomy:mw_genre:slug.',
+					'musicwave'
+				),
+				value: props.attributes.filterTabs || '',
+				onChange( value ) {
+					update( 'filterTabs', value );
+				},
+			} )
+		)
+	);
 	}
 
 	presentationBlocks.forEach( function ( block ) {
@@ -778,6 +910,11 @@
 			attributes: block.attributes || {},
 			supports: block.supports || {},
 			example: block.example || {},
+			// Server-registered variations (register_block_style) must survive
+			// this client-side registration, otherwise the Styles panel would
+			// lose the editorial/vinyl looks on installs where the block type
+			// is not hydrated from the REST endpoint.
+			styles: block.styles || [],
 			edit( props ) {
 				var preview = createElement( serverSideRender, {
 					block: block.name,
@@ -806,19 +943,80 @@
 					);
 				}
 
-				if (
-					'music-wave/release-shelf' === block.name ||
-					'musicwave/release-shelf' === block.name
-				) {
-					return createElement(
-						Fragment,
-						null,
-						shelfInspector( props ),
-						preview
-					);
-				}
+			if (
+				'music-wave/release-shelf' === block.name ||
+				'musicwave/release-shelf' === block.name
+			) {
+				return createElement(
+					Fragment,
+					null,
+					shelfInspector( props ),
+					preview
+				);
+			}
 
-				return preview;
+			if (
+				'music-wave/synced-lyrics' === block.name ||
+				'musicwave/synced-lyrics' === block.name
+			) {
+				return createElement(
+					Fragment,
+					null,
+					createElement(
+						blockEditor.InspectorControls,
+						null,
+						createElement(
+							components.PanelBody,
+							{
+								title: __( 'متن هم‌زمان', 'musicwave' ),
+								initialOpen: true,
+							},
+							createElement( components.TextControl, {
+								label: __( 'عنوان', 'musicwave' ),
+								value: props.attributes.heading || '',
+								onChange( value ) {
+									props.setAttributes( { heading: value } );
+								},
+							} ),
+							createElement( components.SelectControl, {
+								label: __( 'حالت نمایش', 'musicwave' ),
+								value: props.attributes.displayMode || 'spotlight',
+								options: [
+									{
+										label: __( 'نورافکن', 'musicwave' ),
+										value: 'spotlight',
+									},
+									{
+										label: __( 'کارائوکه', 'musicwave' ),
+										value: 'karaoke',
+									},
+									{
+										label: __( 'ساده', 'musicwave' ),
+										value: 'plain',
+									},
+								],
+								onChange( value ) {
+									props.setAttributes( {
+										displayMode: value,
+									} );
+								},
+							} ),
+							createElement( components.TextareaControl, {
+								label: __( 'متن جایگزین (اگر متای LRC خالی باشد)', 'musicwave' ),
+								value: props.attributes.fallbackText || '',
+								onChange( value ) {
+									props.setAttributes( {
+										fallbackText: value,
+									} );
+								},
+							} )
+						)
+					),
+					preview
+				);
+			}
+
+			return preview;
 			},
 			save() {
 				return null;

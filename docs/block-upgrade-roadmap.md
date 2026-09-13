@@ -187,3 +187,59 @@ Verification: `php tests/run.php` (includes extended template-integrity assertio
 ## 2.12 Definition of Done (marketplace-grade)
 
 The project is "marketplace-ready" when: all four quality gates are green, every block ships a `block.json` with icon/keywords/example, the `.pot` + JS translation pipeline is wired, `LICENSE` exists, `docs/block-reference.md` covers all 14 blocks, and RTL + 3 style variations render without visual regressions.
+
+## 2.13 Style variations — editorial × vinyl layer (DONE 2026-09-10)
+
+Two design layers sit next to SonicStream and are wired through one registry per
+package:
+
+- `musicwave/assets/css/components/editorial.css` — magazine vocabulary:
+  `.mw-eyebrow`, `.mw-section-head`, `.mw-chip` / `.mw-chip-rail` (token-driven
+  variants, works on `core/post-terms`), `.mw-metabar`, `.mw-spec-strip`,
+  `.mw-liner-notes`, the `.mw-album-facts` pattern wrapper, plus the
+  `--editorial` / `--minimal` shelf and `--cinema` / `--editorial` slider looks
+  and the Core-block variations (`--stamp`, `--editorial` results, related
+  shelves, artist `--spotlight`).
+- `musicwave/assets/css/components/vinyl.css` — physical media: the sleeve
+  treatment that turns the single-release cover into a record, and the `--vinyl`
+  / `--bento` shelf looks, `--tracklist` collection list, `--vinyl` preview
+  button, and public-playlist cards.
+
+Rules for anything added on top of this layer:
+
+1. **One registry per package.** Theme:
+   `musicwave_presentation_style_variations()` in `functions.php` (slug →
+   label + hint). Core: `Rendering::style_variations()` (block → variations),
+   consumed by `register_block_style()` *and* localized as
+   `musicWaveBlockStyles` for the editor panel.
+2. **`className` is the single source of truth.** Both editing surfaces — the
+   native Styles panel and the "استایل و ظاهر" select in the block's own
+   settings panel — read and write `is-style-<slug>`. `styleVariant` stays a
+   read-only preset so patterns can ship a look; the className wins.
+3. **A variation must resolve to a modifier class.** Theme renderers use
+   `musicwave_style_variant_class()`; Core renderers use
+   `BlockSupport::style_variation()`. Never add a slug without updating the
+   renderer's allow-list.
+4. **A variation must ship CSS.** `tests/template-integrity.php` parses both
+   registries and fails when a non-default slug has no stylesheet rule, and it
+   asserts the Core registry covers exactly the known dynamic blocks.
+5. **No orphan chrome.** Every class in these two files is emitted by a
+   renderer, template, or bundled pattern; the shared "now playing" equalizer
+   stays in `global-player.css` (`.mw-equalizer`) rather than being duplicated.
+6. **Layout coverage.** Style variations must also be visible in the block's
+   non-grid layouts (`feature`, `slider`, `list`); the feature hero and shelf
+   slider both carry variant rules.
+
+Bundled patterns that demonstrate the layer: `vinyl-record-shelf.php`
+(section head + `is-style-vinyl`), `album-spec-sheet.php` (chip rail, metabar,
+spec strip, liner notes — composed from `core/post-terms`, `core/post-date`,
+and `core/post-excerpt`, so every value is the real release data). The single
+release template renders the fact sheet under the hero and ships the
+`is-style-tracklist` collection list.
+
+Verification for this round: `php tests/run.php` (domain smoke tests +
+template integrity + the style-variation contract), `php
+tools/check-templates.php`, `php tools/check-site-editor.php`, `php
+tools/check-script-translations.php`, `php tools/check-syntax.php`,
+`npm run lint:js`, plus regenerated `.pot` / `en_US.po` / `.mo` / JED JSON
+catalogs.

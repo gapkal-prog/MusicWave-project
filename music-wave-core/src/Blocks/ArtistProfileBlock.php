@@ -123,6 +123,9 @@ final class ArtistProfileBlock {
 		$bio_length          = $bio_length <= 200 ? $bio_length : 200;
 
 		$layout = isset( $attributes['layout'] ) ? sanitize_key( (string) $attributes['layout'] ) : 'card';
+		if ( 'row' === $layout ) {
+			$layout = 'list';
+		}
 		$layout = in_array( $layout, array( 'card', 'list', 'slider' ), true ) ? $layout : 'card';
 
 		$image_shape = isset( $attributes['imageShape'] ) ? sanitize_key( (string) $attributes['imageShape'] ) : 'rounded';
@@ -143,9 +146,14 @@ final class ArtistProfileBlock {
 			$wrapper_style = '--mw-artist-accent:' . esc_attr( $accent ) . ';';
 		}
 
+		// Editorial spotlight variation: oversized circular portrait framed by
+		// editorial tokens. Resolved here so the class also reaches the editor
+		// placeholder path.
+		$variation       = \ManaCore\MusicWave\Core\Blocks\BlockSupport::style_variation( $attributes, array( 'spotlight' ) );
 		$wrapper_classes = 'mw-artist-profile mw-surface'
 			. ' mw-artist-profile--' . $layout
-			. ' mw-artist-profile--shape-' . $image_shape;
+			. ' mw-artist-profile--shape-' . $image_shape
+			. ( '' !== $variation ? ' mw-artist-profile--' . $variation : '' );
 
 		$image_html = '';
 		if ( $show_image && $image_id > 0 ) {
@@ -330,6 +338,14 @@ final class ArtistProfileBlock {
 		$queried = get_queried_object();
 		if ( $queried instanceof WP_Term && 'mw_artist' === $queried->taxonomy ) {
 			return $queried;
+		}
+
+		$post = get_post();
+		if ( $post instanceof \WP_Post && ReleasePostType::KEY === $post->post_type ) {
+			$terms = wp_get_post_terms( $post->ID, 'mw_artist' );
+			if ( ! is_wp_error( $terms ) && isset( $terms[0] ) && $terms[0] instanceof WP_Term ) {
+				return $terms[0];
+			}
 		}
 
 		return null;

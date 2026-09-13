@@ -222,3 +222,40 @@
 - فرم درخواست بدون JS کار می‌کند، خطاها فیلد‌به‌فیلد نمایش داده می‌شوند، مقادیر حفظ می‌شوند، رسید و هشدار ارسال می‌شود، نرخ ۳/ساعت اعمال می‌شود و نانس منقضی `wp_die` نمی‌دهد.
 - آیتم «درخواست‌ها و همکاری» با نشان، دقیقاً بالای «MusicWave VIP»؛ همهٔ عملیات فهرست/جزئیات/گروهی/تنظیمات با نانس و قابلیت محافظت شده‌اند؛ صادرات/پاک‌کردن حریم خصوصی کار می‌کند.
 - هیچ تغییری در اسکیمای پایگاه داده (`0.11.0`)؛ ۲۷ بلوک در دروازه‌ها؛ همهٔ دروازه‌ها سبز: `tests/run.php`، `template-integrity.php`، `check-templates.php`، `check-site-editor.php`، `check-script-translations.php`، `npm run lint:js`، بررسی نحو PHP.
+
+## ۸. دور پنجم — لایهٔ طراحی «سرمقاله‌ای × وینیل» و انتخاب سبک در تنظیمات هر بلوک (۱۰ سپتامبر ۲۰۲۶)
+
+### ۸.۱ تحلیل (یافته‌های تأییدشده از کد)
+
+- **زبان طراحی مرجع فقط در فایل‌های HTML ریشه وجود داشت.** پنج ماکاپ ریشه (`home_editorial_music_streaming.html`، `wave_neo_seoul_soundscapes_single_album_vinyl_tracklist.html`، `wave_neo_seoul_soundscapes_single_album_mobile.html`، `wave_search_browse_mobile.html`، `wave_midnight_city_lights_single_track_live_lyrics.html`) سه ایدهٔ تکرارشونده دارند: (۱) سرصفحهٔ مجله‌ای با «برچسب ریز فاصله‌دار + خط گرادیانی»، (۲) وینیل فیزیکی (غلاف + صفحهٔ بیرون‌زننده، نوارهای فرکانس/اکولایزر روی ردیف در حال پخش، فهرست قطعهٔ شماره‌دار)، (۳) کارت‌های شیشه‌ای با دادهٔ فنی (Bento و Spec strip). هیچ‌کدام از این‌ها در CSS قالب وجود نداشت.
+- **سیستم «سبک بلوک» فقط برای بلوک‌های افزونه بود.** `Rendering::register_block_styles()` در هسته شش گروه سبک داشت (پیش‌نمایش‌پخش‌کننده، دکمهٔ پیش‌نمایش، داشبورد، متادیتا، فیلترها، فهرست‌های پخش) اما بلوک‌های نمایشی قالب (`music-wave/release-shelf` و `music-wave/release-slider`) هیچ سبکی نداشتند؛ فقط `layout` داشتند. یعنی ادمین نمی‌توانست ظاهر کارت‌ها را انتخاب کند.
+- **دو نقص واقعی که در مسیر پیدا شد:** (الف) سبک «stacked» داشبورد کاربری هرگز CSS نداشت و رندرکننده به‌جای `mw-user-dashboard--stacked` کلاس بی‌معنی `stacked` چاپ می‌کرد؛ (ب) در `tests/run.php` انتظار `class="mw-request-form mw-request-form--split"` (با گیومهٔ بسته در انتهای کلاس) مانده بود، در حالی که رندرکننده از مدت‌ها پیش `mw-request-form--mode-{mode}` را هم می‌افزاید؛ همین assertion باعث می‌شد `composer test` (و در نتیجه CI) قرمز بماند.
+
+### ۸.۲ تصمیم‌های طراحی
+
+- **لایهٔ افزودنی، نه بازنویسی.** دو فایل تازه (`components/editorial.css` و `components/vinyl.css`) فقط واژگان تازه را اضافه می‌کنند و هیچ کامپوننت SonicStream را بازتعریف نمی‌کنند؛ همه‌چیز از توکن‌های `tokens.css` می‌آید و از پالت قابل ویرایش در ویرایشگر سایت استفاده می‌کند. توکن‌های تازه: `--mw-color-editorial(-soft/-line)`، `--mw-color-gold`، خانوادهٔ `--mw-color-vinyl(-deep/-groove/-label)`، `--mw-color-glass(-border)`، `--mw-gradient-editorial`، `--mw-shadow-lift`، `--mw-eyebrow-tracking` و `--mw-speed-slow`؛ همه در هر دو حالت روشن/تیره بازتنظیم می‌شوند.
+- **بدون CSS یتیم.** هر کلاس این دو فایل توسط یک رندرکننده، پوسته یا الگوی همراه تولید می‌شود؛ اکولایزر «در حال پخش» همان `.mw-equalizer` موجود در `global-player.css` است و نسخهٔ دومی ندارد، و توکن‌های بی‌مصرف (`--mw-eq-speed`، `--mw-gradient-vinyl-sheen`، `--mw-ring-focus`، `--mw-color-glass-strong`) و بخش‌های بی‌تولیدکننده (Spotlight، Bento، Tracklist، Side-divider، Sleeve standalone، Equalizer دوم) حذف شدند. واژگانی که ماند، مصرف واقعی دارد: چیپ‌ها روی `core/post-terms`، نوار مشخصات و یادداشت‌ها در الگوی تازهٔ `album-spec-sheet`، و آستین وینیل روی کاور صفحهٔ تک‌انتشار.
+- **یک منبع حقیقت برای هر دو سطح انتخاب.** سبک‌ها هم در پنل «سبک‌ها» (Styles) ثبت می‌شوند (`register_block_style`) و هم به‌صورت یک `SelectControl` در پنل تنظیمات خودِ بلوک ظاهر می‌شوند؛ هر دو سطح همان کلاس `is-style-<slug>` را می‌نویسند تا هیچ‌وقت با هم اختلاف نداشته باشند. صفت `styleVariant` به‌عنوان «پیش‌تنظیم الگو» باقی مانده است (الگوها می‌توانند ظاهر اولیه بدهند) و رندرکننده اول کلاس و بعد صفت را می‌خواند.
+- **سبک بدون CSS ممنوع.** نگاشت سبک‌ها از رجیستری PHP خوانده می‌شود و `tests/template-integrity.php` برای هر اسلاگ ثبت‌شده، وجود قاعدهٔ CSS و برچسب ترجمه‌شدنی را الزام می‌کند؛ بنابراین یک برچسب بدون ظاهر نمی‌تواند منتشر شود.
+- **سبک‌ها روی همهٔ چیدمان‌ها اثر می‌گذارند.** برای چیدمان `feature` و `slider` هم قاعده نوشته شد تا انتخاب سبک هرگز بی‌اثر نباشد.
+- **RTL و حرکت.** همه‌جا ویژگی‌های منطقی (`inset-inline`, `border-inline-start`) و بودجهٔ حرکت در انتهای هر دو فایل (`prefers-reduced-motion`) رعایت شده است؛ در وینیل، جهت بیرون‌آمدن صفحه با `--mw-vinyl-out` و `html[dir="rtl"]` قرینه می‌شود.
+
+### ۸.۳ برنامهٔ اجرا (انجام‌شده)
+
+۱. توکن‌های تازه در `tokens.css` (شامل بازتنظیم‌های روشن/تیره).
+۲. `components/editorial.css`: برچسب ریز، سرصفحهٔ بخش، نوار چیپ، Metabar، Spec strip، Liner notes، Spotlight، Bento و سبک‌های `--editorial/--minimal` قفسه و `--cinema/--editorial` اسلایدر + بخش «سبک‌های بلوک‌های هسته» (مهر متادیتا، خط نتیجهٔ سرمقاله‌ای، ردیف بخش‌های مرتبط، نورافکن هنرمند).
+۳. `components/vinyl.css`: کامپوننت غلاف+صفحه، اکولایزر، فهرست قطعه، جداکنندهٔ وینیل، قفسهٔ `--vinyl` و `--bento`، فهرست `--tracklist`، دکمهٔ `--vinyl`، فهرست‌های پخش `--vinyl` و میکروحرکت‌های کاهش‌یافته.
+۴. `functions.php`: تابع `musicwave_presentation_style_variations()` (منبع حقیقت)، `musicwave_style_variant()` و `musicwave_style_variant_class()`، ثبت سبک‌ها برای نام کانونیک و نام قدیمی، تزریق کلاس تغییر در رندرکننده‌های قفسه/ویژه‌نامه/اسلایدر هیرو/ویترین فهرست پخش، ثبت دو ماژول CSS تازه.
+۵. `assets/editor-blocks.js`: پنل «استایل و ظاهر» با `SelectControl` که همان کلاس `is-style-*` را می‌نویسد (خریدار بدون دانش فنی هم سبک را می‌بیند).
+۶. هسته: استخراج `Rendering::style_variations()` به‌عنوان منبع واحد، ثبت سبک‌های تازه (`tracklist`, `stamp`, `editorial`, `spotlight`, `vinyl`) و محلی‌سازی نقشه برای ویرایشگر؛ `assets/blocks.js` پنل «استایل و ظاهر» را برای هر بلوکی که سبک دارد می‌سازد.
+۷. رندرکننده‌های هسته: `mw-collection-list--tracklist`، `mw-release-meta--stamp`، `mw-catalog-results--editorial`، `mw-related-releases--editorial/--vinyl`، `mw-artist-profile--spotlight`، `mw-preview-button--vinyl`، `mw-public-playlists--vinyl` و اصلاح `mw-user-dashboard--stacked`.
+۸. الگوها و پوسته: `music-home-layout` (اسلایدر سینمایی + قفسهٔ وینیل + ویژه‌نامهٔ سرمقاله‌ای)، `editorial-feature`، `curated-release-shelf`، `horizontal-release-shelf`، `featured-release-slider`، الگوی تازهٔ `musicwave/vinyl-record-shelf` و الگوی تازهٔ `musicwave/album-spec-sheet` (چیپ تاکسونومی + نوار مشخصات + یادداشت انتشار، همه از بلوک‌های پویا). پوستهٔ `single-mw_release.html` برگهٔ مشخصات را زیر قهرمان صفحه می‌گذارد، فهرست قطعه‌ها را با `is-style-tracklist` رندر می‌کند و کاور را به آستین وینیل با صفحهٔ بیرون‌زننده تبدیل می‌کند (CSS-محور، بدون تغییر نشانه‌گذاری).
+۹. تست‌ها: بخش «قرارداد سبک‌ها» در `tests/template-integrity.php` (هر اسلاگ ⇒ CSS + برچسب + حضور در هر دو سطح ویرایشگر، و نگاشت بلوک‌های هسته) و اصلاح assertion قدیمی فرم درخواست.
+۱۰. ترجمه‌ها: ۲۶ پیام تازه در `musicwave-en_US.po` / `music-wave-core-en_US.po`، بازتولید POT/MO و شش کاتالوگ JSON.
+
+### ۸.۴ معیارهای پذیرش
+
+- ادمین در هر بلوک، هم از پنل «سبک‌ها» و هم از پنل «استایل و ظاهر» در تنظیمات همان بلوک، می‌تواند ظاهر را انتخاب کند و هر دو سطح هم‌زمان عوض می‌شوند.
+- هر سبک ثبت‌شده یک قاعدهٔ CSS واقعی دارد؛ انتخاب سبک در چیدمان‌های grid/list/scroll/feature/slider دیده می‌شود.
+- هر دو حالت روشن و تیره، RTL و `prefers-reduced-motion` پوشش داده شده‌اند؛ رنگ‌ها از پالت ویرایشگر سایت می‌آیند.
+- دروازه‌ها سبز: `tests/run.php` (شامل `template-integrity.php`)، `tools/check-templates.php`، `tools/check-site-editor.php`، `tools/check-script-translations.php`، بررسی نحو PHP و `npm run lint:js`.

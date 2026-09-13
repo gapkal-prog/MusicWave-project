@@ -111,6 +111,15 @@ final class MetaDefinition {
 			case 'mw_bpm':
 				$bpm = absint( $value );
 				return ( 0 === $bpm || ( $bpm >= 20 && $bpm <= 300 ) ) ? $bpm : 0;
+			case 'mw_lyrics_lrc':
+				if ( ! is_scalar( $value ) ) {
+					return '';
+				}
+
+				return sanitize_textarea_field( (string) $value );
+			case 'mw_lyrics_offset':
+				$offset = (int) $value;
+				return max( -10000, min( 10000, $offset ) );
 			case 'mw_track_number':
 			case 'mw_episode_number':
 			case 'mw_season_number':

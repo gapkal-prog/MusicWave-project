@@ -1045,6 +1045,51 @@
             ],
             "همکاری": [
                 "Collaboration"
+            ],
+            "استایل و ظاهر": [
+                "Style and appearance"
+            ],
+            "اسلاید تمام‌قاب با تیتر بزرگ و پردهٔ تیره‌تر.": [
+                "Full-frame slide with an oversized title and a darker scrim."
+            ],
+            "بدون سطح کارت؛ فقط خطوط و تایپوگرافی. مناسب چیدمان‌های فهرستی.": [
+                "No card surfaces — rules and typography only. Best for list layouts."
+            ],
+            "بنتو": [
+                "Bento"
+            ],
+            "حداقلی": [
+                "Minimal"
+            ],
+            "سبک نمایش": [
+                "Display style"
+            ],
+            "ستون متن با خط تأکیدی کنار محتوا.": [
+                "Text column with an accent rule beside the content."
+            ],
+            "سرمقاله‌ای": [
+                "Editorial"
+            ],
+            "سینمایی": [
+                "Cinema"
+            ],
+            "شبکهٔ موزاییکی؛ اولین انتشار به‌صورت کارت شاخص بزرگ نمایش داده می‌شود.": [
+                "Mosaic grid; the first release becomes a large anchor tile."
+            ],
+            "غلاف آلبوم با صفحهٔ بیرون‌زننده که هنگام هاور از غلاف خارج می‌شود.": [
+                "Album sleeve with a disc that slides out of the jacket on hover."
+            ],
+            "همین گزینه‌ها در بخش «سبک‌ها» کنار تنظیمات بلوک هم هستند؛ انتخاب هرکدام بلافاصله در پیش‌نمایش دیده می‌شود.": [
+                "The same options live in the Styles panel next to the block settings; picking one updates the preview right away."
+            ],
+            "وینیل": [
+                "Vinyl"
+            ],
+            "پیش‌فرض قالب": [
+                "Theme default"
+            ],
+            "کارت مجله‌ای با خط تأکیدی، سطح شیشه‌ای و تیتر درشت.": [
+                "Magazine card with an accent rule, a glass surface, and an oversized headline."
             ]
         }
     }

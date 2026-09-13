@@ -351,7 +351,8 @@ final class AccountLibrary {
 		$name  = '' !== $user->display_name ? $user->display_name : $user->user_login;
 		$intro = isset( $attributes['introText'] ) && is_string( $attributes['introText'] ) && '' !== trim( (string) $attributes['introText'] ) ? sanitize_text_field( (string) $attributes['introText'] ) : __( 'میانبرهای حساب، دسترسی به موسیقی، دانلودها و گوش‌دادن شما در یک مکان.', 'music-wave-core' );
 		$style = \ManaCore\MusicWave\Core\Blocks\BlockSupport::style_variation( $attributes, array( 'tabs', 'stacked' ) );
-		$class = 'mw-user-dashboard' . ( '' !== $style ? ' ' . $style : '' );
+		// Modifier class, not a bare word: `stacked` never carried a CSS rule.
+		$class = 'mw-user-dashboard' . ( '' !== $style ? ' mw-user-dashboard--' . $style : '' );
 
 		echo '<section class="' . esc_attr( $class ) . '" data-mw-dashboard><header class="mw-user-dashboard__welcome">' . get_avatar( $user_id, 88, '', '', array( 'class' => 'mw-user-dashboard__avatar' ) ) . '<div><span class="mw-user-dashboard__eyebrow">' . esc_html__( 'خوش آمدید', 'music-wave-core' ) . '</span><h2>' . esc_html( $name ) . '</h2><p>' . esc_html( $intro ) . '</p></div></header>';
 

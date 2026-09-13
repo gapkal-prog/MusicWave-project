@@ -3384,6 +3384,113 @@
 		return null;
 	}
 
+	/*
+	 * Split the current className into the parts we keep and the variation
+	 * class we are about to write. Only styles registered for this block are
+	 * removed, so classes from other plugins survive untouched.
+	 */
+	function withoutBlockStyles( className, names ) {
+		return String( className || '' )
+			.split( /\s+/ )
+			.filter( function ( part ) {
+				if ( ! part ) {
+					return false;
+				}
+				if ( 0 !== part.indexOf( 'is-style-' ) ) {
+					return true;
+				}
+				return -1 === names.indexOf( part.slice( 'is-style-'.length ) );
+			} );
+	}
+
+	/*
+	 * Appearance select for the block's own settings panel.
+	 *
+	 * It drives the exact `is-style-<name>` class the Site Editor "Styles"
+	 * panel writes (the map comes from Rendering::style_variations(), the same
+	 * source `register_block_style()` uses), so both surfaces always agree and
+	 * a variation picked in one shows up in the other.
+	 */
+	function styleVariationPanel( props, blockName ) {
+		var variations =
+			( window.musicWaveBlockStyles || {} )[ blockName ] || [];
+
+		if ( ! variations.length ) {
+			return null;
+		}
+
+		var className = String( props.attributes.className || '' );
+		var names = [];
+		var options = [];
+		var defaultLabel = __( 'پیش‌فرض قالب', 'music-wave-core' );
+		var current = '';
+
+		variations.forEach( function ( variation ) {
+			names.push( variation.name );
+			if ( variation.is_default ) {
+				defaultLabel = variation.label;
+				return;
+			}
+			options.push( {
+				label: variation.label,
+				value: variation.name,
+			} );
+		} );
+
+		names.some( function ( name ) {
+			if (
+				-1 !== className.split( /\s+/ ).indexOf( 'is-style-' + name )
+			) {
+				current = name;
+				return true;
+			}
+			return false;
+		} );
+
+		if (
+			current &&
+			-1 ===
+				options
+					.map( function ( option ) {
+						return option.value;
+					} )
+					.indexOf( current )
+		) {
+			// A default style saved in a template reads as "theme default".
+			current = '';
+		}
+
+		options.unshift( {
+			label: defaultLabel,
+			value: '',
+		} );
+
+		return createElement(
+			components.PanelBody,
+			{
+				title: __( 'استایل و ظاهر', 'music-wave-core' ),
+				initialOpen: false,
+				key: 'music-wave-style',
+			},
+			createElement( components.SelectControl, {
+				label: __( 'سبک نمایش', 'music-wave-core' ),
+				help: __(
+					'همین گزینه‌ها در بخش «سبک‌ها» کنار تنظیمات بلوک هم هستند؛ انتخاب هرکدام بلافاصله در پیش‌نمایش دیده می‌شود.',
+					'music-wave-core'
+				),
+				value: current,
+				options,
+				onChange( value ) {
+					var kept = withoutBlockStyles( className, names );
+					if ( value ) {
+						kept.push( 'is-style-' + value );
+					}
+					props.setAttributes( { className: kept.join( ' ' ) } );
+				},
+			} )
+		);
+	}
+
 	function inspectorControls( props, blockName, options, contextualId ) {
 		var config = fieldConfig[ blockName ] || {};
 		var controls = [];
@@ -3521,6 +3628,11 @@
 				);
 			}
 		} );
+
+		var stylePanel = styleVariationPanel( props, blockName );
+		if ( stylePanel ) {
+			panels.push( stylePanel );
+		}
 
 		if ( ! panels.length ) {
 			return null;

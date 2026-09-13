@@ -88,7 +88,7 @@ final class LibraryCatalog {
 		$has_more  = false;
 		$items     = $this->repository->all( $user_id );
 
-		$this->prime_release_terms( $items );
+		$this->prime_items( $items );
 
 		foreach ( $items as $item ) {
 			$summary = LibraryRepository::TYPE_ARTIST === $item['type']
@@ -129,7 +129,7 @@ final class LibraryCatalog {
 		$counts = array( self::FILTER_ALL => 0 );
 		$items  = $this->repository->all( $user_id );
 
-		$this->prime_release_terms( $items );
+		$this->prime_items( $items );
 
 		foreach ( $items as $item ) {
 			++$counts[ self::FILTER_ALL ];
@@ -289,12 +289,17 @@ final class LibraryCatalog {
 	}
 
 	/**
-	 * Batch-resolve taxonomy terms for every release-shaped library item.
+	 * Batch-resolve everything the summaries below read per item.
+	 *
+	 * A library page renders the first N items but scans the stored stream,
+	 * so an unprimed loop costs a post query, a meta query, and one query per
+	 * cover attachment for every item it touches. Warm the release posts, the
+	 * release meta, the cover attachments, and the two taxonomies once.
 	 *
 	 * @param array<int, array<string, mixed>> $items Normalized library items.
 	 * @return void
 	 */
-	private function prime_release_terms( array $items ): void {
+	private function prime_items( array $items ): void {
 		$release_ids = array();
 		foreach ( $items as $item ) {
 			if ( LibraryRepository::TYPE_ARTIST !== $item['type'] ) {
@@ -302,7 +307,19 @@ final class LibraryCatalog {
 			}
 		}
 
+		$this->visibility->prime( $release_ids, true );
 		$this->term_index->prime( $release_ids, array( 'mw_artist', 'mw_release_type' ) );
+
+		// Cover images resolve their attachment post after the meta is warm.
+		$thumbnail_ids = array();
+		foreach ( $release_ids as $release_id ) {
+			$thumbnail_id = (int) get_post_meta( $release_id, '_thumbnail_id', true );
+			if ( $thumbnail_id > 0 ) {
+				$thumbnail_ids[] = $thumbnail_id;
+			}
+		}
+
+		$this->visibility->prime( $thumbnail_ids, true );
 	}
 
 	/**

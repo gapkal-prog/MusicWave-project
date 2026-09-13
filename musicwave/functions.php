@@ -161,6 +161,32 @@ function musicwave_style_modules(): array {
 			'file'         => 'assets/css/components/block-styles.css',
 			'dependencies' => array( 'musicwave-utilities' ),
 		),
+
+		/*
+		 * Editorial × Vinyl layer. Both files are additive: they never redefine
+		 * a SonicStream component, they only add the editorial vocabulary
+		 * (kickers, section heads, chip rails, spec strips, liner notes) and
+		 * the physical-media vocabulary (sleeve treatment, record displays,
+		 * vinyl tracklist). They load after the components they decorate so a
+		 * merchant editing global styles sees the final cascade in the Site
+		 * Editor too.
+		 */
+		'musicwave-editorial'       => array(
+			'file'         => 'assets/css/components/editorial.css',
+			'dependencies' => array( 'musicwave-catalog', 'musicwave-shelf' ),
+		),
+		'musicwave-vinyl'           => array(
+			'file'         => 'assets/css/components/vinyl.css',
+			'dependencies' => array( 'musicwave-collections', 'musicwave-editorial', 'musicwave-shelf' ),
+		),
+		'musicwave-lyrics'          => array(
+			'file'         => 'assets/css/components/lyrics.css',
+			'dependencies' => array( 'musicwave-utilities' ),
+		),
+		'musicwave-release-page'    => array(
+			'file'         => 'assets/css/components/release-page.css',
+			'dependencies' => array( 'musicwave-catalog', 'musicwave-lyrics', 'musicwave-vinyl' ),
+		),
 		'musicwave-accessibility'   => array(
 			'file'         => 'assets/css/accessibility.css',
 			'dependencies' => array( 'musicwave-base' ),
@@ -199,7 +225,7 @@ function musicwave_enqueue_assets(): void {
 	 */
 	wp_enqueue_style(
 		'musicwave-fonts',
-		'https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Syne:wght@600;700;800&display=swap',
+		'https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Syne:wght@600;700;800&display=swap',
 		array(),
 		$version
 	);
@@ -271,6 +297,16 @@ function musicwave_enqueue_assets(): void {
 	);
 	if ( function_exists( 'wp_set_script_translations' ) ) {
 		wp_set_script_translations( 'musicwave-release-hero', 'musicwave', get_template_directory() . '/languages' );
+	}
+	wp_register_script(
+		'musicwave-lyrics',
+		get_template_directory_uri() . '/assets/lyrics.js',
+		array(),
+		$version,
+		true
+	);
+	if ( function_exists( 'wp_set_script_translations' ) ) {
+		wp_set_script_translations( 'musicwave-lyrics', 'musicwave', get_template_directory() . '/languages' );
 	}
 	wp_localize_script(
 		'musicwave-slider',
@@ -515,6 +551,99 @@ function musicwave_register_block_category( array $categories ): array {
 add_filter( 'block_categories_all', 'musicwave_register_block_category' );
 
 /**
+ * Return the presentation style variations offered by the theme blocks.
+ *
+ * Single source of truth for the surfaces that must never drift:
+ *
+ *   1. the Site Editor "Styles" panel (`register_block_style`),
+ *   2. the block inspector's "استایل و ظاهر" select, which writes the same
+ *      `is-style-<slug>` class — the `styleVariant` attribute stays a
+ *      pattern-level preset so a pattern can ship a look of its own,
+ *   3. the renderer's modifier class (`mw-<component>--<variant>`), resolved
+ *      from `array_keys()` of this registry.
+ *
+ * `tests/template-integrity.php` parses this registry and fails when a slug
+ * ships without a stylesheet rule, a translatable label, or both editor
+ * surfaces, so a new look can never reach an admin as a label without a style.
+ *
+ * @return array<string, array<string, array{label: string, hint: string}>>
+ */
+function musicwave_presentation_style_variations(): array {
+	return array(
+		'release-shelf'  => array(
+			'editorial' => array(
+				'label' => __( 'سرمقاله‌ای', 'musicwave' ),
+				'hint'  => __( 'کارت مجله‌ای با خط تأکیدی، سطح شیشه‌ای و تیتر درشت.', 'musicwave' ),
+			),
+			'vinyl'     => array(
+				'label' => __( 'وینیل', 'musicwave' ),
+				'hint'  => __( 'غلاف آلبوم با صفحهٔ بیرون‌زننده که هنگام هاور از غلاف خارج می‌شود.', 'musicwave' ),
+			),
+			'bento'     => array(
+				'label' => __( 'بنتو', 'musicwave' ),
+				'hint'  => __( 'شبکهٔ موزاییکی؛ اولین انتشار به‌صورت کارت شاخص بزرگ نمایش داده می‌شود.', 'musicwave' ),
+			),
+			'minimal'   => array(
+				'label' => __( 'حداقلی', 'musicwave' ),
+				'hint'  => __( 'بدون سطح کارت؛ فقط خطوط و تایپوگرافی. مناسب چیدمان‌های فهرستی.', 'musicwave' ),
+			),
+		),
+		'release-slider' => array(
+			'cinema'    => array(
+				'label' => __( 'سینمایی', 'musicwave' ),
+				'hint'  => __( 'اسلاید تمام‌قاب با تیتر بزرگ و پردهٔ تیره‌تر.', 'musicwave' ),
+			),
+			'editorial' => array(
+				'label' => __( 'سرمقاله‌ای', 'musicwave' ),
+				'hint'  => __( 'ستون متن با خط تأکیدی کنار محتوا.', 'musicwave' ),
+			),
+		),
+	);
+}
+
+/**
+ * Resolve the active style variation for a theme presentation block.
+ *
+ * Precedence mirrors `ManaCore\MusicWave\Core\Blocks\BlockSupport::style_variation()`:
+ * the Site Editor block style (`is-style-*`) wins over the inspector attribute,
+ * which wins over the block default (an empty string means "no modifier").
+ *
+ * @param array<string, mixed> $attributes Block attributes.
+ * @param array<int, string>   $allowed    Allowed variation slugs.
+ */
+function musicwave_style_variant( array $attributes, array $allowed ): string {
+	$class_name = isset( $attributes['className'] ) && is_scalar( $attributes['className'] )
+		? (string) $attributes['className']
+		: '';
+	if ( '' !== $class_name ) {
+		foreach ( $allowed as $variation ) {
+			if ( false !== strpos( $class_name, 'is-style-' . $variation ) ) {
+				return $variation;
+			}
+		}
+	}
+
+	$selected = isset( $attributes['styleVariant'] ) && is_scalar( $attributes['styleVariant'] )
+		? sanitize_key( (string) $attributes['styleVariant'] )
+		: '';
+
+	return in_array( $selected, $allowed, true ) ? $selected : '';
+}
+
+/**
+ * Return the modifier class suffix for a component's allowed variations.
+ *
+ * @param array<string, mixed> $attributes Block attributes.
+ * @param array<int, string>   $allowed    Allowed variation slugs.
+ * @param string               $component  Root component class, e.g. mw-release-shelf.
+ */
+function musicwave_style_variant_class( array $attributes, array $allowed, string $component ): string {
+	$variant = musicwave_style_variant( $attributes, $allowed );
+
+	return '' !== $variant ? ' ' . $component . '--' . $variant : '';
+}
+
+/**
  * Register curated block styles for one-click visual variations.
  *
  * All styles are pure CSS class hooks consumed by the modular CSS;
@@ -580,6 +709,26 @@ function musicwave_register_block_styles(): void {
 					'label' => $style['label'],
 				)
 			);
+		}
+	}
+
+	// Presentation blocks: the canonical name plus the hidden legacy alias, so
+	// a template saved before the namespace migration keeps its style picker
+	// and both names render the same modifier class.
+	if ( ! function_exists( 'register_block_style' ) ) {
+		return;
+	}
+	foreach ( musicwave_presentation_style_variations() as $slug => $variations ) {
+		foreach ( array( 'music-wave/' . $slug, 'musicwave/' . $slug ) as $block_name ) {
+			foreach ( $variations as $name => $variation ) {
+				register_block_style(
+					$block_name,
+					array(
+						'name'  => $name,
+						'label' => $variation['label'],
+					)
+				);
+			}
 		}
 	}
 }
@@ -734,6 +883,10 @@ function musicwave_register_presentation_blocks(): void {
 			'dir'      => 'release-shelf',
 			'callback' => 'musicwave_render_release_shelf',
 		),
+		'synced-lyrics'  => array(
+			'dir'      => 'synced-lyrics',
+			'callback' => 'musicwave_render_synced_lyrics',
+		),
 	);
 
 	foreach ( $blocks as $config ) {
@@ -774,7 +927,7 @@ function musicwave_enqueue_presentation_editor_blocks(): void {
 		wp_set_script_translations( 'musicwave-presentation-blocks', 'musicwave', get_template_directory() . '/languages' );
 	}
 
-	$dirs      = array( 'theme-text', 'theme-toggle', 'release-slider', 'release-shelf' );
+	$dirs      = array( 'theme-text', 'theme-toggle', 'release-slider', 'release-shelf', 'synced-lyrics' );
 	$localized = array();
 	foreach ( $dirs as $dir ) {
 		$meta = musicwave_load_block_json( $dir );
@@ -796,6 +949,10 @@ function musicwave_enqueue_presentation_editor_blocks(): void {
 			'attributes'  => isset( $meta['attributes'] ) && is_array( $meta['attributes'] ) ? $meta['attributes'] : array(),
 			'supports'    => isset( $meta['supports'] ) && is_array( $meta['supports'] ) ? $meta['supports'] : array(),
 			'example'     => isset( $meta['example'] ) && is_array( $meta['example'] ) ? $meta['example'] : array(),
+			// Block style variations declared in block.json travel with the
+			// client registration so the Styles panel never depends on the
+			// REST hydration order.
+			'styles'      => isset( $meta['styles'] ) && is_array( $meta['styles'] ) ? array_values( $meta['styles'] ) : array(),
 		);
 		$localized[] = $entry;
 
@@ -811,6 +968,12 @@ function musicwave_enqueue_presentation_editor_blocks(): void {
 		'musicwave-presentation-blocks',
 		'musicwavePresentationBlocks',
 		$localized
+	);
+	// Appearance selects read the same map the Styles panel is built from.
+	wp_localize_script(
+		'musicwave-presentation-blocks',
+		'musicwavePresentationVariations',
+		musicwave_presentation_style_variations()
 	);
 }
 add_action( 'enqueue_block_editor_assets', 'musicwave_enqueue_presentation_editor_blocks' );
@@ -877,7 +1040,7 @@ function musicwave_repairable_template_slugs(): array {
 			'taxonomy-mw_genre',
 			'archive-product',
 		),
-		'wp_template_part' => array( 'header', 'header-centered', 'header-minimal', 'header-stream', 'footer', 'footer-widgets', 'footer-simple', 'sidebar', 'sidebar-shop', 'hero' ),
+		'wp_template_part' => array( 'header', 'header-centered', 'header-minimal', 'header-stream', 'header-stream-end', 'footer', 'footer-widgets', 'footer-simple', 'sidebar', 'sidebar-shop', 'hero' ),
 	);
 }
 
@@ -1325,6 +1488,10 @@ function musicwave_render_release_slider( array $attributes ): string {
 		wp_enqueue_script( 'musicwave-slider' );
 	}
 
+	$instance   = wp_unique_id( 'mw-slider-' );
+	$tabbed     = musicwave_apply_filter_tab( $attributes, $instance );
+	$attributes = $tabbed['attributes'];
+
 	$items = isset( $attributes['itemsToShow'] ) ? absint( $attributes['itemsToShow'] ) : 0;
 	$items = $items >= 3 && $items <= 12 ? $items : musicwave_slider_number( 'slider_items', 6 );
 	$items = min( 12, max( 3, $items ) );
@@ -1344,9 +1511,14 @@ function musicwave_render_release_slider( array $attributes ): string {
 		$link       = (string) $item['link'];
 		$title      = (string) $item['title'];
 		$artist     = '' !== (string) $item['artist'] ? (string) $item['artist'] : __( 'انتشار MusicWave', 'musicwave' );
+		$shape      = isset( $attributes['imageShape'] ) ? sanitize_key( (string) $attributes['imageShape'] ) : 'square';
+		$shape      = in_array( $shape, array( 'square', 'landscape', 'portrait', 'circle' ), true ) ? $shape : 'square';
+		$size_key   = isset( $attributes['imageSize'] ) ? sanitize_key( (string) $attributes['imageSize'] ) : 'medium';
+		$size_key   = in_array( $size_key, array( 'small', 'medium', 'large' ), true ) ? $size_key : 'medium';
+		$thumb_size = 'large' === $size_key ? 'large' : ( 'small' === $size_key ? 'medium' : 'medium_large' );
 		$image      = get_the_post_thumbnail(
 			$release_id,
-			'medium_large',
+			$thumb_size,
 			array(
 				'class' => 'mw-release-slider__image',
 				'alt'   => '',
@@ -1374,7 +1546,7 @@ function musicwave_render_release_slider( array $attributes ): string {
 
 		/* translators: %s: music release title. */
 		$slide_label = sprintf( __( 'باز کردن %s', 'musicwave' ), $title );
-		$cards[]     = '<article class="mw-release-slider__slide" role="group" aria-label="' . esc_attr( $slide_label ) . '"><div class="mw-release-slider__artwrap"><a class="mw-release-slider__art" href="' . esc_url( $link ) . '">' . $image . '</a>' . $play_button . '</div><div class="mw-release-slider__body"><h3><a href="' . esc_url( $link ) . '">' . esc_html( $title ) . '</a></h3>' . $artist_markup . $date_markup . $views_markup . $excerpt . '</div></article>';
+		$cards[]     = '<article class="mw-release-slider__slide" role="group" aria-label="' . esc_attr( $slide_label ) . '"><div class="mw-release-slider__artwrap"><a class="mw-release-slider__art mw-release-slider__art--' . esc_attr( $shape ) . '" href="' . esc_url( $link ) . '">' . $image . '</a>' . $play_button . '</div><div class="mw-release-slider__body"><h3><a href="' . esc_url( $link ) . '">' . esc_html( $title ) . '</a></h3>' . $artist_markup . $date_markup . $views_markup . $excerpt . '</div></article>';
 	}
 	if ( empty( $cards ) ) {
 		return '';
@@ -1392,11 +1564,25 @@ function musicwave_render_release_slider( array $attributes ): string {
 	$title         = isset( $attributes['title'] ) ? sanitize_text_field( (string) $attributes['title'] ) : '';
 	$eyebrow       = '' !== $eyebrow ? $eyebrow : __( 'برای شما', 'musicwave' );
 	$title         = '' !== $title ? $title : __( 'انتشارهای منتخب', 'musicwave' );
-	$id            = wp_unique_id( 'mw-release-slider-' );
+	$id            = $instance;
 	$controls      = $arrows ? '<div class="mw-release-slider__arrows"><button type="button" data-mw-slider-previous aria-controls="' . esc_attr( $id ) . '" aria-label="' . esc_attr__( 'انتشارهای قبلی', 'musicwave' ) . '">&#8592;</button><button type="button" data-mw-slider-next aria-controls="' . esc_attr( $id ) . '" aria-label="' . esc_attr__( 'انتشارهای بعدی', 'musicwave' ) . '">&#8594;</button></div>' : '';
 	$dot_container = $dots ? '<div class="mw-release-slider__dots" data-mw-slider-dots aria-label="' . esc_attr__( 'صفحه‌بندی اسلایدر', 'musicwave' ) . '"></div>' : '';
+	$section_url        = isset( $attributes['sectionUrl'] ) ? esc_url( (string) $attributes['sectionUrl'] ) : '';
+	$section_link_label = isset( $attributes['sectionLinkLabel'] ) ? sanitize_text_field( (string) $attributes['sectionLinkLabel'] ) : '';
+	$section_link_label = '' !== $section_link_label ? $section_link_label : __( 'مشاهده همه', 'musicwave' );
+	$more               = '' !== $section_url
+		? '<a class="mw-release-slider__more" href="' . esc_url( $section_url ) . '">' . esc_html( $section_link_label ) . '<span aria-hidden="true">&rarr;</span></a>'
+		: '';
+	$tabs_markup        = musicwave_render_filter_tabs( $tabbed['tabs'], $tabbed['active'], $instance );
+	$size_mod           = $size_key;
 
-	return '<section ' . get_block_wrapper_attributes( array( 'class' => 'mw-release-slider' ) ) . ' data-mw-slider data-autoplay="' . esc_attr( $autoplay ? '1' : '0' ) . '" data-loop="' . esc_attr( $loop ? '1' : '0' ) . '" data-pause-hover="' . esc_attr( $pause ? '1' : '0' ) . '" data-interval="' . esc_attr( (string) $interval ) . '"><header class="mw-release-slider__header"><div><span class="mw-release-slider__eyebrow">' . esc_html( $eyebrow ) . '</span><h2>' . esc_html( $title ) . '</h2></div>' . $controls . '</header><div id="' . esc_attr( $id ) . '" class="mw-release-slider__viewport" data-mw-slider-viewport tabindex="0"><div class="mw-release-slider__track">' . implode( '', $cards ) . '</div></div>' . $dot_container . '<p class="screen-reader-text" aria-live="polite" data-mw-slider-status></p></section>';
+	$slider_variant = musicwave_style_variant_class(
+		$attributes,
+		array_keys( musicwave_presentation_style_variations()['release-slider'] ),
+		'mw-release-slider'
+	);
+
+	return '<section ' . get_block_wrapper_attributes( array( 'class' => 'mw-release-slider mw-release-slider--size-' . $size_mod . $slider_variant ) ) . ' data-mw-slider data-autoplay="' . esc_attr( $autoplay ? '1' : '0' ) . '" data-loop="' . esc_attr( $loop ? '1' : '0' ) . '" data-pause-hover="' . esc_attr( $pause ? '1' : '0' ) . '" data-interval="' . esc_attr( (string) $interval ) . '"><header class="mw-release-slider__header"><div><span class="mw-release-slider__eyebrow">' . esc_html( $eyebrow ) . '</span><h2>' . esc_html( $title ) . '</h2></div><div class="mw-release-slider__tools">' . $tabs_markup . $more . $controls . '</div></header><div id="' . esc_attr( $id ) . '" class="mw-release-slider__viewport" data-mw-slider-viewport tabindex="0"><div class="mw-release-slider__track">' . implode( '', $cards ) . '</div></div>' . $dot_container . '<p class="screen-reader-text" aria-live="polite" data-mw-slider-status></p></section>';
 }
 
 /**
@@ -1478,6 +1664,324 @@ function musicwave_release_query_args( array $attributes, int $items ): array {
 	}
 
 	return $query;
+}
+
+
+/**
+ * Parse filter-tab lines from a block inspector field.
+ *
+ * Each line is `Label|orderBy:date` or `Label|taxonomy:mw_genre:slug`.
+ *
+ * @param string $raw Inspector value.
+ * @return array<int, array{slug: string, label: string, orderBy: string, taxonomy: string, termSlug: string}>
+ */
+function musicwave_parse_filter_tabs( string $raw ): array {
+	$tabs = array();
+	foreach ( preg_split( '/\r\n|\r|\n/', $raw ) as $line ) {
+		$line = trim( (string) $line );
+		if ( '' === $line ) {
+			continue;
+		}
+		$parts = array_map( 'trim', explode( '|', $line, 2 ) );
+		$label = sanitize_text_field( $parts[0] );
+		if ( '' === $label ) {
+			continue;
+		}
+		$slug  = sanitize_title( $label );
+		$order = '';
+		$tax   = '';
+		$term  = '';
+		$spec  = isset( $parts[1] ) ? $parts[1] : '';
+		if ( '' !== $spec ) {
+			$bits = array_map( 'trim', explode( ':', $spec ) );
+			$key  = isset( $bits[0] ) ? sanitize_key( $bits[0] ) : '';
+			if ( 'orderby' === $key && isset( $bits[1] ) ) {
+				$candidate = sanitize_key( $bits[1] );
+				$order     = in_array( $candidate, array( 'date', 'title', 'rand', 'modified', 'views' ), true ) ? $candidate : '';
+			} elseif ( 'taxonomy' === $key && isset( $bits[1], $bits[2] ) ) {
+				$candidate = sanitize_key( $bits[1] );
+				$tax       = in_array( $candidate, array( 'mw_artist', 'mw_genre', 'mw_mood', 'mw_release_type', 'mw_label' ), true ) ? $candidate : '';
+				$term      = sanitize_title( $bits[2] );
+			}
+		}
+		if ( '' === $slug ) {
+			$slug = 'tab-' . (string) ( count( $tabs ) + 1 );
+		}
+		$tabs[] = array(
+			'slug'     => $slug,
+			'label'    => $label,
+			'orderBy'  => $order,
+			'taxonomy' => $tax,
+			'termSlug' => $term,
+		);
+		if ( count( $tabs ) >= 6 ) {
+			break;
+		}
+	}
+
+	return $tabs;
+}
+
+/**
+ * Apply the requested filter tab to a block's query attributes.
+ *
+ * @param array<string, mixed> $attributes Block attributes.
+ * @param string               $instance   Unique instance id.
+ * @return array{attributes: array<string, mixed>, tabs: array<int, array<string, string>>, active: string}
+ */
+function musicwave_apply_filter_tab( array $attributes, string $instance ): array {
+	$raw  = isset( $attributes['filterTabs'] ) ? (string) $attributes['filterTabs'] : '';
+	$tabs = musicwave_parse_filter_tabs( $raw );
+	if ( array() === $tabs ) {
+		return array(
+			'attributes' => $attributes,
+			'tabs'       => array(),
+			'active'     => '',
+		);
+	}
+
+	$key    = 'mw_tab_' . sanitize_html_class( $instance );
+	$active = '';
+	if ( isset( $_GET[ $key ] ) && is_scalar( $_GET[ $key ] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$active = sanitize_title( wp_unslash( (string) $_GET[ $key ] ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+	}
+	$match = null;
+	foreach ( $tabs as $tab ) {
+		if ( $tab['slug'] === $active ) {
+			$match = $tab;
+			break;
+		}
+	}
+	if ( null === $match ) {
+		$match  = $tabs[0];
+		$active = $match['slug'];
+	}
+	if ( '' !== $match['orderBy'] ) {
+		$attributes['orderBy'] = $match['orderBy'];
+	}
+	if ( '' !== $match['taxonomy'] && '' !== $match['termSlug'] ) {
+		$attributes['taxonomy'] = $match['taxonomy'];
+		$attributes['termSlug'] = $match['termSlug'];
+	}
+
+	return array(
+		'attributes' => $attributes,
+		'tabs'       => $tabs,
+		'active'     => $active,
+	);
+}
+
+/**
+ * Render the Today / Week / genre pill row.
+ *
+ * @param array<int, array<string, string>> $tabs     Parsed tabs.
+ * @param string                            $active   Active slug.
+ * @param string                            $instance Block instance id.
+ */
+function musicwave_render_filter_tabs( array $tabs, string $active, string $instance ): string {
+	if ( array() === $tabs ) {
+		return '';
+	}
+
+	$key     = 'mw_tab_' . sanitize_html_class( $instance );
+	$current = class_exists( '\\ManaCore\\MusicWave\\Core\\Blocks\\BlockSupport' )
+		? \ManaCore\MusicWave\Core\Blocks\BlockSupport::current_url()
+		: musicwave_current_request_url();
+	$items   = '';
+	foreach ( $tabs as $tab ) {
+		$url   = add_query_arg( $key, $tab['slug'], remove_query_arg( $key, $current ) );
+		$is_on = $tab['slug'] === $active;
+		$items .= '<a class="mw-filter-tabs__tab' . ( $is_on ? ' is-active' : '' ) . '" href="' . esc_url( $url ) . '"' . ( $is_on ? ' aria-current="true"' : '' ) . '>' . esc_html( $tab['label'] ) . '</a>';
+	}
+
+	return '<nav class="mw-filter-tabs" aria-label="' . esc_attr__( 'فیلتر بازه و سبک', 'musicwave' ) . '">' . $items . '</nav>';
+}
+
+/**
+ * Current request URL when Core is not loaded.
+ */
+function musicwave_current_request_url(): string {
+	if ( function_exists( 'is_singular' ) && is_singular() ) {
+		$permalink = get_permalink();
+		if ( is_string( $permalink ) && '' !== $permalink ) {
+			return $permalink;
+		}
+	}
+	$request = isset( $_SERVER['REQUEST_URI'] ) && is_scalar( $_SERVER['REQUEST_URI'] ) ? sanitize_text_field( wp_unslash( (string) $_SERVER['REQUEST_URI'] ) ) : '/';
+
+	return home_url( $request );
+}
+
+/**
+ * Register the LRC lyrics field on releases.
+ *
+ * @return void
+ */
+function musicwave_register_lyrics_meta(): void {
+	if ( ! function_exists( 'register_post_meta' ) ) {
+		return;
+	}
+		register_post_meta(
+		'mw_release',
+		'mw_lyrics_lrc',
+		array(
+			'type'              => 'string',
+			'single'            => true,
+			'show_in_rest'      => true,
+			'sanitize_callback' => 'sanitize_textarea_field',
+			'auth_callback'     => static function (): bool {
+				return current_user_can( 'edit_posts' );
+			},
+		)
+	);
+	register_post_meta(
+		'mw_release',
+		'mw_lyrics_offset',
+		array(
+			'type'              => 'integer',
+			'single'            => true,
+			'show_in_rest'      => true,
+			'default'           => 0,
+			'sanitize_callback' => static function ( $value ): int {
+				return max( -10000, min( 10000, (int) $value ) );
+			},
+			'auth_callback'     => static function (): bool {
+				return current_user_can( 'edit_posts' );
+			},
+		)
+	);
+}
+add_action( 'init', 'musicwave_register_lyrics_meta' );
+
+/**
+ * Parse an LRC document into timed lines.
+ *
+ * @param string $raw LRC or plain lyrics.
+ * @return array<int, array{time: float, text: string}>
+ */
+function musicwave_parse_lrc( string $raw ): array {
+	$lines = array();
+	foreach ( preg_split( '/\r\n|\r|\n/', $raw ) as $row ) {
+		$row = trim( (string) $row );
+		if ( '' === $row || 1 === preg_match( '/^\[[a-z]+:/i', $row ) ) {
+			continue;
+		}
+		if ( preg_match_all( '/\[(\d{1,2}):(\d{2})(?:\.(\d{1,3}))?\]/', $row, $stamps, PREG_SET_ORDER ) ) {
+			$text = trim( (string) preg_replace( '/\[\d{1,2}:\d{2}(?:\.\d{1,3})?\]/', '', $row ) );
+			if ( '' === $text ) {
+				continue;
+			}
+			$parts       = preg_split( '/\s*(?:\||\/\/)\s+/', $text, 2 );
+			$primary     = isset( $parts[0] ) ? trim( (string) $parts[0] ) : $text;
+			$translation = isset( $parts[1] ) ? trim( (string) $parts[1] ) : '';
+			foreach ( $stamps as $stamp ) {
+				$ms      = isset( $stamp[3] ) ? (float) ( '0.' . $stamp[3] ) : 0.0;
+				$seconds = ( (int) $stamp[1] * 60 ) + (int) $stamp[2] + $ms;
+				$lines[] = array(
+					'time'        => $seconds,
+					'text'        => $primary,
+					'translation' => $translation,
+				);
+			}
+			continue;
+		}
+		$lines[] = array(
+			'time'        => -1.0,
+			'text'        => $row,
+			'translation' => '',
+		);
+	}
+	usort(
+		$lines,
+		static function ( $a, $b ): int {
+			return $a['time'] <=> $b['time'];
+		}
+	);
+
+	return $lines;
+}
+
+/**
+ * Render live-sync lyrics for the current release.
+ *
+ * @param array<string, mixed> $attributes Block attributes.
+ */
+function musicwave_render_synced_lyrics( array $attributes ): string {
+	$release_id = isset( $attributes['releaseId'] ) ? absint( $attributes['releaseId'] ) : 0;
+	if ( $release_id < 1 ) {
+		$release_id = absint( get_the_ID() );
+	}
+	if ( $release_id < 1 || 'mw_release' !== (string) get_post_type( $release_id ) ) {
+		return '';
+	}
+
+	$raw = (string) get_post_meta( $release_id, 'mw_lyrics_lrc', true );
+	if ( '' === $raw ) {
+		$raw = isset( $attributes['fallbackText'] ) ? (string) $attributes['fallbackText'] : '';
+	}
+	$raw = trim( $raw );
+	if ( '' === $raw ) {
+		return '';
+	}
+
+	$parsed = musicwave_parse_lrc( $raw );
+	if ( array() === $parsed ) {
+		return '';
+	}
+
+	if ( function_exists( 'wp_enqueue_script' ) ) {
+		wp_enqueue_script( 'musicwave-lyrics' );
+	}
+
+	$heading = isset( $attributes['heading'] ) ? sanitize_text_field( (string) $attributes['heading'] ) : '';
+	$heading = '' !== $heading ? $heading : __( 'متن هم‌زمان با آهنگ', 'musicwave' );
+	$mode    = isset( $attributes['displayMode'] ) ? sanitize_key( (string) $attributes['displayMode'] ) : 'spotlight';
+	$mode    = in_array( $mode, array( 'spotlight', 'plain', 'karaoke' ), true ) ? $mode : 'spotlight';
+	$offset  = (int) get_post_meta( $release_id, 'mw_lyrics_offset', true );
+
+	$rows = '';
+	foreach ( $parsed as $index => $line ) {
+		$timed     = $line['time'] >= 0;
+		$time_attr = $timed ? ' data-mw-lyric-time="' . esc_attr( (string) $line['time'] ) . '"' : '';
+		$tag       = $timed ? 'button' : 'p';
+		$type      = $timed ? ' type="button"' : '';
+		$stamp     = $timed ? '<span class="mw-lyrics__stamp">' . esc_html( musicwave_format_lyric_clock( $line['time'] ) ) . '</span>' : '';
+		$sub       = ! empty( $line['translation'] ) ? '<span class="mw-lyrics__sub">' . esc_html( (string) $line['translation'] ) . '</span>' : '';
+		$rows     .= '<' . $tag . $type . ' class="mw-lyrics__line" data-mw-lyric-index="' . esc_attr( (string) $index ) . '"' . $time_attr . '><span class="mw-lyrics__text">' . esc_html( $line['text'] ) . '</span>' . $sub . $stamp . '</' . $tag . '>';
+	}
+
+	$modes = '<div class="mw-lyrics__modes" role="group" aria-label="' . esc_attr__( 'حالت نمایش متن', 'musicwave' ) . '">'
+		. '<button type="button" class="mw-lyrics__mode' . ( 'spotlight' === $mode ? ' is-active' : '' ) . '" data-mw-lyrics-mode="spotlight">' . esc_html__( 'Sync', 'musicwave' ) . '</button>'
+		. '<button type="button" class="mw-lyrics__mode' . ( 'plain' === $mode ? ' is-active' : '' ) . '" data-mw-lyrics-mode="plain">' . esc_html__( 'Full Text', 'musicwave' ) . '</button>'
+		. '<button type="button" class="mw-lyrics__mode' . ( 'karaoke' === $mode ? ' is-active' : '' ) . '" data-mw-lyrics-mode="karaoke">' . esc_html__( 'Karaoke', 'musicwave' ) . '</button>'
+		. '</div>';
+
+	$tools = '<div class="mw-lyrics__toolbar">'
+		. '<button type="button" class="mw-lyrics__tool is-active" data-mw-lyrics-autoscroll aria-pressed="true">' . esc_html__( 'اسکرول خودکار', 'musicwave' ) . '</button>'
+		. '<span class="mw-lyrics__toolbar-sep" aria-hidden="true">·</span>'
+		. '<span class="mw-lyrics__hint">' . esc_html__( 'برای پرش، روی خط بزنید', 'musicwave' ) . '</span>'
+		. '<span class="mw-lyrics__grow"></span>'
+		. '<button type="button" class="mw-lyrics__scale" data-mw-lyrics-scale="-1" aria-label="' . esc_attr__( 'کوچک‌تر کردن متن', 'musicwave' ) . '">A−</button>'
+		. '<button type="button" class="mw-lyrics__scale" data-mw-lyrics-scale="1" aria-label="' . esc_attr__( 'بزرگ‌تر کردن متن', 'musicwave' ) . '">A+</button>'
+		. '</div>';
+
+	$foot = '<footer class="mw-lyrics__foot"><span>' . esc_html__( 'متن از کاتالوگ همین انتشار · هم‌زمان با پخش‌کننده سراسری', 'musicwave' ) . '</span></footer>';
+
+	return '<section ' . get_block_wrapper_attributes( array( 'class' => 'mw-lyrics mw-lyrics--' . $mode ) ) . ' data-mw-lyrics data-scroll="center" data-mw-lyric-offset="' . esc_attr( (string) $offset ) . '" data-release-id="' . esc_attr( (string) $release_id ) . '"><header class="mw-lyrics__header"><div class="mw-lyrics__heading"><span class="mw-lyrics__eyebrow">' . esc_html__( 'Live Sync Lyrics', 'musicwave' ) . '</span><h2>' . esc_html( $heading ) . '</h2></div>' . $modes . '</header>' . $tools . '<div class="mw-lyrics__stage" data-mw-lyrics-stage>' . $rows . '</div>' . $foot . '</section>';
+}
+
+/**
+ * Format a lyric timestamp as mm:ss.
+ */
+function musicwave_format_lyric_clock( float $seconds ): string {
+	if ( $seconds < 0 ) {
+		return '';
+	}
+
+	$minutes = (int) floor( $seconds / 60 );
+	$remain  = (int) floor( $seconds ) % 60;
+
+	return sprintf( '%02d:%02d', $minutes, $remain );
 }
 
 /**
@@ -1619,7 +2123,13 @@ function musicwave_render_playlist_shelf( array $attributes ): string {
 	$header = musicwave_render_shelf_header( $eyebrow, $title, $description, $section_url, $section_link_label );
 	$nav    = musicwave_shelf_nav_markup( $layout );
 
-	return '<section ' . get_block_wrapper_attributes( array( 'class' => 'mw-release-shelf mw-release-shelf--' . $layout . ' mw-release-shelf--playlists mw-release-shelf--columns-' . $columns ) ) . '>' . $header . $nav . '<div class="mw-release-shelf__items" data-mw-shelf-viewport>' . implode( '', $cards ) . '</div></section>';
+	$shelf_variant = musicwave_style_variant_class(
+		$attributes,
+		array_keys( musicwave_presentation_style_variations()['release-shelf'] ),
+		'mw-release-shelf'
+	);
+
+	return '<section ' . get_block_wrapper_attributes( array( 'class' => 'mw-release-shelf mw-release-shelf--' . $layout . ' mw-release-shelf--playlists mw-release-shelf--columns-' . $columns . $shelf_variant ) ) . '>' . $header . $nav . '<div class="mw-release-shelf__items" data-mw-shelf-viewport>' . implode( '', $cards ) . '</div></section>';
 }
 
 /**
@@ -1664,6 +2174,10 @@ function musicwave_render_release_shelf( array $attributes ): string {
 		return '';
 	}
 
+	$shelf_instance = wp_unique_id( 'mw-shelf-' );
+	$tabbed         = musicwave_apply_filter_tab( $attributes, $shelf_instance );
+	$attributes     = $tabbed['attributes'];
+
 	$items = isset( $attributes['itemsToShow'] ) ? absint( $attributes['itemsToShow'] ) : 8;
 	$items = min( 24, max( 1, $items ) );
 	$ids   = get_posts( musicwave_release_query_args( $attributes, $items ) );
@@ -1678,6 +2192,15 @@ function musicwave_render_release_shelf( array $attributes ): string {
 	$columns = isset( $attributes['columns'] ) ? absint( $attributes['columns'] ) : 4;
 	$columns = min( 6, max( 2, $columns ) );
 
+	// Editorial × Vinyl look. Resolved once and handed to whichever layout
+	// renders, so the Site Editor style picker, the block inspector select,
+	// and the markup always agree on a single modifier class.
+	$shelf_variant = musicwave_style_variant_class(
+		$attributes,
+		array_keys( musicwave_presentation_style_variations()['release-shelf'] ),
+		'mw-release-shelf'
+	);
+
 	// Resolve section copy before rendering any cards. Feature layout has its
 	// own renderer; returning here prevents the generic card loop from doing
 	// duplicate title, taxonomy, and image work that it would immediately throw
@@ -1689,10 +2212,10 @@ function musicwave_render_release_shelf( array $attributes ): string {
 	$section_link_label = isset( $attributes['sectionLinkLabel'] ) ? sanitize_text_field( (string) $attributes['sectionLinkLabel'] ) : '';
 	$section_link_label = '' !== $section_link_label ? $section_link_label : __( 'مشاهده همه', 'musicwave' );
 	if ( 'feature' === $layout ) {
-		return musicwave_render_feature_shelf( $attributes, $ids, $eyebrow, $section_title, $description, $section_url, $section_link_label );
+		return musicwave_render_feature_shelf( $attributes, $ids, $eyebrow, $section_title, $description, $section_url, $section_link_label, $shelf_variant );
 	}
 	if ( 'slider' === $layout ) {
-		return musicwave_render_hero_slider( $attributes, $ids, $eyebrow, $section_title, $description, $section_url, $section_link_label );
+		return musicwave_render_hero_slider( $attributes, $ids, $eyebrow, $section_title, $description, $section_url, $section_link_label, $shelf_variant );
 	}
 
 	$action_label = isset( $attributes['actionLabel'] ) ? sanitize_text_field( (string) $attributes['actionLabel'] ) : '';
@@ -1748,11 +2271,12 @@ function musicwave_render_release_shelf( array $attributes ): string {
 		return '';
 	}
 
-	$header = musicwave_render_shelf_header( $eyebrow, $section_title, $description, $section_url, $section_link_label );
+	$header      = musicwave_render_shelf_header( $eyebrow, $section_title, $description, $section_url, $section_link_label );
+	$tabs_markup = musicwave_render_filter_tabs( $tabbed['tabs'], $tabbed['active'], $shelf_instance );
 
 	$nav = musicwave_shelf_nav_markup( $layout );
 
-	return '<section ' . get_block_wrapper_attributes( array( 'class' => 'mw-release-shelf mw-release-shelf--' . $layout . ' mw-release-shelf--columns-' . $columns ) ) . '>' . $header . $nav . '<div class="mw-release-shelf__items" data-mw-shelf-viewport>' . implode( '', $cards ) . '</div></section>';
+	return '<section ' . get_block_wrapper_attributes( array( 'class' => 'mw-release-shelf mw-release-shelf--' . $layout . ' mw-release-shelf--columns-' . $columns . $shelf_variant ) ) . '>' . $header . $tabs_markup . $nav . '<div class="mw-release-shelf__items" data-mw-shelf-viewport>' . implode( '', $cards ) . '</div></section>';
 }
 
 /**
@@ -1766,8 +2290,9 @@ function musicwave_render_release_shelf( array $attributes ): string {
  * @param string               $description   Section description.
  * @param string               $section_url   Optional "مشاهده همه" URL.
  * @param string               $section_link_label برچسب for the "مشاهده همه" link.
+ * @param string               $variant_class Optional style-variation modifier class.
  */
-function musicwave_render_feature_shelf( array $attributes, array $ids, string $eyebrow, string $title, string $description, string $section_url, string $section_link_label ): string {
+function musicwave_render_feature_shelf( array $attributes, array $ids, string $eyebrow, string $title, string $description, string $section_url, string $section_link_label, string $variant_class = '' ): string {
 	$featured_id = isset( $attributes['featuredReleaseId'] ) ? absint( $attributes['featuredReleaseId'] ) : 0;
 	if ( $featured_id < 1 || ! in_array( $featured_id, $ids, true ) ) {
 		$featured_id = absint( $ids[0] );
@@ -1904,7 +2429,7 @@ function musicwave_render_feature_shelf( array $attributes, array $ids, string $
 
 	$style_attr = 'style="--mw-feature-overlay:' . esc_attr( (string) $overlay ) . '"';
 
-	return '<section ' . get_block_wrapper_attributes( array( 'class' => 'mw-release-shelf mw-release-shelf--feature' ) ) . ' ' . $style_attr . '><div class="mw-feature">' . $hero . $list . '</div></section>';
+	return '<section ' . get_block_wrapper_attributes( array( 'class' => 'mw-release-shelf mw-release-shelf--feature' . $variant_class ) ) . ' ' . $style_attr . '><div class="mw-feature">' . $hero . $list . '</div></section>';
 }
 
 /**
@@ -1922,8 +2447,9 @@ function musicwave_render_feature_shelf( array $attributes, array $ids, string $
  * @param string               $description Section description.
  * @param string               $section_url Optional "see all" URL.
  * @param string               $section_link_label Label for the "see all" link.
+ * @param string               $variant_class Optional style-variation modifier class.
  */
-function musicwave_render_hero_slider( array $attributes, array $ids, string $eyebrow, string $title, string $description, string $section_url, string $section_link_label ): string {
+function musicwave_render_hero_slider( array $attributes, array $ids, string $eyebrow, string $title, string $description, string $section_url, string $section_link_label, string $variant_class = '' ): string {
 	if ( function_exists( 'wp_enqueue_script' ) ) {
 		wp_enqueue_script( 'musicwave-hero-slider' );
 	}
@@ -2064,7 +2590,7 @@ function musicwave_render_hero_slider( array $attributes, array $ids, string $ey
 	$region_label = '' !== $title ? $title : __( 'اسلایدر انتشارها', 'musicwave' );
 	$header       = musicwave_render_shelf_header( $eyebrow, $title, $description, $section_url, $section_link_label );
 
-	return '<section ' . get_block_wrapper_attributes( array( 'class' => 'mw-release-shelf mw-release-shelf--slider' ) ) . '>'
+	return '<section ' . get_block_wrapper_attributes( array( 'class' => 'mw-release-shelf mw-release-shelf--slider' . $variant_class ) ) . '>'
 		. $header
 		. '<div id="' . esc_attr( $id ) . '" class="mw-hero-slider" data-mw-hero-slider data-autoplay="' . esc_attr( $autoplay ? '1' : '0' ) . '" data-pause-hover="1" data-interval="' . esc_attr( (string) $interval ) . '">'
 		. '<div class="mw-hero-slider__viewport" tabindex="0" role="region" aria-roledescription="' . esc_attr__( 'اسلایدر', 'musicwave' ) . '" aria-label="' . esc_attr( $region_label ) . '">'
@@ -2119,3 +2645,31 @@ function musicwave_render_theme_toggle(): string {
 
 	return '<button class="mw-theme-toggle" type="button" data-mw-theme-value="system" aria-label="' . esc_attr( $label ) . '" title="' . esc_attr( $label ) . '">' . $icons . '</button>';
 }
+
+/**
+ * The Sidebar template part is Appearance → Widgets (musicwave-sidebar).
+ * Empty widget areas render nothing so the rail does not occupy a column.
+ */
+function musicwave_inject_sidebar_widgets( string $content, array $block ): string {
+	$slug = isset( $block['attrs']['slug'] ) ? (string) $block['attrs']['slug'] : '';
+	if ( 'sidebar' !== $slug ) {
+		return $content;
+	}
+
+	$widgets = '';
+	if ( function_exists( 'is_active_sidebar' ) && is_active_sidebar( 'musicwave-sidebar' ) ) {
+		ob_start();
+		dynamic_sidebar( 'musicwave-sidebar' );
+		$widgets = trim( (string) ob_get_clean() );
+	}
+
+	if ( '' === $widgets ) {
+		return '';
+	}
+
+	return '<aside class="mw-sidebar"><div class="mw-sidebar__widgets">' . $widgets . '</div></aside>';
+}
+add_filter( 'render_block_core/template-part', 'musicwave_inject_sidebar_widgets', 10, 2 );
+
+require_once get_template_directory() . '/inc/site-header.php';
+require get_template_directory() . '/inc/nav-icons.php';

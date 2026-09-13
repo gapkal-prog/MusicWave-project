@@ -65,7 +65,7 @@ msgstr ""
 msgid "WooCommerce Subscriptions (subscription-123 یا شناسهٔ محصول)"
 msgstr ""
 
-#: src/ProtectedAssetStorage.php:379
+#: src/ProtectedAssetStorage.php:376
 msgid "asset حفاظت‌شده ذخیره نشد."
 msgstr ""
 
@@ -482,11 +482,11 @@ msgstr ""
 msgid "عمومی — کلید اصلی و دسترسی"
 msgstr ""
 
-#: src/ProtectedAssetStorage.php:417
+#: src/ProtectedAssetStorage.php:410
 msgid "فایل انتخاب‌شده از رسانه‌ها در دسترس نیست."
 msgstr ""
 
-#: src/ProtectedAssetStorage.php:435
+#: src/ProtectedAssetStorage.php:428
 msgid "فایل رسانه‌ها در ذخیره‌سازی حفاظت‌شده کپی نشد."
 msgstr ""
 
@@ -531,11 +531,11 @@ msgstr ""
 msgid "متصل شد: تحویل %1$s فعال است. %2$d طرح VIP پیکربندی‌شده است."
 msgstr ""
 
-#: src/ProtectedAssetStorage.php:366
+#: src/ProtectedAssetStorage.php:363
 msgid "محتوای فایل با پسوند آن مطابقت ندارد."
 msgstr ""
 
-#: src/ProtectedAssetStorage.php:389
+#: src/ProtectedAssetStorage.php:383
 msgid "محتوای فایل یک بایگانی ZIP معتبر نیست."
 msgstr ""
 
@@ -619,7 +619,7 @@ msgstr ""
 msgid "میزبان‌های مجاز اضافی برای تغییرمسیر"
 msgstr ""
 
-#: src/ProtectedAssetStorage.php:373
+#: src/ProtectedAssetStorage.php:370
 msgid "نام فایل مجاز نیست."
 msgstr ""
 
@@ -663,7 +663,7 @@ msgstr ""
 msgid "نمونه‌ها"
 msgstr ""
 
-#: src/ProtectedAssetStorage.php:343 src/ProtectedAssetStorage.php:429
+#: src/ProtectedAssetStorage.php:343 src/ProtectedAssetStorage.php:422
 msgid "نوع یا اندازهٔ asset مجاز نیست."
 msgstr ""
 
@@ -759,7 +759,7 @@ msgstr ""
 msgid "پوشه خارج از همهٔ ریشه‌های وب عمومی است."
 msgstr ""
 
-#: src/ProtectedAssetStorage.php:329 src/ProtectedAssetStorage.php:422
+#: src/ProtectedAssetStorage.php:329 src/ProtectedAssetStorage.php:415
 msgid "پوشهٔ asset حفاظت‌شده در دسترس نیست یا قابل نوشتن نیست."
 msgstr ""
 
@@ -860,7 +860,7 @@ msgstr ""
 msgid "یک خط اضافه کنید؛ مثلاً %s که در آن level نامک سطح عضویت شماست."
 msgstr ""
 
-#: src/ProtectedAssetStorage.php:409
+#: src/ProtectedAssetStorage.php:402
 msgid "یک فایل معتبر از رسانه‌ها انتخاب کنید."
 msgstr ""
 

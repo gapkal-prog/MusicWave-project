@@ -397,6 +397,9 @@ final class CatalogSearch {
 	 * @return array<int, int>
 	 */
 	private function publicly_visible( array $ids ): array {
+		// One batched post query instead of one per candidate release.
+		$this->visibility->prime( $ids );
+
 		$visible = array();
 		foreach ( $ids as $release_id ) {
 			$release_id = absint( $release_id );

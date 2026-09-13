@@ -375,6 +375,11 @@
         "spacing": { "margin": true, "padding": true },
         "border": { "radius": true }
       },
+      "music-wave/synced-lyrics": {
+        "color": { "background": true, "text": true },
+        "spacing": { "margin": true, "padding": true },
+        "typography": { "fontSize": true, "lineHeight": true }
+      },
       "musicwave/release-shelf": {
         "color": { "background": true, "text": true, "gradient": true },
         "spacing": { "margin": true, "padding": true, "blockGap": true },

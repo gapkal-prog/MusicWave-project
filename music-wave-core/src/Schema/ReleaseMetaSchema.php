@@ -123,6 +123,31 @@ final class ReleaseMetaSchema {
 						'group' => 'media',
 					)
 				),
+				'mw_lyrics_lrc'        => new MetaDefinition(
+					'mw_lyrics_lrc',
+					'string',
+					'',
+					true,
+					array(
+						'label' => __( 'متن هم‌زمان (LRC)', 'music-wave-core' ),
+						'type'  => 'textarea',
+						'group' => 'track',
+						'help'  => __( 'هر خط: [mm:ss.xx] متن. ترجمهٔ اختیاری بعد از | یا // . نمونه: [00:12.40] شب شهر | Midnight city', 'music-wave-core' ),
+					)
+				),
+				'mw_lyrics_offset'     => new MetaDefinition(
+					'mw_lyrics_offset',
+					'integer',
+					0,
+					true,
+					array(
+						'label' => __( 'آفست متن (میلی‌ثانیه)', 'music-wave-core' ),
+						'type'  => 'number',
+						'min'   => -10000,
+						'max'   => 10000,
+						'group' => 'track',
+					)
+				),
 				'mw_explicit'          => new MetaDefinition(
 					'mw_explicit',
 					'boolean',

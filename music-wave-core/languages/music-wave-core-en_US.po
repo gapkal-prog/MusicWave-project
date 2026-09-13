@@ -5207,3 +5207,38 @@ msgstr "What song do you want?"
 
 msgid "یادداشت حریم خصوصی"
 msgstr "Privacy note"
+
+msgid "استایل و ظاهر"
+msgstr "Style and appearance"
+
+msgid "سبک نمایش"
+msgstr "Display style"
+
+msgid "سرمقاله‌ای"
+msgstr "Editorial"
+
+msgid "صفحهٔ وینیل (چرخان)"
+msgstr "Vinyl disc (spinning)"
+
+msgid "فهرست وینیل (شماره‌دار)"
+msgstr "Vinyl tracklist (numbered)"
+
+msgid "مهر سرمقاله‌ای"
+msgstr "Editorial stamp"
+
+msgid "نورافکن سرمقاله‌ای"
+msgstr "Editorial spotlight"
+
+msgid "همین گزینه‌ها در بخش «سبک‌ها» کنار تنظیمات بلوک هم هستند؛ انتخاب هرکدام بلافاصله در پیش‌نمایش دیده می‌شود."
+msgstr ""
+"The same options live in the Styles panel next to the block settings; "
+"picking one updates the preview right away."
+
+msgid "ویترین صفحه (وینیل)"
+msgstr "Record display (vinyl)"
+
+msgid "وینیل"
+msgstr "Vinyl"
+
+msgid "پیش‌فرض قالب"
+msgstr "Theme default"

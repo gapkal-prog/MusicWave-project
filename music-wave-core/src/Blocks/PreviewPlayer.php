@@ -96,6 +96,16 @@ final class PreviewPlayer {
 			MUSIC_WAVE_CORE_VERSION,
 			true
 		);
+		$lyrics_js = function_exists( 'get_theme_file_path' ) ? get_theme_file_path( 'assets/lyrics.js' ) : '';
+		if ( is_string( $lyrics_js ) && is_readable( $lyrics_js ) ) {
+			wp_enqueue_script(
+				'musicwave-lyrics',
+				get_theme_file_uri( 'assets/lyrics.js' ),
+				array(),
+				MUSIC_WAVE_CORE_VERSION,
+				true
+			);
+		}
 		wp_localize_script(
 			'music-wave-preview-player',
 			'musicWavePreviewPlayer',
@@ -121,6 +131,8 @@ final class PreviewPlayer {
 					'close'        => __( 'بستن پخش‌کننده', 'music-wave-core' ),
 					'queue'        => __( 'صف پیش‌نمایش', 'music-wave-core' ),
 					'queueHeading' => __( 'بعدی', 'music-wave-core' ),
+					'lyrics'       => __( 'متن هم‌زمان با آهنگ', 'music-wave-core' ),
+					'lyricsClose'  => __( 'بستن متن', 'music-wave-core' ),
 					'previewBadge' => __( 'پیش‌نمایش', 'music-wave-core' ),
 					'loading'      => __( 'در حال بارگذاری…', 'music-wave-core' ),
 					'error'        => __( 'پخش شروع نشد.', 'music-wave-core' ),
@@ -234,7 +246,7 @@ final class PreviewPlayer {
 		$label     = isset( $attributes['label'] ) ? sanitize_text_field( (string) $attributes['label'] ) : '';
 		$style     = isset( $attributes['style'] ) && is_scalar( $attributes['style'] ) ? sanitize_key( (string) $attributes['style'] ) : 'solid';
 		$style     = in_array( $style, array( 'solid', 'outline', 'ghost' ), true ) ? $style : 'solid';
-		$variation = BlockSupport::style_variation( $attributes, array( 'outline', 'ghost' ) );
+		$variation = BlockSupport::style_variation( $attributes, array( 'outline', 'ghost', 'vinyl' ) );
 		if ( '' !== $variation ) {
 			$style = $variation;
 		}
@@ -264,7 +276,7 @@ final class PreviewPlayer {
 		$link    = get_permalink( $release_id );
 		$limit   = absint( $this->releases->get( $release_id, 'mw_preview_duration' ) );
 		$limit   = $limit >= 10 && $limit <= 120 ? $limit : 30;
-		$style   = in_array( $style, array( 'solid', 'outline', 'ghost' ), true ) ? $style : 'solid';
+		$style   = in_array( $style, array( 'solid', 'outline', 'ghost', 'vinyl' ), true ) ? $style : 'solid';
 		$class   = 'mw-preview-button'
 			. ( $compact ? ' mw-preview-button--compact' : '' )
 			. ( 'solid' !== $style ? ' mw-preview-button--' . $style : '' )
@@ -293,6 +305,7 @@ final class PreviewPlayer {
 			'previous'   => '<path d="M6 5a1 1 0 0 1 1 1v12a1 1 0 1 1-2 0V6a1 1 0 0 1 1-1Zm12.53.21A1 1 0 0 1 20 6.06v11.88a1 1 0 0 1-1.53.85L9.2 12.85a1 1 0 0 1 0-1.7l9.27-5.94a1 1 0 0 1 .06 0Z"/>',
 			'next'       => '<path d="M18 5a1 1 0 0 1 1 1v12a1 1 0 1 1-2 0V6a1 1 0 0 1 1-1ZM5.47 5.21a1 1 0 0 1 1.06 0l9.27 5.94a1 1 0 0 1 0 1.7l-9.27 5.94A1 1 0 0 1 5 17.94V6.06a1 1 0 0 1 .47-.85Z"/>',
 			'queue'      => '<path d="M4 6a1 1 0 0 1 1-1h14a1 1 0 1 1 0 2H5a1 1 0 0 1-1-1Zm0 5a1 1 0 0 1 1-1h14a1 1 0 1 1 0 2H5a1 1 0 0 1-1-1Zm1 4a1 1 0 1 0 0 2h8a1 1 0 1 0 0-2H5Zm12.5-1a1 1 0 0 1 1 1v1.5H20a1 1 0 1 1 0 2h-1.5V20a1 1 0 1 1-2 0v-1.5H15a1 1 0 1 1 0-2h1.5V15a1 1 0 0 1 1-1Z"/>',
+			'subtitles'  => '<path d="M4 5.5A2.5 2.5 0 0 1 6.5 3h11A2.5 2.5 0 0 1 20 5.5v9A2.5 2.5 0 0 1 17.5 17H14l-1.8 2.4a.75.75 0 0 1-1.2 0L9.2 17H6.5A2.5 2.5 0 0 1 4 14.5v-9ZM7.75 9a.75.75 0 0 0 0 1.5h3.5a.75.75 0 0 0 0-1.5h-3.5Zm5 0a.75.75 0 0 0 0 1.5h3.5a.75.75 0 0 0 0-1.5h-3.5ZM7.75 12a.75.75 0 0 0 0 1.5h8.5a.75.75 0 0 0 0-1.5h-8.5Z"/>',
 			'close'      => '<path d="M6.22 6.22a1 1 0 0 1 1.41 0L12 10.59l4.36-4.37a1 1 0 1 1 1.42 1.42L13.41 12l4.37 4.36a1 1 0 0 1-1.42 1.42L12 13.41l-4.37 4.37a1 1 0 0 1-1.41-1.42L10.59 12 6.22 7.63a1 1 0 0 1 0-1.41Z"/>',
 			'volume'     => '<path d="M4 9.5A1.5 1.5 0 0 1 5.5 8H8l4.35-3.48A1 1 0 0 1 14 5.3v13.4a1 1 0 0 1-1.65.78L8 16H5.5A1.5 1.5 0 0 1 4 14.5v-5Zm12.7-1.03a1 1 0 0 1 1.4.13A5.98 5.98 0 0 1 19.5 12c0 1.3-.42 2.5-1.4 3.4a1 1 0 0 1-1.53-1.27c.62-.52.93-1.28.93-2.13 0-.85-.31-1.6-.93-2.13a1 1 0 0 1 .13-1.4Zm2.7-2.6a1 1 0 0 1 1.4.16A9.96 9.96 0 0 1 22.5 12a9.96 9.96 0 0 1-1.7 5.97 1 1 0 0 1-1.56-1.24A7.96 7.96 0 0 0 20.5 12c0-1.7-.5-3.28-1.26-4.73a1 1 0 0 1 .16-1.4Z"/>',
 			'volume-off' => '<path d="M4 9.5A1.5 1.5 0 0 1 5.5 8H8l4.35-3.48A1 1 0 0 1 14 5.3v13.4a1 1 0 0 1-1.65.78L8 16H5.5A1.5 1.5 0 0 1 4 14.5v-5Zm12.3-.2a1 1 0 0 1 1.4 0L19 10.6l1.3-1.3a1 1 0 1 1 1.4 1.4L20.4 12l1.3 1.3a1 1 0 0 1-1.4 1.4L19 13.4l-1.3 1.3a1 1 0 0 1-1.4-1.4l1.3-1.3-1.3-1.3a1 1 0 0 1 0-1.4Z"/>',
@@ -325,6 +338,11 @@ final class PreviewPlayer {
 			. '<button type="button" class="mw-global-player__queue-close" aria-label="' . esc_attr__( 'بستن صف', 'music-wave-core' ) . '">' . $this->icon( 'close' ) . '</button></div>'
 			. '<ol class="mw-global-player__queue-list"></ol></div>';
 
+		$lyrics = '<div class="mw-global-player__lyrics" data-mw-player-lyrics hidden>'
+			. '<div class="mw-global-player__queue-header"><h3>' . esc_html__( 'متن هم‌زمان با آهنگ', 'music-wave-core' ) . '</h3>'
+			. '<button type="button" class="mw-global-player__lyrics-close" aria-label="' . esc_attr__( 'بستن متن', 'music-wave-core' ) . '">' . $this->icon( 'close' ) . '</button></div>'
+			. '<div class="mw-lyrics mw-lyrics--karaoke" data-mw-lyrics data-scroll="center" data-mw-lyric-offset="0"><div class="mw-lyrics__stage" data-mw-lyrics-stage></div></div></div>';
+
 		$notice = '<div class="mw-global-player__notice" role="status" hidden>'
 			. '<span class="mw-global-player__notice-message"></span>'
 			. '<a class="mw-global-player__notice-cta wp-element-button" href="#" hidden></a>'
@@ -350,6 +368,7 @@ final class PreviewPlayer {
 			. '</div>';
 
 		$tools = '<div class="mw-global-player__tools">'
+			. '<button type="button" class="mw-global-player__lyrics-toggle" aria-expanded="false" aria-label="' . esc_attr__( 'متن هم‌زمان با آهنگ', 'music-wave-core' ) . '" hidden>' . $this->icon( 'subtitles' ) . '</button>'
 			. '<button type="button" class="mw-global-player__queue-toggle" aria-expanded="false" aria-label="' . esc_attr__( 'صف پیش‌نمایش', 'music-wave-core' ) . '" hidden>' . $this->icon( 'queue' ) . '</button>'
 			. '<div class="mw-global-player__volume-group">'
 			. '<button type="button" class="mw-global-player__mute" aria-pressed="false" aria-label="' . esc_attr__( 'بی‌صدا', 'music-wave-core' ) . '">' . $this->icon( 'volume' ) . $this->icon( 'volume-off' ) . '</button>'
@@ -359,7 +378,7 @@ final class PreviewPlayer {
 			. '</div>';
 
 		$markup = '<aside class="mw-global-player" data-mw-preview-player hidden aria-label="' . esc_attr__( 'پخش‌کننده پیش‌نمایش موسیقی', 'music-wave-core' ) . '">'
-			. $queue . $notice
+			. $queue . $lyrics . $notice
 			. '<audio preload="metadata"></audio>'
 			. '<div class="mw-global-player__bar">' . $track . '<div class="mw-global-player__center">' . $controls . $timeline . '</div>' . $tools . '</div>'
 			. '</aside>';

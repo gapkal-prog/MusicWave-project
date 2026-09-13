@@ -19,6 +19,10 @@
       "type": "string",
       "default": "inherit"
     },
+    "styleVariant": {
+      "type": "string",
+      "default": ""
+    },
     "eyebrow": {
       "type": "string",
       "default": ""
@@ -94,6 +98,30 @@
     "showViews": {
       "type": "boolean",
       "default": false
+    },
+    "sectionUrl": {
+      "type": "string",
+      "default": ""
+    },
+    "sectionLinkLabel": {
+      "type": "string",
+      "default": ""
+    },
+    "imageShape": {
+      "type": "string",
+      "default": "square"
+    },
+    "imageSize": {
+      "type": "string",
+      "default": "medium"
+    },
+    "filterTabs": {
+      "type": "string",
+      "default": ""
+    },
+    "className": {
+      "type": "string",
+      "default": ""
     }
   },
   "supports": {

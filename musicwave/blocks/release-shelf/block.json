@@ -62,6 +62,10 @@
       "type": "string",
       "default": "grid"
     },
+    "styleVariant": {
+      "type": "string",
+      "default": ""
+    },
     "autoplay": {
       "type": "boolean",
       "default": true
@@ -189,6 +193,14 @@
     "sideColumnWidth": {
       "type": "integer",
       "default": 340
+    },
+    "filterTabs": {
+      "type": "string",
+      "default": ""
+    },
+    "className": {
+      "type": "string",
+      "default": ""
     }
   },
   "supports": {

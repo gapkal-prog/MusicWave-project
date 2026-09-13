@@ -863,6 +863,19 @@ function get_posts( array $arguments = array() ) {
 	return $ids;
 }
 
+/**
+ * Post-cache priming is a query optimisation. The doubles below read their
+ * fixtures straight from globals, so there is nothing to warm.
+ *
+ * @param array<int, int> $ids               Post IDs.
+ * @param bool            $update_term_cache Whether the caller wants terms.
+ * @param bool            $update_meta_cache Whether the caller wants meta.
+ * @return void
+ */
+function _prime_post_caches( $ids, $update_term_cache = true, $update_meta_cache = true ) {
+	unset( $ids, $update_term_cache, $update_meta_cache );
+}
+
 function get_term_link( $term ) {
 	return $term instanceof WP_Term ? 'https://example.test/artist/' . $term->term_id : new WP_Error( 'invalid_term', 'Invalid term.' );
 }
@@ -1491,7 +1504,7 @@ function mw_assert_same( $expected, $actual, string $message ): void {
 }
 
 $schema = new ManaCore\MusicWave\Core\Schema\ReleaseMetaSchema();
-mw_assert_same( 24, count( $schema->all() ), 'Schema must expose every canonical release and metadata lookup field.' );
+mw_assert_same( 26, count( $schema->all() ), 'Schema must expose every canonical release and metadata lookup field.' );
 mw_assert_same( false, $schema->get( 'mw_product_ids' )->show_in_rest(), 'Product mappings must remain private.' );
 mw_assert_same( 'Discovery', $schema->get( 'mw_album' )->sanitize( ' Discovery ' ), 'Album names must be safely normalized.' );
 mw_assert_same( 2026, $schema->get( 'mw_release_year' )->sanitize( '2026' ), 'Release years must be stored as valid integers.' );
@@ -3336,7 +3349,7 @@ $_POST = array();
 
 $mw_req_block = new RequestFormBlock( $mw_req_forms, $mw_req_settings );
 $mw_req_html  = $mw_req_block->render( array() );
-mw_assert_same( true, false !== strpos( $mw_req_html, 'class="mw-request-form mw-request-form--split"' ), 'The block renders the split layout by default.' );
+mw_assert_same( true, false !== strpos( $mw_req_html, 'class="mw-request-form mw-request-form--split mw-request-form--mode-both"' ), 'The block renders the split layout in both access modes by default.' );
 mw_assert_same( true, false !== strpos( $mw_req_html, 'action="https://example.test/wp-admin/admin-post.php"' ), 'The form posts to admin-post.php for no-JS operation.' );
 mw_assert_same( true, false !== strpos( $mw_req_html, 'name="' . RequestFormHandler::HONEYPOT . '"' ) && false !== strpos( $mw_req_html, 'name="' . RequestFormHandler::TIMER . '"' ), 'The form carries the honeypot and the timing field.' );
 mw_assert_same( true, false !== strpos( $mw_req_html, 'name="consent"' ) && false !== strpos( $mw_req_html, 'name="_wpnonce"' ), 'The form carries consent and a nonce.' );

@@ -32,32 +32,67 @@
 	}
 }
 
-/* Stream rail (parts/header-stream.html): fixed chrome on the front end,
- * an ordinary editable row inside the canvas so nothing overlaps the
- * blocks being edited. */
+/*
+ * Stream chrome in the Site Editor: keep the rail on the inline-start
+ * (or inline-end) edge, like the front end, so editing «سربرگ (استریم)»
+ * is a side-by-side canvas — not a stacked row sitting above the top bar.
+ */
+.editor-styles-wrapper .mw-site-header--stream > .block-editor-inner-blocks {
+	display: contents;
+}
+
+.editor-styles-wrapper .mw-site-header--stream,
+.editor-styles-wrapper .mw-site-header--stream > .block-editor-inner-blocks > .block-editor-block-list__layout,
+.editor-styles-wrapper .mw-site-header--stream.is-layout-flow {
+	display: grid;
+	grid-template-columns: minmax(14.5rem, 16.5rem) minmax(0, 1fr);
+	align-items: stretch;
+	min-block-size: 22rem;
+}
+
+.editor-styles-wrapper .mw-site-header--stream-end,
+.editor-styles-wrapper .mw-site-header--stream-end > .block-editor-inner-blocks > .block-editor-block-list__layout,
+.editor-styles-wrapper .mw-site-header--stream-end.is-layout-flow {
+	grid-template-columns: minmax(0, 1fr) minmax(14.5rem, 16.5rem);
+}
+
 .editor-styles-wrapper .mw-site-header--stream .mw-rail {
 	position: relative;
 	inset: auto;
 	z-index: auto;
+	grid-row: 1 / span 8;
 	inline-size: 100%;
+	min-inline-size: 14.5rem;
 	block-size: auto;
+	min-block-size: 22rem;
 	padding: 0.75rem;
+	overflow: auto;
 	border: 0;
-	border-block-end: 1px solid var(--mw-color-border);
+	border-inline-end: 1px solid var(--mw-color-border);
 	background: var(--mw-color-surface);
 	backdrop-filter: none;
 	-webkit-backdrop-filter: none;
 }
 
+.editor-styles-wrapper .mw-site-header--stream-end .mw-rail {
+	border-inline-end: 0;
+	border-inline-start: 1px solid var(--mw-color-border);
+}
+
+.editor-styles-wrapper .mw-site-header--stream .mw-stream-topbar {
+	min-inline-size: 0;
+}
+
 .editor-styles-wrapper .mw-site-header--stream .mw-rail .wp-block-navigation__container {
-	flex-direction: row;
-	flex-wrap: wrap;
+	flex-direction: column;
+	flex-wrap: nowrap;
 	justify-content: flex-start;
 	gap: 0.25rem;
+	inline-size: 100%;
 }
 
 .editor-styles-wrapper .mw-site-header--stream .mw-rail .wp-block-navigation-item {
-	inline-size: auto;
+	inline-size: 100%;
 	flex: 0 0 auto;
 }
 
@@ -77,9 +112,78 @@
 	display: none;
 }
 
-/* The canvas never reserves room for the fixed rail (it is a normal row
- * there) and has no global player to dock above. */
 html .editor-styles-wrapper .wp-site-blocks {
 	margin-inline-start: 0;
 	padding-block-end: 0;
+}
+
+/*
+ * Site Editor mobile / tablet canvas: same chrome as the front end so
+ * editing «سربرگ (استریم)» in the phone preview stays connected — top bar
+ * first, destinations as a bottom tab strip that still accepts clicks.
+ */
+@media (max-width: 63.99rem) {
+	.editor-styles-wrapper .mw-site-header--stream > .block-editor-inner-blocks {
+		display: block;
+	}
+
+	.editor-styles-wrapper .mw-site-header--stream,
+	.editor-styles-wrapper .mw-site-header--stream > .block-editor-inner-blocks > .block-editor-block-list__layout,
+	.editor-styles-wrapper .mw-site-header--stream.is-layout-flow,
+	.editor-styles-wrapper .mw-site-header--stream-end,
+	.editor-styles-wrapper .mw-site-header--stream-end > .block-editor-inner-blocks > .block-editor-block-list__layout,
+	.editor-styles-wrapper .mw-site-header--stream-end.is-layout-flow {
+		display: flex;
+		flex-direction: column;
+		grid-template-columns: none;
+		min-block-size: 0;
+	}
+
+	.editor-styles-wrapper .mw-site-header--stream .mw-stream-topbar {
+		order: 1;
+	}
+
+	.editor-styles-wrapper .mw-site-header--stream .mw-rail,
+	.editor-styles-wrapper .mw-site-header--stream-end .mw-rail {
+		order: 2;
+		grid-row: auto;
+		inline-size: 100%;
+		min-inline-size: 0;
+		min-block-size: 0;
+		margin-block-start: auto;
+		padding: 0.35rem 0.25rem;
+		overflow-x: auto;
+		border: 0;
+		border-block-start: 1px solid var(--mw-color-border);
+	}
+
+	.editor-styles-wrapper .mw-site-header--stream .mw-rail__brand {
+		display: none;
+	}
+
+	.editor-styles-wrapper .mw-site-header--stream .mw-stream-topbar__brand {
+		display: flex;
+	}
+
+	.editor-styles-wrapper .mw-site-header--stream .mw-rail .wp-block-navigation__container {
+		flex-direction: row;
+		flex-wrap: nowrap;
+		justify-content: flex-start;
+		gap: 0.15rem;
+		overflow-x: auto;
+	}
+
+	.editor-styles-wrapper .mw-site-header--stream .mw-rail .wp-block-navigation-item {
+		flex: 0 0 auto;
+		inline-size: auto;
+		min-inline-size: 4.25rem;
+	}
+
+	.editor-styles-wrapper .mw-site-header--stream .mw-rail .wp-block-navigation-item__content {
+		flex-direction: column;
+		justify-content: center;
+		min-block-size: 3.25rem;
+		padding: 0.3rem 0.35rem;
+		font-size: 0.68rem;
+	}
 }

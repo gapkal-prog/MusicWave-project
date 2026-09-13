@@ -531,6 +531,7 @@ final class PlaylistRoutes {
 		$image   = is_string( $image ) ? $image : '';
 		$link    = get_permalink( $release_id );
 		$full    = '' !== $quality;
+		$lrc     = (string) get_post_meta( $release_id, 'mw_lyrics_lrc', true );
 
 		return array(
 			'releaseId'    => $release_id,
@@ -543,6 +544,9 @@ final class PlaylistRoutes {
 			'previewLimit' => $full ? 0 : $this->playlist_preview_limit( $release_id ),
 			'full'         => $full,
 			'quality'      => $quality,
+			'lyricsLrc'    => $lrc,
+			'lyricsOffset' => (int) get_post_meta( $release_id, 'mw_lyrics_offset', true ),
+			'hasLyrics'    => '' !== trim( $lrc ),
 		);
 	}
 

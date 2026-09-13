@@ -13,6 +13,7 @@
 <?php
 echo wp_json_encode(
 	array(
+		'className'   => 'is-style-editorial',
 		'eyebrow'     => __( 'سرمقاله', 'musicwave' ),
 		'title'       => __( 'انتخاب‌های برتر این هفته', 'musicwave' ),
 		'orderBy'     => 'rand',

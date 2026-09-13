@@ -21,6 +21,9 @@
 			full: false,
 			quality: '',
 			limited: false,
+			lyricsLrc: '',
+			lyricsOffset: 0,
+			hasLyrics: false,
 		};
 	}
 
@@ -40,7 +43,60 @@
 			full,
 			quality: full ? item.quality : '',
 			limited: false,
+			lyricsLrc: item.lyricsLrc || '',
+			lyricsOffset: parseInt( item.lyricsOffset, 10 ) || 0,
+			hasLyrics: Boolean( item.hasLyrics ) || Boolean( item.lyricsLrc ),
 		};
+	}
+
+	function parseLrc( raw ) {
+		var lines = [];
+		String( raw || '' )
+			.split( /\r\n|\r|\n/ )
+			.forEach( function ( row ) {
+				row = row.trim();
+				if ( ! row || /^\[[a-z]+:/i.test( row ) ) {
+					return;
+				}
+				var stamps = [];
+				var stampRe = /\[(\d{1,2}):(\d{2})(?:\.(\d{1,3}))?\]/g;
+				var match;
+				while ( ( match = stampRe.exec( row ) ) ) {
+					stamps.push( match );
+				}
+				if ( stamps.length ) {
+					var text = row.replace( /\[\d{1,2}:\d{2}(?:\.\d{1,3})?\]/g, '' ).trim();
+					if ( ! text ) {
+						return;
+					}
+					var parts = text.split( /\s*(?:\||\/\/)\s+/ );
+					var primary = ( parts[ 0 ] || text ).trim();
+					var translation = ( parts[ 1 ] || '' ).trim();
+					stamps.forEach( function ( stamp ) {
+						var ms = stamp[ 3 ] ? parseFloat( '0.' + stamp[ 3 ] ) : 0;
+						lines.push( {
+							time: parseInt( stamp[ 1 ], 10 ) * 60 + parseInt( stamp[ 2 ], 10 ) + ms,
+							text: primary,
+							translation: translation,
+						} );
+					} );
+					return;
+				}
+				lines.push( { time: -1, text: row, translation: '' } );
+			} );
+		lines.sort( function ( a, b ) {
+			return a.time - b.time;
+		} );
+		return lines;
+	}
+
+	function formatLyricClock( seconds ) {
+		if ( seconds < 0 ) {
+			return '';
+		}
+		var minutes = Math.floor( seconds / 60 );
+		var remain = Math.floor( seconds ) % 60;
+		return String( minutes ).padStart( 2, '0' ) + ':' + String( remain ).padStart( 2, '0' );
 	}
 
 	function formatTime( seconds ) {
@@ -153,6 +209,15 @@
 		var queueClose = player.querySelector(
 			'.mw-global-player__queue-close'
 		);
+		var lyricsToggle = player.querySelector(
+			'.mw-global-player__lyrics-toggle'
+		);
+		var lyricsPanel = player.querySelector( '[data-mw-player-lyrics]' );
+		var lyricsClose = player.querySelector(
+			'.mw-global-player__lyrics-close'
+		);
+		var lyricsRoot = player.querySelector( '[data-mw-lyrics]' );
+		var lyricsStage = player.querySelector( '[data-mw-lyrics-stage]' );
 		var notice = player.querySelector( '.mw-global-player__notice' );
 		var noticeMessage = player.querySelector(
 			'.mw-global-player__notice-message'
@@ -432,11 +497,83 @@
 			if ( ! queuePanel || ! queueToggle ) {
 				return;
 			}
+			if ( open ) {
+				setLyricsOpen( false );
+			}
 			queuePanel.hidden = ! open;
 			queueToggle.setAttribute(
 				'aria-expanded',
 				open ? 'true' : 'false'
 			);
+		}
+
+		function setLyricsOpen( open ) {
+			if ( ! lyricsPanel || ! lyricsToggle ) {
+				return;
+			}
+			if ( open ) {
+				if ( queuePanel && queueToggle ) {
+					queuePanel.hidden = true;
+					queueToggle.setAttribute( 'aria-expanded', 'false' );
+				}
+				renderLyricsPanel();
+			}
+			lyricsPanel.hidden = ! open;
+			lyricsToggle.setAttribute(
+				'aria-expanded',
+				open ? 'true' : 'false'
+			);
+		}
+
+		function renderLyricsPanel() {
+			if ( ! lyricsToggle || ! lyricsPanel || ! lyricsStage || ! lyricsRoot ) {
+				return;
+			}
+			var track = currentTrack();
+			var raw = track && track.lyricsLrc ? String( track.lyricsLrc ) : '';
+			var has = Boolean( track && ( track.hasLyrics || raw.trim() ) );
+			lyricsToggle.hidden = ! has;
+			if ( ! has ) {
+				setLyricsOpen( false );
+				lyricsStage.replaceChildren();
+				return;
+			}
+			lyricsRoot.setAttribute(
+				'data-mw-lyric-offset',
+				String( track.lyricsOffset || 0 )
+			);
+			if ( track.releaseId ) {
+				lyricsRoot.setAttribute( 'data-release-id', String( track.releaseId ) );
+			}
+			var lines = parseLrc( raw );
+			lyricsStage.replaceChildren();
+			lines.forEach( function ( line, index ) {
+				var timed = line.time >= 0;
+				var node = document.createElement( timed ? 'button' : 'p' );
+				if ( timed ) {
+					node.type = 'button';
+					node.setAttribute( 'data-mw-lyric-time', String( line.time ) );
+				}
+				node.className = 'mw-lyrics__line';
+				node.setAttribute( 'data-mw-lyric-index', String( index ) );
+				var text = document.createElement( 'span' );
+				text.className = 'mw-lyrics__text';
+				text.textContent = line.text;
+				node.appendChild( text );
+				if ( line.translation ) {
+					var sub = document.createElement( 'span' );
+					sub.className = 'mw-lyrics__sub';
+					sub.textContent = line.translation;
+					node.appendChild( sub );
+				}
+				if ( timed ) {
+					var stamp = document.createElement( 'span' );
+					stamp.className = 'mw-lyrics__stamp';
+					stamp.textContent = formatLyricClock( line.time );
+					node.appendChild( stamp );
+				}
+				lyricsStage.appendChild( node );
+			} );
 		}
 
 		function hideNotice() {
@@ -582,6 +719,7 @@
 			next.disabled = current >= queue.length - 1;
 			updateButtons();
 			renderQueuePanel();
+			renderLyricsPanel();
 		}
 
 		function loadSource( track ) {
@@ -858,6 +996,16 @@
 				setQueueOpen( false );
 			} );
 		}
+		if ( lyricsToggle ) {
+			lyricsToggle.addEventListener( 'click', function () {
+				setLyricsOpen( lyricsPanel.hidden );
+			} );
+		}
+		if ( lyricsClose ) {
+			lyricsClose.addEventListener( 'click', function () {
+				setLyricsOpen( false );
+			} );
+		}
 		if ( noticeClose ) {
 			noticeClose.addEventListener( 'click', hideNotice );
 		}
@@ -871,6 +1019,7 @@
 			player.removeAttribute( 'data-mw-state' );
 			setPresence( false );
 			setQueueOpen( false );
+			setLyricsOpen( false );
 			hideNotice();
 			clearState();
 			updateButtons();
@@ -983,6 +1132,7 @@
 						position: audio.currentTime || 0,
 						playing: ! audio.paused,
 						queueOpen: Boolean( queuePanel ) && ! queuePanel.hidden,
+						lyricsOpen: Boolean( lyricsPanel ) && ! lyricsPanel.hidden,
 						queue,
 						meta: queueMeta,
 					} )
@@ -1051,6 +1201,9 @@
 			render();
 			if ( data.queueOpen ) {
 				setQueueOpen( true );
+			}
+			if ( data.lyricsOpen ) {
+				setLyricsOpen( true );
 			}
 			announcePreviewMode();
 			setLoading( true );

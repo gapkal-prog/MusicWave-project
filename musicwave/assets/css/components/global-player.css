@@ -494,7 +494,8 @@ html.mw-has-player {
 	display: none;
 }
 
-.mw-global-player__queue-toggle[aria-expanded="true"] {
+.mw-global-player__queue-toggle[aria-expanded="true"],
+.mw-global-player__lyrics-toggle[aria-expanded="true"] {
 	color: var(--mw-color-accent-strong);
 	background: color-mix(in srgb, var(--mw-color-accent) 14%, transparent);
 }
@@ -589,20 +590,128 @@ html.mw-has-player {
 
 /* --- Queue panel floating above the bar --------------------------------- */
 
-.mw-global-player__queue {
+.mw-global-player__queue,
+.mw-global-player__lyrics {
 	position: absolute;
 	inset-inline: 0;
 	inset-block-end: calc(100% + 0.5rem);
 	z-index: 1;
 	display: flex;
 	flex-direction: column;
+	min-block-size: 0;
 	max-block-size: min(22rem, 60vh);
-	overflow: hidden auto;
+	overflow: hidden;
 	color: var(--mw-color-text);
 	background: var(--mw-color-surface);
 	border: 1px solid var(--mw-color-border);
 	border-radius: var(--mw-radius-lg);
 	box-shadow: var(--mw-shadow-floating);
+}
+
+.mw-global-player__lyrics .mw-lyrics {
+	display: flex;
+	flex: 1 1 auto;
+	flex-direction: column;
+	min-block-size: 0;
+	margin: 0;
+	padding: 0;
+	background: transparent;
+	border: 0;
+	border-radius: 0;
+	box-shadow: none;
+	overflow: hidden;
+}
+
+.mw-global-player__lyrics .mw-lyrics__stage {
+	display: flex;
+	flex: 1 1 auto;
+	flex-direction: column;
+	gap: 0.35rem;
+	min-block-size: 12rem;
+	max-block-size: none;
+	padding-block: 4.75rem;
+	padding-inline: 1.15rem;
+	overflow-x: hidden;
+	overflow-y: auto;
+	overscroll-behavior: contain;
+	scroll-behavior: smooth;
+	mask-image: linear-gradient(180deg, transparent, #000 10%, #000 88%, transparent);
+}
+
+/*
+ * Lyric rows are <button>s. The player chrome forces every button into a
+ * 2.75rem circle; reset that here so the karaoke river can fill the panel.
+ */
+.mw-global-player .mw-global-player__lyrics .mw-lyrics__line {
+	display: block;
+	flex: 0 0 auto;
+	inline-size: 100%;
+	block-size: auto;
+	min-block-size: 0;
+	margin: 0;
+	padding: 0.35rem 0.4rem;
+	place-items: unset;
+	color: color-mix(in srgb, var(--mw-color-text) 38%, transparent);
+	font: inherit;
+	font-size: 1.05rem;
+	font-weight: 600;
+	line-height: 1.45;
+	letter-spacing: -0.01em;
+	text-align: center;
+	background: transparent;
+	border: 0;
+	border-radius: 0.65rem;
+	box-shadow: none;
+	opacity: 1;
+	transform: none;
+	cursor: pointer;
+}
+
+.mw-global-player .mw-global-player__lyrics .mw-lyrics__line:hover,
+.mw-global-player .mw-global-player__lyrics .mw-lyrics__line:focus-visible {
+	color: color-mix(in srgb, var(--mw-color-text) 82%, transparent);
+	background: color-mix(in srgb, var(--mw-color-text) 6%, transparent);
+	scale: 1;
+}
+
+.mw-global-player .mw-global-player__lyrics .mw-lyrics__text,
+.mw-global-player .mw-global-player__lyrics .mw-lyrics__sub {
+	display: block;
+	grid-column: auto;
+}
+
+.mw-global-player .mw-global-player__lyrics .mw-lyrics__stamp {
+	display: none;
+}
+
+.mw-global-player .mw-global-player__lyrics .mw-lyrics__line.is-passed {
+	color: color-mix(in srgb, var(--mw-color-text) 52%, transparent);
+	font-weight: 500;
+}
+
+.mw-global-player .mw-global-player__lyrics .mw-lyrics__line.is-active {
+	padding-block: 0.7rem;
+	color: var(--mw-color-editorial, #fa2d65);
+	font-size: 1.45rem;
+	font-weight: 800;
+	line-height: 1.25;
+	background: transparent;
+	box-shadow: none;
+	transform: none;
+}
+
+.mw-global-player .mw-global-player__lyrics .mw-lyrics__line.is-active::before {
+	content: none;
+}
+
+.mw-global-player .mw-global-player__lyrics .mw-lyrics__line.is-upcoming {
+	color: color-mix(in srgb, var(--mw-color-text) 70%, transparent);
+}
+
+.mw-global-player .mw-global-player__lyrics .mw-lyrics__sub {
+	margin-block-start: 0.15rem;
+	font-size: 0.78em;
+	font-weight: 500;
 }
 
 .mw-global-player__queue-header {
@@ -622,15 +731,21 @@ html.mw-has-player {
 }
 
 .mw-global-player__queue-close,
+.mw-global-player__lyrics-close,
 .mw-global-player__notice-close {
 	inline-size: 2.25rem;
 	block-size: 2.25rem;
 }
 
 .mw-global-player__queue-list {
+	flex: 1 1 auto;
+	min-block-size: 0;
 	margin: 0;
 	padding: 0.4rem;
 	list-style: none;
+	overflow-x: hidden;
+	overflow-y: auto;
+	overscroll-behavior: contain;
 	scrollbar-width: thin;
 	scrollbar-color: color-mix(in srgb, var(--mw-color-text) 25%, transparent) transparent;
 }
@@ -867,6 +982,7 @@ html.mw-has-player {
 	}
 
 	.mw-global-player__queue,
+	.mw-global-player__lyrics,
 	.mw-global-player__notice {
 		inset-inline: 0.5rem;
 		inset-block-end: calc(100% + 0.35rem);

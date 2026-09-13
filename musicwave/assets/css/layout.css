@@ -216,6 +216,118 @@ body {
 	margin: 0;
 }
 
+.mw-sidebar__section--widgets:empty,
+.mw-sidebar__section--widgets:not(:has(*)) {
+	display: none;
+}
+
+.mw-sidebar__widgets,
+.mw-sidebar .widget,
+.mw-sidebar .mw-widget {
+	display: grid;
+	gap: 0.65rem;
+}
+
+.mw-sidebar .widget {
+	margin: 0;
+	padding-block-end: 0.85rem;
+	border-block-end: 1px solid var(--mw-color-border);
+}
+
+.mw-sidebar .widgettitle,
+.mw-sidebar .widget h2,
+.mw-sidebar .widget h3 {
+	margin: 0;
+	color: var(--mw-color-text-muted);
+	font-size: 0.72rem;
+	font-weight: 800;
+	letter-spacing: 0.1em;
+	text-transform: uppercase;
+}
+
+.mw-sidebar .mw-release-shelf,
+.mw-sidebar .mw-artists-shelf,
+.mw-sidebar .mw-terms-shelf {
+	margin: 0;
+	padding: 0;
+	background: transparent;
+	border: 0;
+	box-shadow: none;
+}
+
+.mw-sidebar .mw-release-shelf__header,
+.mw-sidebar .mw-artists-shelf .mw-release-shelf__header {
+	display: none;
+}
+
+.mw-sidebar .mw-release-shelf--list .mw-release-shelf__items,
+.mw-sidebar .mw-release-shelf--list .mw-artists-shelf__items {
+	display: grid;
+	gap: 0.45rem;
+}
+
+.mw-sidebar .mw-release-shelf--list .mw-release-shelf__item,
+.mw-sidebar .mw-release-shelf--list .mw-artists-shelf__item {
+	display: grid;
+	grid-template-columns: 2.5rem minmax(0, 1fr);
+	gap: 0.65rem;
+	align-items: center;
+	padding: 0.35rem 0.4rem;
+	border-radius: var(--mw-radius-sm);
+}
+
+.mw-sidebar .mw-release-shelf--list .mw-release-shelf__item:hover,
+.mw-sidebar .mw-release-shelf--list .mw-artists-shelf__item:hover {
+	background: color-mix(in srgb, var(--mw-color-text) 6%, transparent);
+}
+
+.mw-sidebar .mw-release-shelf__art,
+.mw-sidebar .mw-release-shelf__art img,
+.mw-sidebar .mw-artists-shelf__avatar,
+.mw-sidebar .mw-artists-shelf__avatar img {
+	inline-size: 2.5rem;
+	block-size: 2.5rem;
+	border-radius: 0.45rem;
+	object-fit: cover;
+}
+
+.mw-sidebar .mw-artists-shelf__avatar,
+.mw-sidebar .mw-artists-shelf__avatar img {
+	border-radius: 50%;
+}
+
+.mw-sidebar .mw-release-shelf__body h3,
+.mw-sidebar .mw-artists-shelf__name {
+	margin: 0;
+	font-size: 0.85rem;
+	font-weight: 700;
+	line-height: 1.3;
+}
+
+.mw-sidebar .mw-release-shelf__artist,
+.mw-sidebar .mw-artists-shelf__count {
+	color: var(--mw-color-text-muted);
+	font-size: 0.75rem;
+}
+
+.mw-sidebar .mw-release-shelf__action,
+.mw-sidebar .mw-release-shelf__nav {
+	display: none;
+}
+
+.mw-sidebar .mw-terms-shelf__tile {
+	min-height: 0;
+	padding: 0.45rem 0.65rem;
+	font-size: 0.82rem;
+}
+
+.mw-release-stage__aside .mw-sidebar {
+	position: static;
+	max-block-size: none;
+	overflow: visible;
+	padding: clamp(1rem, 2.4vw, 1.5rem);
+}
+
 /* Responsive shell */
 @media (max-width: 48rem) {
 	.mw-app-shell:has(> .mw-sidebar) {

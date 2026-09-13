@@ -329,9 +329,19 @@ final class PlaylistRepository {
 		}
 
 		$is_owner = $viewer_id > 0 && (int) $playlist['user_id'] === $viewer_id;
+		$rows     = $this->store->items( $playlist_id );
+
+		// Long playlists are the norm; warm the post cache for every stored
+		// release so the per-item visibility check below is a cache read.
+		$release_ids = array();
+		foreach ( $rows as $item ) {
+			$release_ids[] = (int) $item['release_id'];
+		}
+		$this->visibility->prime( $release_ids );
+
 		$items    = array();
 		$position = 0;
-		foreach ( $this->store->items( $playlist_id ) as $item ) {
+		foreach ( $rows as $item ) {
 			$release_id = (int) $item['release_id'];
 			$readable   = $is_owner ? $this->visibility->can_read( $release_id ) : $this->visibility->is_public( $release_id );
 			if ( $release_id < 1 || ! $readable ) {

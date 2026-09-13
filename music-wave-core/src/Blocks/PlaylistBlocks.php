@@ -247,7 +247,7 @@ final class PlaylistBlocks {
 		$layout        = isset( $attributes['layout'] ) && in_array( $attributes['layout'], array( 'grid', 'scroll', 'list' ), true ) ? $attributes['layout'] : 'grid';
 		$shape         = isset( $attributes['imageShape'] ) && in_array( $attributes['imageShape'], array( 'square', 'circle', 'landscape', 'portrait' ), true ) ? $attributes['imageShape'] : 'square';
 		$orderby       = isset( $attributes['orderby'] ) && in_array( $attributes['orderby'], array( 'updated_at', 'created_at', 'title' ), true ) ? $attributes['orderby'] : 'updated_at';
-		$style         = BlockSupport::style_variation( $attributes, array( 'cards', 'minimal' ) );
+		$style         = BlockSupport::style_variation( $attributes, array( 'cards', 'minimal', 'vinyl' ) );
 
 		// The JS renderer re-applies layout, columns, and art shape when it
 		// rebuilds cards after an instant search, so keep them in the payload.
@@ -285,7 +285,8 @@ final class PlaylistBlocks {
 
 		// Root classes: base component plus the selected editor style variation
 		// (registered via register_block_style; default "cards" adds no class).
-		$root_class = 'mw-public-playlists' . ( 'minimal' === $style ? ' mw-public-playlists--minimal' : '' );
+		$root_class = 'mw-public-playlists'
+			. ( '' !== $style && 'cards' !== $style ? ' mw-public-playlists--' . $style : '' );
 
 		$header_actions = '';
 		if ( $show_count && $total > 0 ) {

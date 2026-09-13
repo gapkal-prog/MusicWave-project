@@ -171,6 +171,8 @@ final class ReleaseMetaBox {
 			$this->render_protected_asset( $key, $value );
 		} elseif ( 'protected_assets' === $type ) {
 			$this->render_protected_assets( $key, $value );
+		} elseif ( 'textarea' === $type ) {
+			echo '<textarea class="widefat" rows="10" id="' . esc_attr( $key ) . '" name="' . esc_attr( $key ) . '" dir="auto">' . esc_textarea( is_scalar( $value ) ? (string) $value : '' ) . '</textarea>';
 		} else {
 			$input_type = in_array( $type, array( 'date', 'number', 'url' ), true ) ? $type : 'text';
 			$display    = 'key_list' === $type && is_array( $value ) ? implode( ', ', $value ) : (string) $value;
@@ -181,6 +183,10 @@ final class ReleaseMetaBox {
 				}
 			}
 			echo '>';
+		}
+
+		if ( isset( $config['help'] ) && is_string( $config['help'] ) && '' !== $config['help'] ) {
+			echo '<span class="description">' . esc_html( $config['help'] ) . '</span>';
 		}
 
 		echo '</p>';

@@ -8,23 +8,23 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Domain: musicwave\n"
 
-#: functions.php:1615
+#: functions.php:1760
 #, php-format
 msgid "%d قطعه"
 msgid_plural "%d قطعه"
 msgstr[0] ""
 msgstr[1] ""
 
-#: functions.php:1115
+#: functions.php:1254
 #, php-format
 msgid "%d مورد سفارشی‌سازی قالب MusicWave به زباله‌دان منتقل شد. فایل‌های معتبر قالب اکنون فعال هستند."
 msgstr ""
 
-#: functions.php:465 functions.php:508
+#: functions.php:481 functions.php:524
 msgid "MusicWave"
 msgstr ""
 
-#: functions.php:1189
+#: functions.php:1328
 msgid "آخرین انتشارها"
 msgstr ""
 
@@ -32,11 +32,11 @@ msgstr ""
 msgid "ابزارک — جست‌وجو و دسته‌بندی‌ها"
 msgstr ""
 
-#: functions.php:469
+#: functions.php:485
 msgid "ابزارک‌های MusicWave"
 msgstr ""
 
-#: functions.php:628
+#: functions.php:757
 msgid "ابزارک‌های سربرگ MusicWave"
 msgstr ""
 
@@ -44,7 +44,7 @@ msgstr ""
 msgid "ابزارک‌های پابرگ"
 msgstr ""
 
-#: functions.php:610
+#: functions.php:739
 msgid "ابزارک‌های پابرگ MusicWave"
 msgstr ""
 
@@ -56,7 +56,7 @@ msgstr ""
 msgid "اختیاری. برای تعیین ترتیب دقیق، شناسه انتشارها را با کاما جدا کرده و وارد کنید (مثلاً ۱۲، ۴۵، ۷۸). با بردن نشانگر روی عنوان انتشار در MusicWave → انتشارها، شناسه را در پیش‌نمایش پیوند ببینید. این گزینه همه فیلترهای دیگر را نادیده می‌گیرد."
 msgstr ""
 
-#: assets/editor-blocks.js:385
+#: assets/editor-blocks.js:499
 msgid "اختیاری. فقط فهرست‌های پخش عمومی را نمایش بده که عنوانشان با این متن مطابقت دارد."
 msgstr ""
 
@@ -64,7 +64,7 @@ msgstr ""
 msgid "اختیاری. نامک را از فهرست هنرمندان / سبک‌ها / حال‌وهواها در وردپرس → MusicWave کپی کنید. اگر خالی بگذارید، همهٔ موارد نمایش داده می‌شوند. نمونه: pop یا lo-fi."
 msgstr ""
 
-#: functions.php:630
+#: functions.php:759
 msgid "اختیاری: ناحیه کوچک ابزارک برای سربرگ (مثلاً اعلان یا تغییر زبان). بلوک‌ها را از نمایش → ابزارک‌ها یا مستقیماً در بخش قالب سربرگ اضافه کنید."
 msgstr ""
 
@@ -72,53 +72,61 @@ msgstr ""
 msgid "از این عنوان قابل ویرایش بالای حلقه پرس‌وجو، فهرست پخش، مجموعه هنرمندان یا هر بلوک سفارشی استفاده کنید."
 msgstr ""
 
+#: assets/editor-blocks.js:209
+msgid "استایل و ظاهر"
+msgstr ""
+
 #: assets/editor-blocks.js:29
 msgid "استفاده از تنظیمات کلی"
 msgstr ""
 
-#: assets/editor-blocks.js:507
+#: assets/editor-blocks.js:621
 msgid "استفاده از فیلد توضیحات"
 msgstr ""
 
-#: functions.php:316 blocks/theme-toggle/block.json
+#: functions.php:332 blocks/theme-toggle/block.json
 msgid "استفاده از پوسته تیره"
 msgstr ""
 
-#: functions.php:315 blocks/theme-toggle/block.json
+#: functions.php:331 blocks/theme-toggle/block.json
 msgid "استفاده از پوسته روشن"
 msgstr ""
 
-#: functions.php:314 functions.php:2112 blocks/theme-toggle/block.json
+#: functions.php:330 functions.php:2274 blocks/theme-toggle/block.json
 msgid "استفاده از پوسته سیستم"
 msgstr ""
 
-#: assets/editor-blocks.js:500
+#: assets/editor-blocks.js:614
 msgid "استفاده از چکیده"
 msgstr ""
 
-#: functions.php:306
+#: functions.php:322
 #, php-format
 msgid "اسلاید %1$d از %2$d"
 msgstr ""
 
-#: functions.php:2031
+#: functions.php:2193
 #, php-format
 msgid "اسلاید %1$d: %2$s"
 msgstr ""
 
-#: functions.php:302 functions.php:2052
+#: functions.php:318 functions.php:2214
 msgid "اسلاید بعدی"
 msgstr ""
 
-#: functions.php:301 functions.php:2051
+#: functions.php:574
+msgid "اسلاید تمام‌قاب با تیتر بزرگ و پردهٔ تیره‌تر."
+msgstr ""
+
+#: functions.php:317 functions.php:2213
 msgid "اسلاید قبلی"
 msgstr ""
 
-#: functions.php:2070 blocks/release-shelf/block.json blocks/release-slider/block.json
+#: functions.php:2232 blocks/release-shelf/block.json blocks/release-slider/block.json
 msgid "اسلایدر"
 msgstr ""
 
-#: functions.php:2064
+#: functions.php:2226
 msgid "اسلایدر انتشارها"
 msgstr ""
 
@@ -130,7 +138,7 @@ msgstr ""
 msgid "اسلایدر انتشارهای منتخب"
 msgstr ""
 
-#: assets/editor-blocks.js:423
+#: assets/editor-blocks.js:537
 msgid "اسلایدر هیرو"
 msgstr ""
 
@@ -138,7 +146,7 @@ msgstr ""
 msgid "اسلایدر واکنش‌گرا و دسترس‌پذیر برای انتشارهای منتخب یا جدید. از طریق ویرایشگر سایت و تنظیمات کلی اسلایدر کاملاً قابل سفارشی‌سازی است."
 msgstr ""
 
-#: assets/editor-blocks.js:446
+#: assets/editor-blocks.js:560
 msgid "افقی"
 msgstr ""
 
@@ -146,7 +154,7 @@ msgstr ""
 msgid "امروز شنیدن را شروع کنید"
 msgstr ""
 
-#: patterns/editorial-feature.php:17
+#: patterns/editorial-feature.php:18
 msgid "انتخاب‌های برتر این هفته"
 msgstr ""
 
@@ -154,15 +162,15 @@ msgstr ""
 msgid "انتخاب‌هایی آرام برای کار و استراحت."
 msgstr ""
 
-#: functions.php:1346
+#: functions.php:1485
 msgid "انتشار MusicWave"
 msgstr ""
 
-#: assets/editor-blocks.js:294 blocks/release-shelf/block.json blocks/release-slider/block.json
+#: assets/editor-blocks.js:408 blocks/release-shelf/block.json blocks/release-slider/block.json
 msgid "انتشارها"
 msgstr ""
 
-#: assets/editor-blocks.js:332
+#: assets/editor-blocks.js:446
 msgid "انتشارها برای نمایش"
 msgstr ""
 
@@ -170,11 +178,11 @@ msgstr ""
 msgid "انتشارها، هنرمندان، آلبوم‌ها و دانلودهای اختصاصی را در تجربه‌ای یکپارچه کشف کنید."
 msgstr ""
 
-#: functions.php:1396
+#: functions.php:1535
 msgid "انتشارهای بعدی"
 msgstr ""
 
-#: functions.php:1896
+#: functions.php:2057
 msgid "انتشارهای بیشتر"
 msgstr ""
 
@@ -186,15 +194,15 @@ msgstr ""
 msgid "انتشارهای جدید و انتخاب‌های سرمقاله‌ای را دریافت کنید. این بخش را با بلوک خبرنامه، فرم یا ابزارک قدیمی خود جایگزین کنید؛ بدون نیاز به کدنویسی."
 msgstr ""
 
-#: functions.php:1396
+#: functions.php:1535
 msgid "انتشارهای قبلی"
 msgstr ""
 
-#: functions.php:1394 patterns/featured-release-slider.php:12
+#: functions.php:1533 patterns/featured-release-slider.php:12
 msgid "انتشارهای منتخب"
 msgstr ""
 
-#: assets/editor-blocks.js:578
+#: assets/editor-blocks.js:692
 msgid "اندازه فونت عنوان (پیکسل، ۰ = پیش‌فرض)"
 msgstr ""
 
@@ -206,11 +214,11 @@ msgstr ""
 msgid "این چیدمان دو ستونه از بخش قالب قابل استفادهٔ مجدد «نوار کناری» استفاده می‌کند. آن را یک‌بار به‌روزرسانی کنید تا تغییرات فوراً در همه صفحات این الگو دیده شود؛ مناسب برای صاحبان فروشگاه بدون دانش فنی."
 msgstr ""
 
-#: functions.php:1123
+#: functions.php:1262
 msgid "این کار انتشارها، صفحات، منوها، رسانه‌ها، تنظیمات افزونه یا سبک‌های کلی را حذف نمی‌کند."
 msgstr ""
 
-#: functions.php:1191
+#: functions.php:1330
 msgid "اینجا چیزی در حال پخش نیست."
 msgstr ""
 
@@ -222,24 +230,24 @@ msgstr ""
 msgid "با چیزی شروع کنید که شما را به حرکت درمی‌آورد"
 msgstr ""
 
-#: functions.php:1376 functions.php:1612 functions.php:1728 functions.php:1954
+#: functions.php:1515 functions.php:1757 functions.php:1888 functions.php:2116
 #, php-format
 msgid "باز کردن %s"
 msgstr ""
 
-#: functions.php:1699 functions.php:1813 functions.php:1940
+#: functions.php:1859 functions.php:1974 functions.php:2102
 msgid "باز کردن انتشار"
 msgstr ""
 
-#: functions.php:1369 functions.php:1840
+#: functions.php:1508 functions.php:2001
 msgid "بازدیدها"
 msgstr ""
 
-#: functions.php:248
+#: functions.php:264
 msgid "بازکردن منو"
 msgstr ""
 
-#: functions.php:1142
+#: functions.php:1281
 msgid "بازیابی فایل‌های معتبر قالب"
 msgstr ""
 
@@ -251,7 +259,7 @@ msgstr ""
 msgid "بخش معرفی"
 msgstr ""
 
-#: functions.php:467
+#: functions.php:483
 msgid "بخش‌های معرفی MusicWave"
 msgstr ""
 
@@ -259,23 +267,27 @@ msgstr ""
 msgid "بدنه پلاس جاکارتا"
 msgstr ""
 
-#: assets/editor-blocks.js:514
+#: functions.php:568
+msgid "بدون سطح کارت؛ فقط خطوط و تایپوگرافی. مناسب چیدمان‌های فهرستی."
+msgstr ""
+
+#: assets/editor-blocks.js:628
 msgid "بدون متن بدنه"
 msgstr ""
 
-#: assets/editor-blocks.js:636
+#: assets/editor-blocks.js:750
 msgid "برای استفاده از رنگ تأکیدی قالب، خالی بگذارید."
 msgstr ""
 
-#: assets/editor-blocks.js:647
+#: assets/editor-blocks.js:761
 msgid "برای استفاده از مقدار پیش‌فرض قالب، خالی بگذارید."
 msgstr ""
 
-#: functions.php:1393
+#: functions.php:1532
 msgid "برای شما"
 msgstr ""
 
-#: assets/editor-blocks.js:789
+#: assets/editor-blocks.js:908
 msgid "برای نمایش پیش‌نمایش زنده، انتشار منتشرشده اضافه کنید یا این بلوک را فعال کنید."
 msgstr ""
 
@@ -287,19 +299,19 @@ msgstr ""
 msgid "برچسب"
 msgstr ""
 
-#: assets/editor-blocks.js:469
+#: assets/editor-blocks.js:583
 msgid "برچسب اقدام"
 msgstr ""
 
-#: assets/editor-blocks.js:177 assets/editor-blocks.js:307
+#: assets/editor-blocks.js:290 assets/editor-blocks.js:421
 msgid "برچسب بالایی"
 msgstr ""
 
-#: assets/editor-blocks.js:607
+#: assets/editor-blocks.js:721
 msgid "برچسب دکمه"
 msgstr ""
 
-#: assets/editor-blocks.js:744
+#: assets/editor-blocks.js:858
 msgid "برچسب مشاهده همه"
 msgstr ""
 
@@ -315,6 +327,10 @@ msgstr ""
 msgid "برگه با نوار کناری"
 msgstr ""
 
+#: patterns/album-spec-sheet.php
+msgid "برگهٔ مشخصات آلبوم (سرمقاله‌ای)"
+msgstr ""
+
 #: theme.json
 msgid "بزرگ"
 msgstr ""
@@ -323,15 +339,19 @@ msgstr ""
 msgid "بسیار بزرگ"
 msgstr ""
 
-#: functions.php:1649
+#: functions.php:1800
 msgid "بعدی"
+msgstr ""
+
+#: functions.php:563
+msgid "بنتو"
 msgstr ""
 
 #: patterns/cta-banner.php
 msgid "بنر فراخوان اقدام"
 msgstr ""
 
-#: assets/editor-blocks.js:358
+#: assets/editor-blocks.js:472
 msgid "به‌تازگی به‌روزرسانی‌شده"
 msgstr ""
 
@@ -363,7 +383,7 @@ msgstr ""
 msgid "ترجیح نمایش MusicWave"
 msgstr ""
 
-#: functions.php:1194 theme.json
+#: functions.php:1333 theme.json
 msgid "تسویه‌حساب"
 msgstr ""
 
@@ -371,16 +391,16 @@ msgstr ""
 msgid "تصادفی"
 msgstr ""
 
-#: assets/editor-blocks.js:191
+#: assets/editor-blocks.js:304
 msgid "تعداد انتشارهای بارگذاری‌شده"
 msgstr ""
 
-#: functions.php:1128
+#: functions.php:1267
 #, php-format
 msgid "تعداد سفارشی‌سازی‌های ذخیره‌شده قالب: %d"
 msgstr ""
 
-#: functions.php:830 functions.php:831 functions.php:1108
+#: functions.php:969 functions.php:970 functions.php:1247
 msgid "تعمیر قالب MusicWave"
 msgstr ""
 
@@ -396,7 +416,7 @@ msgstr ""
 msgid "تمرکز و آرامش"
 msgstr ""
 
-#: assets/editor-blocks.js:677
+#: assets/editor-blocks.js:791
 msgid "تنظیمات اسلایدر هیرو"
 msgstr ""
 
@@ -404,15 +424,15 @@ msgstr ""
 msgid "توضیح کوتاهی برای معرفی بخش. برچسب بالایی، عنوان، رنگ متن، فاصله‌ها و تایپوگرافی را بدون کدنویسی در ویرایشگر سایت تغییر دهید."
 msgstr ""
 
-#: assets/editor-blocks.js:321
+#: assets/editor-blocks.js:435
 msgid "توضیحات"
 msgstr ""
 
-#: assets/editor-blocks.js:240
+#: assets/editor-blocks.js:353
 msgid "توقف هنگام قرارگیری نشانگر یا تمرکز"
 msgstr ""
 
-#: assets/editor-blocks.js:237
+#: assets/editor-blocks.js:350
 msgid "تکرار"
 msgstr ""
 
@@ -424,15 +444,15 @@ msgstr ""
 msgid "تیتر اصلی"
 msgstr ""
 
-#: assets/editor-blocks.js:523
+#: assets/editor-blocks.js:637
 msgid "تیرگی لایه رویی"
 msgstr ""
 
-#: assets/editor-blocks.js:365
+#: assets/editor-blocks.js:479
 msgid "جدیدترین‌ها در ابتدا"
 msgstr ""
 
-#: functions.php:247
+#: functions.php:263
 msgid "جمع‌کردن منو"
 msgstr ""
 
@@ -444,15 +464,19 @@ msgstr ""
 msgid "جوهر نیمه‌شب"
 msgstr ""
 
-#: assets/editor-blocks.js:99
+#: assets/editor-blocks.js:99 patterns/album-spec-sheet.php:45
 msgid "حال‌وهوا"
+msgstr ""
+
+#: functions.php:567
+msgid "حداقلی"
 msgstr ""
 
 #: theme.json
 msgid "حساب موسیقی"
 msgstr ""
 
-#: functions.php:1195 patterns/cta-banner.php:24 patterns/footer-widget-columns.php:35
+#: functions.php:1334 patterns/cta-banner.php:24 patterns/footer-widget-columns.php:35
 msgid "حساب کاربری من"
 msgstr ""
 
@@ -460,15 +484,15 @@ msgstr ""
 msgid "خریدها، کتابخانه موسیقی شخصی و ابزارهای حساب کاربری شما در یک‌جا."
 msgstr ""
 
-#: functions.php:556
+#: functions.php:665
 msgid "خط تأکیدی"
 msgstr ""
 
-#: functions.php:536
+#: functions.php:645
 msgid "خط تأکیدی خطی"
 msgstr ""
 
-#: assets/editor-blocks.js:622
+#: assets/editor-blocks.js:736
 msgid "خطی"
 msgstr ""
 
@@ -484,19 +508,19 @@ msgstr ""
 msgid "داشبورد موسیقی کاربر"
 msgstr ""
 
-#: assets/editor-blocks.js:453 functions.php:566
+#: assets/editor-blocks.js:567 functions.php:675
 msgid "دایره"
 msgstr ""
 
-#: functions.php:612
+#: functions.php:741
 msgid "در بخش قالب «ابزارک‌های پابرگ» نمایش داده می‌شود (نمایش → ویرایشگر → بخش‌های قالب → ابزارک‌های پابرگ). هر بلوک یا ابزارک قدیمی را بکشید و رها کنید؛ رنگ‌ها از سبک‌های کلی پیروی می‌کنند."
 msgstr ""
 
-#: functions.php:621
+#: functions.php:750
 msgid "در بخش قالب «نوار کناری فروشگاه» نمایش داده می‌شود (بخش‌های قالب → نوار کناری فروشگاه). از فیلترها و دسته‌بندی‌های ووکامرس یا هر بلوکی استفاده کنید."
 msgstr ""
 
-#: functions.php:603
+#: functions.php:732
 msgid "در بخش قالب «نوار کناری» نمایش داده می‌شود (نمایش → ویرایشگر → بخش‌های قالب → نوار کناری). هر بلوک یا ابزارک قدیمی را اینجا اضافه کنید. همه‌چیز بدون نیاز به کدنویسی از رابط بصری قابل ویرایش است."
 msgstr ""
 
@@ -508,7 +532,7 @@ msgstr ""
 msgid "درخشش غروب"
 msgstr ""
 
-#: functions.php:992 theme.json
+#: functions.php:1131 theme.json
 msgid "درخواست آهنگ و همکاری"
 msgstr ""
 
@@ -520,7 +544,7 @@ msgstr ""
 msgid "دکمه تأکیدی"
 msgstr ""
 
-#: assets/editor-blocks.js:603
+#: assets/editor-blocks.js:717
 msgid "دکمه فراخوان اقدام"
 msgstr ""
 
@@ -540,16 +564,16 @@ msgstr ""
 msgid "رز تحریریه"
 msgstr ""
 
-#: assets/editor-blocks.js:232
+#: assets/editor-blocks.js:345
 msgid "رفتار اسلایدر"
 msgstr ""
 
-#: functions.php:304 functions.php:2058
+#: functions.php:320 functions.php:2220
 #, php-format
 msgid "رفتن به اسلاید %d"
 msgstr ""
 
-#: functions.php:280
+#: functions.php:296
 #, php-format
 msgid "رفتن به گروه اسلاید %d"
 msgstr ""
@@ -562,15 +586,15 @@ msgstr ""
 msgid "رنگ تأکیدی پررنگ"
 msgstr ""
 
-#: assets/editor-blocks.js:570
+#: assets/editor-blocks.js:684
 msgid "رنگ عنوان (هگز)"
 msgstr ""
 
-#: assets/editor-blocks.js:590
+#: assets/editor-blocks.js:704
 msgid "رنگ متن بدنه (هگز)"
 msgstr ""
 
-#: assets/editor-blocks.js:646
+#: assets/editor-blocks.js:760
 msgid "رنگ متن دکمه (هگز)"
 msgstr ""
 
@@ -582,11 +606,15 @@ msgstr ""
 msgid "ساخته‌شده برای شما"
 msgstr ""
 
+#: patterns/album-spec-sheet.php:53
+msgid "سال انتشار"
+msgstr ""
+
 #: theme.json
 msgid "سبد خرید"
 msgstr ""
 
-#: functions.php:1193
+#: functions.php:1332
 msgid "سبد خرید شما"
 msgstr ""
 
@@ -598,8 +626,12 @@ msgstr ""
 msgid "سبک"
 msgstr ""
 
-#: assets/editor-blocks.js:614
+#: assets/editor-blocks.js:728
 msgid "سبک دکمه"
+msgstr ""
+
+#: assets/editor-blocks.js:213
+msgid "سبک نمایش"
 msgstr ""
 
 #: patterns/footer-widget-columns.php:29
@@ -610,11 +642,15 @@ msgstr ""
 msgid "ستون اصلی؛ پاراگراف، تصویر، انتشار یا هر بلوکی را اضافه کنید. نوار کناری سمت راست به‌صورت جداگانه کاملاً قابل ویرایش است."
 msgstr ""
 
+#: functions.php:578
+msgid "ستون متن با خط تأکیدی کنار محتوا."
+msgstr ""
+
 #: patterns/footer-widget-columns.php
 msgid "ستون‌های ابزارک پابرگ"
 msgstr ""
 
-#: assets/editor-blocks.js:432
+#: assets/editor-blocks.js:546
 msgid "ستون‌های دسکتاپ"
 msgstr ""
 
@@ -634,12 +670,16 @@ msgstr ""
 msgid "سربرگ (وسط‌چین)"
 msgstr ""
 
-#: functions.php:471
+#: functions.php:487
 msgid "سربرگ‌های MusicWave"
 msgstr ""
 
-#: patterns/editorial-feature.php:16
+#: patterns/editorial-feature.php:17
 msgid "سرمقاله"
+msgstr ""
+
+#: functions.php:555 functions.php:577
+msgid "سرمقاله‌ای"
 msgstr ""
 
 #: theme.json
@@ -650,43 +690,51 @@ msgstr ""
 msgid "سطح"
 msgstr ""
 
-#: functions.php:546 theme.json
+#: functions.php:655 theme.json
 msgid "سطح برجسته"
 msgstr ""
 
-#: functions.php:993 theme.json
+#: functions.php:1132 theme.json
 msgid "سفارش آهنگ اختصاصی"
 msgstr ""
 
-#: functions.php:1122
+#: functions.php:1261
 msgid "سفارشی‌سازی‌های ویرایشگر سایت در پایگاه داده ذخیره می‌شوند و بر فایل‌های به‌روزشده قالب اولویت دارند. فقط زمانی از این ابزار استفاده کنید که قالب MusicWave بخش قالبی ناموجود یا محتوای بلوک نامعتبر گزارش کند."
+msgstr ""
+
+#: functions.php:573
+msgid "سینمایی"
 msgstr ""
 
 #: blocks/release-shelf/block.json
 msgid "شبکه"
 msgstr ""
 
-#: assets/editor-blocks.js:407
+#: assets/editor-blocks.js:521
 msgid "شبکه واکنش‌گرا"
+msgstr ""
+
+#: functions.php:564
+msgid "شبکهٔ موزاییکی؛ اولین انتشار به‌صورت کارت شاخص بزرگ نمایش داده می‌شود."
 msgstr ""
 
 #: patterns/music-service-callout.php:26
 msgid "شروع شنیدن"
 msgstr ""
 
-#: assets/editor-blocks.js:657
+#: assets/editor-blocks.js:771
 msgid "شعاع گوشه دکمه (پیکسل)"
 msgstr ""
 
-#: assets/editor-blocks.js:626
+#: assets/editor-blocks.js:740
 msgid "شفاف"
 msgstr ""
 
-#: functions.php:1158
+#: functions.php:1297
 msgid "شما اجازه تعمیر قالب‌ها را ندارید."
 msgstr ""
 
-#: assets/editor-blocks.js:484
+#: assets/editor-blocks.js:598
 msgid "شناسه انتشار منتخب (۰ = اولین نتیجه)"
 msgstr ""
 
@@ -702,7 +750,7 @@ msgstr ""
 msgid "شنیدن پیوسته برای هر لحظه."
 msgstr ""
 
-#: assets/editor-blocks.js:441
+#: assets/editor-blocks.js:555
 msgid "شکل تصویر"
 msgstr ""
 
@@ -730,15 +778,15 @@ msgstr ""
 msgid "صفحه کامل سرمقاله موسیقی"
 msgstr ""
 
-#: functions.php:2061
+#: functions.php:2223
 msgid "صفحهبندی اسلایدر"
 msgstr ""
 
-#: functions.php:995 theme.json
+#: functions.php:1134 theme.json
 msgid "صفحهٔ استریم (نوار کناری)"
 msgstr ""
 
-#: functions.php:1397
+#: functions.php:1536
 msgid "صفحه‌بندی اسلایدر"
 msgstr ""
 
@@ -746,7 +794,7 @@ msgstr ""
 msgid "ظریف"
 msgstr ""
 
-#: assets/editor-blocks.js:552
+#: assets/editor-blocks.js:666
 msgid "عرض ستون کناری (پیکسل)"
 msgstr ""
 
@@ -758,11 +806,11 @@ msgstr ""
 msgid "عضویت‌ها، انتشارهای اختصاصی، دانلودها یا یک فهرست پخش منتخب را با این فراخوان قابل ویرایش برجسته کنید."
 msgstr ""
 
-#: assets/editor-blocks.js:450
+#: assets/editor-blocks.js:564
 msgid "عمودی"
 msgstr ""
 
-#: assets/editor-blocks.js:66 assets/editor-blocks.js:184 assets/editor-blocks.js:314 assets/editor-blocks.js:372
+#: assets/editor-blocks.js:66 assets/editor-blocks.js:297 assets/editor-blocks.js:428 assets/editor-blocks.js:486
 msgid "عنوان"
 msgstr ""
 
@@ -774,7 +822,7 @@ msgstr ""
 msgid "عنوان بخش اینجا قرار می‌گیرد"
 msgstr ""
 
-#: assets/editor-blocks.js:566
+#: assets/editor-blocks.js:680
 msgid "عنوان بخش معرفی"
 msgstr ""
 
@@ -786,23 +834,31 @@ msgstr ""
 msgid "عنوان صفحه"
 msgstr ""
 
+#: functions.php:560
+msgid "غلاف آلبوم با صفحهٔ بیرون‌زننده که هنگام هاور از غلاف خارج می‌شود."
+msgstr ""
+
+#: patterns/vinyl-record-shelf.php:30
+msgid "غلاف را ورق بزنید: روی هر کارت، صفحه با هاور از داخل غلاف بیرون می‌آید."
+msgstr ""
+
 #: assets/editor-blocks.js:33
 msgid "غیرفعال"
 msgstr ""
 
-#: functions.php:551
+#: functions.php:660
 msgid "فاصله کم"
 msgstr ""
 
-#: assets/editor-blocks.js:691
+#: assets/editor-blocks.js:805
 msgid "فاصلهٔ تعویض اسلایدها (میلی‌ثانیه)"
 msgstr ""
 
-#: assets/editor-blocks.js:245
+#: assets/editor-blocks.js:358
 msgid "فاصلهٔ پخش خودکار (میلی‌ثانیه)"
 msgstr ""
 
-#: functions.php:473
+#: functions.php:489
 msgid "فراخوان اقدام MusicWave"
 msgstr ""
 
@@ -826,11 +882,11 @@ msgstr ""
 msgid "فعال"
 msgstr ""
 
-#: assets/editor-blocks.js:242
+#: assets/editor-blocks.js:355
 msgid "فلش‌های پیمایش"
 msgstr ""
 
-#: assets/editor-blocks.js:415
+#: assets/editor-blocks.js:529
 msgid "فهرست جمع‌وجور"
 msgstr ""
 
@@ -846,19 +902,19 @@ msgstr ""
 msgid "فهرست‌های پخش"
 msgstr ""
 
-#: functions.php:1534
+#: functions.php:1679
 msgid "فهرست‌های پخش اجتماعی"
 msgstr ""
 
-#: assets/editor-blocks.js:331
+#: assets/editor-blocks.js:445
 msgid "فهرست‌های پخش برای نمایش"
 msgstr ""
 
-#: assets/editor-blocks.js:298 functions.php:991 theme.json
+#: assets/editor-blocks.js:412 functions.php:1130 theme.json
 msgid "فهرست‌های پخش عمومی"
 msgstr ""
 
-#: assets/editor-blocks.js:381
+#: assets/editor-blocks.js:495
 msgid "فیلتر جست‌وجوی فهرست پخش"
 msgstr ""
 
@@ -870,11 +926,11 @@ msgstr ""
 msgid "قالب"
 msgstr ""
 
-#: functions.php:1648
+#: functions.php:1799
 msgid "قبلی"
 msgstr ""
 
-#: functions.php:1196
+#: functions.php:1335
 msgid "قدرت‌گرفته از MusicWave."
 msgstr ""
 
@@ -882,11 +938,15 @@ msgstr ""
 msgid "قطعه بعدی موردعلاقه‌تان را پیدا کنید."
 msgstr ""
 
+#: patterns/vinyl-record-shelf.php:24
+msgid "قفسهٔ صفحه‌ها"
+msgstr ""
+
 #: blocks/theme-text/block.json theme.json
 msgid "متن"
 msgstr ""
 
-#: assets/editor-blocks.js:496
+#: assets/editor-blocks.js:610
 msgid "متن بخش منتخب"
 msgstr ""
 
@@ -906,11 +966,11 @@ msgstr ""
 msgid "متوسط"
 msgstr ""
 
-#: assets/editor-blocks.js:591
+#: assets/editor-blocks.js:705
 msgid "مثلاً #cccccc"
 msgstr ""
 
-#: assets/editor-blocks.js:571
+#: assets/editor-blocks.js:685
 msgid "مثلاً #ffffff"
 msgstr ""
 
@@ -934,7 +994,7 @@ msgstr ""
 msgid "محتوا با نوار کناری"
 msgstr ""
 
-#: assets/editor-blocks.js:173
+#: assets/editor-blocks.js:286
 msgid "محتوای اسلایدر"
 msgstr ""
 
@@ -942,11 +1002,11 @@ msgstr ""
 msgid "محتوای صفحه شما"
 msgstr ""
 
-#: assets/editor-blocks.js:282
+#: assets/editor-blocks.js:396
 msgid "محتوای ویترین"
 msgstr ""
 
-#: assets/editor-blocks.js:444
+#: assets/editor-blocks.js:558
 msgid "مربع"
 msgstr ""
 
@@ -954,7 +1014,7 @@ msgstr ""
 msgid "مرتب‌سازی بر اساس"
 msgstr ""
 
-#: assets/editor-blocks.js:349
+#: assets/editor-blocks.js:463
 msgid "مرتب‌سازی فهرست‌های پخش بر اساس"
 msgstr ""
 
@@ -990,11 +1050,11 @@ msgstr ""
 msgid "مرکز حساب کاربری"
 msgstr ""
 
-#: functions.php:1302 functions.php:1690
+#: functions.php:1441 functions.php:1850
 msgid "مشاهده همه"
 msgstr ""
 
-#: functions.php:1532
+#: functions.php:1677
 msgid "مشاهدهٔ همهٔ فهرست‌های پخش"
 msgstr ""
 
@@ -1006,15 +1066,15 @@ msgstr ""
 msgid "معرفی کشف موسیقی"
 msgstr ""
 
-#: functions.php:1192
+#: functions.php:1331
 msgid "ممکن است صفحه جابه‌جا شده باشد. کاتالوگ را جست‌وجو کنید."
 msgstr ""
 
-#: assets/editor-blocks.js:286
+#: assets/editor-blocks.js:400
 msgid "منبع محتوا"
 msgstr ""
 
-#: functions.php:466 patterns/section-heading.php:16 blocks/release-slider/block.json
+#: functions.php:482 patterns/section-heading.php:16 blocks/release-slider/block.json
 msgid "منتخب"
 msgstr ""
 
@@ -1022,7 +1082,7 @@ msgstr ""
 msgid "منتخب برای شما"
 msgstr ""
 
-#: functions.php:1537
+#: functions.php:1682
 msgid "منتخب شنوندگان"
 msgstr ""
 
@@ -1042,7 +1102,7 @@ msgstr ""
 msgid "موسیقی شما"
 msgstr ""
 
-#: functions.php:1190
+#: functions.php:1329
 msgid "موسیقی‌ای پیدا نشد."
 msgstr ""
 
@@ -1058,11 +1118,11 @@ msgstr ""
 msgid "نزولی"
 msgstr ""
 
-#: assets/editor-blocks.js:243
+#: assets/editor-blocks.js:356
 msgid "نقاط صفحه‌بندی"
 msgstr ""
 
-#: assets/editor-blocks.js:235
+#: assets/editor-blocks.js:348
 msgid "نمایش اسلایدر"
 msgstr ""
 
@@ -1070,47 +1130,47 @@ msgstr ""
 msgid "نمایش انتشارها بهصورت شبکهای، ویترین افقی، فهرست جمعوجور، ویژهنامه سرمقاله یا اسلایدر هیرو. بین انتشارها و فهرستهای پخش عمومی جامعه جابهجا شوید. چیدمان، رنگها و فاصلهها در ویرایشگر سایت قابل ویرایش هستند."
 msgstr ""
 
-#: assets/editor-blocks.js:214 assets/editor-blocks.js:465
+#: assets/editor-blocks.js:327 assets/editor-blocks.js:579
 msgid "نمایش تاریخ"
 msgstr ""
 
-#: assets/editor-blocks.js:459
+#: assets/editor-blocks.js:573
 msgid "نمایش تصویر"
 msgstr ""
 
-#: assets/editor-blocks.js:221 assets/editor-blocks.js:545
+#: assets/editor-blocks.js:334 assets/editor-blocks.js:659
 msgid "نمایش تعداد بازدید"
 msgstr ""
 
-#: assets/editor-blocks.js:538
+#: assets/editor-blocks.js:652
 msgid "نمایش شماره رتبه"
 msgstr ""
 
-#: assets/editor-blocks.js:709
+#: assets/editor-blocks.js:823
 msgid "نمایش فلش‌ها"
 msgstr ""
 
-#: assets/editor-blocks.js:719
+#: assets/editor-blocks.js:833
 msgid "نمایش نقاط صفحهبندی"
 msgstr ""
 
-#: assets/editor-blocks.js:207 assets/editor-blocks.js:464
+#: assets/editor-blocks.js:320 assets/editor-blocks.js:578
 msgid "نمایش هنرمند"
 msgstr ""
 
-#: assets/editor-blocks.js:467
+#: assets/editor-blocks.js:581
 msgid "نمایش پیوند اقدام"
 msgstr ""
 
-#: assets/editor-blocks.js:466
+#: assets/editor-blocks.js:580
 msgid "نمایش چکیده"
 msgstr ""
 
-#: assets/editor-blocks.js:200
+#: assets/editor-blocks.js:313
 msgid "نمایش چکیده‌ها"
 msgstr ""
 
-#: assets/editor-blocks.js:462
+#: assets/editor-blocks.js:576
 msgid "نمایش کنترل پخش"
 msgstr ""
 
@@ -1126,7 +1186,7 @@ msgstr ""
 msgid "نوار کناری"
 msgstr ""
 
-#: functions.php:601
+#: functions.php:730
 msgid "نوار کناری MusicWave"
 msgstr ""
 
@@ -1138,7 +1198,7 @@ msgstr ""
 msgid "نوار کناری فروشگاه"
 msgstr ""
 
-#: functions.php:619
+#: functions.php:748
 msgid "نوار کناری فروشگاه MusicWave"
 msgstr ""
 
@@ -1182,8 +1242,12 @@ msgstr ""
 msgid "همهٔ انتشارها"
 msgstr ""
 
-#: functions.php:994 theme.json
+#: functions.php:1133 theme.json
 msgid "همکاری"
+msgstr ""
+
+#: assets/editor-blocks.js:214
+msgid "همین گزینه‌ها در بخش «سبک‌ها» کنار تنظیمات بلوک هم هستند؛ انتخاب هرکدام بلافاصله در پیش‌نمایش دیده می‌شود."
 msgstr ""
 
 #: assets/editor-blocks.js:97
@@ -1202,7 +1266,7 @@ msgstr ""
 msgid "هیرو"
 msgstr ""
 
-#: functions.php:1145
+#: functions.php:1284
 msgid "هیچ سفارشی‌سازی ذخیره‌شده‌ای پیدا نشد. وردپرس در حال حاضر از فایل‌های قالب بسته استفاده می‌کند."
 msgstr ""
 
@@ -1214,7 +1278,7 @@ msgstr ""
 msgid "ویترین"
 msgstr ""
 
-#: assets/editor-blocks.js:411
+#: assets/editor-blocks.js:525
 msgid "ویترین افقی"
 msgstr ""
 
@@ -1238,23 +1302,35 @@ msgstr ""
 msgid "ویترین انتشارهای هنرمند"
 msgstr ""
 
-#: assets/editor-blocks.js:287
+#: assets/editor-blocks.js:401
 msgid "ویترین را بین انتشارهای کاتالوگ و فهرست‌های پخش عمومی جامعه جابه‌جا کنید."
+msgstr ""
+
+#: patterns/vinyl-record-shelf.php
+msgid "ویترین وینیل با سرصفحهٔ سرمقاله‌ای"
 msgstr ""
 
 #: assets/editor-blocks.js:90
 msgid "ویترین یا اسلایدر را به یک طبقه‌بندی محدود کنید، یا روی «همهٔ انتشارها» بگذارید."
 msgstr ""
 
-#: functions.php:468
+#: functions.php:484
 msgid "ویترین‌های MusicWave"
 msgstr ""
 
-#: assets/editor-blocks.js:419
+#: functions.php:559
+msgid "وینیل"
+msgstr ""
+
+#: patterns/vinyl-record-shelf.php:27
+msgid "وینیل‌هایی که این هفته گذاشته‌ایم"
+msgstr ""
+
+#: assets/editor-blocks.js:533
 msgid "ویژهنامه سرمقاله"
 msgstr ""
 
-#: assets/editor-blocks.js:480
+#: assets/editor-blocks.js:594
 msgid "ویژه‌نامه سرمقاله"
 msgstr ""
 
@@ -1270,19 +1346,19 @@ msgstr ""
 msgid "پابرگ (ساده)"
 msgstr ""
 
-#: functions.php:470
+#: functions.php:486
 msgid "پابرگ‌های MusicWave"
 msgstr ""
 
-#: assets/editor-blocks.js:236
+#: assets/editor-blocks.js:349
 msgid "پخش خودکار"
 msgstr ""
 
-#: assets/editor-blocks.js:681
+#: assets/editor-blocks.js:795
 msgid "پخش خودکار اسلایدها"
 msgstr ""
 
-#: functions.php:1609
+#: functions.php:1754
 #, php-format
 msgid "پخش همه قطعه‌های %s"
 msgstr ""
@@ -1299,15 +1375,15 @@ msgstr ""
 msgid "پرس‌وجو و فیلتر"
 msgstr ""
 
-#: assets/editor-blocks.js:345
+#: assets/editor-blocks.js:459
 msgid "پرس‌وجوی فهرست پخش"
 msgstr ""
 
-#: assets/editor-blocks.js:618
+#: assets/editor-blocks.js:732
 msgid "پرشدگی یکدست"
 msgstr ""
 
-#: assets/editor-blocks.js:635
+#: assets/editor-blocks.js:749
 msgid "پس‌زمینه دکمه (هگز)"
 msgstr ""
 
@@ -1315,11 +1391,15 @@ msgstr ""
 msgid "پشتیبانی"
 msgstr ""
 
-#: assets/editor-blocks.js:733
+#: assets/editor-blocks.js:193
+msgid "پیش‌فرض قالب"
+msgstr ""
+
+#: assets/editor-blocks.js:847
 msgid "پیوند بخش"
 msgstr ""
 
-#: assets/editor-blocks.js:737
+#: assets/editor-blocks.js:851
 msgid "پیوند مشاهده همه"
 msgstr ""
 
@@ -1327,16 +1407,20 @@ msgstr ""
 msgid "چرخان"
 msgstr ""
 
-#: functions.php:571
+#: functions.php:680
 msgid "چک‌لیست"
 msgstr ""
 
-#: assets/editor-blocks.js:403
+#: assets/editor-blocks.js:517
 msgid "چیدمان"
 msgstr ""
 
-#: assets/editor-blocks.js:399
+#: assets/editor-blocks.js:513
 msgid "چیدمان و تصویر"
+msgstr ""
+
+#: patterns/album-spec-sheet.php:37
+msgid "ژانر"
 msgstr ""
 
 #: blocks/release-shelf/block.json
@@ -1351,11 +1435,15 @@ msgstr ""
 msgid "کارت"
 msgstr ""
 
-#: functions.php:541
+#: functions.php:650
 msgid "کارت سطحی"
 msgstr ""
 
-#: functions.php:472
+#: functions.php:556
+msgid "کارت مجله‌ای با خط تأکیدی، سطح شیشه‌ای و تیتر درشت."
+msgstr ""
+
+#: functions.php:488
 msgid "کارت‌های MusicWave"
 msgstr ""
 
@@ -1371,7 +1459,7 @@ msgstr ""
 msgid "کوچک"
 msgstr ""
 
-#: functions.php:531
+#: functions.php:640
 msgid "کپسولی (MusicWave)"
 msgstr ""
 
@@ -1379,12 +1467,16 @@ msgstr ""
 msgid "گرادیان تأکیدی"
 msgstr ""
 
-#: functions.php:561
+#: functions.php:670
 msgid "گرد"
 msgstr ""
 
-#: functions.php:282
+#: functions.php:298
 #, php-format
 msgid "گروه اسلاید %1$d از %2$d"
+msgstr ""
+
+#: patterns/album-spec-sheet.php:65
+msgid "یادداشت انتشار"
 msgstr ""
 
