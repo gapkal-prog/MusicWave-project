@@ -1075,3 +1075,82 @@ foreach ( $core_variation_map as $core_style_block_name => $core_style_body ) {
 		);
 	}
 }
+
+/*
+ * Editor preview fidelity, style-variation identity, and the secure download
+ * label contract.
+ *
+ * Each of these is a regression a PHP-only test run cannot see: the preview
+ * context lives in the editor bundle, the variations live in the stylesheets,
+ * and the labels live in the rendered markup. The source contracts are
+ * asserted directly so the fixes stay fixed.
+ */
+
+// Query Loop: every row must preview against its own post.
+mw_assert_same(
+	true,
+	false !== strpos( $core_editor_script, 'urlQueryArgs' )
+		&& false !== strpos( $core_editor_script, 'post_id: contextPost.postId' ),
+	'The editor preview must send the contextual post to the block renderer so a Query Loop row renders its own release.'
+);
+mw_assert_same(
+	true,
+	false !== strpos( $core_editor_script, '! contextPost && options.length' ),
+	'The representative-release fallback must never apply while a contextual post exists.'
+);
+mw_assert_same(
+	true,
+	false !== strpos( $core_editor_script, 'if ( existing && ! blocks.getBlockType( block.name ) ) {' ),
+	'Re-registration must restore the server definition when the editor settings are rejected, so a block is never left unregistered inside a template.'
+);
+
+// Catalog filters: the stacked look must differ from the toolbar structurally.
+$catalog_filters_stylesheet = (string) file_get_contents( $theme_directory . '/assets/css/components/catalog-filters.css' );
+foreach ( array( 'grid-template-columns', '.mw-catalog-filters__actions', 'grid-column: 1 / -1' ) as $stacked_rule ) {
+	mw_assert_same(
+		true,
+		false !== strpos( $catalog_filters_stylesheet, $stacked_rule ),
+		'The stacked catalog-filters variation must ship the "' . $stacked_rule . '" rule that separates it from the inline toolbar.'
+	);
+}
+mw_assert_same(
+	true,
+	false !== strpos( $release_blocks_source, 'mw-catalog-filters__actions' ),
+	'The catalog filter renderer must group the submit and reset controls so both looks can place them as one unit.'
+);
+
+// Collection list: the tracklist look must be its own design, not a tweak.
+$vinyl_stylesheet = (string) file_get_contents( $theme_directory . '/assets/css/components/vinyl.css' );
+foreach ( array( '.mw-collection-list.mw-collection-list--tracklist {', 'border-block-end: 1px dotted' ) as $tracklist_rule ) {
+	mw_assert_same(
+		true,
+		false !== strpos( $vinyl_stylesheet, $tracklist_rule ),
+		'The tracklist variation must ship the "' . $tracklist_rule . '" rule.'
+	);
+}
+
+// Secure download: the labels are visible text, not only an accessible name.
+foreach ( array( 'mw-download-button__label', 'mw-secure-play-button__label' ) as $download_label_class ) {
+	mw_assert_same(
+		true,
+		false !== strpos( $release_blocks_source, $download_label_class ),
+		'The secure download renderer must print the ' . $download_label_class . ' as visible text.'
+	);
+	mw_assert_same(
+		true,
+		false !== strpos( $downloads_css, $download_label_class ),
+		'The theme must style the ' . $download_label_class . '.'
+	);
+}
+mw_assert_same(
+	true,
+	false !== strpos( $release_blocks_source, 'download_sign_in_markup' ),
+	'The loginLabel attribute must drive a sign-in prompt instead of being declared and ignored.'
+);
+
+$download_runtime = (string) file_get_contents( dirname( __DIR__ ) . '/music-wave-core/assets/download.js' );
+mw_assert_same(
+	true,
+	false !== strpos( $download_runtime, '.mw-secure-play-button__label' ),
+	'The download runtime must keep the visible play/pause label in step with the accessible name.'
+);

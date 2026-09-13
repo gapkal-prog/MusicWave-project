@@ -116,6 +116,97 @@ attributeهای حساس بین renderer و editor نیز در بررسی‌ها
 - قواعد تکراری overlay، close button و responsive navigation یکپارچه شدند.
 - هدرهای معمولی، centered و minimal از همین قرارداد مشترک استفاده می‌کنند.
 
+## اصلاح Query Loop، تغییرهای سبک و برچسب‌های دانلود
+
+### ۱) پیش‌نمایش Query Loop
+
+`ServerSideRender` تنها `attributes` را به `/wp/v2/block-renderer` می‌فرستد؛ context هر ردیف
+(`postId`/`postType` که `core/post-template` در اختیار بلوک‌های داخلی می‌گذارد) در آن درخواست
+جایی نداشت. `editorPreview()` این کمبود را با سنجاق‌کردن `options[0].value` (جدیدترین انتشار
+کاتالوگ) جبران می‌کرد؛ یعنی هرگاه context در دسترس نبود، دادهٔ یک انتشار واقعی داخل ردیفی
+می‌رفت که به آن تعلق نداشت — از جمله در Query Loop روی `post` یا روی یک taxonomy.
+
+اکنون:
+
+- `useEditorContextPost()` پست جاری را نخست از context بلوک و در نبود آن از `core/editor`
+  می‌خواند. هر دو `useSelect` مقدار اولیه (عدد/رشته) برمی‌گردانند، چون `@wordpress/data`
+  نتیجهٔ selector را با هویت مقایسه می‌کند و بازگرداندن آبجکت تازه باعث حلقهٔ re-render می‌شد.
+- همان شناسه به‌شکل `urlQueryArgs: { post_id }` به endpoint فرستاده می‌شود.
+  `WP_REST_Block_Renderer_Controller` با آن پست سراسری را دقیقاً مانند frontend جای‌گزین می‌کند،
+  پس `release_id()`، permalinkها، تصمیم دسترسی و `BlockSupport::current_url()` برای هر ردیف
+  درست حل می‌شوند — نه فقط `releaseId`.
+- fallback «انتشار نمونه» تنها وقتی اجرا می‌شود که هیچ پست context وجود نداشته باشد
+  (Site Editor روی یک Template). داخل Query Loop هرگز اجرا نمی‌شود و مقدار آن هیچ‌وقت در
+  attributeها نوشته نمی‌شود.
+
+پیام «This block has an error and cannot be previewed» خروجی ErrorBoundary گوتنبرگ است، نه
+پاسخ خطای `ServerSideRender` (آن یک `Notice` فارسی جداگانه دارد). یکی از مسیرهای رسیدن به آن
+خطا در کد خود پروژه بود: حلقهٔ registration در `blocks.js` بلوک را `unregisterBlockType` می‌کرد
+و اگر ثبت مجدد ناموفق می‌ماند — `registerBlockType()` در صورت رد شدن settings مقدار
+`undefined` برمی‌گرداند — بلوک برای همیشه unregister می‌ماند. در آن حالت
+`sanitizeBlockAttributes()` داخل `ServerSideRender` استثنا پرتاب می‌کند و چون بلوک‌های MusicWave
+داخل `core/post-template` رندر می‌شوند، خطا به نام خودِ Query Loop ثبت می‌شد. اکنون اگر ثبت
+ناموفق باشد، تعریف server بازگردانده می‌شود تا بلوک هیچ‌وقت بی‌تعریف نماند.
+
+### ۲) دو سبک Catalog Filters
+
+دو ایراد مستقل روی هم اثر می‌کردند:
+
+1. **دو کنترل برای یک نتیجه.** هم attribute `layout` (با مقدارهای `inline`/`stacked`) و هم
+   block style «انباشته شده» وجود داشت و در renderer مقدار style بر `layout` غلبه می‌کرد.
+   در نتیجه اگر `layout` روی `stacked` بود، تغییر Styles panel هیچ اثر قابل دیدنی نداشت.
+   اکنون `attributeUpdate()` در `blocks.js` این دو را همگام نگه می‌دارد: تغییر هرکدام دیگری
+   را هم می‌نویسد، پس هیچ‌کدام بی‌اثر نمی‌ماند.
+2. **CSS ناکافی.** قاعدهٔ `--stacked` فقط `flex-direction: column` بود و چون
+   `@media (max-width: 42rem)` همان کار را برای حالت inline هم می‌کرد، در عرض‌های کوچک دو سبک
+   کاملاً یکسان می‌شدند. همچنین `.mw-catalog-suggest` و لینک بازنشانی زیر پوشش selectorها
+   نبودند.
+
+حالا `stacked` یک **پنل** است نه یک نوار ابزار: گرید پاسخ‌گو، سطح و شعاع متفاوت،
+`border-block-start` با رنگ accent، کنترل‌های بلندتر و کادر‌دار، جست‌وجو و گروه اقدامات روی
+`grid-column: 1 / -1`، و footer خط‌کشی‌شده. `inline` همان نوار ابزار شیشه‌ای فشرده می‌ماند، پس
+دو سبک در هر عرضی از هم قابل تشخیص‌اند. renderer هم `submit` و `reset` را داخل
+`.mw-catalog-filters__actions` می‌گذارد تا هر دو چیدمان بتوانند آن‌ها را یک‌جا جابه‌جا کنند
+(همهٔ selectorهای `catalog-filters.js` از نوع descendant هستند، پس این تغییر برای instant
+filtering بی‌خطر است). chevron انتخابگرها هم که با `background-position` فیزیکی کشیده می‌شد،
+برای RTL آینه شد.
+
+### ۳) دو سبک Collection Track List
+
+`--tracklist` تا پیش از این فقط رنگ حاشیه، padding و اندازهٔ قلم را تغییر می‌داد؛ ساختار
+(ردیف‌های باز و بدون سطح) دقیقاً همان حالت پیش‌فرض بود. اکنون variation هویت ساختاری خودش را
+دارد و از همان hookهای موجود markup استفاده می‌کند: پنل کادردار با `--mw-shadow-card`، عنوان
+با خط accent، ستون شمارهٔ tabular پهن‌تر، **leader نقطه‌چین** بین عنوان و زمان اجرا،
+quality با حروف ریز فاصله‌دار، اکشن‌های همیشه نمایان (به‌جای `opacity: 0.6`)، جمع مدت‌زمان به
+شکل footer خط‌کشی‌شده، و در عرض‌های کوچک فقط leader جمع می‌شود تا هویت پنل حفظ بماند.
+
+### ۴) برچسب‌های Secure Download
+
+`downloadLabel`، `playLabel` و `loginLabel` در `block.json`، در `Rendering.php` و در پنل تنظیمات
+حضور داشتند، ولی renderer هیچ‌وقت متن قابل دیدن چاپ نمی‌کرد: فقط `aria-label` و یک آیکون.
+`loginLabel` اساساً هیچ مصرفی نداشت.
+
+- هر دو دکمهٔ دانلود و پخش (در `download_file_rows()` و `download_inline_markup()`) اکنون از
+  دو helper مشترک ساخته می‌شوند و `<span class="mw-download-button__label">` /
+  `<span class="mw-secure-play-button__label">` را به‌عنوان متن قابل دیدن کنار آیکون
+  چاپ می‌کنند. `download.js` هنگام پخش، هم `aria-label` و هم متن قابل دیدن را با هم
+  جابه‌جا می‌کند تا نام دسترس‌پذیر و متن روی صفحه هیچ‌وقت از هم جدا نیفتند.
+- `loginLabel` به یک **فراخوان ورود opt-in** وصل شد (`download_sign_in_markup()`): فقط برای
+  بازدیدکنندهٔ خارج‌شده از سیستم و فقط وقتی تصمیم دسترسی رد شده و `loginLabel` پر باشد و
+  دارایی دانلود واقعاً وجود داشته باشد. پیش‌فرض آن خالی است، پس رفتار
+  `single-mw_release.html` (که هم `download-button` و هم `access-panel` دارد) بدون تغییر می‌ماند
+  و پیام دوباره نمایش داده نمی‌شود. این prompt هیچ رشتهٔ ترجمه‌شدهٔ تازه‌ای اضافه نمی‌کند و
+  از heading خود بلوک و `wp_login_url( BlockSupport::current_url() )` — همان الگوی
+  `PlaylistBlocks`/`QueueBlock`/`ListeningBlocks` — استفاده می‌کند.
+
+### contract تست‌های تازه
+
+`tests/template-integrity.php` حالا علاوه بر parity قبلی، این قراردادها را هم assertion می‌کند:
+ارسال `post_id` در پیش‌نمایش، ممنوعیت fallback وقتی context وجود دارد، بازگرداندن تعریف server
+پس از ثبت ناموفق، وجود قواعد ساختاری `--stacked` و `--tracklist` در stylesheetها، گروه
+`.mw-catalog-filters__actions` در renderer، چاپ کلاس‌های `__label` هم در PHP و هم در CSS، و
+همگام ماندن برچسب پخش در `download.js`.
+
 ## تست‌های انجام‌شده در این محیط
 
 موفق:

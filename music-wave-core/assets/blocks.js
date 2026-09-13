@@ -2991,30 +2991,65 @@
 		),
 	};
 
-	function useEditorReleaseId( props ) {
+	/**
+	 * Resolve the post the editor is currently rendering this block against.
+	 *
+	 * Inside a Query Loop the per-row context wins, so every card previews its
+	 * own post; on a post editor screen the edited post is used; in the Site
+	 * Editor there is no content post at all and the caller falls back to a
+	 * representative release instead of inventing context.
+	 *
+	 * @param {Object} props Block edit props.
+	 * @return {{postId: number, postType: string}|null} The contextual post.
+	 */
+	function useEditorContextPost( props ) {
+		var context = props.context || {};
+		var contextId = parseInt( context.postId, 10 );
+
+		// Both selectors return primitives: @wordpress/data compares results by
+		// identity, so a selector that built a fresh object on every store
+		// change would re-render the block in a loop.
 		var editorId = useSelect( function ( select ) {
 			var editor = select ? select( 'core/editor' ) : null;
-			if (
-				! editor ||
-				! editor.getCurrentPostType ||
-				! editor.getCurrentPostId
-			) {
+			if ( ! editor || ! editor.getCurrentPostId ) {
 				return 0;
 			}
-			return 'mw_release' === editor.getCurrentPostType()
-				? editor.getCurrentPostId()
-				: 0;
+			var id = parseInt( editor.getCurrentPostId(), 10 );
+			return id > 0 ? id : 0;
 		}, [] );
 
-		if (
-			props.context &&
-			'mw_release' === props.context.postType &&
-			parseInt( props.context.postId, 10 ) > 0
-		) {
-			return parseInt( props.context.postId, 10 );
+		var editorType = useSelect( function ( select ) {
+			var editor = select ? select( 'core/editor' ) : null;
+			if ( ! editor || ! editor.getCurrentPostType ) {
+				return '';
+			}
+			return String( editor.getCurrentPostType() || '' );
+		}, [] );
+
+		if ( contextId > 0 ) {
+			return {
+				postId: contextId,
+				postType: String( context.postType || '' ),
+			};
 		}
 
-		return editorId;
+		if ( editorId > 0 ) {
+			return { postId: editorId, postType: editorType };
+		}
+
+		return null;
+	}
+
+	/**
+	 * Release the block should render when it is bound to the current post.
+	 *
+	 * @param {{postId: number, postType: string}|null} contextPost Contextual post.
+	 * @return {number} The release ID, or 0 when the context is not a release.
+	 */
+	function editorReleaseId( contextPost ) {
+		return contextPost && 'mw_release' === contextPost.postType
+			? contextPost.postId
+			: 0;
 	}
 
 	function useReleaseOptions( releaseId ) {
@@ -3293,7 +3328,7 @@
 	 * ['select', attr, label, [[value, label]], help?]   SelectControl
 	 * ['range', attr, label, min, max, help?, fallback?]   RangeControl
 	 */
-	function buildGroupControl( descriptor, props ) {
+	function buildGroupControl( descriptor, props, blockName ) {
 		var type = descriptor[ 0 ];
 		var attr = descriptor[ 1 ];
 		var label = descriptor[ 2 ];
@@ -3305,9 +3340,9 @@
 				value: props.attributes[ attr ] || '',
 				help: descriptor[ 4 ] || undefined,
 				onChange( value ) {
-					var update = {};
-					update[ attr ] = value;
-					props.setAttributes( update );
+					props.setAttributes(
+						attributeUpdate( props, blockName, attr, value )
+					);
 				},
 			} );
 		}
@@ -3321,9 +3356,14 @@
 					: '',
 				onChange( value ) {
 					var parsed = parseInt( value, 10 );
-					var update = {};
-					update[ attr ] = isNaN( parsed ) ? 0 : parsed;
-					props.setAttributes( update );
+					props.setAttributes(
+						attributeUpdate(
+							props,
+							blockName,
+							attr,
+							isNaN( parsed ) ? 0 : parsed
+						)
+					);
 				},
 			} );
 		}
@@ -3338,9 +3378,9 @@
 						: !! props.attributes[ attr ],
 				help: descriptor[ 4 ] || undefined,
 				onChange( value ) {
-					var update = {};
-					update[ attr ] = !! value;
-					props.setAttributes( update );
+					props.setAttributes(
+						attributeUpdate( props, blockName, attr, !! value )
+					);
 				},
 			} );
 		}
@@ -3355,9 +3395,9 @@
 				} ),
 				help: descriptor[ 4 ] || undefined,
 				onChange( value ) {
-					var update = {};
-					update[ attr ] = value;
-					props.setAttributes( update );
+					props.setAttributes(
+						attributeUpdate( props, blockName, attr, value )
+					);
 				},
 			} );
 		}
@@ -3374,9 +3414,14 @@
 				max: descriptor[ 4 ],
 				help: descriptor[ 5 ] || undefined,
 				onChange( value ) {
-					var update = {};
-					update[ attr ] = parseInt( value, 10 ) || descriptor[ 3 ];
-					props.setAttributes( update );
+					props.setAttributes(
+						attributeUpdate(
+							props,
+							blockName,
+							attr,
+							parseInt( value, 10 ) || descriptor[ 3 ]
+						)
+					);
 				},
 			} );
 		}
@@ -3401,6 +3446,52 @@
 				}
 				return -1 === names.indexOf( part.slice( 'is-style-'.length ) );
 			} );
+	}
+
+	/*
+	 * Attributes that predate, and duplicate, a registered block style. Both
+	 * switches produce the same look and the style wins on the server, so
+	 * changing one has to update the other; otherwise a control appears to do
+	 * nothing while the other one holds the value. `fallback` is the attribute
+	 * value that matches the default (style-less) look.
+	 */
+	var styleBackedAttributes = {
+		'music-wave/catalog-filters': {
+			attribute: 'layout',
+			style: 'stacked',
+			fallback: 'inline',
+		},
+	};
+
+	/**
+	 * Build a control's attribute update, keeping any style-backed attribute
+	 * and its block style in agreement.
+	 *
+	 * @param {Object} props     Block edit props.
+	 * @param {string} blockName Registered block name.
+	 * @param {string} attribute Attribute the control writes.
+	 * @param {*}      value     New attribute value.
+	 * @return {Object} Attributes to hand to setAttributes().
+	 */
+	function attributeUpdate( props, blockName, attribute, value ) {
+		var update = {};
+		update[ attribute ] = value;
+
+		var sync = styleBackedAttributes[ blockName ];
+		if ( ! sync || sync.attribute !== attribute ) {
+			return update;
+		}
+
+		var className = withoutBlockStyles(
+			( props.attributes || {} ).className,
+			[ sync.style ]
+		);
+		if ( sync.style === value ) {
+			className.push( 'is-style-' + sync.style );
+		}
+		update.className = className.join( ' ' );
+
+		return update;
 	}
 
 	/*
@@ -3485,7 +3576,15 @@
 					if ( value ) {
 						kept.push( 'is-style-' + value );
 					}
-					props.setAttributes( { className: kept.join( ' ' ) } );
+					var update = { className: kept.join( ' ' ) };
+					// Keep any attribute that duplicates this style in step so
+					// the two switches can never disagree on the server.
+					var sync = styleBackedAttributes[ blockName ];
+					if ( sync && -1 !== names.indexOf( sync.style ) ) {
+						update[ sync.attribute ] =
+							sync.style === value ? sync.style : sync.fallback;
+					}
+					props.setAttributes( update );
 				},
 			} )
 		);
@@ -3597,7 +3696,7 @@
 		( config.groups || [] ).forEach( function ( group, index ) {
 			var groupControls = ( group.controls || [] )
 				.map( function ( descriptor ) {
-					return buildGroupControl( descriptor, props );
+					return buildGroupControl( descriptor, props, blockName );
 				} )
 				.filter( function ( control ) {
 					return null !== control;
@@ -3684,19 +3783,19 @@
 		);
 	}
 
-	function editorPreview( props, block, options, contextualId ) {
-		var attrs = Object.assign( {}, props.attributes );
+	function editorPreview( props, block, options, contextualId, contextPost ) {
 		var config = fieldConfig[ block.name ] || {};
+		var attrs = Object.assign( {}, props.attributes || {} );
 
-		if (
-			config.releaseId &&
-			( ! attrs.releaseId || attrs.releaseId < 1 )
-		) {
+		if ( config.releaseId && ! ( attrs.releaseId > 0 ) ) {
 			if ( contextualId > 0 ) {
 				attrs.releaseId = contextualId;
-			} else if ( options.length ) {
-				// Use a real release only for the editor preview. Do not persist it
-				// into a contextual template or Query Loop.
+			} else if ( ! contextPost && options.length ) {
+				// The Site Editor has no content post to render against, so the
+				// preview borrows a real release. It stays preview-only: the id
+				// is never written back into the attributes, and it is skipped
+				// whenever a contextual post exists so a Query Loop row can
+				// never inherit another row's release.
 				attrs.releaseId = options[ 0 ].value;
 			}
 		}
@@ -3706,14 +3805,18 @@
 			{
 				className:
 					'mw-block-editor-shell' +
-					( props.attributes && props.attributes.align
-						? ' align' + props.attributes.align
-						: '' ),
+					( attrs.align ? ' align' + attrs.align : '' ),
 				'data-mw-block': block.name,
 			},
 			createElement( serverSideRender, {
 				block: block.name,
 				attributes: attrs,
+				// post_id points the renderer at the same global post the
+				// frontend would use, so permalinks, access decisions and the
+				// get_post() fallback resolve per row instead of per request.
+				urlQueryArgs: contextPost
+					? { post_id: contextPost.postId }
+					: undefined,
 				EmptyResponsePlaceholder() {
 					return editorEmptyState(
 						props,
@@ -3783,16 +3886,18 @@
 			// field the server provided (attributes, supports, context, titles)
 			// stays authoritative, so block.json remains the single source of
 			// truth (PROJECT_PLAN.md Stage 4 deliverable 3).
-			try {
-				blocks.unregisterBlockType( block.name );
-			} catch ( error ) {
-				return;
-			}
+			//
+			// The unregister/register pair must always leave a definition
+			// behind: ServerSideRender sanitizes attributes against the
+			// registered type and throws when it is missing, and inside a Query
+			// Loop that throw is reported against the Query block itself.
+			blocks.unregisterBlockType( block.name );
 		}
 
 		function ReleaseFieldsEdit( props ) {
 			var config = fieldConfig[ block.name ] || {};
-			var contextualId = useEditorReleaseId( props );
+			var contextPost = useEditorContextPost( props );
+			var contextualId = editorReleaseId( contextPost );
 			var options = useReleaseOptions(
 				config.releaseId ? props.attributes.releaseId || 0 : -1
 			);
@@ -3801,7 +3906,13 @@
 				Fragment,
 				null,
 				inspectorControls( props, block.name, options, contextualId ),
-				editorPreview( props, block, options, contextualId )
+				editorPreview(
+					props,
+					block,
+					options,
+					contextualId,
+					contextPost
+				)
 			);
 		}
 
@@ -3837,6 +3948,14 @@
 				return null;
 			},
 		} );
+
+		// registerBlockType() drops settings it cannot validate (a missing
+		// title, for instance) and returns undefined. Put the server definition
+		// back so the block still renders instead of breaking every template
+		// that contains it.
+		if ( existing && ! blocks.getBlockType( block.name ) ) {
+			blocks.registerBlockType( block.name, existing );
+		}
 	} );
 } )(
 	window.wp && window.wp.blocks,

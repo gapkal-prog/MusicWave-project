@@ -65,12 +65,18 @@
 .mw-download-quality:focus-visible { border-color: color-mix(in srgb, var(--mw-color-accent) 55%, transparent); box-shadow: 0 0 0 3px color-mix(in srgb, var(--mw-color-accent) 22%, transparent); outline: none; }
 
 .mw-download-file-row__actions { display: flex; align-items: center; justify-content: flex-end; gap: 0.5rem; }
-.mw-download-action .mw-download-button { min-height: 2.55rem; min-width: 2.55rem; padding: 0.42rem; white-space: nowrap; }
+.mw-download-action .mw-download-button { display: inline-flex; align-items: center; justify-content: center; gap: 0.42rem; min-height: 2.55rem; padding: 0.42rem 1rem; white-space: nowrap; }
 .mw-download-action .mw-download-button:hover:not(:disabled) { scale: 1.02; }
 .mw-download-button__icon,
 .mw-secure-play-button__icon { display: inline-block; font-size: 1rem; line-height: 1; }
+/* The delivery and playback buttons carry their label as visible text: the
+ * accessible name and the on-screen text are the same string, so a translated
+ * or block-level label is always readable (assets/download.js keeps both in
+ * step while playback runs). */
+.mw-download-button__label,
+.mw-secure-play-button__label { display: inline-block; font-size: 0.875rem; font-weight: 650; line-height: 1.2; }
 
-.mw-secure-play-button { display: inline-flex; align-items: center; justify-content: center; gap: 0.42rem; min-height: 2.55rem; min-width: 2.55rem; padding: 0.42rem; color: var(--mw-color-text); font-size: 0.875rem; font-weight: 600; white-space: nowrap; background: transparent; border: 1px solid var(--mw-color-border); border-radius: var(--mw-radius-pill); cursor: pointer; transition: color var(--mw-speed-fast,150ms) ease, border-color var(--mw-speed-fast,150ms) ease, background-color var(--mw-speed-fast,150ms) ease; }
+.mw-secure-play-button { display: inline-flex; align-items: center; justify-content: center; gap: 0.42rem; min-height: 2.55rem; padding: 0.42rem 0.95rem; color: var(--mw-color-text); font-size: 0.875rem; font-weight: 600; white-space: nowrap; background: transparent; border: 1px solid var(--mw-color-border); border-radius: var(--mw-radius-pill); cursor: pointer; transition: color var(--mw-speed-fast,150ms) ease, border-color var(--mw-speed-fast,150ms) ease, background-color var(--mw-speed-fast,150ms) ease; }
 .mw-secure-play-button:hover:not(:disabled) { color: var(--mw-color-text); border-color: color-mix(in srgb, var(--mw-color-text) 42%, transparent); background: color-mix(in srgb, var(--mw-color-text) 7%, transparent); }
 .mw-secure-play-button:disabled,
 .mw-download-button:disabled { cursor: wait; opacity: 0.55; }
@@ -81,13 +87,23 @@
 .mw-download-inline { display: inline-flex; align-items: center; gap: 0.5rem; }
 .mw-download-action--inline .mw-download-quality { width: min(9rem, 100%); min-height: 2.2rem; padding: 0.28rem 1.9rem 0.28rem 0.58rem; font-size: 0.8125rem; }
 .mw-download-action--inline .mw-download-button,
-.mw-download-action--inline .mw-secure-play-button { min-height: 2.2rem; min-width: 2.2rem; padding: 0.28rem; font-size: 0.8125rem; }
+.mw-download-action--inline .mw-secure-play-button { min-height: 2.2rem; padding: 0.28rem 0.8rem; font-size: 0.8125rem; }
+.mw-download-action--inline .mw-download-button__label,
+.mw-download-action--inline .mw-secure-play-button__label { font-size: 0.8125rem; }
 .mw-download-action--inline .mw-download-status { position: absolute; z-index: 5; min-height: 0; margin: 0; padding: 0.3rem 0.65rem; font-size: 0.74rem; font-weight: 600; white-space: nowrap; color: var(--mw-color-text); background: var(--mw-color-surface-raised); border: 1px solid var(--mw-color-border); border-radius: var(--mw-radius-sm); box-shadow: var(--mw-shadow-card); pointer-events: none; }
 .mw-download-action--inline .mw-download-status:empty { display: none; }
 
 .mw-download-action__security { display: flex; align-items: flex-start; gap: 0.5rem; margin: var(--wp--preset--spacing--20) 0 0; padding-top: 0.7rem; border-top: 1px dashed var(--mw-color-border); color: var(--mw-color-text-muted); font-size: 0.8125rem; line-height: 1.5; }
 .mw-download-action__security-icon { flex: 0 0 auto; margin-top: 0.18rem; color: var(--mw-color-accent-strong); }
 .mw-download-action__security-badge { flex: 0 0 auto; margin-inline-start: auto; padding: 0.14rem 0.58rem; color: var(--mw-color-accent-strong); font-size: 0.68rem; font-weight: 800; letter-spacing: 0.05em; text-transform: uppercase; white-space: nowrap; background: color-mix(in srgb, var(--mw-color-accent) 14%, transparent); border-radius: var(--mw-radius-pill); }
+
+/* Opt-in sign-in prompt (loginLabel): shown only to signed-out visitors the
+ * access decision denies, so a template that already renders the access panel
+ * never repeats the message. */
+.mw-download-action--signin { margin: var(--wp--preset--spacing--30) 0; padding: 0.95rem 1.1rem; background: color-mix(in srgb, var(--mw-color-accent) 7%, var(--mw-color-surface-raised)); border: 1px solid var(--mw-color-border); border-radius: var(--mw-radius-md); box-shadow: var(--mw-shadow-sm); }
+.mw-download-action__signin { display: flex; flex-wrap: wrap; align-items: center; gap: 0.7rem; }
+.mw-download-action__signin-icon { flex: 0 0 auto; color: var(--mw-color-accent-strong); }
+.mw-download-action__signin-link { flex: 0 0 auto; margin-inline-start: auto; white-space: nowrap; }
 
 .mw-download-action--single .mw-download-file-row { background: transparent; }
 .mw-download-action--single .mw-download-file-row:hover { background: var(--mw-color-surface-raised); }

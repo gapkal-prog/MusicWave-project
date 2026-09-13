@@ -59,3 +59,25 @@ exists in the inventory and the acting user holds `manage_mw_protected_assets`.
 new "Server acceleration" setting, keeping PHP workers free for large masters. The nginx
 internal location must be marked `internal;` and aliased to the protected directory; range
 handling is then performed by the server.
+
+## Block labels
+
+`music-wave/download-button` exposes three label attributes and all three now render as visible
+text, not only as an accessible name:
+
+- `downloadLabel` prints inside `.mw-download-button__label` next to the download glyph, in both
+  the panel rows (`download_file_rows()`) and the compact inline group
+  (`download_inline_markup()`). An empty value falls back to the translated "Secure download".
+- `playLabel` prints inside `.mw-secure-play-button__label`. `assets/download.js` swaps the
+  visible text and `aria-label` together while playback runs, so the accessible name and the
+  on-screen text can never disagree. An empty value falls back to the translated "Play".
+- `loginLabel` drives an **opt-in** sign-in prompt (`download_sign_in_markup()`). It renders only
+  when the visitor is signed out, the access decision denies the release, the label is non-empty,
+  and the release actually has downloadable assets. The default is empty, so
+  `single-mw_release.html` — which renders `music-wave/access-panel` beside this block — keeps
+  showing exactly one sign-in message. The prompt reuses the block's own `heading` attribute and
+  `wp_login_url( BlockSupport::current_url() )`, the same guest-CTA shape `PlaylistBlocks`,
+  `QueueBlock`, and `ListeningBlocks` already use, and adds no new translatable string.
+
+Both buttons are built by the shared `secure_play_button()` / `secure_download_button()` helpers,
+so the panel and the inline group cannot drift apart again.
