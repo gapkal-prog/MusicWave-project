@@ -1997,10 +1997,7 @@ final class ReleaseBlocks {
 			return '';
 		}
 
-		$more = '';
-		if ( '' !== $section_url && '' !== $section_link_label ) {
-			$more = '<a class="mw-related-releases__more" href="' . esc_url( $section_url ) . '">' . esc_html( $section_link_label ) . '<span aria-hidden="true">&rarr;</span></a>';
-		}
+		$more = SectionHeader::more_link( 'mw-related-releases__more', $section_url, $section_link_label );
 
 		$shelf_class = 'mw-release-shelf mw-release-shelf--' . $options['layout'];
 		if ( '' !== $options['variation'] ) {
@@ -2014,68 +2011,52 @@ final class ReleaseBlocks {
 	}
 
 	/**
-	 * Render one related-release card with the release-shelf card markup.
+	 * Render one related-release card with the shared release-card markup.
 	 *
-	 * @param array<string, mixed> $options Resolved card options.
+	 * The card skeleton lives in `ReleaseCard`; this method keeps only what is
+	 * specific to related releases — the play-overlay fallback, the release
+	 * date, and the in-body preview button.
+	 *
+	 * @param int                  $release_id Release to render.
+	 * @param array<string, mixed> $options    Resolved card options.
 	 */
 	private function related_card( int $release_id, array $options ): string {
-		$title = get_the_title( $release_id );
-		$link  = get_permalink( $release_id );
-		if ( ! is_string( $link ) || '' === $link ) {
+		$data = ReleaseCard::presentation_data( $release_id );
+		if ( array() === $data ) {
 			return '';
 		}
 
-		$art = '';
-		if ( $options['show_artwork'] ) {
-			$image   = get_the_post_thumbnail(
-				$release_id,
-				'medium_large',
-				array(
-					'class' => 'mw-release-shelf__image',
-					'alt'   => '',
-				)
-			);
-			$initial = function_exists( 'mb_substr' ) ? mb_substr( $title, 0, 1 ) : substr( $title, 0, 1 );
-			/* translators: %s: music release title. */
-			$open_label = sprintf( __( 'باز کردن %s', 'music-wave-core' ), $title );
-			$overlay    = '';
-			if ( $options['show_preview'] ) {
-				$overlay = apply_filters( 'music_wave_card_play_button', '', $release_id, 'mw-release-shelf__play' );
-				$overlay = is_string( $overlay ) ? $overlay : '';
-				if ( '' === $overlay && $this->has_preview( $release_id ) ) {
-					$overlay = '<span class="mw-release-shelf__play" aria-hidden="true">&#9654;</span>';
-				}
-			}
-			$art = '<div class="mw-release-shelf__artwrap"><a class="mw-release-shelf__art mw-release-shelf__art--' . esc_attr( (string) $options['shape'] ) . '" href="' . esc_url( $link ) . '" aria-label="' . esc_attr( $open_label ) . '">' . ( '' !== $image ? $image : '<span class="mw-release-shelf__placeholder" aria-hidden="true">' . esc_html( $initial ) . '</span>' ) . '</a>' . $overlay . '</div>';
-		}
-
-		$artist = '';
-		if ( $options['show_artist'] ) {
-			$artists = wp_get_post_terms( $release_id, 'mw_artist', array( 'fields' => 'names' ) );
-			if ( is_array( $artists ) && ! empty( $artists ) ) {
-				$artist = '<span class="mw-release-shelf__artist">' . esc_html( implode( ', ', $artists ) ) . '</span>';
+		$overlay = '';
+		if ( $options['show_preview'] ) {
+			$overlay = apply_filters( 'music_wave_card_play_button', '', $release_id, 'mw-release-shelf__play' );
+			$overlay = is_string( $overlay ) ? $overlay : '';
+			if ( '' === $overlay && $this->has_preview( $release_id ) ) {
+				$overlay = '<span class="mw-release-shelf__play" aria-hidden="true">&#9654;</span>';
 			}
 		}
 
-		$date = '';
+		$meta_html = '';
 		if ( $options['show_date'] ) {
-			$date = '<time datetime="' . esc_attr( get_the_date( 'c', $release_id ) ) . '">' . esc_html( get_the_date( '', $release_id ) ) . '</time>';
+			$meta_html = '<time datetime="' . esc_attr( get_the_date( 'c', $release_id ) ) . '">' . esc_html( get_the_date( '', $release_id ) ) . '</time>';
 		}
 
-		$excerpt = '';
-		if ( $options['show_excerpt'] ) {
-			$excerpt_text = get_the_excerpt( $release_id );
-			if ( '' !== $excerpt_text ) {
-				$excerpt = '<p>' . esc_html( wp_trim_words( $excerpt_text, 18 ) ) . '</p>';
-			}
-		}
-
-		$preview = $options['show_preview'] ? $this->collection_preview_button( $release_id ) : '';
-		$action  = $options['show_action']
-			? '<a class="mw-release-shelf__action" href="' . esc_url( $link ) . '">' . esc_html( (string) $options['action_label'] ) . '</a>'
-			: '';
-
-		return '<article class="mw-release-shelf__item">' . $art . '<div class="mw-release-shelf__body"><h3><a href="' . esc_url( $link ) . '">' . esc_html( $title ) . '</a></h3>' . $artist . $date . $excerpt . $preview . $action . '</div></article>';
+		return ReleaseCard::render(
+			$data,
+			array(
+				'shape'            => (string) $options['shape'],
+				'image_attributes' => array(),
+				/* translators: %s: music release title. */
+				'open_label'       => sprintf( __( 'باز کردن %s', 'music-wave-core' ), $data['title'] ),
+				'overlay'          => $overlay,
+				'show_artwork'     => $options['show_artwork'],
+				'show_artist'      => $options['show_artist'],
+				'show_excerpt'     => $options['show_excerpt'],
+				'show_action'      => $options['show_action'],
+				'action_label'     => (string) $options['action_label'],
+				'meta_html'        => $meta_html,
+				'body_html'        => $options['show_preview'] ? $this->collection_preview_button( $release_id ) : '',
+			)
+		);
 	}
 
 	/**

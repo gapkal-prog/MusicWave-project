@@ -460,14 +460,49 @@ foreach ( array( '.mw-related-releases__section-header', '.mw-related-releases__
 }
 
 // Related rails reuse the MusicWave release shelf layout system so they stay
-// visually identical to the shelf block.
-foreach ( array( 'mw-release-shelf--', 'mw-release-shelf__items', 'mw-release-shelf__item', 'mw-release-shelf__art--' ) as $shelf_marker ) {
+// visually identical to the shelf block. The section chrome still lives in
+// ReleaseBlocks; the card itself is emitted by the shared ReleaseCard
+// renderer, so the card classes are asserted there instead.
+foreach ( array( 'mw-release-shelf--', 'mw-release-shelf__items' ) as $shelf_marker ) {
 	mw_assert_same(
 		true,
 		false !== strpos( $release_blocks_source, $shelf_marker ),
 		'Related releases must render with the release-shelf layout class ' . $shelf_marker . '.'
 	);
 }
+
+$release_card_source     = (string) file_get_contents( dirname( __DIR__ ) . '/music-wave-core/src/Blocks/ReleaseCard.php' );
+$listening_blocks_source = (string) file_get_contents( dirname( __DIR__ ) . '/music-wave-core/src/Blocks/ListeningBlocks.php' );
+foreach ( array( 'mw-release-shelf__item', 'mw-release-shelf__artwrap', 'mw-release-shelf__art--', 'mw-release-shelf__image', 'mw-release-shelf__placeholder', 'mw-release-shelf__artist', 'mw-release-shelf__body', 'mw-release-shelf__action' ) as $card_marker ) {
+	mw_assert_same(
+		true,
+		false !== strpos( $release_card_source, $card_marker ),
+		'The shared release card must render the shelf card class ' . $card_marker . '.'
+	);
+}
+
+// The card skeleton has exactly one home. Related releases, continue listening
+// and the theme shelf all delegate, so re-inlining the markup anywhere is a
+// regression: tests/card-markup.php pins the rendered bytes and these
+// assertions pin the delegation itself.
+foreach ( array( 'ReleaseBlocks.php' => $release_blocks_source, 'ListeningBlocks.php' => $listening_blocks_source ) as $producer_name => $producer_source ) {
+	mw_assert_same(
+		false,
+		false !== strpos( $producer_source, 'mw-release-shelf__artwrap' ),
+		$producer_name . ' must not re-inline the release card artwork; it must delegate to ReleaseCard.'
+	);
+	mw_assert_same(
+		true,
+		false !== strpos( $producer_source, 'ReleaseCard::render(' ) && false !== strpos( $producer_source, 'ReleaseCard::presentation_data(' ),
+		$producer_name . ' must build its cards through the shared ReleaseCard renderer.'
+	);
+}
+
+mw_assert_same(
+	true,
+	false !== strpos( $functions_source, 'ReleaseCard::presentation_data(' ) && false !== strpos( $functions_source, 'musicwave_render_release_card(' ),
+	'The theme release shelf must build its cards through the shared ReleaseCard renderer.'
+);
 
 $access_css = (string) file_get_contents( $theme_directory . '/assets/css/components/access.css' );
 mw_assert_same(

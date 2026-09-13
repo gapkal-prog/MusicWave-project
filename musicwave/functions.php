@@ -1427,24 +1427,35 @@ function musicwave_slider_number( string $setting, int $fallback ): int {
  * @return array<string, mixed>
  */
 function musicwave_release_presentation_data( int $release_id ): array {
-	$release_id = absint( $release_id );
-	$link       = get_permalink( $release_id );
-	if ( $release_id < 1 || ! is_string( $link ) || '' === $link ) {
-		return array();
+	// The card skeleton is shared with the plugin so every shelf, related
+	// section and history rail renders identical markup. Release surfaces are
+	// unreachable without MusicWave Core anyway: it owns the `mw_release` post
+	// type, and every caller treats an empty array as "skip this card".
+	if ( class_exists( '\ManaCore\MusicWave\Core\Blocks\ReleaseCard' ) ) {
+		return \ManaCore\MusicWave\Core\Blocks\ReleaseCard::presentation_data( $release_id );
 	}
 
-	$title   = (string) get_the_title( $release_id );
-	$artists = wp_get_post_terms( $release_id, 'mw_artist', array( 'fields' => 'names' ) );
-	$artist  = is_array( $artists ) && ! empty( $artists ) ? implode( ', ', $artists ) : '';
-	$initial = function_exists( 'mb_substr' ) ? mb_substr( $title, 0, 1 ) : substr( $title, 0, 1 );
+	return array();
+}
 
-	return array(
-		'id'      => $release_id,
-		'link'    => $link,
-		'title'   => $title,
-		'artist'  => $artist,
-		'initial' => $initial,
-	);
+/**
+ * Render one release card with the shared MusicWave card markup.
+ *
+ * Thin wrapper around `ReleaseCard::render()` so the theme names the plugin
+ * class in exactly one place, and degrades to an empty string instead of a
+ * fatal should MusicWave Core ever be missing. Callers already treat an empty
+ * card as "skip".
+ *
+ * @param array<string, mixed> $item    Presentation data from musicwave_release_presentation_data().
+ * @param array<string, mixed> $options Card options; see ReleaseCard::render().
+ * @return string
+ */
+function musicwave_render_release_card( array $item, array $options ): string {
+	if ( ! class_exists( '\ManaCore\MusicWave\Core\Blocks\ReleaseCard' ) ) {
+		return '';
+	}
+
+	return \ManaCore\MusicWave\Core\Blocks\ReleaseCard::render( $item, $options );
 }
 
 /**
@@ -1463,7 +1474,12 @@ function musicwave_render_shelf_header( string $eyebrow, string $title, string $
 	}
 
 	$section_link_label = '' !== $section_link_label ? $section_link_label : __( 'مشاهده همه', 'musicwave' );
-	$link               = '' !== $section_url
+
+	if ( class_exists( '\ManaCore\MusicWave\Core\Blocks\SectionHeader' ) ) {
+		return \ManaCore\MusicWave\Core\Blocks\SectionHeader::shelf_header( $eyebrow, $title, $description, $section_url, $section_link_label );
+	}
+
+	$link = '' !== $section_url
 		? '<a class="mw-release-shelf__more" href="' . esc_url( $section_url ) . '">' . esc_html( $section_link_label ) . '<span aria-hidden="true">&rarr;</span></a>'
 		: '';
 
@@ -2231,41 +2247,46 @@ function musicwave_render_release_shelf( array $attributes ): string {
 		}
 
 		$release_id = (int) $item['id'];
-		$link       = (string) $item['link'];
-		$card_title = (string) $item['title'];
-		$artist     = (string) $item['artist'];
 		$is_first   = $idx < 2;
-		$thumbnail  = get_the_post_thumbnail(
-			$release_id,
-			'medium_large',
-			array(
-				'class'         => 'mw-release-shelf__image',
-				'alt'           => '',
-				'loading'       => $is_first ? 'eager' : 'lazy',
-				'fetchpriority' => $is_first ? 'high' : 'low',
-				'decoding'      => 'async',
-			)
-		);
-		$initial    = (string) $item['initial'];
-		/* translators: %s: music release title. */
-		$open_label  = sprintf( __( 'باز کردن %s', 'musicwave' ), $card_title );
+
+		// The shelf always shows a play affordance when asked for one, so the
+		// filtered button falls back to a decorative glyph.
 		$play_button = '';
 		if ( $show_play ) {
 			$play_button = apply_filters( 'music_wave_card_play_button', '', $release_id, 'mw-release-shelf__play' );
 			$play_button = is_string( $play_button ) && '' !== $play_button ? $play_button : '<span class="mw-release-shelf__play" aria-hidden="true">&#9654;</span>';
 		}
-		$art            = $show_artwork
-			? '<div class="mw-release-shelf__artwrap"><a class="mw-release-shelf__art mw-release-shelf__art--' . esc_attr( $shape ) . '" href="' . esc_url( $link ) . '" aria-label="' . esc_attr( $open_label ) . '">' . ( '' !== $thumbnail ? $thumbnail : '<span class="mw-release-shelf__placeholder" aria-hidden="true">' . esc_html( $initial ) . '</span>' ) . '</a>' . $play_button . '</div>'
+
+		$date_markup = ! empty( $attributes['showDate'] )
+			? '<time datetime="' . esc_attr( get_the_date( 'c', $release_id ) ) . '">' . esc_html( get_the_date( '', $release_id ) ) . '</time>'
 			: '';
-		$artist_markup  = ( ! isset( $attributes['showArtist'] ) || false !== $attributes['showArtist'] ) && '' !== $artist ? '<span class="mw-release-shelf__artist">' . esc_html( $artist ) . '</span>' : '';
-		$date_markup    = ! empty( $attributes['showDate'] ) ? '<time datetime="' . esc_attr( get_the_date( 'c', $release_id ) ) . '">' . esc_html( get_the_date( '', $release_id ) ) . '</time>' : '';
-		$excerpt_markup = '';
-		if ( ! empty( $attributes['showExcerpt'] ) ) {
-			$excerpt        = get_the_excerpt( $release_id );
-			$excerpt_markup = '' !== $excerpt ? '<p>' . esc_html( wp_trim_words( $excerpt, 18 ) ) . '</p>' : '';
+
+		/* translators: %s: music release title. */
+		$open_label = sprintf( __( 'باز کردن %s', 'musicwave' ), (string) $item['title'] );
+
+		$card = musicwave_render_release_card(
+			$item,
+			array(
+				'shape'            => $shape,
+				'image_attributes' => array(
+					'loading'       => $is_first ? 'eager' : 'lazy',
+					'fetchpriority' => $is_first ? 'high' : 'low',
+					'decoding'      => 'async',
+				),
+				'open_label'       => $open_label,
+				'overlay'          => $play_button,
+				'show_artwork'     => $show_artwork,
+				'show_artist'      => ! isset( $attributes['showArtist'] ) || false !== $attributes['showArtist'],
+				'show_excerpt'     => ! empty( $attributes['showExcerpt'] ),
+				'show_action'      => ! isset( $attributes['showAction'] ) || false !== $attributes['showAction'],
+				'action_label'     => $action_label,
+				'meta_html'        => $date_markup,
+			)
+		);
+
+		if ( '' !== $card ) {
+			$cards[] = $card;
 		}
-		$action  = ! isset( $attributes['showAction'] ) || false !== $attributes['showAction'] ? '<a class="mw-release-shelf__action" href="' . esc_url( $link ) . '">' . esc_html( $action_label ) . '</a>' : '';
-		$cards[] = '<article class="mw-release-shelf__item">' . $art . '<div class="mw-release-shelf__body"><h3><a href="' . esc_url( $link ) . '">' . esc_html( $card_title ) . '</a></h3>' . $artist_markup . $date_markup . $excerpt_markup . $action . '</div></article>';
 	}
 	if ( empty( $cards ) ) {
 		return '';
