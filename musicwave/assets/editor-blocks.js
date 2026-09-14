@@ -5,7 +5,8 @@
 	components,
 	i18n,
 	serverSideRender,
-	presentationBlocks
+	presentationBlocks,
+	staticBlocks
 ) {
 	'use strict';
 
@@ -883,30 +884,48 @@
 	);
 	}
 
+	/**
+	 * Translate one block.json metadata entry for the browser registry.
+	 *
+	 * Both registration lanes (ServerSideRender leaves and static InnerBlocks
+	 * containers) read the same block.json shape, so the translation lives once
+	 * here instead of being copied into each loop.
+	 *
+	 * @param {Object} block Localized block.json metadata.
+	 * @return {Object} Translated title, description, keywords and textdomain.
+	 */
+	function translatedMetadata( block ) {
+		var textdomain = block.textdomain || 'musicwave';
+
+		return {
+			textdomain,
+			// Metadata originates in block.json and is intentionally translated at runtime.
+			// eslint-disable-next-line @wordpress/i18n-no-variables
+			title: __( block.title, textdomain ),
+			// eslint-disable-next-line @wordpress/i18n-no-variables
+			description: __( block.description, textdomain ),
+			keywords: ( block.keywords || [] ).map( function ( keyword ) {
+				// eslint-disable-next-line @wordpress/i18n-no-variables
+				return __( keyword, textdomain );
+			} ),
+		};
+	}
+
 	presentationBlocks.forEach( function ( block ) {
 		if ( blocks.getBlockType( block.name ) ) {
 			return;
 		}
 
-		var textdomain = block.textdomain || 'musicwave';
-		// Metadata originates in block.json and is intentionally translated at runtime.
-		// eslint-disable-next-line @wordpress/i18n-no-variables
-		var title = __( block.title, textdomain );
-		// eslint-disable-next-line @wordpress/i18n-no-variables
-		var description = __( block.description, textdomain );
-		var keywords = ( block.keywords || [] ).map( function ( keyword ) {
-			// eslint-disable-next-line @wordpress/i18n-no-variables
-			return __( keyword, textdomain );
-		} );
+		var meta = translatedMetadata( block );
 
 		blocks.registerBlockType( block.name, {
 			apiVersion: block.apiVersion || 3,
-			title,
-			description,
+			title: meta.title,
+			description: meta.description,
 			category: block.category || 'music-wave',
 			icon: block.icon,
-			keywords,
-			textdomain,
+			keywords: meta.keywords,
+			textdomain: meta.textdomain,
 			attributes: block.attributes || {},
 			supports: block.supports || {},
 			example: block.example || {},
@@ -922,7 +941,7 @@
 					EmptyResponsePlaceholder() {
 						return createElement( components.Placeholder, {
 							icon: block.icon,
-							label: title,
+							label: meta.title,
 							instructions: __(
 								'برای نمایش پیش‌نمایش زنده، انتشار منتشرشده اضافه کنید یا این بلوک را فعال کنید.',
 								'musicwave'
@@ -1023,6 +1042,99 @@
 			},
 		} );
 	} );
+
+	/*
+	 * Lane 3 — static child-bearing blocks (docs/composability-architecture.md §5).
+	 *
+	 * These blocks store their own markup from save(), so there is no
+	 * render_callback, no ServerSideRender preview and no REST round-trip: the
+	 * editor renders real child blocks. That is what makes every part of the
+	 * header individually selectable, movable and editable, which a PHP-rendered
+	 * section header can never offer.
+	 *
+	 * The shell is the theme's existing editorial component (.mw-section-head +
+	 * __text), the same vocabulary patterns/vinyl-record-shelf.php composes, so
+	 * a stored header and a pattern-built header look identical.
+	 */
+	var sectionHeadTemplate = [
+		[
+			'core/group',
+			{ className: 'mw-section-head__text', layout: { type: 'default' } },
+			[
+				[
+					'core/paragraph',
+					{
+						className: 'mw-eyebrow',
+						placeholder: __( 'برچسب بالایی', 'musicwave' ),
+					},
+				],
+				[
+					'core/heading',
+					{ level: 2, placeholder: __( 'عنوان بخش', 'musicwave' ) },
+				],
+				[
+					'core/paragraph',
+					{ placeholder: __( 'توضیح کوتاه بخش', 'musicwave' ) },
+				],
+			],
+		],
+	];
+
+	var staticBlockList = Array.isArray( staticBlocks ) ? staticBlocks : [];
+
+	staticBlockList.forEach( function ( block ) {
+		if ( blocks.getBlockType( block.name ) ) {
+			return;
+		}
+
+		var meta = translatedMetadata( block );
+
+		blocks.registerBlockType( block.name, {
+			apiVersion: block.apiVersion || 3,
+			title: meta.title,
+			description: meta.description,
+			category: block.category || 'music-wave',
+			icon: block.icon,
+			keywords: meta.keywords,
+			textdomain: meta.textdomain,
+			attributes: block.attributes || {},
+			supports: block.supports || {},
+			example: block.example || {},
+			// Server-registered block styles (register_block_style) must survive
+			// this client-side registration, exactly as for the dynamic lane.
+			styles: block.styles || [],
+			edit() {
+				var blockProps = blockEditor.useBlockProps( {
+					className: 'mw-section-head',
+				} );
+
+				// templateLock false is the whole point of the block: the
+				// template only seeds the eyebrow / title / description stack,
+				// and editors may add, remove or reorder children — a rule, a
+				// button, a second column — while the shell keeps its class
+				// hooks and the Styles panel keeps the center/stack/invert looks.
+				return createElement(
+					'div',
+					blockProps,
+					createElement( blockEditor.InnerBlocks, {
+						template: sectionHeadTemplate,
+						templateLock: false,
+					} )
+				);
+			},
+			save() {
+				var blockProps = blockEditor.useBlockProps.save( {
+					className: 'mw-section-head',
+				} );
+
+				return createElement(
+					'div',
+					blockProps,
+					createElement( blockEditor.InnerBlocks.Content )
+				);
+			},
+		} );
+	} );
 } )(
 	window.wp && window.wp.blocks,
 	window.wp && window.wp.element,
@@ -1030,5 +1142,6 @@
 	window.wp && window.wp.components,
 	window.wp && window.wp.i18n,
 	window.wp && window.wp.serverSideRender,
-	window.musicwavePresentationBlocks || []
+	window.musicwavePresentationBlocks || [],
+	window.musicwaveStaticBlocks || []
 );

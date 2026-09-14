@@ -1,9 +1,9 @@
 # MusicWave composability architecture (design proposal — not yet implemented)
 
-Status: **Stage B and Stage A are implemented** (commits `bb18048`, and the Stage A commit that
-follows it). Stage C is deferred on its trigger criteria; Stage D is not started. Every claim
-below was re-verified against the working tree, and §10 records what changed during
-implementation, including where the plan was wrong or incomplete.
+Status: **Stages B, A and D are implemented** (`bb18048`, `6ed2b59`, and the Stage D commit that
+follows them). Stage C stays deferred on its trigger criteria. Every claim below was re-verified
+against the working tree, and §10 records what changed during implementation, including where the
+plan was wrong or incomplete.
 
 Goal: make the complex MusicWave blocks genuinely modular and Site Editor–friendly — a
 Query-Loop-like editing experience — **without** breaking dynamic PHP rendering, shipped
@@ -541,17 +541,18 @@ the byte-identity assertion. Both pass again after revert.
 
 ### 10.3 Outstanding, deliberately not done in Stage A
 
-* **2 new translatable strings** (`انتشاری پیدا نشد`, `فیلترها را تغییر دهید یا کاتالوگ کامل را مرور کنید.`)
-  in `patterns/release-grid.php`, via `esc_html__()` per the existing pattern convention. They are
-  not yet in `musicwave.pot` because regenerating would also pull in the **pre-existing** staleness
-  (67 msgids in `musicwave.pot`, 6 in `music-wave-core.pot`, missing at HEAD before any of this
-  work). Both belong to one deferred pot/po/mo pass.
+* **9 new translatable strings** — 2 in `patterns/release-grid.php` (Stage A) and 7 from Stage D
+  (the section-head title, description, one keyword and the three Styles-panel labels plus two
+  template placeholders that were already catalogued). Measured by running `tools/generate-pot.php`
+  over an archive of HEAD and over the working tree and diffing the msgid sets, so the count is
+  exact rather than estimated. They are not yet in `musicwave.pot` because regenerating would also
+  pull in the **pre-existing** staleness (67 msgids in `musicwave.pot`, 6 in `music-wave-core.pot`,
+  missing at HEAD before any of this work). All of it belongs to one deferred pot/po/mo pass.
 * **Pre-existing phpcs debt**: 18 errors / 37 warnings in `musicwave/functions.php` (5/18),
   `inc/nav-icons.php` (1/3) and `inc/site-header.php` (12/16). The `site-header.php` errors are real
   findings — `$_POST` reads without nonce verification and unsanitized. Present at HEAD; untouched
   here by instruction.
-* **Stage C** (`music-wave/release-card-media` leaf) and **Stage D**
-  (`music-wave/section-head`, the static InnerBlocks pilot) are not started.
+* **Stage C** (`music-wave/release-card-media` leaf) is not started; its trigger criteria are in §8.
 
 ### 10.4 Verification environment
 
@@ -565,6 +566,108 @@ network-blocked; `codeload` and npm are not). Consequences worth recording:
   sweep that throws real `ParseError`s is used instead — 219/219 files clean.
 * **phpstan cannot run at all** here: its `.phar` is a blocked release asset and the source needs
   composer plus the `php-stubs/*` packages. `composer check:phpstan` still has to be run in CI.
-* `npm run lint:js` cannot run (`node_modules` absent), but Stage A touches no JavaScript.
+* `npm run lint:js` cannot run here (`node_modules` absent). Stage D *does* touch JavaScript, so its
+  runtime behaviour was verified with a dependency-free harness instead: `tests/editor-lanes.js`
+  executes the real `musicwave/assets/editor-blocks.js` in a `vm` context against a stubbed `wp.*`,
+  which needs no npm install. `npm run test:editor-lanes` is committed; wiring it into
+  `.github/workflows/quality.yml` needs the `workflows` permission the push token does not have, so
+  the exact step is recorded in docs/block-upgrade-roadmap.md §2.15 for a maintainer to apply.
 * The theme's files open with `if ( ! defined( 'ABSPATH' ) ) { exit; }` using a **bare `exit;`**, so
   any harness loading them must define `ABSPATH` or it terminates silently with no error recorded.
+
+### 10.5 Stage D — done
+
+`music-wave/section-head` is now the project's single deliberate InnerBlocks block: a static
+container whose children are real blocks, registered from `musicwave/blocks/section-head/block.json`
+with **no** `render_callback`, **no** attributes and **no** second script.
+
+```
+music-wave/section-head                     save(): useBlockProps.save({ className: 'mw-section-head' })
+└── core/group .mw-section-head__text        (template seed, templateLock: false)
+    ├── core/paragraph .mw-eyebrow           eyebrow
+    ├── core/heading (level 2)               title
+    └── core/paragraph                       description
+```
+
+Styles panel looks are the existing editorial modifiers, registered with `register_block_style()`:
+`center` / `stack` / `invert` → `is-style-*`. `editorial.css` lists both spellings on each rule
+(`.mw-section-head--center` and `.mw-section-head.is-style-center`), so a stored header and a
+PHP-rendered header share one declaration set and cannot drift. All rules already used logical
+properties, so RTL and the responsive clamp()s carry over unchanged.
+
+**One correction to the plan.** §7 sketched the template as three flat children
+(`[paragraph eyebrow], [heading], [paragraph]`). Against the real stylesheet that would have
+broken the layout: `.mw-section-head` is `display:flex; justify-content:space-between; align-items:end`
+(editorial.css:78), so three flat children sit *side by side*; only `.mw-section-head__text`
+(`display:grid; gap:.4rem`) stacks them. The seeded template therefore wraps the three lines in the
+`__text` group — which is also exactly the structure `patterns/vinyl-record-shelf.php` already
+composes by hand, so the block and that pattern render identically. §7's own wording ("the `__text` /
+`__rule` structure produced by the template") intended this; the inline sketch was inconsistent with
+it. The shell stays a flex row, so an editor can still add a `__rule` hairline or a button as a
+sibling — that is what the `order: 3` rule is for.
+
+**Supports were narrowed on evidence, not copied from the sketch.** §7 listed
+`align, anchor, color, spacing, typography, __experimentalSelector`. Three of those would have been
+*dead controls*, which is worse than no control: `color.text` and `typography.fontSize`/`lineHeight`
+are overridden by `.mw-section-head h2 { font-family/font-size/line-height }` and `.mw-section-head p { color }`,
+and `spacing.blockGap` writes `--wp--style--block-gap` while the component sets `gap: 1.25rem`
+itself. Shipped: `align: [wide, full]`, `anchor`, `html: false`, `color: { background, gradient }`,
+`spacing: { margin, padding }`. Children keep their own native colour and typography controls, which
+do work. Each exclusion is asserted with its reason in `tests/template-integrity.php`, so it cannot
+be "restored" by accident.
+
+**Coexistence with `musicwave/section-heading`** — both ship, in different inserter surfaces and for
+different jobs, and the difference is documented in both directions:
+
+| | `musicwave/section-heading` (pattern) | `music-wave/section-head` (block) |
+|---|---|---|
+| Inserter surface | Patterns tab (`musicwave`, `featured`, `musicwave-widgets`) | Blocks tab, category `music-wave` |
+| What it inserts | A wide `core/group` with eyebrow/title/muted paragraph, styled through Global Styles | The `.mw-section-head` component shell with a seeded `__text` stack |
+| Component vocabulary | none — plain core blocks | `mw-section-head` + `__text` (+ optional `__rule`), `mw-eyebrow` |
+| Looks | inline typography, `mw-muted` | Styles panel: center / stack / invert |
+| Choose it when | a one-off text heading inside content | a section needs the editorial header and a composable shell |
+
+The pattern's HTML was **not** touched; only its docblock gained the cross-reference. Its block.json
+counterpart asserts it still composes `core/group` + `core/heading` + `core/paragraph` and still
+contains no `wp:music-wave/section-head` comment, so it cannot be silently converted or retired.
+
+**Lane separation is now enforced, not just documented.** `editor-blocks.js` gained a second
+registration loop fed by its own localized list (`musicwaveStaticBlocks`) instead of branching the
+ServerSideRender loop on a block name. Both lanes build their client metadata through one extracted
+helper (`musicwave_block_metadata_entry()` in PHP, `translatedMetadata()` in JS) rather than copying
+it. The five PHP-rendered blocks and their five hidden legacy aliases were re-verified as unchanged
+after that extraction: same titles, same keyword counts, `save()` still returns `null`, `edit()` still
+uses ServerSideRender, aliases still hidden.
+
+**The template-integrity pairing rule was amended structurally.** The old assertion required *every*
+`music-wave/*` comment in bundled content to be self-closing, which a child-bearing block cannot
+satisfy. It now classifies each block by how it is *registered*, with no per-block exception list:
+
+* dynamic (has a `render_callback`) → must be self-closing, so stored fallback HTML still fails. Core
+  is dynamic by construction: every Core block goes through `BlockSupport::register_dynamic()`, which
+  always merges a callback. A theme dir is dynamic exactly when
+  `musicwave_register_presentation_blocks()` maps it with a `'dir' =>` entry beside a callback.
+* static (registered from block.json with no callback) → must be a correctly paired open/close
+  container; self-closing it fails, because that would store no editable children.
+* any name registered by neither → fails outright.
+
+The strict nesting walker below it is untouched, so a paired container still cannot smuggle in an
+unmatched delimiter. The classifier returns violation strings instead of asserting inline, which
+makes it exercisable over fixtures: bundled content never uses the paired form (the pilot is
+deliberately kept out of shipped templates), so six fixture cases prove the rule accepts a paired
+container and a self-closing leaf, and rejects a self-closed container, a dynamic block with fallback
+HTML, an unclosed container and an unregistered name. A seventh contract asserts
+`musicwave_static_block_dirs()` lists exactly the theme block.json files that have no callback, so a
+new static block cannot ship unregistered and a stale entry cannot survive its metadata.
+
+**Verification.** 14 negative controls were run against the new gates and all 14 failed with precise
+messages before reverting clean: 8 on the integrity contracts (locked template, `render_callback`
+added to block.json, SSR smuggled into the static lane, dropped `is-style-invert` twin, pattern
+converted to the block, static dir moved into the callback lane, deleted `__rule` and `__text`
+declaration blocks) and 6 on `tests/editor-lanes.js` (locked template, renamed `__text`, `save()`
+storing nothing, `save()` returning `null`, diverging edit/save shells, removed `getBlockType()`
+guard). Two of those controls initially *passed* — the first because a deleted CSS selector survived
+inside a sibling rule, the second because an unanchored selector matched a descendant rule — and both
+assertions were tightened (count both spellings per slug; anchor to a rule start) until the control
+failed. Recording that, because an assertion that survives its own negative control is worse than no
+assertion.

@@ -718,6 +718,20 @@ function musicwave_register_block_styles(): void {
 	if ( ! function_exists( 'register_block_style' ) ) {
 		return;
 	}
+
+	// Static section head: the same editorial modifiers a PHP-rendered header
+	// uses, exposed as block styles so the Styles panel can switch a stored
+	// container between them without code.
+	foreach ( musicwave_section_head_styles() as $style_name => $style_label ) {
+		register_block_style(
+			'music-wave/section-head',
+			array(
+				'name'  => $style_name,
+				'label' => $style_label,
+			)
+		);
+	}
+
 	foreach ( musicwave_presentation_style_variations() as $slug => $variations ) {
 		foreach ( array( 'music-wave/' . $slug, 'musicwave/' . $slug ) as $block_name ) {
 			foreach ( $variations as $name => $variation ) {
@@ -807,6 +821,107 @@ function musicwave_load_block_json( string $block_dir ): ?array {
 	}
 	$data = json_decode( $raw, true );
 	return is_array( $data ) ? $data : null;
+}
+
+/**
+ * Build the browser registration entry for one bundled theme block.
+ *
+ * block.json is the single source of truth for the client registry: this reads
+ * it once and returns the exact shape editor-blocks.js consumes, so the dynamic
+ * (ServerSideRender) and static (InnerBlocks) lanes share one metadata path and
+ * cannot drift from each other or from the PHP registration.
+ *
+ * @param string $block_dir Directory name inside the theme's blocks directory.
+ * @return array<string, mixed>|null Null when the metadata file is unusable.
+ */
+function musicwave_block_metadata_entry( string $block_dir ): ?array {
+	$meta = musicwave_load_block_json( $block_dir );
+	if ( null === $meta || empty( $meta['name'] ) ) {
+		return null;
+	}
+
+	return array(
+		'name'        => (string) $meta['name'],
+		'apiVersion'  => isset( $meta['apiVersion'] ) ? (int) $meta['apiVersion'] : 3,
+		'title'       => isset( $meta['title'] ) ? (string) $meta['title'] : '',
+		'description' => isset( $meta['description'] ) ? (string) $meta['description'] : '',
+		'category'    => isset( $meta['category'] ) ? (string) $meta['category'] : 'music-wave',
+		'icon'        => isset( $meta['icon'] ) ? (string) $meta['icon'] : 'format-audio',
+		'keywords'    => isset( $meta['keywords'] ) && is_array( $meta['keywords'] ) ? array_values( $meta['keywords'] ) : array(),
+		'textdomain'  => isset( $meta['textdomain'] ) ? (string) $meta['textdomain'] : 'musicwave',
+		'attributes'  => isset( $meta['attributes'] ) && is_array( $meta['attributes'] ) ? $meta['attributes'] : array(),
+		'supports'    => isset( $meta['supports'] ) && is_array( $meta['supports'] ) ? $meta['supports'] : array(),
+		'example'     => isset( $meta['example'] ) && is_array( $meta['example'] ) ? $meta['example'] : array(),
+		// Block style variations declared in block.json travel with the
+		// client registration so the Styles panel never depends on the
+		// REST hydration order.
+		'styles'      => isset( $meta['styles'] ) && is_array( $meta['styles'] ) ? array_values( $meta['styles'] ) : array(),
+	);
+}
+
+/**
+ * Return the theme's static, child-bearing blocks.
+ *
+ * A block either renders itself in PHP (leaf block, ServerSideRender preview,
+ * `render_callback`) or stores itself from JavaScript (`save()` + InnerBlocks) —
+ * never both. Mixing the two is what produces duplicated chrome and stale
+ * editor previews, so the two lanes are registered, localized and validated
+ * separately. See docs/composability-architecture.md §5.
+ *
+ * Directories listed here are registered from block.json with no render
+ * callback and get no legacy `musicwave/*` alias, because nothing was ever
+ * saved under another name.
+ *
+ * @return array<int, string>
+ */
+function musicwave_static_block_dirs(): array {
+	return array( 'section-head' );
+}
+
+/**
+ * Register static container blocks from their bundled block.json metadata.
+ *
+ * With no `render_callback`, WordPress prints the markup the block's own
+ * `save()` stored, so the frontend needs no PHP renderer and the Site Editor
+ * needs no REST round-trip to preview it.
+ *
+ * @return void
+ */
+function musicwave_register_static_blocks(): void {
+	if ( ! function_exists( 'register_block_type' ) ) {
+		return;
+	}
+
+	foreach ( musicwave_static_block_dirs() as $block_dir ) {
+		$path = get_template_directory() . '/blocks/' . $block_dir;
+		// Missing bundled metadata must never fatal a request; the block simply
+		// stays unavailable on an incomplete deployment.
+		if ( ! is_readable( $path . '/block.json' ) ) {
+			continue;
+		}
+
+		register_block_type( $path );
+	}
+}
+add_action( 'init', 'musicwave_register_static_blocks' );
+
+/**
+ * Return the section-head looks offered by the Site Editor Styles panel.
+ *
+ * The slugs are the editorial modifiers editorial.css already ships
+ * (`mw-section-head--center` / `--stack` / `--invert`), so a static container
+ * and a PHP-rendered header speak one vocabulary. The Styles panel writes
+ * `is-style-<slug>`; editorial.css maps both spellings onto one declaration set
+ * rather than duplicating the rules.
+ *
+ * @return array<string, string> Slug => translated label.
+ */
+function musicwave_section_head_styles(): array {
+	return array(
+		'center' => __( 'وسط‌چین', 'musicwave' ),
+		'stack'  => __( 'ستونی', 'musicwave' ),
+		'invert' => __( 'معکوس (روی سطح رنگی)', 'musicwave' ),
+	);
 }
 
 /**
@@ -930,30 +1045,13 @@ function musicwave_enqueue_presentation_editor_blocks(): void {
 	$dirs      = array( 'theme-text', 'theme-toggle', 'release-slider', 'release-shelf', 'synced-lyrics' );
 	$localized = array();
 	foreach ( $dirs as $dir ) {
-		$meta = musicwave_load_block_json( $dir );
-		if ( null === $meta || empty( $meta['name'] ) ) {
-			continue;
-		}
 		// block.json is the single source of truth for the browser registry.
 		// Do not maintain a second title/description/attribute map here: that
 		// was the source of Site Editor drift in earlier versions.
-		$entry       = array(
-			'name'        => (string) $meta['name'],
-			'apiVersion'  => isset( $meta['apiVersion'] ) ? (int) $meta['apiVersion'] : 3,
-			'title'       => isset( $meta['title'] ) ? (string) $meta['title'] : '',
-			'description' => isset( $meta['description'] ) ? (string) $meta['description'] : '',
-			'category'    => isset( $meta['category'] ) ? (string) $meta['category'] : 'music-wave',
-			'icon'        => isset( $meta['icon'] ) ? (string) $meta['icon'] : 'format-audio',
-			'keywords'    => isset( $meta['keywords'] ) && is_array( $meta['keywords'] ) ? array_values( $meta['keywords'] ) : array(),
-			'textdomain'  => isset( $meta['textdomain'] ) ? (string) $meta['textdomain'] : 'musicwave',
-			'attributes'  => isset( $meta['attributes'] ) && is_array( $meta['attributes'] ) ? $meta['attributes'] : array(),
-			'supports'    => isset( $meta['supports'] ) && is_array( $meta['supports'] ) ? $meta['supports'] : array(),
-			'example'     => isset( $meta['example'] ) && is_array( $meta['example'] ) ? $meta['example'] : array(),
-			// Block style variations declared in block.json travel with the
-			// client registration so the Styles panel never depends on the
-			// REST hydration order.
-			'styles'      => isset( $meta['styles'] ) && is_array( $meta['styles'] ) ? array_values( $meta['styles'] ) : array(),
-		);
+		$entry = musicwave_block_metadata_entry( $dir );
+		if ( null === $entry ) {
+			continue;
+		}
 		$localized[] = $entry;
 
 		// Keep legacy theme blocks editable after the namespace migration.
@@ -964,10 +1062,29 @@ function musicwave_enqueue_presentation_editor_blocks(): void {
 		$localized[]                          = $legacy_entry;
 	}
 
+	/*
+	 * Static child-bearing blocks travel in their own list: they register a real
+	 * edit/save pair (InnerBlocks) instead of a ServerSideRender preview, and
+	 * they get no legacy alias. Keeping the lanes separate means editor-blocks.js
+	 * never has to branch on a block name to decide how to render it.
+	 */
+	$static_localized = array();
+	foreach ( musicwave_static_block_dirs() as $static_dir ) {
+		$static_entry = musicwave_block_metadata_entry( $static_dir );
+		if ( null !== $static_entry ) {
+			$static_localized[] = $static_entry;
+		}
+	}
+
 	wp_localize_script(
 		'musicwave-presentation-blocks',
 		'musicwavePresentationBlocks',
 		$localized
+	);
+	wp_localize_script(
+		'musicwave-presentation-blocks',
+		'musicwaveStaticBlocks',
+		$static_localized
 	);
 	// Appearance selects read the same map the Styles panel is built from.
 	wp_localize_script(

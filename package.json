@@ -11,6 +11,7 @@
 		"lint:js": "wp-scripts lint-js music-wave-core/assets musicwave/assets",
 		"lint:js:fix": "wp-scripts lint-js music-wave-core/assets musicwave/assets --fix",
 		"build": "npm run lint:js",
+		"test:editor-lanes": "node tests/editor-lanes.js",
 		"test:e2e": "playwright test --config tests/e2e/playwright.config.js",
 		"test:e2e:headed": "playwright test --config tests/e2e/playwright.config.js --headed"
 	},

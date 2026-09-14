@@ -21,7 +21,8 @@
 		"musicWaveMetadataLookup": "readonly",
 		"musicwaveSlider": "readonly",
 		"musicwaveThemePreference": "readonly",
-		"musicwavePresentationBlocks": "readonly"
+		"musicwavePresentationBlocks": "readonly",
+		"musicwaveStaticBlocks": "readonly"
 	},
 	"rules": {
 		"camelcase": "off",
