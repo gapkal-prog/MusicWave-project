@@ -504,6 +504,102 @@ mw_assert_same(
 	'The theme release shelf must build its cards through the shared ReleaseCard renderer.'
 );
 
+// Stage A (docs/composability-architecture.md): one canonical release card.
+// Every release archive surface composes the same __media / __overlay / __body
+// structure so catalog.css styles them identically, and the preview button
+// lives inside the overlay - that selector is what turns it into an artwork
+// affordance instead of a loose button in the card flow.
+$mw_card_pattern_source = (string) file_get_contents( $theme_directory . '/patterns/release-card.php' );
+$mw_card_pattern_start  = strpos( $mw_card_pattern_source, '?>' );
+mw_assert_same( true, false !== $mw_card_pattern_start, 'release-card.php must be a PHP pattern file.' );
+$mw_canonical_card = trim( substr( $mw_card_pattern_source, (int) $mw_card_pattern_start + 2 ) );
+
+$mw_search_source = (string) file_get_contents( $theme_directory . '/templates/search.html' );
+$mw_search_card   = array();
+preg_match( '/<!-- wp:post-template.*?-->\n(.*?)\n<!-- \/wp:post-template -->/s', $mw_search_source, $mw_search_card );
+mw_assert_same(
+	isset( $mw_search_card[1] ) ? (string) $mw_search_card[1] : '',
+	$mw_canonical_card,
+	'The bundled release-card pattern must stay byte-identical to the search archive card, so the inserter and the templates cannot drift apart.'
+);
+
+mw_assert_same(
+	true,
+	in_array( 'musicwave/release-card', $registered_patterns, true ) && in_array( 'musicwave/release-grid', $registered_patterns, true ),
+	'The theme must register the canonical release-card and release-grid patterns.'
+);
+
+$mw_grid_pattern_source = (string) file_get_contents( $theme_directory . '/patterns/release-grid.php' );
+mw_assert_same(
+	true,
+	false !== strpos( $mw_grid_pattern_source, $mw_canonical_card ),
+	'The release-grid pattern must embed the same canonical card as the release-card pattern.'
+);
+mw_assert_same(
+	true,
+	false !== strpos( $mw_grid_pattern_source, '<!-- wp:query ' ) && false !== strpos( $mw_grid_pattern_source, '<!-- wp:post-template ' ) && false !== strpos( $mw_grid_pattern_source, '<!-- wp:query-no-results -->' ),
+	'The release-grid pattern must compose a native Query Loop with an empty state.'
+);
+
+// The shared card prefix (root group + media + overlay) is derived from the
+// canonical markup instead of being restated here, so this assertion cannot
+// disagree with the pattern it guards.
+$mw_body_marker   = '<!-- wp:group {"className":"mw-release-card__body"';
+$mw_body_position = strpos( $mw_canonical_card, $mw_body_marker );
+mw_assert_same( true, false !== $mw_body_position, 'The canonical card must have a body group.' );
+$mw_canonical_media = substr( $mw_canonical_card, 0, (int) $mw_body_position );
+
+foreach ( array( 'archive-mw_release.html', 'search.html', 'taxonomy-mw_artist.html', 'taxonomy-mw_genre.html' ) as $mw_release_template ) {
+	$mw_template_source = (string) file_get_contents( $theme_directory . '/templates/' . $mw_release_template );
+	$mw_template_card   = array();
+	preg_match( '/<!-- wp:post-template.*?-->\n(.*?)\n<!-- \/wp:post-template -->/s', $mw_template_source, $mw_template_card );
+	$mw_card_markup = isset( $mw_template_card[1] ) ? (string) $mw_template_card[1] : '';
+
+	mw_assert_same(
+		true,
+		0 === strpos( $mw_card_markup, $mw_canonical_media ),
+		$mw_release_template . ' must compose the canonical card media group and preview overlay.'
+	);
+	mw_assert_same(
+		true,
+		false !== strpos( $mw_card_markup, $mw_body_marker ),
+		$mw_release_template . ' must compose the canonical card body group.'
+	);
+	mw_assert_same(
+		1,
+		substr_count( $mw_card_markup, 'wp:music-wave/preview-button' ),
+		$mw_release_template . ' must place exactly one preview button, inside the card overlay.'
+	);
+	mw_assert_same(
+		true,
+		false !== strpos( $mw_card_markup, 'wp:music-wave/release-meta' ),
+		$mw_release_template . ' must keep the compact release metadata in the card body.'
+	);
+}
+
+// archive.html is the generic archive: it inherits the main query and renders
+// any post type, so release-only blocks stay out and there is no overlay - an
+// empty overlay would still paint its hover gradient across the artwork.
+$mw_generic_source = (string) file_get_contents( $theme_directory . '/templates/archive.html' );
+$mw_generic_card   = array();
+preg_match( '/<!-- wp:post-template.*?-->\n(.*?)\n<!-- \/wp:post-template -->/s', $mw_generic_source, $mw_generic_card );
+$mw_generic_markup = isset( $mw_generic_card[1] ) ? (string) $mw_generic_card[1] : '';
+mw_assert_same(
+	true,
+	false !== strpos( $mw_generic_markup, 'mw-release-card__media' ) && false !== strpos( $mw_generic_markup, $mw_body_marker ),
+	'archive.html must compose the canonical card media and body groups.'
+);
+mw_assert_same(
+	false,
+	false !== strpos( $mw_generic_markup, 'mw-release-card__overlay' ),
+	'archive.html renders any post type, so it must not carry a preview overlay it has nothing to put in.'
+);
+mw_assert_same(
+	false,
+	false !== strpos( $mw_generic_markup, 'wp:music-wave/' ),
+	'archive.html renders any post type, so it must not embed release-only MusicWave blocks.'
+);
+
 $access_css = (string) file_get_contents( $theme_directory . '/assets/css/components/access.css' );
 mw_assert_same(
 	true,

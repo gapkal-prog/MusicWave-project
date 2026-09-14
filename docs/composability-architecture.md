@@ -1,7 +1,9 @@
 # MusicWave composability architecture (design proposal — not yet implemented)
 
-Status: **plan only**. No code was changed while writing this. Every claim below was
-re-verified against the working tree on 2026-09-13.
+Status: **Stage B and Stage A are implemented** (commits `bb18048`, and the Stage A commit that
+follows it). Stage C is deferred on its trigger criteria; Stage D is not started. Every claim
+below was re-verified against the working tree, and §10 records what changed during
+implementation, including where the plan was wrong or incomplete.
 
 Goal: make the complex MusicWave blocks genuinely modular and Site Editor–friendly — a
 Query-Loop-like editing experience — **without** breaking dynamic PHP rendering, shipped
@@ -455,3 +457,114 @@ in-place rewrite).
 4. **Stage C** only on the trigger criteria above.
 
 Each stage is a separate commit and separately revertable.
+
+---
+
+## 10. Implementation log
+
+### 10.1 Stage B — done (`bb18048`)
+
+`Core\Blocks\ReleaseCard` (`presentation_data`, `initial`, `artwork`, `render`) and
+`Core\Blocks\SectionHeader` (`more_link`, `shelf_header`) now own the shared markup;
+`ReleaseBlocks::related_card()`, `ReleaseBlocks::related_section()`,
+`ListeningBlocks::history_card()`, the theme's release-shelf card loop,
+`musicwave_render_shelf_header()` and `musicwave_release_presentation_data()` all delegate.
+
+Two plan corrections discovered while implementing:
+
+* **The theme needed no fallback copy.** `mw_release` is registered only by
+  `music-wave-core/src/Catalog/ReleasePostType.php`, and every theme release renderer bails on
+  `! post_type_exists( 'mw_release' )` (or on a Core `class_exists()` for playlists). The
+  duplicated theme markup was therefore unreachable without Core, so it was *replaced* rather than
+  shadowed by a fallback — which is what turned this from an extra indirection layer into a real
+  removal of duplication.
+* **Two producers were deliberately left alone.** The playlist shelf card
+  (`functions.php:2116–2120`) is a different domain object — collage artwork, `data-mw-playlist-play`,
+  a track-count meta line, `PlaylistRepository` as its source — and forcing it through a
+  release-shaped renderer would have meant overriding nearly every part. The continue-listening
+  *header* is built inline inside `render()`, which the parity harness does not drive; extracting it
+  unverified would have traded a proven change for an unproven one.
+
+Results: 30/30 parity cases byte-identical; **0 msgids gained or lost** in both catalogs; the four
+Core files are phpcs-clean; `functions.php` unchanged at its pre-existing 5 errors / 18 warnings.
+`template-integrity.php` now asserts the card classes live in `ReleaseCard.php` *and* that all three
+producers delegate without re-inlining `mw-release-shelf__artwrap`.
+
+### 10.2 Stage A — done
+
+**Canonical card** (derived from `search.html`, the template `catalog.css` was written for, and
+byte-checked against it by the generator before any file was written):
+
+```
+group.mw-release-card.mw-surface            (constrained)
+├── group.mw-release-card__media            (constrained)
+│   ├── core/post-featured-image            isLink, aspectRatio 1
+│   └── group.mw-release-card__overlay      (flex, centred)
+│       └── music-wave/preview-button
+└── group.mw-release-card__body             (constrained)
+    ├── core/post-title                     isLink, fontSize large
+    ├── music-wave/release-meta             compact, showLibraryButton false
+    └── core/post-excerpt                   (per surface — see below)
+```
+
+Templates converged: `search.html` (gained `mw-surface`), `archive-mw_release.html`,
+`taxonomy-mw_genre.html` (both restructured flat → media/overlay/body), `archive.html`
+(restructured to media/body). `taxonomy-mw_artist.html` was **already canonical and was not
+touched**. `taxonomy-mw_genre.html` and `taxonomy-mw_artist.html` now hold byte-identical cards.
+
+Patterns added: `musicwave/release-card` (the canonical card, `Block Types: core/post-template`,
+category `musicwave-cards`) and `musicwave/release-grid` (native `core/query` over `mw_release` +
+`core/post-template` + the same card + `core/query-no-results` + pagination). Both embed the
+identical card markup, inline-expanded — never referenced from templates via `wp:pattern`, because
+a pattern block is opaque in the editor and would have made card parts *less* selectable.
+
+Decisions, with the evidence that settled them:
+
+| Decision | Why |
+|---|---|
+| Card root is `mw-release-card mw-surface` on all five | `.mw-release-card` already sets background, border and radius; `.mw-surface` (`utilities.css:5`) adds only `box-shadow: var(--mw-shadow-card)`. Four of five templates carried it, so converging on it changes one surface (search gains the standard card elevation) instead of four. |
+| `showLibraryButton:false` everywhere | `ReleaseBlocks.php:690` returns early in compact mode, so the library/actions buttons at lines 708–715 are **unreachable** — every one of these cards uses `compact:true`. The attribute had no effect anywhere; converging removes a dead attribute, not a control. The library action still lives on `single-mw_release.html`. |
+| Each surface keeps its own `post-excerpt` comment verbatim | `moreText:"مشاهده انتشار"` means "view release", which would mislabel a regular post — that is why `archive.html` uses `moreText:""`. Excerpt presence and length are per-surface content decisions; changing them would be a redesign, which Stage A excludes. |
+| `archive.html` gets `__media` + `__body` but **no `__overlay`** | It is the generic archive (`mw-generic-archive`, `query.inherit:true`) and renders any post type, so release-only blocks stay out. An empty overlay is not harmless: `.mw-release-card__overlay` (catalog.css:1049) paints a gradient on `__media:hover`, so an overlay with nothing in it would still darken the artwork. |
+| Pagination left as-is | `search.html` uses `mw-catalog-pagination` + `flexWrap`; the other four use a bare pagination. That is real drift, but pagination is not the card and converging it would change visuals on four surfaces — outside Stage A. Recorded here as a follow-up. |
+
+New integrity contracts in `tests/template-integrity.php`: the `release-card` pattern must stay
+**byte-identical** to the `search.html` card (so inserter and templates cannot drift); `release-grid`
+must embed that same card and compose a real Query Loop with an empty state; all four release
+templates must start with the canonical media+overlay prefix — *derived from the pattern at
+runtime*, not restated — and must place exactly one preview button and keep compact release meta;
+`archive.html` must have media+body and must contain no overlay and no `music-wave/*` block.
+
+Both new gates were negative-controlled: moving the preview button out of the overlay in
+`taxonomy-mw_genre.html` fails with a precise message, and renaming `__body` in the pattern fails
+the byte-identity assertion. Both pass again after revert.
+
+### 10.3 Outstanding, deliberately not done in Stage A
+
+* **2 new translatable strings** (`انتشاری پیدا نشد`, `فیلترها را تغییر دهید یا کاتالوگ کامل را مرور کنید.`)
+  in `patterns/release-grid.php`, via `esc_html__()` per the existing pattern convention. They are
+  not yet in `musicwave.pot` because regenerating would also pull in the **pre-existing** staleness
+  (67 msgids in `musicwave.pot`, 6 in `music-wave-core.pot`, missing at HEAD before any of this
+  work). Both belong to one deferred pot/po/mo pass.
+* **Pre-existing phpcs debt**: 18 errors / 37 warnings in `musicwave/functions.php` (5/18),
+  `inc/nav-icons.php` (1/3) and `inc/site-header.php` (12/16). The `site-header.php` errors are real
+  findings — `$_POST` reads without nonce verification and unsanitized. Present at HEAD; untouched
+  here by instruction.
+* **Stage C** (`music-wave/release-card-media` leaf) and **Stage D**
+  (`music-wave/section-head`, the static InnerBlocks pilot) are not started.
+
+### 10.4 Verification environment
+
+The sandbox has no PHP binary, so the gates are run through a WebAssembly PHP 8.x
+(`@php-wasm/node`) with a WPCS toolchain assembled from GitHub *source* archives (release assets are
+network-blocked; `codeload` and npm are not). Consequences worth recording:
+
+* **Exit codes do not propagate** through that wrapper — `exit(3)` reports 0 — so every gate is
+  judged on its output text, never on `$?`.
+* `tools/check-syntax.php` cannot run (it shells out to `php -l` via `exec()`); a `TOKEN_PARSE`
+  sweep that throws real `ParseError`s is used instead — 219/219 files clean.
+* **phpstan cannot run at all** here: its `.phar` is a blocked release asset and the source needs
+  composer plus the `php-stubs/*` packages. `composer check:phpstan` still has to be run in CI.
+* `npm run lint:js` cannot run (`node_modules` absent), but Stage A touches no JavaScript.
+* The theme's files open with `if ( ! defined( 'ABSPATH' ) ) { exit; }` using a **bare `exit;`**, so
+  any harness loading them must define `ABSPATH` or it terminates silently with no error recorded.
