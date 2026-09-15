@@ -5242,3 +5242,24 @@ msgstr "Vinyl"
 
 msgid "پیش‌فرض قالب"
 msgstr "Theme default"
+
+
+msgid "آفست متن (میلی‌ثانیه)"
+msgstr "Lyrics offset (milliseconds)"
+
+msgid "بستن متن"
+msgstr "Close lyrics"
+
+msgid "متن هم‌زمان (LRC)"
+msgstr "Synced lyrics (LRC)"
+
+msgid "متن هم‌زمان با آهنگ"
+msgstr "Lyrics synced with the track"
+
+msgid ""
+"هر خط: [mm:ss.xx] متن. ترجمهٔ اختیاری بعد از | یا // . نمونه: [00:12.40] شب شهر | Midnight city"
+msgstr ""
+"Each line: [mm:ss.xx] lyrics. Optional translation after | or // . Example: [00:12.40] شب شهر | Midnight city"
+
+msgid "پخش الان"
+msgstr "Play now"

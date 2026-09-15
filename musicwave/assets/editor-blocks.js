@@ -855,33 +855,36 @@
 						update( 'sectionUrl', value );
 					},
 				} ),
-			createElement( components.TextControl, {
-				label: __( 'برچسب مشاهده همه', 'musicwave' ),
-				value: props.attributes.sectionLinkLabel || '',
-				onChange( value ) {
-					update( 'sectionLinkLabel', value );
+				createElement( components.TextControl, {
+					label: __( 'برچسب مشاهده همه', 'musicwave' ),
+					value: props.attributes.sectionLinkLabel || '',
+					onChange( value ) {
+						update( 'sectionLinkLabel', value );
+					},
+				} )
+			),
+			createElement(
+				components.PanelBody,
+				{
+					title: __(
+						'تب‌های فیلتر (Today / Week / سبک)',
+						'musicwave'
+					),
+					initialOpen: false,
 				},
-			} )
-		),
-		createElement(
-			components.PanelBody,
-			{
-				title: __( 'تب‌های فیلتر (Today / Week / سبک)', 'musicwave' ),
-				initialOpen: false,
-			},
-			createElement( components.TextareaControl, {
-				label: __( 'تب‌ها', 'musicwave' ),
-				help: __(
-					'هر خط یک تب: برچسب|orderBy:date یا برچسب|taxonomy:mw_genre:slug.',
-					'musicwave'
-				),
-				value: props.attributes.filterTabs || '',
-				onChange( value ) {
-					update( 'filterTabs', value );
-				},
-			} )
-		)
-	);
+				createElement( components.TextareaControl, {
+					label: __( 'تب‌ها', 'musicwave' ),
+					help: __(
+						'هر خط یک تب: برچسب|orderBy:date یا برچسب|taxonomy:mw_genre:slug.',
+						'musicwave'
+					),
+					value: props.attributes.filterTabs || '',
+					onChange( value ) {
+						update( 'filterTabs', value );
+					},
+				} )
+			)
+		);
 	}
 
 	/**
@@ -962,80 +965,90 @@
 					);
 				}
 
-			if (
-				'music-wave/release-shelf' === block.name ||
-				'musicwave/release-shelf' === block.name
-			) {
-				return createElement(
-					Fragment,
-					null,
-					shelfInspector( props ),
-					preview
-				);
-			}
+				if (
+					'music-wave/release-shelf' === block.name ||
+					'musicwave/release-shelf' === block.name
+				) {
+					return createElement(
+						Fragment,
+						null,
+						shelfInspector( props ),
+						preview
+					);
+				}
 
-			if (
-				'music-wave/synced-lyrics' === block.name ||
-				'musicwave/synced-lyrics' === block.name
-			) {
-				return createElement(
-					Fragment,
-					null,
-					createElement(
-						blockEditor.InspectorControls,
+				if (
+					'music-wave/synced-lyrics' === block.name ||
+					'musicwave/synced-lyrics' === block.name
+				) {
+					return createElement(
+						Fragment,
 						null,
 						createElement(
-							components.PanelBody,
-							{
-								title: __( 'متن هم‌زمان', 'musicwave' ),
-								initialOpen: true,
-							},
-							createElement( components.TextControl, {
-								label: __( 'عنوان', 'musicwave' ),
-								value: props.attributes.heading || '',
-								onChange( value ) {
-									props.setAttributes( { heading: value } );
+							blockEditor.InspectorControls,
+							null,
+							createElement(
+								components.PanelBody,
+								{
+									title: __( 'متن هم‌زمان', 'musicwave' ),
+									initialOpen: true,
 								},
-							} ),
-							createElement( components.SelectControl, {
-								label: __( 'حالت نمایش', 'musicwave' ),
-								value: props.attributes.displayMode || 'spotlight',
-								options: [
-									{
-										label: __( 'نورافکن', 'musicwave' ),
-										value: 'spotlight',
+								createElement( components.TextControl, {
+									label: __( 'عنوان', 'musicwave' ),
+									value: props.attributes.heading || '',
+									onChange( value ) {
+										props.setAttributes( {
+											heading: value,
+										} );
 									},
-									{
-										label: __( 'کارائوکه', 'musicwave' ),
-										value: 'karaoke',
+								} ),
+								createElement( components.SelectControl, {
+									label: __( 'حالت نمایش', 'musicwave' ),
+									value:
+										props.attributes.displayMode ||
+										'spotlight',
+									options: [
+										{
+											label: __( 'نورافکن', 'musicwave' ),
+											value: 'spotlight',
+										},
+										{
+											label: __(
+												'کارائوکه',
+												'musicwave'
+											),
+											value: 'karaoke',
+										},
+										{
+											label: __( 'ساده', 'musicwave' ),
+											value: 'plain',
+										},
+									],
+									onChange( value ) {
+										props.setAttributes( {
+											displayMode: value,
+										} );
 									},
-									{
-										label: __( 'ساده', 'musicwave' ),
-										value: 'plain',
+								} ),
+								createElement( components.TextareaControl, {
+									label: __(
+										'متن جایگزین (اگر متای LRC خالی باشد)',
+										'musicwave'
+									),
+									value: props.attributes.fallbackText || '',
+									onChange( value ) {
+										props.setAttributes( {
+											fallbackText: value,
+										} );
 									},
-								],
-								onChange( value ) {
-									props.setAttributes( {
-										displayMode: value,
-									} );
-								},
-							} ),
-							createElement( components.TextareaControl, {
-								label: __( 'متن جایگزین (اگر متای LRC خالی باشد)', 'musicwave' ),
-								value: props.attributes.fallbackText || '',
-								onChange( value ) {
-									props.setAttributes( {
-										fallbackText: value,
-									} );
-								},
-							} )
-						)
-					),
-					preview
-				);
-			}
+								} )
+							)
+						),
+						preview
+					);
+				}
 
-			return preview;
+				return preview;
 			},
 			save() {
 				return null;

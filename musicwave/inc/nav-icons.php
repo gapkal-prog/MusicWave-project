@@ -164,7 +164,7 @@ function musicwave_nav_icon_render( string $content, array $block, $instance = n
 	$nav_class = is_object( $instance ) && isset( $instance->context['musicwave/navClass'] ) ? (string) $instance->context['musicwave/navClass'] : '';
 	$auto      = (bool) preg_match( '/\bmw-(?:rail__nav|icon-nav|stream-account)\b/', $nav_class );
 	if ( 'core/home-link' === $name ) {
-		$url = home_url( '/' );
+		$url   = home_url( '/' );
 		$label = '' !== $label ? $label : __( 'خانه', 'musicwave' );
 	}
 
@@ -173,8 +173,8 @@ function musicwave_nav_icon_render( string $content, array $block, $instance = n
 		return $content;
 	}
 
-	$icons  = musicwave_nav_icons();
-	$glyph  = '<span class="mw-nav-icon mw-nav-icon--' . esc_attr( $key ) . '" aria-hidden="true">' . $icons[ $key ] . '</span>';
+	$icons = musicwave_nav_icons();
+	$glyph = '<span class="mw-nav-icon mw-nav-icon--' . esc_attr( $key ) . '" aria-hidden="true">' . $icons[ $key ] . '</span>';
 
 	// Account link: the visitor's avatar replaces the generic glyph.
 	if ( 'account' === $key && is_user_logged_in() ) {

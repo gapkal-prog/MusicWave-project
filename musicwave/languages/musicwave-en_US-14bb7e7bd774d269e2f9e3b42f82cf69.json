@@ -1090,6 +1090,264 @@
             ],
             "کارت مجله‌ای با خط تأکیدی، سطح شیشه‌ای و تیتر درشت.": [
                 "Magazine card with an accent rule, a glass surface, and an oversized headline."
+            ],
+            "برگهٔ مشخصات آلبوم (سرمقاله‌ای)": [
+                "برگهٔ مشخصات آلبوم (سرمقاله‌ای)"
+            ],
+            "سال انتشار": [
+                "سال انتشار"
+            ],
+            "غلاف را ورق بزنید: روی هر کارت، صفحه با هاور از داخل غلاف بیرون می‌آید.": [
+                "غلاف را ورق بزنید: روی هر کارت، صفحه با هاور از داخل غلاف بیرون می‌آید."
+            ],
+            "قفسهٔ صفحه‌ها": [
+                "قفسهٔ صفحه‌ها"
+            ],
+            "ویترین وینیل با سرصفحهٔ سرمقاله‌ای": [
+                "ویترین وینیل با سرصفحهٔ سرمقاله‌ای"
+            ],
+            "وینیل‌هایی که این هفته گذاشته‌ایم": [
+                "وینیل‌هایی که این هفته گذاشته‌ایم"
+            ],
+            "ژانر": [
+                "ژانر"
+            ],
+            "یادداشت انتشار": [
+                "یادداشت انتشار"
+            ],
+            "Full Text": [
+                "Full Text"
+            ],
+            "Karaoke": [
+                "Karaoke"
+            ],
+            "LRC": [
+                "LRC"
+            ],
+            "Live Sync Lyrics": [
+                "Live Sync Lyrics"
+            ],
+            "Sync": [
+                "Sync"
+            ],
+            "karaoke": [
+                "karaoke"
+            ],
+            "lyrics": [
+                "lyrics"
+            ],
+            "آیکون‌های نوار پایین": [
+                "Bottom bar icons"
+            ],
+            "اسکرول خودکار": [
+                "Auto-scroll"
+            ],
+            "انتشاری پیدا نشد": [
+                "No releases found"
+            ],
+            "برای پرش، روی خط بزنید": [
+                "Tap a line to jump"
+            ],
+            "برند نوار بالا": [
+                "Top bar brand"
+            ],
+            "بزرگ‌تر کردن متن": [
+                "Increase text size"
+            ],
+            "به ما بپیوندید": [
+                "Join us"
+            ],
+            "تب‌ها": [
+                "Tabs"
+            ],
+            "تب‌های فیلتر (Today / Week / سبک)": [
+                "Filter tabs (Today / Week / genre)"
+            ],
+            "ترانه": [
+                "Track"
+            ],
+            "تعداد آیکون نوار پایین": [
+                "Bottom bar icon count"
+            ],
+            "تغییر پوسته": [
+                "Change theme"
+            ],
+            "توضیح کوتاه بخش": [
+                "Short section description"
+            ],
+            "جستجو": [
+                "Search"
+            ],
+            "حالت نمایش": [
+                "Display mode"
+            ],
+            "حالت نمایش متن": [
+                "Lyrics display mode"
+            ],
+            "حساب کاربری": [
+                "Account"
+            ],
+            "خانه": [
+                "Home"
+            ],
+            "خروج": [
+                "Log out"
+            ],
+            "خروج از حساب": [
+                "Sign out"
+            ],
+            "ذخیره سربرگ": [
+                "Save header"
+            ],
+            "ساده": [
+                "Simple"
+            ],
+            "ستونی": [
+                "Stacked"
+            ],
+            "سربرگ MusicWave": [
+                "MusicWave header"
+            ],
+            "سربرگ استریم (ریل انتها)": [
+                "Stream header (rail end)"
+            ],
+            "سربرگ استریم (ریل شروع اینلاین)": [
+                "Stream header (inline rail start)"
+            ],
+            "سربرگ ساده (افقی)": [
+                "Simple header (horizontal)"
+            ],
+            "سربرگ سراسری": [
+                "Site header"
+            ],
+            "سربرگ سراسری MusicWave": [
+                "MusicWave site header"
+            ],
+            "سربرگ سراسری ذخیره شد.": [
+                "Site header saved."
+            ],
+            "سربرگ موبایل": [
+                "Mobile header"
+            ],
+            "سربرگ و پوسته استریم": [
+                "Stream header and theme"
+            ],
+            "سربرگ وسط‌چین": [
+                "Centered header"
+            ],
+            "سربرگ کمینه": [
+                "Minimal header"
+            ],
+            "سرصفحه": [
+                "Heading"
+            ],
+            "سرصفحهٔ بخش MusicWave": [
+                "MusicWave section heading"
+            ],
+            "سرصفحهٔ سرمقاله‌ای با پوستهٔ mw-section-head و سبک‌های وسط‌چین، ستونی و معکوس؛ بلوک‌های درونی جداگانه انتخاب و جابه‌جا می‌شوند. برای یک عنوان متنی ساده، الگوی «عنوان بخش» را درج کنید.": [
+                "Editorial heading with the mw-section-head wrapper and centered, stacked, and inverse styles; inner blocks can be selected and moved independently. For a simple text title, insert the “Section heading” pattern."
+            ],
+            "شبکهٔ انتشارها (حلقهٔ پرس‌وجو)": [
+                "Releases grid (Query Loop)"
+            ],
+            "عضو": [
+                "Member"
+            ],
+            "فقط لوگو": [
+                "Logo only"
+            ],
+            "فیلتر بازه و سبک": [
+                "Date range and genre filter"
+            ],
+            "فیلترها را تغییر دهید یا کاتالوگ کامل را مرور کنید.": [
+                "Change the filters or browse the full catalog."
+            ],
+            "لوگو و نام در نوار کناری (نه در نوار پایین موبایل)": [
+                "Logo and name in the sidebar (not in the mobile bottom bar)"
+            ],
+            "لوگو و نام در نوار کناری دسکتاپ / منوی کشویی": [
+                "Logo and name in the desktop sidebar / drawer"
+            ],
+            "لوگو و نام سایت": [
+                "Site logo and name"
+            ],
+            "لینک‌های نوار کناری را در نمایش → ویرایشگر → بخش‌های قالب → سربرگ (استریم) ویرایش کنید. این صفحه فقط چیدمان و نمایش برند/ابزارها را عوض می‌کند.": [
+                "Edit sidebar links in Appearance → Editor → Template parts → Header (stream). This screen only changes layout and brand/tool visibility."
+            ],
+            "متن LRC انتشار را با خط فعال هم‌زمان با پخش‌کننده سراسری نشان می‌دهد. بدون جاوااسکریپت همهٔ خطوط خوانا می‌مانند.": [
+                "Shows the release LRC with the active line synced to the global player. Without JavaScript every line stays readable."
+            ],
+            "متن از کاتالوگ همین انتشار · هم‌زمان با پخش‌کننده سراسری": [
+                "Lyrics from this release’s catalog · synced with the global player"
+            ],
+            "متن جایگزین (اگر متای LRC خالی باشد)": [
+                "Fallback lyrics (if LRC meta is empty)"
+            ],
+            "متن هم‌زمان": [
+                "Synced lyrics"
+            ],
+            "متن هم‌زمان MusicWave": [
+                "MusicWave synced lyrics"
+            ],
+            "متن هم‌زمان با آهنگ": [
+                "Lyrics synced with the track"
+            ],
+            "مخفی": [
+                "Hidden"
+            ],
+            "مدل سربرگ": [
+                "Header model"
+            ],
+            "مدیر سایت": [
+                "Site admin"
+            ],
+            "معکوس (روی سطح رنگی)": [
+                "Inverse (on a colored surface)"
+            ],
+            "منوی کناری همان mw-rail قابل ویرایش است. نوار پایین لوگو و نام سایت ندارد.": [
+                "The side menu is the same editable mw-rail. The bottom bar has no logo or site name."
+            ],
+            "موبایل: سربرگ + نوار پایین": [
+                "Mobile: header + bottom bar"
+            ],
+            "موبایل: سربرگ ساده + منوی کناری": [
+                "Mobile: simple header + side menu"
+            ],
+            "نمایش": [
+                "Display"
+            ],
+            "نمایش تغییر پوسته": [
+                "Show theme toggle"
+            ],
+            "نمایش جستجو": [
+                "Show search"
+            ],
+            "نمایش حساب کاربری": [
+                "Show account"
+            ],
+            "نورافکن": [
+                "Spotlight"
+            ],
+            "هر خط یک تب: برچسب|orderBy:date یا برچسب|taxonomy:mw_genre:slug.": [
+                "Each line is a tab: label|orderBy:date or label|taxonomy:mw_genre:slug."
+            ],
+            "ورود / ثبت‌نام": [
+                "Log in / Sign up"
+            ],
+            "وسط‌چین": [
+                "Centered"
+            ],
+            "چیدمان سراسری و موبایل. لینک‌های نوار را در ویرایشگر سایت → بخش‌های قالب → سربرگ (استریم) ویرایش کنید.": [
+                "Global and mobile layout. Edit rail links in the Site Editor → Template parts → Header (stream)."
+            ],
+            "کارائوکه": [
+                "Karaoke"
+            ],
+            "کارت انتشار": [
+                "Release card"
+            ],
+            "کوچک‌تر کردن متن": [
+                "Decrease text size"
             ]
         }
     }

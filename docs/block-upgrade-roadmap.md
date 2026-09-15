@@ -291,11 +291,9 @@ Two findings that future work must not undo:
   regular posts.
 
 Deferred follow-ups (known, deliberate, not regressions): pagination drift (`search` uses
-`mw-catalog-pagination` + `flexWrap`, the other four a bare pagination); 2 new `esc_html__()` strings
-in `patterns/release-grid.php` awaiting the pot pass; pre-existing phpcs debt (18 errors / 37
-warnings in `musicwave/functions.php`, `inc/nav-icons.php`, `inc/site-header.php` — the last includes
-nonce-less unsanitized `$_POST` reads); pre-existing pot staleness (67 + 6 msgids missing at HEAD).
-Stage C and Stage D are not started.
+`mw-catalog-pagination` + `flexWrap`, the other four a bare pagination). The pot/po/mo pass and the
+phpcs/security work on `functions.php` / `inc/nav-icons.php` / `inc/site-header.php` landed in the
+final quality pass (see §2.15). Stage C is not started.
 
 Environment note: the verification sandbox has no PHP binary. Gates are run through WebAssembly PHP
 with a from-source WPCS toolchain, which **swallows exit codes** — judge every gate on its output
@@ -355,6 +353,9 @@ workflows permission`), so the npm script shipped but its CI step did not. Add t
 Optionally rename that job to `JavaScript lint + editor lanes`. Until it lands, the gate still runs
 locally with `npm run test:editor-lanes`; nothing else depends on the workflow edit.
 
-Deferred, unchanged: Stage C and its trigger criteria (§8 of the composability plan); the pot/po/mo
-pass, which now owes 9 new msgids from Stages A + D on top of pre-existing staleness (67 + 6);
-pre-existing phpcs debt, now 18 errors / 36 warnings in the same three files.
+Deferred, unchanged: Stage C and its trigger criteria (§8 of the composability plan). The final
+quality pass regenerated `.pot` / `en_US.po` / `.mo` / JED JSON (Stage A + D strings included;
+stale extra msgids kept), ran `npm run lint:js` to zero, and brought `functions.php`,
+`inc/nav-icons.php`, and `inc/site-header.php` to 0 PHPCS errors under `phpcs.xml` without sniff
+suppression. Site Editor E2E and PHPStan remain environment-limited where Docker / phpstan.phar
+are absent.

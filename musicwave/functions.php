@@ -1685,21 +1685,21 @@ function musicwave_render_release_slider( array $attributes ): string {
 		return '';
 	}
 
-	$autoplay      = musicwave_slider_toggle( $attributes, 'autoplay', 'slider_autoplay' );
-	$loop          = musicwave_slider_toggle( $attributes, 'loop', 'slider_loop' );
-	$pause         = musicwave_slider_toggle( $attributes, 'pauseOnHover', 'slider_pause_on_hover' );
-	$arrows        = musicwave_slider_toggle( $attributes, 'showArrows', 'slider_show_arrows' );
-	$dots          = musicwave_slider_toggle( $attributes, 'showDots', 'slider_show_dots' );
-	$interval      = isset( $attributes['interval'] ) ? absint( $attributes['interval'] ) : 0;
-	$interval      = $interval >= 2000 && $interval <= 20000 ? $interval : musicwave_slider_number( 'slider_interval', 5000 );
-	$interval      = min( 20000, max( 2000, $interval ) );
-	$eyebrow       = isset( $attributes['eyebrow'] ) ? sanitize_text_field( (string) $attributes['eyebrow'] ) : '';
-	$title         = isset( $attributes['title'] ) ? sanitize_text_field( (string) $attributes['title'] ) : '';
-	$eyebrow       = '' !== $eyebrow ? $eyebrow : __( 'برای شما', 'musicwave' );
-	$title         = '' !== $title ? $title : __( 'انتشارهای منتخب', 'musicwave' );
-	$id            = $instance;
-	$controls      = $arrows ? '<div class="mw-release-slider__arrows"><button type="button" data-mw-slider-previous aria-controls="' . esc_attr( $id ) . '" aria-label="' . esc_attr__( 'انتشارهای قبلی', 'musicwave' ) . '">&#8592;</button><button type="button" data-mw-slider-next aria-controls="' . esc_attr( $id ) . '" aria-label="' . esc_attr__( 'انتشارهای بعدی', 'musicwave' ) . '">&#8594;</button></div>' : '';
-	$dot_container = $dots ? '<div class="mw-release-slider__dots" data-mw-slider-dots aria-label="' . esc_attr__( 'صفحه‌بندی اسلایدر', 'musicwave' ) . '"></div>' : '';
+	$autoplay           = musicwave_slider_toggle( $attributes, 'autoplay', 'slider_autoplay' );
+	$loop               = musicwave_slider_toggle( $attributes, 'loop', 'slider_loop' );
+	$pause              = musicwave_slider_toggle( $attributes, 'pauseOnHover', 'slider_pause_on_hover' );
+	$arrows             = musicwave_slider_toggle( $attributes, 'showArrows', 'slider_show_arrows' );
+	$dots               = musicwave_slider_toggle( $attributes, 'showDots', 'slider_show_dots' );
+	$interval           = isset( $attributes['interval'] ) ? absint( $attributes['interval'] ) : 0;
+	$interval           = $interval >= 2000 && $interval <= 20000 ? $interval : musicwave_slider_number( 'slider_interval', 5000 );
+	$interval           = min( 20000, max( 2000, $interval ) );
+	$eyebrow            = isset( $attributes['eyebrow'] ) ? sanitize_text_field( (string) $attributes['eyebrow'] ) : '';
+	$title              = isset( $attributes['title'] ) ? sanitize_text_field( (string) $attributes['title'] ) : '';
+	$eyebrow            = '' !== $eyebrow ? $eyebrow : __( 'برای شما', 'musicwave' );
+	$title              = '' !== $title ? $title : __( 'انتشارهای منتخب', 'musicwave' );
+	$id                 = $instance;
+	$controls           = $arrows ? '<div class="mw-release-slider__arrows"><button type="button" data-mw-slider-previous aria-controls="' . esc_attr( $id ) . '" aria-label="' . esc_attr__( 'انتشارهای قبلی', 'musicwave' ) . '">&#8592;</button><button type="button" data-mw-slider-next aria-controls="' . esc_attr( $id ) . '" aria-label="' . esc_attr__( 'انتشارهای بعدی', 'musicwave' ) . '">&#8594;</button></div>' : '';
+	$dot_container      = $dots ? '<div class="mw-release-slider__dots" data-mw-slider-dots aria-label="' . esc_attr__( 'صفحه‌بندی اسلایدر', 'musicwave' ) . '"></div>' : '';
 	$section_url        = isset( $attributes['sectionUrl'] ) ? esc_url( (string) $attributes['sectionUrl'] ) : '';
 	$section_link_label = isset( $attributes['sectionLinkLabel'] ) ? sanitize_text_field( (string) $attributes['sectionLinkLabel'] ) : '';
 	$section_link_label = '' !== $section_link_label ? $section_link_label : __( 'مشاهده همه', 'musicwave' );
@@ -1922,8 +1922,8 @@ function musicwave_render_filter_tabs( array $tabs, string $active, string $inst
 		: musicwave_current_request_url();
 	$items   = '';
 	foreach ( $tabs as $tab ) {
-		$url   = add_query_arg( $key, $tab['slug'], remove_query_arg( $key, $current ) );
-		$is_on = $tab['slug'] === $active;
+		$url    = add_query_arg( $key, $tab['slug'], remove_query_arg( $key, $current ) );
+		$is_on  = $tab['slug'] === $active;
 		$items .= '<a class="mw-filter-tabs__tab' . ( $is_on ? ' is-active' : '' ) . '" href="' . esc_url( $url ) . '"' . ( $is_on ? ' aria-current="true"' : '' ) . '>' . esc_html( $tab['label'] ) . '</a>';
 	}
 
@@ -1954,7 +1954,7 @@ function musicwave_register_lyrics_meta(): void {
 	if ( ! function_exists( 'register_post_meta' ) ) {
 		return;
 	}
-		register_post_meta(
+	register_post_meta(
 		'mw_release',
 		'mw_lyrics_lrc',
 		array(

@@ -5003,6 +5003,24 @@
             ],
             "پیش‌فرض قالب": [
                 "Theme default"
+            ],
+            "آفست متن (میلی‌ثانیه)": [
+                "Lyrics offset (milliseconds)"
+            ],
+            "بستن متن": [
+                "Close lyrics"
+            ],
+            "متن هم‌زمان (LRC)": [
+                "Synced lyrics (LRC)"
+            ],
+            "متن هم‌زمان با آهنگ": [
+                "Lyrics synced with the track"
+            ],
+            "هر خط: [mm:ss.xx] متن. ترجمهٔ اختیاری بعد از | یا // . نمونه: [00:12.40] شب شهر | Midnight city": [
+                "Each line: [mm:ss.xx] lyrics. Optional translation after | or // . Example: [00:12.40] شب شهر | Midnight city"
+            ],
+            "پخش الان": [
+                "Play now"
             ]
         }
     }

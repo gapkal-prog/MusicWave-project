@@ -1213,3 +1213,247 @@ msgstr "ژانر"
 
 msgid "یادداشت انتشار"
 msgstr "یادداشت انتشار"
+
+
+msgid "Full Text"
+msgstr "Full Text"
+
+msgid "Karaoke"
+msgstr "Karaoke"
+
+msgid "LRC"
+msgstr "LRC"
+
+msgid "Live Sync Lyrics"
+msgstr "Live Sync Lyrics"
+
+msgid "Sync"
+msgstr "Sync"
+
+msgid "karaoke"
+msgstr "karaoke"
+
+msgid "lyrics"
+msgstr "lyrics"
+
+msgid "آیکون‌های نوار پایین"
+msgstr "Bottom bar icons"
+
+msgid "اسکرول خودکار"
+msgstr "Auto-scroll"
+
+msgid "انتشاری پیدا نشد"
+msgstr "No releases found"
+
+msgid "برای پرش، روی خط بزنید"
+msgstr "Tap a line to jump"
+
+msgid "برند نوار بالا"
+msgstr "Top bar brand"
+
+msgid "بزرگ‌تر کردن متن"
+msgstr "Increase text size"
+
+msgid "به ما بپیوندید"
+msgstr "Join us"
+
+msgid "تب‌ها"
+msgstr "Tabs"
+
+msgid "تب‌های فیلتر (Today / Week / سبک)"
+msgstr "Filter tabs (Today / Week / genre)"
+
+msgid "ترانه"
+msgstr "Track"
+
+msgid "تعداد آیکون نوار پایین"
+msgstr "Bottom bar icon count"
+
+msgid "تغییر پوسته"
+msgstr "Change theme"
+
+msgid "توضیح کوتاه بخش"
+msgstr "Short section description"
+
+msgid "جستجو"
+msgstr "Search"
+
+msgid "حالت نمایش"
+msgstr "Display mode"
+
+msgid "حالت نمایش متن"
+msgstr "Lyrics display mode"
+
+msgid "حساب کاربری"
+msgstr "Account"
+
+msgid "خانه"
+msgstr "Home"
+
+msgid "خروج"
+msgstr "Log out"
+
+msgid "خروج از حساب"
+msgstr "Sign out"
+
+msgid "ذخیره سربرگ"
+msgstr "Save header"
+
+msgid "ساده"
+msgstr "Simple"
+
+msgid "ستونی"
+msgstr "Stacked"
+
+msgid "سربرگ MusicWave"
+msgstr "MusicWave header"
+
+msgid "سربرگ استریم (ریل انتها)"
+msgstr "Stream header (rail end)"
+
+msgid "سربرگ استریم (ریل شروع اینلاین)"
+msgstr "Stream header (inline rail start)"
+
+msgid "سربرگ ساده (افقی)"
+msgstr "Simple header (horizontal)"
+
+msgid "سربرگ سراسری"
+msgstr "Site header"
+
+msgid "سربرگ سراسری MusicWave"
+msgstr "MusicWave site header"
+
+msgid "سربرگ سراسری ذخیره شد."
+msgstr "Site header saved."
+
+msgid "سربرگ موبایل"
+msgstr "Mobile header"
+
+msgid "سربرگ و پوسته استریم"
+msgstr "Stream header and theme"
+
+msgid "سربرگ وسط‌چین"
+msgstr "Centered header"
+
+msgid "سربرگ کمینه"
+msgstr "Minimal header"
+
+msgid "سرصفحه"
+msgstr "Heading"
+
+msgid "سرصفحهٔ بخش MusicWave"
+msgstr "MusicWave section heading"
+
+msgid ""
+"سرصفحهٔ سرمقاله‌ای با پوستهٔ mw-section-head و سبک‌های وسط‌چین، ستونی و معکوس؛ بلوک‌های درونی جداگانه انتخاب و جابه‌جا می‌شوند. برای یک عنوان متنی ساده، الگوی «عنوان بخش» را درج کنید."
+msgstr ""
+"Editorial heading with the mw-section-head wrapper and centered, stacked, and inverse styles; inner blocks can be selected and moved independently. For a simple text title, insert the “Section heading” pattern."
+
+msgid "شبکهٔ انتشارها (حلقهٔ پرس‌وجو)"
+msgstr "Releases grid (Query Loop)"
+
+msgid "عضو"
+msgstr "Member"
+
+msgid "فقط لوگو"
+msgstr "Logo only"
+
+msgid "فیلتر بازه و سبک"
+msgstr "Date range and genre filter"
+
+msgid "فیلترها را تغییر دهید یا کاتالوگ کامل را مرور کنید."
+msgstr "Change the filters or browse the full catalog."
+
+msgid "لوگو و نام در نوار کناری (نه در نوار پایین موبایل)"
+msgstr "Logo and name in the sidebar (not in the mobile bottom bar)"
+
+msgid "لوگو و نام در نوار کناری دسکتاپ / منوی کشویی"
+msgstr "Logo and name in the desktop sidebar / drawer"
+
+msgid "لوگو و نام سایت"
+msgstr "Site logo and name"
+
+msgid ""
+"لینک‌های نوار کناری را در نمایش → ویرایشگر → بخش‌های قالب → سربرگ (استریم) ویرایش کنید. این صفحه فقط چیدمان و نمایش برند/ابزارها را عوض می‌کند."
+msgstr ""
+"Edit sidebar links in Appearance → Editor → Template parts → Header (stream). This screen only changes layout and brand/tool visibility."
+
+msgid ""
+"متن LRC انتشار را با خط فعال هم‌زمان با پخش‌کننده سراسری نشان می‌دهد. بدون جاوااسکریپت همهٔ خطوط خوانا می‌مانند."
+msgstr ""
+"Shows the release LRC with the active line synced to the global player. Without JavaScript every line stays readable."
+
+msgid "متن از کاتالوگ همین انتشار · هم‌زمان با پخش‌کننده سراسری"
+msgstr "Lyrics from this release’s catalog · synced with the global player"
+
+msgid "متن جایگزین (اگر متای LRC خالی باشد)"
+msgstr "Fallback lyrics (if LRC meta is empty)"
+
+msgid "متن هم‌زمان"
+msgstr "Synced lyrics"
+
+msgid "متن هم‌زمان MusicWave"
+msgstr "MusicWave synced lyrics"
+
+msgid "متن هم‌زمان با آهنگ"
+msgstr "Lyrics synced with the track"
+
+msgid "مخفی"
+msgstr "Hidden"
+
+msgid "مدل سربرگ"
+msgstr "Header model"
+
+msgid "مدیر سایت"
+msgstr "Site admin"
+
+msgid "معکوس (روی سطح رنگی)"
+msgstr "Inverse (on a colored surface)"
+
+msgid "منوی کناری همان mw-rail قابل ویرایش است. نوار پایین لوگو و نام سایت ندارد."
+msgstr ""
+"The side menu is the same editable mw-rail. The bottom bar has no logo or site name."
+
+msgid "موبایل: سربرگ + نوار پایین"
+msgstr "Mobile: header + bottom bar"
+
+msgid "موبایل: سربرگ ساده + منوی کناری"
+msgstr "Mobile: simple header + side menu"
+
+msgid "نمایش"
+msgstr "Display"
+
+msgid "نمایش تغییر پوسته"
+msgstr "Show theme toggle"
+
+msgid "نمایش جستجو"
+msgstr "Show search"
+
+msgid "نمایش حساب کاربری"
+msgstr "Show account"
+
+msgid "نورافکن"
+msgstr "Spotlight"
+
+msgid "هر خط یک تب: برچسب|orderBy:date یا برچسب|taxonomy:mw_genre:slug."
+msgstr "Each line is a tab: label|orderBy:date or label|taxonomy:mw_genre:slug."
+
+msgid "ورود / ثبت‌نام"
+msgstr "Log in / Sign up"
+
+msgid "وسط‌چین"
+msgstr "Centered"
+
+msgid ""
+"چیدمان سراسری و موبایل. لینک‌های نوار را در ویرایشگر سایت → بخش‌های قالب → سربرگ (استریم) ویرایش کنید."
+msgstr ""
+"Global and mobile layout. Edit rail links in the Site Editor → Template parts → Header (stream)."
+
+msgid "کارائوکه"
+msgstr "Karaoke"
+
+msgid "کارت انتشار"
+msgstr "Release card"
+
+msgid "کوچک‌تر کردن متن"
+msgstr "Decrease text size"
