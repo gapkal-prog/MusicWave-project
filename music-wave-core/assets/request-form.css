@@ -46,6 +46,36 @@
 	pointer-events: none;
 }
 
+/* Pattern/templates compose heading + side as core blocks around the PHP form.
+ * The outer group is the card; flatten the nested PHP section so two cards
+ * never stack. Glow on a group without the PHP glow child uses ::before. */
+.mw-request-form .mw-request-form {
+	padding: 0;
+	overflow: visible;
+	background: none;
+	border: 0;
+	border-radius: 0;
+	box-shadow: none;
+	isolation: auto;
+}
+
+.mw-request-form .mw-request-form__glow {
+	display: none;
+}
+
+.mw-request-form:not(:has(> .mw-request-form__glow))::before {
+	content: "";
+	position: absolute;
+	inset-block-end: -30%;
+	inset-inline-start: -10%;
+	z-index: -1;
+	width: 55%;
+	aspect-ratio: 1;
+	background: radial-gradient(circle, color-mix(in srgb, var(--mw-rf-accent) 22%, transparent), transparent 62%);
+	filter: blur(30px);
+	pointer-events: none;
+}
+
 /* Header ------------------------------------------------------------- */
 
 .mw-request-form__header {
@@ -53,7 +83,7 @@
 	margin-block-end: clamp(1.5rem, 3vw, 2.5rem);
 }
 
-.mw-request-form__eyebrow {
+.mw-request-form .mw-request-form__eyebrow {
 	display: inline-flex;
 	align-items: center;
 	gap: 0.5rem;
@@ -65,7 +95,8 @@
 	text-transform: uppercase;
 }
 
-.mw-request-form__eyebrow-dot {
+.mw-request-form__eyebrow-dot,
+.mw-request-form .mw-request-form__eyebrow:not(:has(.mw-request-form__eyebrow-dot))::before {
 	width: 0.55rem;
 	height: 0.55rem;
 	border-radius: 50%;
@@ -74,7 +105,13 @@
 	animation: mw-request-pulse 2.4s ease-in-out infinite;
 }
 
-.mw-request-form__heading {
+.mw-request-form .mw-request-form__eyebrow:not(:has(.mw-request-form__eyebrow-dot))::before {
+	content: "";
+	flex: 0 0 auto;
+	display: block;
+}
+
+.mw-request-form .mw-request-form__heading {
 	margin: 0 0 0.6rem;
 	font-size: clamp(1.6rem, 3.4vw, 2.5rem);
 	font-weight: 800;
@@ -83,7 +120,7 @@
 	text-wrap: balance;
 }
 
-.mw-request-form__intro {
+.mw-request-form .mw-request-form__intro {
 	margin: 0;
 	color: var(--mw-rf-muted);
 	font-size: 1.02rem;
@@ -126,7 +163,8 @@
 	list-style: none;
 }
 
-.mw-request-form__highlight {
+.mw-request-form__highlight,
+.mw-request-form__highlights > li {
 	display: flex;
 	gap: 0.9rem;
 	padding: 1rem 1.1rem;
@@ -136,12 +174,14 @@
 	transition: transform var(--mw-speed-normal, 220ms) var(--mw-ease-out, ease), border-color var(--mw-speed-normal, 220ms) ease;
 }
 
-.mw-request-form__highlight:hover {
+.mw-request-form__highlight:hover,
+.mw-request-form__highlights > li:hover {
 	border-color: color-mix(in srgb, var(--mw-rf-accent) 45%, transparent);
 	transform: translateX(calc(var(--mw-rf-dir, -1) * 4px));
 }
 
-[dir="ltr"] .mw-request-form__highlight {
+[dir="ltr"] .mw-request-form__highlight,
+[dir="ltr"] .mw-request-form__highlights > li {
 	--mw-rf-dir: 1;
 }
 
@@ -158,7 +198,8 @@
 	box-shadow: 0 8px 20px color-mix(in srgb, var(--mw-rf-accent) 35%, transparent);
 }
 
-.mw-request-form__highlight strong {
+.mw-request-form__highlight strong,
+.mw-request-form__highlights > li strong {
 	display: block;
 	margin-block-end: 0.15rem;
 	font-size: 1rem;
@@ -185,7 +226,7 @@
 	line-height: 1.6;
 }
 
-.mw-request-form__steps li + li::before {
+.mw-request-form__steps li + li:has(.mw-request-form__step-number)::before {
 	content: "";
 	position: absolute;
 	inset-block-start: -0.75rem;
@@ -209,7 +250,38 @@
 	border-radius: 50%;
 }
 
-.mw-request-form__privacy {
+/* Core ordered lists have no PHP number span; .wp-block-list is absent on the
+ * PHP <ol>, so these rules never double-number the server-rendered steps. */
+ol.wp-block-list.mw-request-form__steps > li {
+	counter-increment: mw-step;
+}
+
+ol.wp-block-list.mw-request-form__steps > li::before {
+	content: counter(mw-step);
+	display: grid;
+	flex: 0 0 auto;
+	place-items: center;
+	width: 1.75rem;
+	height: 1.75rem;
+	color: var(--mw-rf-text);
+	font-size: 0.8rem;
+	font-weight: 800;
+	background: var(--mw-rf-raised);
+	border: 1px solid var(--mw-rf-border);
+	border-radius: 50%;
+}
+
+ol.wp-block-list.mw-request-form__steps > li + li::after {
+	content: "";
+	position: absolute;
+	inset-block-start: -0.75rem;
+	inset-inline-start: 0.85rem;
+	width: 2px;
+	height: 0.75rem;
+	background: var(--mw-rf-border);
+}
+
+.mw-request-form .mw-request-form__privacy {
 	margin: 0;
 	padding-inline-start: 0.85rem;
 	color: var(--mw-rf-muted);
@@ -706,11 +778,13 @@
 
 @media (prefers-reduced-motion: reduce) {
 	.mw-request-form__eyebrow-dot,
+	.mw-request-form .mw-request-form__eyebrow:not(:has(.mw-request-form__eyebrow-dot))::before,
 	.mw-request-form__success-icon {
 		animation: none;
 	}
 
 	.mw-request-form__highlight,
+	.mw-request-form__highlights > li,
 	.mw-request-form__chip span,
 	.mw-request-form__submit,
 	.mw-request-form__submit-icon {
@@ -718,6 +792,7 @@
 	}
 
 	.mw-request-form__highlight:hover,
+	.mw-request-form__highlights > li:hover,
 	.mw-request-form__submit:hover {
 		transform: none;
 	}

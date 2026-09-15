@@ -1414,6 +1414,73 @@ mw_assert_same(
 	'Compact download-button must hide heading and description controls that have no effect on the inline action group.'
 );
 
+// Request-form: editorial chrome is core blocks on the existing __* classes;
+// the PHP block stays a self-closing form with heading/side off. POST/nonce
+// /honeypot never move to JavaScript, and the block is not InnerBlocks.
+$mw_request_cta = (string) file_get_contents( $theme_directory . '/patterns/request-cta.php' );
+$mw_request_form_php = (string) file_get_contents( dirname( __DIR__ ) . '/music-wave-core/src/Blocks/RequestFormBlock.php' );
+$mw_request_form_css = (string) file_get_contents( dirname( __DIR__ ) . '/music-wave-core/assets/request-form.css' );
+$mw_editor_canvas_css = (string) file_get_contents( dirname( __DIR__ ) . '/music-wave-core/assets/editor.css' );
+mw_assert_same(
+	true,
+	false !== strpos( $mw_request_cta, 'mw-request-form__header' )
+		&& false !== strpos( $mw_request_cta, 'mw-request-form__heading' )
+		&& false !== strpos( $mw_request_cta, 'mw-request-form__highlights' )
+		&& false !== strpos( $mw_request_cta, 'mw-request-form__steps' )
+		&& false !== strpos( $mw_request_cta, '"showHeading":false' )
+		&& false !== strpos( $mw_request_cta, '"showSteps":false' )
+		&& false !== strpos( $mw_request_cta, '"showHighlights":false' )
+		&& 1 === substr_count( $mw_request_cta, 'wp:music-wave/request-form' ),
+	'The request-cta pattern must compose canvas chrome around a self-closing form with PHP heading/side off.'
+);
+mw_assert_same(
+	false,
+	false !== strpos( $mw_request_form_php, 'InnerBlocks' ),
+	'RequestFormBlock must keep rendering the form in PHP; do not add InnerBlocks on the SSR form.'
+);
+mw_assert_same(
+	true,
+	false !== strpos( $mw_request_form_php, 'admin-post.php' )
+		&& false !== strpos( $mw_request_form_php, 'HONEYPOT' )
+		&& false !== strpos( $mw_request_form_php, 'wp_nonce_field' ),
+	'Request form POST, nonce and honeypot must stay in the PHP renderer.'
+);
+mw_assert_same(
+	true,
+	false !== strpos( $mw_request_form_css, '.mw-request-form .mw-request-form {' )
+		&& false !== strpos( $mw_request_form_css, 'ol.wp-block-list.mw-request-form__steps > li::before' ),
+	'Request-form CSS must flatten a nested PHP form and number core/list steps without touching the PHP ol.'
+);
+mw_assert_same(
+	true,
+	false !== strpos( $mw_editor_canvas_css, '.mw-block-editor-shell .mw-request-form__form' )
+		&& false === strpos( $mw_editor_canvas_css, '.mw-block-editor-shell > .wp-block-music-wave-request-form .mw-request-form__form' ),
+	'Canvas form lock must be a descendant selector so a composed wrapper still disables submit.'
+);
+mw_assert_same(
+	true,
+	false !== strpos( $editor_script, 'Request-form chrome copy is dead' )
+		&& false !== strpos( $editor_script, 'برای ویرایش روی بوم، سربرگ را خاموش کنید' ),
+	'Request-form inspector must hide chrome copy while show* is off and point editors at the canvas pattern.'
+);
+
+$mw_request_templates = array(
+	$theme_directory . '/templates/page-requests.html',
+	$theme_directory . '/templates/page-request-song.html',
+	$theme_directory . '/templates/page-request-collab.html',
+);
+foreach ( $mw_request_templates as $mw_request_template ) {
+	$mw_request_html = (string) file_get_contents( $mw_request_template );
+	mw_assert_same(
+		true,
+		false !== strpos( $mw_request_html, 'mw-request-form__heading' )
+			&& false !== strpos( $mw_request_html, '"showHeading":false' )
+			&& 1 === substr_count( $mw_request_html, 'wp:music-wave/request-form' ),
+		basename( $mw_request_template ) . ' must pair canvas request chrome with a single self-closing PHP form.'
+	);
+}
+
+
 mw_assert_same(
 	true,
 	is_array( $mw_section_head_metadata ) && false !== strpos( (string) $mw_section_head_metadata['description'], 'عنوان بخش' ),

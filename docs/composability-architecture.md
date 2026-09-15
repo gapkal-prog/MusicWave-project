@@ -690,6 +690,7 @@ block.
 | `related-releases` | E — fat dynamic | Empty both headings omit PHP titles (one-insert defaults fill only when at least one heading is already set). Skip empty `<h2>`; omit `__section-header` when heading and more are both empty. Inspector help points at `section-head`. Query + `ReleaseCard` stay in PHP. |
 | `release-meta` compact | E — fat dynamic | Compact `<dl>` never renders library/actions/chips; inspector hides those three toggles while compact is on. |
 | `download-button` compact | E — fat dynamic | Compact inline group never prints panel heading/description; inspector hides those four controls while compact is on. Signed-token download stays in PHP. |
+| `request-form` | D+E | Form stays fat PHP. Pattern/templates compose chrome as core blocks on `.mw-request-form__*`. Nested card flattened in CSS. |
 | access-panel, credits, collection-list, catalog-filters/results, public-playlists, continue-listening, playlist UI | E — fat dynamic | Query, permission, download or playlist logic. Headings already have `showHeading` (credits, collection-list, download panel). Unchanged this pass except compact download. |
 | Stage C `release-card-media` | deferred | Stage A overlay already composes featured-image + group + preview-button; no overlay-break trigger. |
 
@@ -717,7 +718,7 @@ Lane legend: ✅ upgraded this programme · 🟡 pairing/empty-header available 
 | `release-credits` | ⏸️ E | Credits from release meta. `showHeading` already exists. |
 | `access-panel` | ⏸️ E | Access policy + purchase/membership CTA. Copy is settings-backed, not canvas prose. |
 | `catalog-filters` / `catalog-results` | ⏸️ E | GET form + live archive query. Labels already inspector-controlled. Style variations exist. |
-| `request-form` | ⏸️ E | Nonce, kinds, honeypot, stash. `showHeading`/`showSteps`/`showHighlights` already omit chrome. Do not move POST into JS. |
+| `request-form` | ✅ D+E | Form/POST/nonce/honeypot stay fat PHP. `request-cta` + the three request page templates compose heading/highlights/steps as core blocks on `.mw-request-form__*` (not `.mw-section-head`). Nested PHP section is flattened in CSS. Inspector hides chrome copy while the matching `show*` toggle is off. |
 | `public-playlists` / `continue-listening` / `artists-shelf` / `taxonomy-shelf` | ⏸️ E | Query shelves. Same empty-header contract as theme shelf where they share `SectionHeader`. |
 | `playlists` / `playback-queue` / `music-library` / add-to-* | ⏸️ E | Auth + mutation. Not canvas composition. |
 | `preview-button` / `preview-player` / `share-button` / `shuffle-button` / `library-button` | ⏸️ E | Leaf actions; already small. |
@@ -725,4 +726,4 @@ Lane legend: ✅ upgraded this programme · 🟡 pairing/empty-header available 
 | header / nav / stream-rail | 🔵 C | Template parts + core navigation; not fat product blocks. |
 | Stage C `release-card-media` | 🔴 | No overlay-break trigger. |
 
-**Not claimed complete.** Next highest remaining Site Editor limitation: request-form editorial copy is still inspector-only (highlights/steps). Do not convert it to InnerBlocks; a later pass can empty-header-gate its copy the same way as related-releases if a pattern already uses `.mw-request-form__header` vocabulary — do not restyle it onto `.mw-section-head`.
+**Not claimed complete.** Request-form chrome is canvas-editable via Lane D composition; the form renderer is still fat PHP. Next highest remaining Site Editor limitation: do not convert remaining query/access shelves merely because they are large. Prefer the next surface whose chrome is inspector-only *and* already has a `showHeading` (or empty-header) gate with a matching CSS vocabulary — `collection-list` on `single-mw_release.html` is a candidate only if pairing can keep `.mw-collection-list__heading` rather than restyling onto `.mw-section-head`. Stage C remains deferred.

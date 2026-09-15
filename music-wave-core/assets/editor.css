@@ -77,12 +77,14 @@
 }
 
 /* The request form is a server-rendered form: inside the canvas it must
- * look exactly like the front end but never submit or steal focus. */
-.mw-block-editor-shell > .wp-block-music-wave-request-form .mw-request-form__form {
+ * look exactly like the front end but never submit or steal focus.
+ * Descendant (not child) so a composed pattern wrapping the PHP form
+ * still locks the fields. */
+.mw-block-editor-shell .mw-request-form__form {
 	pointer-events: none;
 }
 
-.mw-block-editor-shell > .wp-block-music-wave-request-form .mw-request-form__form :is(input, textarea, select, button) {
+.mw-block-editor-shell .mw-request-form__form :is(input, textarea, select, button) {
 	pointer-events: none;
 	user-select: none;
 }

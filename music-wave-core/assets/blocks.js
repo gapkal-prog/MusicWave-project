@@ -2288,6 +2288,10 @@
 							'showHeading',
 							__( 'نمایش سربرگ', 'music-wave-core' ),
 							true,
+							__(
+								'برای ویرایش روی بوم، سربرگ را خاموش کنید و الگوی «فراخوان درخواست آهنگ و همکاری» را بگذارید. فرم و ارسال در PHP می‌مانند.',
+								'music-wave-core'
+							),
 						],
 						[ 'text', 'eyebrow', __( 'ابرو', 'music-wave-core' ) ],
 						[
@@ -2302,7 +2306,7 @@
 						],
 					],
 					help: __(
-						'برای استفاده از متن‌های پیش‌فرض ترجمه‌شدهٔ هر حالت خالی بگذارید.',
+						'این فیلدها فقط وقتی سربرگ روشن است روی خود فرم چاپ می‌شوند. خالی یعنی متن پیش‌فرض همان حالت.',
 						'music-wave-core'
 					),
 				},
@@ -2332,12 +2336,20 @@
 							'showHighlights',
 							__( 'نمایش خدمات', 'music-wave-core' ),
 							true,
+							__(
+								'خاموش کنید تا فهرست خدمات روی بوم یک core/list باشد، نه متن بازرس.',
+								'music-wave-core'
+							),
 						],
 						[
 							'toggle',
 							'showSteps',
 							__( 'نمایش مراحل', 'music-wave-core' ),
 							true,
+							__(
+								'خاموش کنید تا مراحل روی بوم یک فهرست شماره‌دار باشد، نه متن بازرس.',
+								'music-wave-core'
+							),
 						],
 						[
 							'text',
@@ -3372,6 +3384,29 @@
 			return null;
 		}
 
+		// Request-form chrome copy is dead while the matching show* toggle
+		// is off (the pattern puts that copy in core blocks on the canvas).
+		if ( 'music-wave/request-form' === blockName ) {
+			var headingOff = false === props.attributes.showHeading;
+			var highlightsOff = false === props.attributes.showHighlights;
+			var stepsOff = false === props.attributes.showSteps;
+			if (
+				headingOff &&
+				-1 !== [ 'eyebrow', 'heading', 'intro' ].indexOf( attr )
+			) {
+				return null;
+			}
+			if ( highlightsOff && 0 === attr.indexOf( 'highlight' ) ) {
+				return null;
+			}
+			if ( stepsOff && 0 === attr.indexOf( 'step' ) ) {
+				return null;
+			}
+			if ( highlightsOff && stepsOff && 'privacyNote' === attr ) {
+				return null;
+			}
+		}
+
 		if ( 'text' === type ) {
 			return createElement( components.TextControl, {
 				key: attr,
@@ -3746,7 +3781,7 @@
 				.filter( function ( control ) {
 					return null !== control;
 				} );
-			if ( group.help ) {
+			if ( group.help && groupControls.length ) {
 				groupControls.push(
 					createElement(
 						'p',

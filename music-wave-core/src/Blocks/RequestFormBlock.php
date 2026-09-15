@@ -138,6 +138,9 @@ final class RequestFormBlock {
 		$html  = '<section ' . BlockSupport::wrapper_attributes( $class ) . ' id="mw-request-form" data-mw-request-mode="' . esc_attr( $mode ) . '">';
 		$html .= '<div class="mw-request-form__glow" aria-hidden="true"></div>';
 
+		// Pairing: templates/patterns turn this off and put heading, intro,
+		// highlights and steps in core blocks with the same __* classes so
+		// each line is canvas-selectable. POST/nonce/honeypot stay here.
 		if ( BlockSupport::bool_attribute( $attributes, 'showHeading', true ) ) {
 			$html .= '<header class="mw-request-form__header">';
 			$html .= '<span class="mw-request-form__eyebrow"><span class="mw-request-form__eyebrow-dot" aria-hidden="true"></span>' . esc_html( $eyebrow ) . '</span>';
