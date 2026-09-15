@@ -1785,8 +1785,19 @@ final class ReleaseBlocks {
 		$excluded = array( $release_id );
 		$sections = array();
 
-		$same_artist_heading = BlockSupport::text_attribute( $attributes, 'sameArtistHeading', __( 'انتشارهای بیشتر از این هنرمند', 'music-wave-core' ) );
-		$similar_heading     = BlockSupport::text_attribute( $attributes, 'similarHeading', __( 'انتشارهای مشابه', 'music-wave-core' ) );
+		// Fill one-insert copy only when the editor already set at least one
+		// heading. Empty both omits the PHP chrome so a canvas section-head
+		// can sit above a rail without a second title.
+		$same_artist_heading = isset( $attributes['sameArtistHeading'] ) && is_scalar( $attributes['sameArtistHeading'] )
+			? sanitize_text_field( (string) $attributes['sameArtistHeading'] )
+			: '';
+		$similar_heading     = isset( $attributes['similarHeading'] ) && is_scalar( $attributes['similarHeading'] )
+			? sanitize_text_field( (string) $attributes['similarHeading'] )
+			: '';
+		if ( '' !== $same_artist_heading || '' !== $similar_heading ) {
+			$same_artist_heading = '' !== $same_artist_heading ? $same_artist_heading : __( 'انتشارهای بیشتر از این هنرمند', 'music-wave-core' );
+			$similar_heading     = '' !== $similar_heading ? $similar_heading : __( 'انتشارهای مشابه', 'music-wave-core' );
+		}
 		$show_section_link   = BlockSupport::bool_attribute( $attributes, 'showSectionLink', false );
 		$section_link_label  = BlockSupport::text_attribute( $attributes, 'sectionLinkLabel', __( 'همه را ببینید', 'music-wave-core' ) );
 

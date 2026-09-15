@@ -1395,6 +1395,27 @@ mw_assert_same(
 
 mw_assert_same(
 	true,
+	false !== strpos( $release_blocks_source, "'' !== \$same_artist_heading || '' !== \$similar_heading" )
+		&& false !== strpos( $release_blocks_source, 'Fill one-insert copy only when' ),
+	'Related-releases must fill default headings only when at least one heading attribute is already set.'
+);
+mw_assert_same(
+	true,
+	false !== strpos( $editor_script, 'هر دو عنوان را خالی بگذارید' )
+		&& false !== strpos( $editor_script, 'خالی بماند تا سربرگ این بخش چاپ نشود' ),
+	'Related-releases heading fields must tell editors to leave them empty and use section-head on the canvas.'
+);
+mw_assert_same(
+	true,
+	false !== strpos( $editor_script, "'music-wave/download-button' === blockName" )
+		&& false !== strpos( $editor_script, "'showHeading'" )
+		&& false !== strpos( $editor_script, "'showDescription'" )
+		&& false !== strpos( $editor_script, 'Compact download-button' ),
+	'Compact download-button must hide heading and description controls that have no effect on the inline action group.'
+);
+
+mw_assert_same(
+	true,
 	is_array( $mw_section_head_metadata ) && false !== strpos( (string) $mw_section_head_metadata['description'], 'عنوان بخش' ),
 	'The section-head block description must point editors at the section-heading pattern for a plain text heading.'
 );

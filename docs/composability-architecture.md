@@ -687,15 +687,42 @@ block.
 | Query Loop archive cards | C — Core composition | Stage A; unchanged. |
 | `release-shelf` / `release-slider` | E — fat dynamic | Query + card chrome stay in PHP. Empty eyebrow+title omit the PHP heading (slider no longer fills «برای شما» / «انتشارهای منتخب» unless one field is already set). Inspector help points at `section-head`. |
 | Playlist shelf source | E — fat dynamic | Same empty-copy omit; auto `/playlists/` URL only when copy is already going to print. |
-| `related-releases` | E — fat dynamic | Skip empty `<h2>`; omit `__section-header` when heading and more are both empty. Attribute defaults unchanged. |
+| `related-releases` | E — fat dynamic | Empty both headings omit PHP titles (one-insert defaults fill only when at least one heading is already set). Skip empty `<h2>`; omit `__section-header` when heading and more are both empty. Inspector help points at `section-head`. Query + `ReleaseCard` stay in PHP. |
 | `release-meta` compact | E — fat dynamic | Compact `<dl>` never renders library/actions/chips; inspector hides those three toggles while compact is on. |
-| access-panel, credits, collection-list, catalog-filters/results, download-button, public-playlists, continue-listening, playlist UI | E — fat dynamic | Query, permission, download or playlist logic. Unchanged this stage. |
+| `download-button` compact | E — fat dynamic | Compact inline group never prints panel heading/description; inspector hides those four controls while compact is on. Signed-token download stays in PHP. |
+| access-panel, credits, collection-list, catalog-filters/results, public-playlists, continue-listening, playlist UI | E — fat dynamic | Query, permission, download or playlist logic. Headings already have `showHeading` (credits, collection-list, download panel). Unchanged this pass except compact download. |
 | Stage C `release-card-media` | deferred | Stage A overlay already composes featured-image + group + preview-button; no overlay-break trigger. |
 
-Shipped templates (`home.html`, `page-stream.html`, `single-mw_release.html`, `section-heading.php`) were **not** converted: `.mw-release-shelf__header` is not `.mw-section-head`, so emptying shelf attrs would drop a heading without adding a canvas one.
+Shipped templates (`home.html`, `page-stream.html`, `single-mw_release.html`, `section-heading.php`) were **not** converted: `.mw-release-shelf__header` is not `.mw-section-head`, so emptying shelf attrs would drop a heading without adding a canvas one. `single-mw_release.html` still stores `sameArtistHeading` on related-releases, so that rail keeps its PHP title.
 
-**Backward compatible.** Saved blocks keep their attributes. Empty both copy fields now omit chrome instead of filling Persian defaults; any saved slider/playlist that already has a title still fills the missing sibling. Vinyl is an inserter pattern: existing posts that inserted the old `core/group` markup are untouched.
+**Backward compatible.** Saved blocks keep their attributes. Empty both related headings now omit chrome instead of filling Persian defaults; any saved related-releases that already has one heading still fills the missing sibling. Compact download inspector hide is editor-only.
 
-**Tests.** `tests/template-integrity.php` asserts vinyl pairing, empty-header gates, compact skip, and inspector help. `tests/editor-lanes.js` stays at 11 (no new lane). No live Site Editor run in this environment.
+**Tests.** `tests/template-integrity.php` asserts vinyl pairing, empty-header gates (including related heading fill), compact skip (meta + download), and inspector help. `tests/editor-lanes.js` stays at 11 (no new lane). No live Site Editor run in this environment.
 
-**Not claimed complete.** Major audit blocks that remain intentionally dynamic are listed in the table. Next priority stays a later fat-block pass (related-releases composition beyond header omit) or Stage C only if overlay-break reports appear.
+### Remaining-block classification (audit inventory)
+
+Lane legend: ✅ upgraded this programme · 🟡 pairing/empty-header available · 🔵 Core composition already · ⏸️ intentionally fat (query/access/download/playlist) · 🔴 deferred (Stage C only on overlay-break).
+
+| Block | Lane | Why this lane |
+| --- | --- | --- |
+| `section-head` | ✅ A | Static InnerBlocks; chrome is CSS + children. |
+| `section-heading` pattern | ✅ D | Coexists; not converted. |
+| `vinyl-record-shelf` pattern | ✅ D | Paired section-head + empty vinyl shelf. |
+| Query Loop archive cards | ✅ C | Stage A; overlay is featured-image + group + preview-button. |
+| `release-shelf` / `release-slider` | 🟡 E | Fat query + `ReleaseCard`. Empty eyebrow+title omit PHP header; vinyl pairs. Not converted in shipped templates. |
+| `related-releases` | 🟡 E | Two query rails + shared card. Empty both headings omit PHP titles. Do not InnerBlocks the cards. |
+| `release-meta` | ⏸️ E | Policy + taxonomy + library/playlist actions. Compact hides dead toggles. |
+| `download-button` | ⏸️ E | Signed-token download. Compact hides dead heading chrome. `showHeading` already exists for the panel. |
+| `collection-list` | ⏸️ E | Collection query + per-row preview/download. `showHeading` already exists. Track rows must stay PHP. |
+| `release-credits` | ⏸️ E | Credits from release meta. `showHeading` already exists. |
+| `access-panel` | ⏸️ E | Access policy + purchase/membership CTA. Copy is settings-backed, not canvas prose. |
+| `catalog-filters` / `catalog-results` | ⏸️ E | GET form + live archive query. Labels already inspector-controlled. Style variations exist. |
+| `request-form` | ⏸️ E | Nonce, kinds, honeypot, stash. `showHeading`/`showSteps`/`showHighlights` already omit chrome. Do not move POST into JS. |
+| `public-playlists` / `continue-listening` / `artists-shelf` / `taxonomy-shelf` | ⏸️ E | Query shelves. Same empty-header contract as theme shelf where they share `SectionHeader`. |
+| `playlists` / `playback-queue` / `music-library` / add-to-* | ⏸️ E | Auth + mutation. Not canvas composition. |
+| `preview-button` / `preview-player` / `share-button` / `shuffle-button` / `library-button` | ⏸️ E | Leaf actions; already small. |
+| `term-hero` / `artist-profile` | ⏸️ E | Term/query identity. Archives already compose them as leaves. |
+| header / nav / stream-rail | 🔵 C | Template parts + core navigation; not fat product blocks. |
+| Stage C `release-card-media` | 🔴 | No overlay-break trigger. |
+
+**Not claimed complete.** Next highest remaining Site Editor limitation: request-form editorial copy is still inspector-only (highlights/steps). Do not convert it to InnerBlocks; a later pass can empty-header-gate its copy the same way as related-releases if a pattern already uses `.mw-request-form__header` vocabulary — do not restyle it onto `.mw-section-head`.

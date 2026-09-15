@@ -739,12 +739,20 @@
 							'sameArtistHeading',
 							__( 'عنوان همان هنرمند', 'music-wave-core' ),
 							'',
+							__(
+								'برای عنوان قابل‌ویرایش روی بوم، هر دو عنوان را خالی بگذارید و بلوک «سرصفحهٔ بخش» را بالای ریل قرار دهید.',
+								'music-wave-core'
+							),
 						],
 						[
 							'text',
 							'similarHeading',
 							__( 'عنوان انتشارهای مشابه', 'music-wave-core' ),
 							'',
+							__(
+								'خالی بماند تا سربرگ این بخش چاپ نشود؛ برای متن روی بوم از بلوک سرصفحهٔ بخش استفاده کنید.',
+								'music-wave-core'
+							),
 						],
 						[
 							'toggle',
@@ -3343,6 +3351,22 @@
 					'showLibraryButton',
 					'showActions',
 					'showTaxonomyChips',
+				].indexOf( attr )
+		) {
+			return null;
+		}
+
+		// Compact download-button renders the inline action group, so the
+		// panel heading/description chrome has no markup to drive.
+		if (
+			'music-wave/download-button' === blockName &&
+			props.attributes.compact &&
+			-1 !==
+				[
+					'heading',
+					'description',
+					'showHeading',
+					'showDescription',
 				].indexOf( attr )
 		) {
 			return null;
