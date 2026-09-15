@@ -2007,7 +2007,12 @@ final class ReleaseBlocks {
 			$shelf_class .= ' mw-release-shelf--columns-' . $options['columns'];
 		}
 
-		return '<section class="mw-related-releases__section ' . esc_attr( $shelf_class ) . '"><div class="mw-related-releases__section-header"><h2>' . esc_html( $heading ) . '</h2>' . $more . '</div><div class="mw-release-shelf__items">' . implode( '', $cards ) . '</div></section>';
+		$heading_html = '' !== $heading ? '<h2>' . esc_html( $heading ) . '</h2>' : '';
+		$header       = ( '' !== $heading_html || '' !== $more )
+			? '<div class="mw-related-releases__section-header">' . $heading_html . $more . '</div>'
+			: '';
+
+		return '<section class="mw-related-releases__section ' . esc_attr( $shelf_class ) . '">' . $header . '<div class="mw-release-shelf__items">' . implode( '', $cards ) . '</div></section>';
 	}
 
 	/**

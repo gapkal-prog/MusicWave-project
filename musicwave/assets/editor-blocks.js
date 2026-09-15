@@ -289,6 +289,10 @@
 				},
 				createElement( components.TextControl, {
 					label: __( 'برچسب بالایی', 'musicwave' ),
+					help: __(
+						'برای عنوان قابل‌ویرایش روی بوم، این فیلدها را خالی بگذارید و بلوک «سرصفحهٔ بخش» را بالای اسلایدر قرار دهید.',
+						'musicwave'
+					),
 					value: props.attributes.eyebrow || '',
 					onChange( value ) {
 						props.setAttributes( { eyebrow: value } );
@@ -296,6 +300,10 @@
 				} ),
 				createElement( components.TextControl, {
 					label: __( 'عنوان', 'musicwave' ),
+					help: __(
+						'خالی بماند تا سربرگ اسلایدر چاپ نشود؛ برای متن روی بوم از بلوک سرصفحهٔ بخش استفاده کنید.',
+						'musicwave'
+					),
 					value: props.attributes.title || '',
 					onChange( value ) {
 						props.setAttributes( { title: value } );
@@ -420,6 +428,10 @@
 				} ),
 				createElement( components.TextControl, {
 					label: __( 'برچسب بالایی', 'musicwave' ),
+					help: __(
+						'برای عنوان قابل‌ویرایش روی بوم، این فیلدها را خالی بگذارید و بلوک «سرصفحهٔ بخش» را بالای ویترین قرار دهید.',
+						'musicwave'
+					),
 					value: props.attributes.eyebrow || '',
 					onChange( value ) {
 						update( 'eyebrow', value );
@@ -427,6 +439,10 @@
 				} ),
 				createElement( components.TextControl, {
 					label: __( 'عنوان', 'musicwave' ),
+					help: __(
+						'خالی بماند تا سربرگ ویترین چاپ نشود؛ برای متن روی بوم از بلوک سرصفحهٔ بخش استفاده کنید.',
+						'musicwave'
+					),
 					value: props.attributes.title || '',
 					onChange( value ) {
 						update( 'title', value );
@@ -1066,8 +1082,8 @@
 	 * section header can never offer.
 	 *
 	 * The shell is the theme's existing editorial component (.mw-section-head +
-	 * __text), the same vocabulary patterns/vinyl-record-shelf.php composes, so
-	 * a stored header and a pattern-built header look identical.
+	 * __text). The vinyl-record-shelf pattern stores this block as its header,
+	 * so a canvas-edited heading and the pattern insert share one markup.
 	 */
 	var sectionHeadTemplate = [
 		[

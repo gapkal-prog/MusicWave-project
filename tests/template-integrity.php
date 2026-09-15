@@ -382,9 +382,9 @@ mw_assert_same(
 );
 
 // Fixtures: the same classifier, proven to accept a correctly paired static
-// container and to reject each way the contract can be broken. Without these
-// the pairing branch is never exercised, because the pilot block is kept out of
-// the bundled templates.
+// container and to reject each way the contract can be broken. The vinyl
+// pattern now stores a paired section-head (Stage E); the fixtures still
+// cover the negative cases bundled content cannot exercise.
 $mw_paired_static = '<!-- wp:music-wave/section-head {"align":"wide"} -->' . "\n"
 	. '<div class="wp-block-music-wave-section-head alignwide mw-section-head"><!-- wp:group {"className":"mw-section-head__text"} -->'
 	. '<div class="wp-block-group mw-section-head__text"><!-- wp:heading {"level":2} -->'
@@ -1331,6 +1331,68 @@ mw_assert_same(
 	false !== strpos( $mw_heading_pattern, 'music-wave/section-head' ),
 	'The section-heading pattern must document how it differs from the section-head block.'
 );
+
+// Stage E: vinyl is a pattern, not a new InnerBlocks parent. Its header is
+// the static section-head; the vinyl shelf stays a self-closing PHP renderer
+// with empty header attributes so the canvas heading is the only one.
+$mw_vinyl_pattern = (string) file_get_contents( $theme_directory . '/patterns/vinyl-record-shelf.php' );
+mw_assert_same(
+	true,
+	false !== strpos( $mw_vinyl_pattern, '<!-- wp:music-wave/section-head' )
+		&& false !== strpos( $mw_vinyl_pattern, '<!-- /wp:music-wave/section-head -->' )
+		&& false !== strpos( $mw_vinyl_pattern, 'wp-block-music-wave-section-head alignwide mw-section-head' ),
+	'The vinyl pattern must pair music-wave/section-head with the same save shell the static lane writes.'
+);
+mw_assert_same(
+	false,
+	false !== strpos( $mw_vinyl_pattern, 'wp:group {"align":"wide","className":"mw-section-head"' ),
+	'The vinyl pattern must not wrap its header in core/group.mw-section-head once section-head exists.'
+);
+mw_assert_same(
+	true,
+	false !== strpos( $mw_vinyl_pattern, '"eyebrow":""' )
+		&& false !== strpos( $mw_vinyl_pattern, '"title":""' )
+		&& false !== strpos( $mw_vinyl_pattern, 'is-style-vinyl' )
+		&& 1 === substr_count( $mw_vinyl_pattern, 'wp:music-wave/release-shelf' ),
+	'The vinyl shelf must stay a self-closing PHP renderer with empty header attrs and the vinyl look.'
+);
+mw_assert_same(
+	false,
+	false !== strpos( $functions_source, 'mw-vinyl-shelf' ),
+	'Do not reintroduce a vinyl wrapper class that is not in the live pattern.'
+);
+
+// Empty PHP headers: fill one-insert copy only when the editor already set
+// eyebrow or title, so a canvas section-head can sit above without a second
+// heading. The playlist more-link auto-URL is gated the same way.
+mw_assert_same(
+	true,
+	substr_count( $functions_source, "'' !== \$eyebrow || '' !== \$title" ) >= 3,
+	'Slider, playlist copy, and playlist auto-URL must all gate on eyebrow-or-title being set.'
+);
+mw_assert_same(
+	true,
+	false !== strpos( $release_blocks_source, "'' !== \$heading ? '<h2>'" )
+		&& false !== strpos( $release_blocks_source, "'' !== \$heading_html || '' !== \$more" ),
+	'Related-releases must skip an empty h2 and omit the section-header wrapper when heading and more are both empty.'
+);
+
+mw_assert_same(
+	true,
+	false !== strpos( $theme_editor_script, 'بالای اسلایدر قرار دهید' )
+		&& false !== strpos( $theme_editor_script, 'بالای ویترین قرار دهید' ),
+	'Shelf and slider heading fields must tell editors to leave them empty and use section-head on the canvas.'
+);
+
+mw_assert_same(
+	true,
+	false !== strpos( $editor_script, "'showLibraryButton'" )
+		&& false !== strpos( $editor_script, "'showActions'" )
+		&& false !== strpos( $editor_script, "'showTaxonomyChips'" )
+		&& false !== strpos( $editor_script, 'props.attributes.compact &&' ),
+	'Compact release-meta must hide the library, actions and taxonomy-chip toggles that have no effect on the compact <dl>.'
+);
+
 mw_assert_same(
 	true,
 	is_array( $mw_section_head_metadata ) && false !== strpos( (string) $mw_section_head_metadata['description'], 'عنوان بخش' ),

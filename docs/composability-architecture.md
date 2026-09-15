@@ -653,10 +653,10 @@ satisfy. It now classifies each block by how it is *registered*, with no per-blo
 
 The strict nesting walker below it is untouched, so a paired container still cannot smuggle in an
 unmatched delimiter. The classifier returns violation strings instead of asserting inline, which
-makes it exercisable over fixtures: bundled content never uses the paired form (the pilot is
-deliberately kept out of shipped templates), so six fixture cases prove the rule accepts a paired
-container and a self-closing leaf, and rejects a self-closed container, a dynamic block with fallback
-HTML, an unclosed container and an unregistered name. A seventh contract asserts
+makes it exercisable over fixtures. Stage E stores a paired `music-wave/section-head` in the vinyl
+pattern (not in templates); six fixture cases still prove the rule accepts a paired container and a
+self-closing leaf, and rejects a self-closed container, a dynamic block with fallback HTML, an
+unclosed container and an unregistered name. A seventh contract asserts
 `musicwave_static_block_dirs()` lists exactly the theme block.json files that have no callback, so a
 new static block cannot ship unregistered and a stale entry cannot survive its metadata.
 
@@ -671,3 +671,31 @@ inside a sibling rule, the second because an unanchored selector matched a desce
 assertions were tightened (count both spellings per slug; anchor to a rule start) until the control
 failed. Recording that, because an assertion that survives its own negative control is worse than no
 assertion.
+
+### 10.6 Stage E — header pairing without converting fat SSR (this stage)
+
+Stage E does **not** add InnerBlocks to shelf, slider, related-releases, or public-playlists.
+Those stay Lane 1 (fat PHP / ServerSideRender). What changed is how a canvas `section-head` can
+sit *above* them without a second PHP heading, plus one pattern that actually stores the Stage D
+block.
+
+| Surface | Lane | Why |
+| --- | --- | --- |
+| `music-wave/section-head` | A — static InnerBlocks | Chrome is CSS + children; no query/access logic. |
+| `musicwave/section-heading` | D — pattern of core blocks | Coexists; not converted. |
+| `musicwave/vinyl-record-shelf` | D — pattern | Paired `section-head` + self-closing vinyl `release-shelf` with empty `eyebrow`/`title`. Not a new parent block. |
+| Query Loop archive cards | C — Core composition | Stage A; unchanged. |
+| `release-shelf` / `release-slider` | E — fat dynamic | Query + card chrome stay in PHP. Empty eyebrow+title omit the PHP heading (slider no longer fills «برای شما» / «انتشارهای منتخب» unless one field is already set). Inspector help points at `section-head`. |
+| Playlist shelf source | E — fat dynamic | Same empty-copy omit; auto `/playlists/` URL only when copy is already going to print. |
+| `related-releases` | E — fat dynamic | Skip empty `<h2>`; omit `__section-header` when heading and more are both empty. Attribute defaults unchanged. |
+| `release-meta` compact | E — fat dynamic | Compact `<dl>` never renders library/actions/chips; inspector hides those three toggles while compact is on. |
+| access-panel, credits, collection-list, catalog-filters/results, download-button, public-playlists, continue-listening, playlist UI | E — fat dynamic | Query, permission, download or playlist logic. Unchanged this stage. |
+| Stage C `release-card-media` | deferred | Stage A overlay already composes featured-image + group + preview-button; no overlay-break trigger. |
+
+Shipped templates (`home.html`, `page-stream.html`, `single-mw_release.html`, `section-heading.php`) were **not** converted: `.mw-release-shelf__header` is not `.mw-section-head`, so emptying shelf attrs would drop a heading without adding a canvas one.
+
+**Backward compatible.** Saved blocks keep their attributes. Empty both copy fields now omit chrome instead of filling Persian defaults; any saved slider/playlist that already has a title still fills the missing sibling. Vinyl is an inserter pattern: existing posts that inserted the old `core/group` markup are untouched.
+
+**Tests.** `tests/template-integrity.php` asserts vinyl pairing, empty-header gates, compact skip, and inspector help. `tests/editor-lanes.js` stays at 11 (no new lane). No live Site Editor run in this environment.
+
+**Not claimed complete.** Major audit blocks that remain intentionally dynamic are listed in the table. Next priority stays a later fat-block pass (related-releases composition beyond header omit) or Stage C only if overlay-break reports appear.

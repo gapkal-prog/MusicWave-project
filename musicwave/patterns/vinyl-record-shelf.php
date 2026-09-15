@@ -6,18 +6,17 @@
  * Keywords: vinyl, record, editorial, shelf, spotlight
  * Inserter: true
  *
- * The editorial header uses the theme's magazine vocabulary
- * (`mw-section-head` + `mw-eyebrow`), and the shelf ships the vinyl look so
- * the record-store presentation is one click away. Every colour comes from
- * the Site Editor palette, so the pattern follows the active style variation
- * and both colour schemes.
+ * The editorial header is the static `music-wave/section-head` container so
+ * every line is selectable on the canvas; the shelf ships empty PHP header
+ * attributes and the vinyl look so the record-store presentation is one click
+ * away. Every colour comes from the Site Editor palette.
  *
  * @package MusicWave
  */
 
 ?>
-<!-- wp:group {"align":"wide","className":"mw-section-head","layout":{"type":"default"}} -->
-<div class="wp-block-group alignwide mw-section-head">
+<!-- wp:music-wave/section-head {"align":"wide"} -->
+<div class="wp-block-music-wave-section-head alignwide mw-section-head">
 	<!-- wp:group {"className":"mw-section-head__text","layout":{"type":"default"}} -->
 	<div class="wp-block-group mw-section-head__text">
 		<!-- wp:paragraph {"className":"mw-eyebrow"} -->
@@ -32,6 +31,6 @@
 	</div>
 	<!-- /wp:group -->
 </div>
-<!-- /wp:group -->
+<!-- /wp:music-wave/section-head -->
 
 <!-- wp:music-wave/release-shelf {"className":"is-style-vinyl","align":"wide","eyebrow":"","title":"","orderBy":"rand","itemsToShow":8,"columns":4,"layout":"grid","showAction":false} /-->

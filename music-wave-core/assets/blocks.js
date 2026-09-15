@@ -3333,6 +3333,21 @@
 		var attr = descriptor[ 1 ];
 		var label = descriptor[ 2 ];
 
+		// Compact release-meta returns a <dl> before chips, library and playlist
+		// actions, so those toggles have no effect while compact is on.
+		if (
+			'music-wave/release-meta' === blockName &&
+			props.attributes.compact &&
+			-1 !==
+				[
+					'showLibraryButton',
+					'showActions',
+					'showTaxonomyChips',
+				].indexOf( attr )
+		) {
+			return null;
+		}
+
 		if ( 'text' === type ) {
 			return createElement( components.TextControl, {
 				key: attr,
@@ -3611,10 +3626,16 @@
 					onChange( value ) {
 						props.setAttributes( { compact: !! value } );
 					},
-					help: __(
-						'از چیدمان متراکم‌تر برای کارت‌ها، فهرست‌ها و نوارهای کناری استفاده کنید.',
-						'music-wave-core'
-					),
+					help:
+						'music-wave/release-meta' === blockName
+							? __(
+									'چیدمان فشرده فقط فرادادهٔ خطی را نشان می‌دهد. دکمهٔ کتابخانه و اقدامات روی پنل کامل در دسترس‌اند.',
+									'music-wave-core'
+							  )
+							: __(
+									'از چیدمان متراکم‌تر برای کارت‌ها، فهرست‌ها و نوارهای کناری استفاده کنید.',
+									'music-wave-core'
+							  ),
 				} )
 			);
 		}
