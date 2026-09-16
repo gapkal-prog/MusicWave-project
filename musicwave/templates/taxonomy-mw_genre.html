@@ -6,10 +6,16 @@
 <!-- wp:query {"queryId":32,"query":{"inherit":true}} -->
 <div class="wp-block-query"><!-- wp:post-template {"className":"mw-release-grid","layout":{"type":"grid","columnCount":3}} -->
 <!-- wp:group {"className":"mw-release-card mw-surface","layout":{"type":"constrained"}} -->
-<div class="wp-block-group mw-release-card mw-surface"><!-- wp:post-featured-image {"isLink":true,"aspectRatio":"1"} /-->
-<!-- wp:post-title {"isLink":true,"fontSize":"large"} /-->
-<!-- wp:music-wave/release-meta {"compact":true} /-->
-<!-- wp:music-wave/preview-button /--></div>
+<div class="wp-block-group mw-release-card mw-surface"><!-- wp:group {"className":"mw-release-card__media","layout":{"type":"constrained"}} -->
+<div class="wp-block-group mw-release-card__media"><!-- wp:post-featured-image {"isLink":true,"aspectRatio":"1"} /-->
+<!-- wp:group {"className":"mw-release-card__overlay","layout":{"type":"flex","justifyContent":"center","verticalAlignment":"center"}} -->
+<div class="wp-block-group mw-release-card__overlay"><!-- wp:music-wave/preview-button /--></div>
+<!-- /wp:group --></div>
+<!-- /wp:group -->
+<!-- wp:group {"className":"mw-release-card__body","layout":{"type":"constrained"}} -->
+<div class="wp-block-group mw-release-card__body"><!-- wp:post-title {"isLink":true,"fontSize":"large"} /-->
+<!-- wp:music-wave/release-meta {"compact":true,"showLibraryButton":false} /--></div>
+<!-- /wp:group --></div>
 <!-- /wp:group -->
 <!-- /wp:post-template -->
 <!-- wp:query-pagination {"layout":{"type":"flex","justifyContent":"space-between"}} -->

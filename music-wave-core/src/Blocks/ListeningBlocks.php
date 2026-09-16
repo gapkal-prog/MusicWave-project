@@ -205,51 +205,30 @@ final class ListeningBlocks {
 	}
 
 	/**
-	 * One history card using the shared release-shelf markup, extended with
-	 * the "played ago" meta line.
+	 * One history card using the shared release-card markup, extended with the
+	 * "played ago" meta line.
 	 *
 	 * @param int                  $release_id Readable release.
 	 * @param int                  $updated_at Last activity timestamp.
 	 * @param array<string, mixed> $options    Resolved display options.
 	 */
 	private function history_card( int $release_id, int $updated_at, array $options ): string {
-		$title = get_the_title( $release_id );
-		$link  = get_permalink( $release_id );
-		if ( $release_id < 1 || ! is_string( $link ) || '' === $link ) {
+		$data = ReleaseCard::presentation_data( $release_id );
+		if ( array() === $data ) {
 			return '';
 		}
-		$title = '' !== $title ? $title : __( 'انتشار بدون عنوان', 'music-wave-core' );
 
-		$art = '';
-		if ( $options['show_artwork'] ) {
-			$image   = get_the_post_thumbnail(
-				$release_id,
-				'medium_large',
-				array(
-					'class'         => 'mw-release-shelf__image',
-					'alt'           => '',
-					'loading'       => 'lazy',
-					'fetchpriority' => 'low',
-					'decoding'      => 'async',
-				)
-			);
-			$initial = function_exists( 'mb_substr' ) ? mb_substr( $title, 0, 1 ) : substr( $title, 0, 1 );
-			/* translators: %s: music release title. */
-			$open_label = sprintf( __( 'باز کردن %s', 'music-wave-core' ), $title );
-			$overlay    = '';
-			if ( $options['show_preview'] ) {
-				$filtered = apply_filters( 'music_wave_card_play_button', '', $release_id, 'mw-release-shelf__play' );
-				$overlay  = is_string( $filtered ) ? $filtered : '';
-			}
-			$art = '<div class="mw-release-shelf__artwrap"><a class="mw-release-shelf__art mw-release-shelf__art--' . esc_attr( (string) $options['shape'] ) . '" href="' . esc_url( $link ) . '" aria-label="' . esc_attr( $open_label ) . '">' . ( '' !== $image ? $image : '<span class="mw-release-shelf__placeholder" aria-hidden="true">' . esc_html( $initial ) . '</span>' ) . '</a>' . $overlay . '</div>';
+		// An untitled release still needs a readable card, and the artwork
+		// placeholder takes its initial from the same resolved title.
+		if ( '' === $data['title'] ) {
+			$data['title']   = __( 'انتشار بدون عنوان', 'music-wave-core' );
+			$data['initial'] = ReleaseCard::initial( $data['title'] );
 		}
 
-		$artist = '';
-		if ( $options['show_artist'] ) {
-			$artists = wp_get_post_terms( $release_id, 'mw_artist', array( 'fields' => 'names' ) );
-			if ( is_array( $artists ) && ! empty( $artists ) ) {
-				$artist = '<span class="mw-release-shelf__artist">' . esc_html( implode( ', ', $artists ) ) . '</span>';
-			}
+		$overlay = '';
+		if ( $options['show_preview'] ) {
+			$filtered = apply_filters( 'music_wave_card_play_button', '', $release_id, 'mw-release-shelf__play' );
+			$overlay  = is_string( $filtered ) ? $filtered : '';
 		}
 
 		$when = '';
@@ -257,9 +236,24 @@ final class ListeningBlocks {
 			$when = '<time datetime="' . esc_attr( gmdate( 'c', $updated_at ) ) . '">' . esc_html( $this->human_time_diff( $updated_at ) ) . '</time>';
 		}
 
-		return '<article class="mw-release-shelf__item mw-continue-listening__item">' . $art
-			. '<div class="mw-release-shelf__body"><h3><a href="' . esc_url( $link ) . '">' . esc_html( $title ) . '</a></h3>' . $artist . $when . '</div>'
-			. '</article>';
+		return ReleaseCard::render(
+			$data,
+			array(
+				'shape'              => (string) $options['shape'],
+				'image_attributes'   => array(
+					'loading'       => 'lazy',
+					'fetchpriority' => 'low',
+					'decoding'      => 'async',
+				),
+				/* translators: %s: music release title. */
+				'open_label'         => sprintf( __( 'باز کردن %s', 'music-wave-core' ), $data['title'] ),
+				'overlay'            => $overlay,
+				'show_artwork'       => $options['show_artwork'],
+				'show_artist'        => $options['show_artist'],
+				'extra_item_classes' => 'mw-continue-listening__item',
+				'meta_html'          => $when,
+			)
+		);
 	}
 
 	/**

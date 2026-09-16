@@ -115,32 +115,50 @@
 	order: 3;
 }
 
-.mw-section-head--center {
+/*
+ * Two spellings, one declaration set.
+ *
+ * PHP-rendered headers emit the BEM modifier (mw-section-head--center), while
+ * the Site Editor's Styles panel writes is-style-<slug> onto a stored
+ * music-wave/section-head block. Both are listed here so the static container
+ * and the rendered component cannot drift; the slugs come from
+ * musicwave_section_head_styles() in functions.php.
+ *
+ * All rules use logical properties, so RTL mirrors them for free.
+ */
+.mw-section-head--center,
+.mw-section-head.is-style-center {
 	justify-content: center;
 	text-align: center;
 }
 
-.mw-section-head--center .mw-section-head__text {
+.mw-section-head--center .mw-section-head__text,
+.mw-section-head.is-style-center .mw-section-head__text {
 	justify-items: center;
 	margin-inline: auto;
 }
 
-.mw-section-head--center .mw-section-head__rule {
+.mw-section-head--center .mw-section-head__rule,
+.mw-section-head.is-style-center .mw-section-head__rule {
 	margin-inline: auto;
 }
 
-.mw-section-head--stack {
+.mw-section-head--stack,
+.mw-section-head.is-style-stack {
 	align-items: flex-start;
 	flex-direction: column;
 }
 
 /* Section head on a filled/spotlight surface flips to light-on-dark tokens. */
 .mw-section-head--invert h2,
-.mw-section-head--invert p {
+.mw-section-head--invert p,
+.mw-section-head.is-style-invert h2,
+.mw-section-head.is-style-invert p {
 	color: #fff;
 }
 
-.mw-section-head--invert p {
+.mw-section-head--invert p,
+.mw-section-head.is-style-invert p {
 	opacity: 0.75;
 }
 

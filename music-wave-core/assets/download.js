@@ -105,6 +105,7 @@
 	function setPlayButton( button, playing ) {
 		var labels = window.musicWaveDownload || {};
 		var icon = button.querySelector( '.mw-secure-play-button__icon' );
+		var label = button.querySelector( '.mw-secure-play-button__label' );
 		var playLabel =
 			button.getAttribute( 'data-play-label' ) ||
 			labels.playLabel ||
@@ -113,11 +114,16 @@
 			button.getAttribute( 'data-pause-label' ) ||
 			labels.pauseLabel ||
 			'مکث';
+		var nextLabel = playing ? pauseLabel : playLabel;
 		button.setAttribute( 'aria-pressed', playing ? 'true' : 'false' );
-		// Icon-only affordance: the accessible name stays on aria-label.
-		button.setAttribute( 'aria-label', playing ? pauseLabel : playLabel );
+		// The accessible name and the visible text are the same string, so
+		// screen readers and sighted visitors always read the current state.
+		button.setAttribute( 'aria-label', nextLabel );
 		if ( icon ) {
 			icon.textContent = playing ? '❚❚' : '▶';
+		}
+		if ( label ) {
+			label.textContent = nextLabel;
 		}
 	}
 

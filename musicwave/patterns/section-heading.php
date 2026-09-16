@@ -8,6 +8,18 @@
  * Block Types: core/group, core/heading, core/paragraph
  * Viewport Width: 1440
  *
+ * A plain, ready-to-type heading: one wide Group holding an eyebrow paragraph,
+ * an h2 and a muted paragraph, styled entirely through Global Styles (palette
+ * colours plus inline typography). It inserts copy an editor replaces
+ * immediately and leaves no component behind.
+ *
+ * Deliberately not the same thing as the `music-wave/section-head` block, which
+ * wraps its children in the theme's editorial `.mw-section-head` shell and
+ * exposes the centered / stacked / inverted looks in the Styles panel. Use this
+ * pattern for a one-off text heading inside content; use the block when a
+ * section needs the magazine header vocabulary. Both ship on purpose and
+ * neither replaces the other.
+ *
  * @package MusicWave
  */
 ?>

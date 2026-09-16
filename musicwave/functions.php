@@ -718,6 +718,20 @@ function musicwave_register_block_styles(): void {
 	if ( ! function_exists( 'register_block_style' ) ) {
 		return;
 	}
+
+	// Static section head: the same editorial modifiers a PHP-rendered header
+	// uses, exposed as block styles so the Styles panel can switch a stored
+	// container between them without code.
+	foreach ( musicwave_section_head_styles() as $style_name => $style_label ) {
+		register_block_style(
+			'music-wave/section-head',
+			array(
+				'name'  => $style_name,
+				'label' => $style_label,
+			)
+		);
+	}
+
 	foreach ( musicwave_presentation_style_variations() as $slug => $variations ) {
 		foreach ( array( 'music-wave/' . $slug, 'musicwave/' . $slug ) as $block_name ) {
 			foreach ( $variations as $name => $variation ) {
@@ -807,6 +821,107 @@ function musicwave_load_block_json( string $block_dir ): ?array {
 	}
 	$data = json_decode( $raw, true );
 	return is_array( $data ) ? $data : null;
+}
+
+/**
+ * Build the browser registration entry for one bundled theme block.
+ *
+ * block.json is the single source of truth for the client registry: this reads
+ * it once and returns the exact shape editor-blocks.js consumes, so the dynamic
+ * (ServerSideRender) and static (InnerBlocks) lanes share one metadata path and
+ * cannot drift from each other or from the PHP registration.
+ *
+ * @param string $block_dir Directory name inside the theme's blocks directory.
+ * @return array<string, mixed>|null Null when the metadata file is unusable.
+ */
+function musicwave_block_metadata_entry( string $block_dir ): ?array {
+	$meta = musicwave_load_block_json( $block_dir );
+	if ( null === $meta || empty( $meta['name'] ) ) {
+		return null;
+	}
+
+	return array(
+		'name'        => (string) $meta['name'],
+		'apiVersion'  => isset( $meta['apiVersion'] ) ? (int) $meta['apiVersion'] : 3,
+		'title'       => isset( $meta['title'] ) ? (string) $meta['title'] : '',
+		'description' => isset( $meta['description'] ) ? (string) $meta['description'] : '',
+		'category'    => isset( $meta['category'] ) ? (string) $meta['category'] : 'music-wave',
+		'icon'        => isset( $meta['icon'] ) ? (string) $meta['icon'] : 'format-audio',
+		'keywords'    => isset( $meta['keywords'] ) && is_array( $meta['keywords'] ) ? array_values( $meta['keywords'] ) : array(),
+		'textdomain'  => isset( $meta['textdomain'] ) ? (string) $meta['textdomain'] : 'musicwave',
+		'attributes'  => isset( $meta['attributes'] ) && is_array( $meta['attributes'] ) ? $meta['attributes'] : array(),
+		'supports'    => isset( $meta['supports'] ) && is_array( $meta['supports'] ) ? $meta['supports'] : array(),
+		'example'     => isset( $meta['example'] ) && is_array( $meta['example'] ) ? $meta['example'] : array(),
+		// Block style variations declared in block.json travel with the
+		// client registration so the Styles panel never depends on the
+		// REST hydration order.
+		'styles'      => isset( $meta['styles'] ) && is_array( $meta['styles'] ) ? array_values( $meta['styles'] ) : array(),
+	);
+}
+
+/**
+ * Return the theme's static, child-bearing blocks.
+ *
+ * A block either renders itself in PHP (leaf block, ServerSideRender preview,
+ * `render_callback`) or stores itself from JavaScript (`save()` + InnerBlocks) —
+ * never both. Mixing the two is what produces duplicated chrome and stale
+ * editor previews, so the two lanes are registered, localized and validated
+ * separately. See docs/composability-architecture.md §5.
+ *
+ * Directories listed here are registered from block.json with no render
+ * callback and get no legacy `musicwave/*` alias, because nothing was ever
+ * saved under another name.
+ *
+ * @return array<int, string>
+ */
+function musicwave_static_block_dirs(): array {
+	return array( 'section-head' );
+}
+
+/**
+ * Register static container blocks from their bundled block.json metadata.
+ *
+ * With no `render_callback`, WordPress prints the markup the block's own
+ * `save()` stored, so the frontend needs no PHP renderer and the Site Editor
+ * needs no REST round-trip to preview it.
+ *
+ * @return void
+ */
+function musicwave_register_static_blocks(): void {
+	if ( ! function_exists( 'register_block_type' ) ) {
+		return;
+	}
+
+	foreach ( musicwave_static_block_dirs() as $block_dir ) {
+		$path = get_template_directory() . '/blocks/' . $block_dir;
+		// Missing bundled metadata must never fatal a request; the block simply
+		// stays unavailable on an incomplete deployment.
+		if ( ! is_readable( $path . '/block.json' ) ) {
+			continue;
+		}
+
+		register_block_type( $path );
+	}
+}
+add_action( 'init', 'musicwave_register_static_blocks' );
+
+/**
+ * Return the section-head looks offered by the Site Editor Styles panel.
+ *
+ * The slugs are the editorial modifiers editorial.css already ships
+ * (`mw-section-head--center` / `--stack` / `--invert`), so a static container
+ * and a PHP-rendered header speak one vocabulary. The Styles panel writes
+ * `is-style-<slug>`; editorial.css maps both spellings onto one declaration set
+ * rather than duplicating the rules.
+ *
+ * @return array<string, string> Slug => translated label.
+ */
+function musicwave_section_head_styles(): array {
+	return array(
+		'center' => __( 'وسط‌چین', 'musicwave' ),
+		'stack'  => __( 'ستونی', 'musicwave' ),
+		'invert' => __( 'معکوس (روی سطح رنگی)', 'musicwave' ),
+	);
 }
 
 /**
@@ -930,30 +1045,13 @@ function musicwave_enqueue_presentation_editor_blocks(): void {
 	$dirs      = array( 'theme-text', 'theme-toggle', 'release-slider', 'release-shelf', 'synced-lyrics' );
 	$localized = array();
 	foreach ( $dirs as $dir ) {
-		$meta = musicwave_load_block_json( $dir );
-		if ( null === $meta || empty( $meta['name'] ) ) {
-			continue;
-		}
 		// block.json is the single source of truth for the browser registry.
 		// Do not maintain a second title/description/attribute map here: that
 		// was the source of Site Editor drift in earlier versions.
-		$entry       = array(
-			'name'        => (string) $meta['name'],
-			'apiVersion'  => isset( $meta['apiVersion'] ) ? (int) $meta['apiVersion'] : 3,
-			'title'       => isset( $meta['title'] ) ? (string) $meta['title'] : '',
-			'description' => isset( $meta['description'] ) ? (string) $meta['description'] : '',
-			'category'    => isset( $meta['category'] ) ? (string) $meta['category'] : 'music-wave',
-			'icon'        => isset( $meta['icon'] ) ? (string) $meta['icon'] : 'format-audio',
-			'keywords'    => isset( $meta['keywords'] ) && is_array( $meta['keywords'] ) ? array_values( $meta['keywords'] ) : array(),
-			'textdomain'  => isset( $meta['textdomain'] ) ? (string) $meta['textdomain'] : 'musicwave',
-			'attributes'  => isset( $meta['attributes'] ) && is_array( $meta['attributes'] ) ? $meta['attributes'] : array(),
-			'supports'    => isset( $meta['supports'] ) && is_array( $meta['supports'] ) ? $meta['supports'] : array(),
-			'example'     => isset( $meta['example'] ) && is_array( $meta['example'] ) ? $meta['example'] : array(),
-			// Block style variations declared in block.json travel with the
-			// client registration so the Styles panel never depends on the
-			// REST hydration order.
-			'styles'      => isset( $meta['styles'] ) && is_array( $meta['styles'] ) ? array_values( $meta['styles'] ) : array(),
-		);
+		$entry = musicwave_block_metadata_entry( $dir );
+		if ( null === $entry ) {
+			continue;
+		}
 		$localized[] = $entry;
 
 		// Keep legacy theme blocks editable after the namespace migration.
@@ -964,10 +1062,29 @@ function musicwave_enqueue_presentation_editor_blocks(): void {
 		$localized[]                          = $legacy_entry;
 	}
 
+	/*
+	 * Static child-bearing blocks travel in their own list: they register a real
+	 * edit/save pair (InnerBlocks) instead of a ServerSideRender preview, and
+	 * they get no legacy alias. Keeping the lanes separate means editor-blocks.js
+	 * never has to branch on a block name to decide how to render it.
+	 */
+	$static_localized = array();
+	foreach ( musicwave_static_block_dirs() as $static_dir ) {
+		$static_entry = musicwave_block_metadata_entry( $static_dir );
+		if ( null !== $static_entry ) {
+			$static_localized[] = $static_entry;
+		}
+	}
+
 	wp_localize_script(
 		'musicwave-presentation-blocks',
 		'musicwavePresentationBlocks',
 		$localized
+	);
+	wp_localize_script(
+		'musicwave-presentation-blocks',
+		'musicwaveStaticBlocks',
+		$static_localized
 	);
 	// Appearance selects read the same map the Styles panel is built from.
 	wp_localize_script(
@@ -1427,24 +1544,35 @@ function musicwave_slider_number( string $setting, int $fallback ): int {
  * @return array<string, mixed>
  */
 function musicwave_release_presentation_data( int $release_id ): array {
-	$release_id = absint( $release_id );
-	$link       = get_permalink( $release_id );
-	if ( $release_id < 1 || ! is_string( $link ) || '' === $link ) {
-		return array();
+	// The card skeleton is shared with the plugin so every shelf, related
+	// section and history rail renders identical markup. Release surfaces are
+	// unreachable without MusicWave Core anyway: it owns the `mw_release` post
+	// type, and every caller treats an empty array as "skip this card".
+	if ( class_exists( '\ManaCore\MusicWave\Core\Blocks\ReleaseCard' ) ) {
+		return \ManaCore\MusicWave\Core\Blocks\ReleaseCard::presentation_data( $release_id );
 	}
 
-	$title   = (string) get_the_title( $release_id );
-	$artists = wp_get_post_terms( $release_id, 'mw_artist', array( 'fields' => 'names' ) );
-	$artist  = is_array( $artists ) && ! empty( $artists ) ? implode( ', ', $artists ) : '';
-	$initial = function_exists( 'mb_substr' ) ? mb_substr( $title, 0, 1 ) : substr( $title, 0, 1 );
+	return array();
+}
 
-	return array(
-		'id'      => $release_id,
-		'link'    => $link,
-		'title'   => $title,
-		'artist'  => $artist,
-		'initial' => $initial,
-	);
+/**
+ * Render one release card with the shared MusicWave card markup.
+ *
+ * Thin wrapper around `ReleaseCard::render()` so the theme names the plugin
+ * class in exactly one place, and degrades to an empty string instead of a
+ * fatal should MusicWave Core ever be missing. Callers already treat an empty
+ * card as "skip".
+ *
+ * @param array<string, mixed> $item    Presentation data from musicwave_release_presentation_data().
+ * @param array<string, mixed> $options Card options; see ReleaseCard::render().
+ * @return string
+ */
+function musicwave_render_release_card( array $item, array $options ): string {
+	if ( ! class_exists( '\ManaCore\MusicWave\Core\Blocks\ReleaseCard' ) ) {
+		return '';
+	}
+
+	return \ManaCore\MusicWave\Core\Blocks\ReleaseCard::render( $item, $options );
 }
 
 /**
@@ -1463,7 +1591,12 @@ function musicwave_render_shelf_header( string $eyebrow, string $title, string $
 	}
 
 	$section_link_label = '' !== $section_link_label ? $section_link_label : __( 'مشاهده همه', 'musicwave' );
-	$link               = '' !== $section_url
+
+	if ( class_exists( '\ManaCore\MusicWave\Core\Blocks\SectionHeader' ) ) {
+		return \ManaCore\MusicWave\Core\Blocks\SectionHeader::shelf_header( $eyebrow, $title, $description, $section_url, $section_link_label );
+	}
+
+	$link = '' !== $section_url
 		? '<a class="mw-release-shelf__more" href="' . esc_url( $section_url ) . '">' . esc_html( $section_link_label ) . '<span aria-hidden="true">&rarr;</span></a>'
 		: '';
 
@@ -1500,7 +1633,9 @@ function musicwave_render_release_slider( array $attributes ): string {
 		return '';
 	}
 
-	$cards = array();
+	$cards    = array();
+	$size_key = isset( $attributes['imageSize'] ) ? sanitize_key( (string) $attributes['imageSize'] ) : 'medium';
+	$size_key = in_array( $size_key, array( 'small', 'medium', 'large' ), true ) ? $size_key : 'medium';
 	foreach ( $ids as $release_id ) {
 		$item = musicwave_release_presentation_data( absint( $release_id ) );
 		if ( empty( $item ) ) {
@@ -1857,7 +1992,7 @@ add_action( 'init', 'musicwave_register_lyrics_meta' );
  * Parse an LRC document into timed lines.
  *
  * @param string $raw LRC or plain lyrics.
- * @return array<int, array{time: float, text: string}>
+ * @return array<int, array{time: float, text: string, translation: string}>
  */
 function musicwave_parse_lrc( string $raw ): array {
 	$lines = array();
@@ -2231,41 +2366,46 @@ function musicwave_render_release_shelf( array $attributes ): string {
 		}
 
 		$release_id = (int) $item['id'];
-		$link       = (string) $item['link'];
-		$card_title = (string) $item['title'];
-		$artist     = (string) $item['artist'];
 		$is_first   = $idx < 2;
-		$thumbnail  = get_the_post_thumbnail(
-			$release_id,
-			'medium_large',
-			array(
-				'class'         => 'mw-release-shelf__image',
-				'alt'           => '',
-				'loading'       => $is_first ? 'eager' : 'lazy',
-				'fetchpriority' => $is_first ? 'high' : 'low',
-				'decoding'      => 'async',
-			)
-		);
-		$initial    = (string) $item['initial'];
-		/* translators: %s: music release title. */
-		$open_label  = sprintf( __( 'باز کردن %s', 'musicwave' ), $card_title );
+
+		// The shelf always shows a play affordance when asked for one, so the
+		// filtered button falls back to a decorative glyph.
 		$play_button = '';
 		if ( $show_play ) {
 			$play_button = apply_filters( 'music_wave_card_play_button', '', $release_id, 'mw-release-shelf__play' );
 			$play_button = is_string( $play_button ) && '' !== $play_button ? $play_button : '<span class="mw-release-shelf__play" aria-hidden="true">&#9654;</span>';
 		}
-		$art            = $show_artwork
-			? '<div class="mw-release-shelf__artwrap"><a class="mw-release-shelf__art mw-release-shelf__art--' . esc_attr( $shape ) . '" href="' . esc_url( $link ) . '" aria-label="' . esc_attr( $open_label ) . '">' . ( '' !== $thumbnail ? $thumbnail : '<span class="mw-release-shelf__placeholder" aria-hidden="true">' . esc_html( $initial ) . '</span>' ) . '</a>' . $play_button . '</div>'
+
+		$date_markup = ! empty( $attributes['showDate'] )
+			? '<time datetime="' . esc_attr( get_the_date( 'c', $release_id ) ) . '">' . esc_html( get_the_date( '', $release_id ) ) . '</time>'
 			: '';
-		$artist_markup  = ( ! isset( $attributes['showArtist'] ) || false !== $attributes['showArtist'] ) && '' !== $artist ? '<span class="mw-release-shelf__artist">' . esc_html( $artist ) . '</span>' : '';
-		$date_markup    = ! empty( $attributes['showDate'] ) ? '<time datetime="' . esc_attr( get_the_date( 'c', $release_id ) ) . '">' . esc_html( get_the_date( '', $release_id ) ) . '</time>' : '';
-		$excerpt_markup = '';
-		if ( ! empty( $attributes['showExcerpt'] ) ) {
-			$excerpt        = get_the_excerpt( $release_id );
-			$excerpt_markup = '' !== $excerpt ? '<p>' . esc_html( wp_trim_words( $excerpt, 18 ) ) . '</p>' : '';
+
+		/* translators: %s: music release title. */
+		$open_label = sprintf( __( 'باز کردن %s', 'musicwave' ), (string) $item['title'] );
+
+		$card = musicwave_render_release_card(
+			$item,
+			array(
+				'shape'            => $shape,
+				'image_attributes' => array(
+					'loading'       => $is_first ? 'eager' : 'lazy',
+					'fetchpriority' => $is_first ? 'high' : 'low',
+					'decoding'      => 'async',
+				),
+				'open_label'       => $open_label,
+				'overlay'          => $play_button,
+				'show_artwork'     => $show_artwork,
+				'show_artist'      => ! isset( $attributes['showArtist'] ) || false !== $attributes['showArtist'],
+				'show_excerpt'     => ! empty( $attributes['showExcerpt'] ),
+				'show_action'      => ! isset( $attributes['showAction'] ) || false !== $attributes['showAction'],
+				'action_label'     => $action_label,
+				'meta_html'        => $date_markup,
+			)
+		);
+
+		if ( '' !== $card ) {
+			$cards[] = $card;
 		}
-		$action  = ! isset( $attributes['showAction'] ) || false !== $attributes['showAction'] ? '<a class="mw-release-shelf__action" href="' . esc_url( $link ) . '">' . esc_html( $action_label ) . '</a>' : '';
-		$cards[] = '<article class="mw-release-shelf__item">' . $art . '<div class="mw-release-shelf__body"><h3><a href="' . esc_url( $link ) . '">' . esc_html( $card_title ) . '</a></h3>' . $artist_markup . $date_markup . $excerpt_markup . $action . '</div></article>';
 	}
 	if ( empty( $cards ) ) {
 		return '';

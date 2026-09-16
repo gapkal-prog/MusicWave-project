@@ -110,6 +110,21 @@
 5. **CSS**: BEM-style `mw-*` classes with `--modifier` variants, theme vars (`--mw-color-accent`, `--wp--preset--spacing--*`, `color-mix()`). Reuse shared shelf/layout classes across blocks instead of new ones.
 6. **Backward compatibility**: all changes additive; modifier classes appended only when non-default; optional trailing params on shared methods.
 7. **Settings harmony**: default sort / labels resolve through `Settings::get()` (option `music_wave_settings`, e.g. `archive_default_sort` normalized via `ReleaseArchiveQuery::normalize_sort()`).
+8. **Shared card markup**: the release shelf card lives in `Core\Blocks\ReleaseCard` and the shelf
+   header in `Core\Blocks\SectionHeader` — render through them, never re-inline `mw-release-shelf__artwrap`.
+   The block-architecture release card is the `mw-release-card mw-surface` / `__media` / `__overlay` /
+   `__body` structure: keep `music-wave/preview-button` inside `__overlay` (that selector is what makes it
+   an artwork affordance) and `music-wave/release-meta` a direct child of `__body` (`.mw-release-meta--compact`
+   is pinned with `margin:auto 0 0`). `patterns/release-card.php` must stay byte-identical to the card in
+   `templates/search.html`; `tests/template-integrity.php` asserts all of this.
+9. **Two rendering lanes, never mixed**: a block either renders itself in PHP (leaf block,
+   `render_callback`, ServerSideRender preview) or stores itself from JavaScript (static container,
+   `save()` + InnerBlocks). Dynamic blocks register through `musicwave_register_presentation_blocks()`
+   with a `'dir' =>` + callback entry and a hidden `musicwave/*` alias; static blocks register through
+   `musicwave_register_static_blocks()` from block.json with no callback and no alias. Stored content
+   must keep dynamic blocks self-closing and static containers correctly paired — classified from the
+   registration site, never from an exception list. `tests/editor-lanes.js` (runtime) and
+   `tests/template-integrity.php` (structural) enforce both lanes.
 
 ## 2.4 Phase 0 — Quality Debt Cleanup (DONE 2026-08-16)
 
@@ -243,3 +258,104 @@ tools/check-templates.php`, `php tools/check-site-editor.php`, `php
 tools/check-script-translations.php`, `php tools/check-syntax.php`,
 `npm run lint:js`, plus regenerated `.pot` / `en_US.po` / `.mo` / JED JSON
 catalogs.
+
+## 2.14 Composability — Stage B + Stage A (DONE 2026-09-14)
+
+Full design, evidence and decisions: `docs/composability-architecture.md` §7–§10.
+
+**Stage B (`bb18048`)** — extracted the two duplicated renderers into
+`Core\Blocks\ReleaseCard` (`presentation_data` / `initial` / `artwork` / `render`) and
+`Core\Blocks\SectionHeader` (`more_link` / `shelf_header`). All three PHP card producers
+(`ReleaseBlocks::related_card`, `ListeningBlocks::history_card`, the theme release-shelf loop) and
+both section-header producers now delegate; theme delegation is `class_exists`-guarded. The
+duplicated markup was *removed*, not shadowed: `mw_release` is registered only by
+`music-wave-core`, so the theme copy was unreachable without Core. `tests/card-markup.php` (30
+cases) proves byte-parity and has two negative controls proving it fails on drift.
+
+**Stage A** — one canonical release card on all five archive surfaces
+(`search`, `taxonomy-mw_artist`, `archive-mw_release`, `taxonomy-mw_genre`, `archive`), plus two new
+patterns: `musicwave/release-card` and `musicwave/release-grid` (native `core/query` composition).
+Patterns are inline-expanded into templates, never referenced via `wp:pattern`, so every card part
+stays selectable in the Site Editor. `taxonomy-mw_artist.html` was already canonical and untouched.
+
+Two findings that future work must not undo:
+
+* `showLibraryButton` is **inert on these cards**: `ReleaseBlocks.php:690` returns early in compact
+  mode, before the library/actions buttons at :708–715. All five cards use `compact:true`, so they
+  now all state `showLibraryButton:false` explicitly. The library action still lives on
+  `single-mw_release.html`. If compact mode ever grows actions, revisit this.
+* `archive.html` is the **generic** archive (`mw-generic-archive`, `query.inherit:true`, renders any
+  post type): it composes `__media` + `__body` only. Do not add an overlay there — an empty
+  `.mw-release-card__overlay` still paints its hover gradient (catalog.css:1049) — and do not add
+  `music-wave/release-meta` or `moreText:"مشاهده انتشار"` ("view release"), which would mislabel
+  regular posts.
+
+Deferred follow-ups (known, deliberate, not regressions): pagination drift (`search` uses
+`mw-catalog-pagination` + `flexWrap`, the other four a bare pagination). The pot/po/mo pass and the
+phpcs/security work on `functions.php` / `inc/nav-icons.php` / `inc/site-header.php` landed in the
+final quality pass (see §2.15). Stage C is not started.
+
+Environment note: the verification sandbox has no PHP binary. Gates are run through WebAssembly PHP
+with a from-source WPCS toolchain, which **swallows exit codes** — judge every gate on its output
+text, never on `$?`. `tools/check-syntax.php` (needs `exec`) and phpstan (blocked release asset)
+cannot run there; `composer check:phpstan` must still be run in CI. See
+`docs/composability-architecture.md` §10.4.
+
+## 2.15 Composability — Stage D (DONE 2026-09-14)
+
+`music-wave/section-head` shipped as the project's only static InnerBlocks block. Design, evidence
+and the correction to the plan's flat-template sketch: `docs/composability-architecture.md` §10.5.
+
+Files: `musicwave/blocks/section-head/block.json` (no attributes, no render/editor script),
+`musicwave/functions.php` (`musicwave_static_block_dirs()`, `musicwave_register_static_blocks()`,
+`musicwave_section_head_styles()`, `musicwave_block_metadata_entry()`, the `musicwaveStaticBlocks`
+localization), `musicwave/assets/editor-blocks.js` (second registration lane + `translatedMetadata()`),
+`musicwave/assets/css/components/editorial.css` (`is-style-*` twins for the three modifiers),
+`musicwave/theme.json` (per-block settings), `musicwave/patterns/section-heading.php` (docblock
+cross-reference only), `tests/editor-lanes.js` + `tests/e2e/section-head.spec.js`, and the amended
+pairing rule in `tests/template-integrity.php`.
+
+Things future work must not undo:
+
+* The seeded InnerBlocks template wraps its three lines in a `core/group` with
+  `className: mw-section-head__text`. That group is load-bearing: `.mw-section-head` is a flex row,
+  so flat children would sit side by side. `patterns/vinyl-record-shelf.php` composes the same
+  structure by hand and must keep matching it.
+* `templateLock: false` is the feature. Locking it would turn the block back into a fixed header.
+* Supports deliberately exclude `color.text`, `typography` and `spacing.blockGap`: each would be a
+  dead control because `editorial.css` sets those properties on `h2`/`p` and on the shell's own
+  `gap`. Children carry their own working controls. The exclusions are asserted with reasons.
+* The static lane must never gain a ServerSideRender preview and the dynamic lane must never gain
+  InnerBlocks. Both directions are asserted; a second JS rendering path for PHP blocks is exactly the
+  duplication this architecture exists to prevent.
+* `musicwave/section-heading` (the pattern) stays. It is a different tool: plain core blocks for a
+  one-off text heading, no component shell. Do not "consolidate" the two without a product decision.
+
+New gates: `npm run test:editor-lanes` (runs the real editor script against a stubbed `wp.*`) and
+`tests/e2e/section-head.spec.js` (needs the staging install: seeded
+structure, child editability and move controls, a Styles-panel look reaching the frontend, block
+validation on reload, inserter coexistence).
+
+**One push-blocked change to apply by hand.** The coding agent's GitHub App token cannot write
+`.github/workflows/*` (`refusing to allow a GitHub App to create or update workflow ... without
+workflows permission`), so the npm script shipped but its CI step did not. Add this to the
+`javascript` job in `.github/workflows/quality.yml`, directly after `- run: npm run lint:js`:
+
+```yaml
+      # Executes the real musicwave/assets/editor-blocks.js against a stubbed
+      # wp.* and asserts what each registration lane does at runtime: the
+      # PHP-rendered blocks keep their ServerSideRender preview and store
+      # nothing, the static container keeps an unlocked InnerBlocks template and
+      # stores its own markup. Dependency-free, so no WordPress needed.
+      - run: npm run test:editor-lanes
+```
+
+Optionally rename that job to `JavaScript lint + editor lanes`. Until it lands, the gate still runs
+locally with `npm run test:editor-lanes`; nothing else depends on the workflow edit.
+
+Deferred, unchanged: Stage C and its trigger criteria (§8 of the composability plan). The final
+quality pass regenerated `.pot` / `en_US.po` / `.mo` / JED JSON (Stage A + D strings included;
+stale extra msgids kept), ran `npm run lint:js` to zero, and brought `functions.php`,
+`inc/nav-icons.php`, and `inc/site-header.php` to 0 PHPCS errors under `phpcs.xml` without sniff
+suppression. Site Editor E2E and PHPStan remain environment-limited where Docker / phpstan.phar
+are absent.

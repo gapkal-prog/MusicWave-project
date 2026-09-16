@@ -1,6 +1,7 @@
 /* Catalog filter toolbar rendered by music-wave/catalog-filters.
- * Markup: form.mw-catalog-filters > label>select* (taxonomies) +
- * .mw-catalog-suggest + label.mw-catalog-filters__sort>select + button/a. */
+ * Markup: form.mw-catalog-filters > .mw-catalog-suggest + label>select*
+ * (taxonomies) + label.mw-catalog-filters__sort>select +
+ * div.mw-catalog-filters__actions > button + a. */
 .mw-catalog-filters {
 	display: flex;
 	flex-wrap: wrap;
@@ -84,20 +85,77 @@
 	color: var(--mw-color-text);
 }
 
-/* Stacked layout: every control gets its own full-width row. */
-.mw-catalog-filters--stacked {
-	flex-direction: column;
-	align-items: stretch;
+/* The chevron is painted with background images, which have no logical
+ * equivalent, so it is mirrored explicitly for right-to-left locales. */
+html[dir="rtl"] .mw-catalog-filters select {
+	background-position: 1.15rem calc(50% + 0.1rem), 0.8rem calc(50% + 0.1rem);
 }
 
-.mw-catalog-filters--stacked > label,
-.mw-catalog-filters--stacked > button {
-	flex: 1 1 100%;
+/* Submit and reset travel as one unit so both looks can place them together:
+ * trailing in the toolbar, in a ruled footer in the stacked panel. */
+.mw-catalog-filters__actions {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: var(--wp--preset--spacing--20);
+	margin-inline-start: auto;
+}
+
+/* -------------------------------------------------------------------------
+ * Stacked variation
+ * A bordered filter panel instead of a toolbar: the search field leads on its
+ * own row, taxonomy and sort controls fill a responsive grid of squared,
+ * outlined fields, and the actions sit in a ruled footer. Every difference is
+ * structural, so the two looks stay distinguishable at any viewport width.
+ * ------------------------------------------------------------------------- */
+.mw-catalog-filters--stacked {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr));
+	gap: var(--wp--preset--spacing--30);
+	padding: var(--wp--preset--spacing--40);
+	background: var(--mw-color-surface);
+	border-block-start: 2px solid var(--mw-color-accent);
+	border-radius: var(--mw-radius-md);
+	box-shadow: var(--mw-shadow-sm);
+	backdrop-filter: none;
+	-webkit-backdrop-filter: none;
+}
+
+/* Search and the action footer always span the whole panel. */
+.mw-catalog-filters--stacked > .mw-catalog-suggest,
+.mw-catalog-filters--stacked > .mw-catalog-filters__actions {
+	grid-column: 1 / -1;
+}
+
+.mw-catalog-filters--stacked > label {
+	display: grid;
+	gap: 0.35rem;
+	min-width: 0;
+}
+
+.mw-catalog-filters--stacked input,
+.mw-catalog-filters--stacked select,
+.mw-catalog-filters--stacked button,
+.mw-catalog-filters--stacked a {
+	min-height: 3rem;
+	border-radius: var(--mw-radius-sm);
 }
 
 .mw-catalog-filters--stacked input,
 .mw-catalog-filters--stacked select {
 	width: 100%;
+	border-color: var(--mw-color-border-strong);
+}
+
+.mw-catalog-filters--stacked > .mw-catalog-filters__actions {
+	justify-content: space-between;
+	margin-inline-start: 0;
+	padding-block-start: var(--wp--preset--spacing--20);
+	border-block-start: 1px solid var(--mw-color-border);
+}
+
+.mw-catalog-filters--stacked > .mw-catalog-filters__actions button {
+	padding-inline: 1.75rem;
 }
 
 /* Instant filtering: dim the form while results load in place and run a
@@ -210,14 +268,31 @@ html[dir="rtl"] .mw-catalog-filters[data-mw-busy="true"]::after {
 }
 
 @media (max-width: 42rem) {
+	/* The toolbar drops to one column but keeps its compact, borderless
+	 * controls, so it never collapses into the stacked panel's look. */
 	.mw-catalog-filters > label,
-	.mw-catalog-filters > button {
+	.mw-catalog-filters > .mw-catalog-suggest,
+	.mw-catalog-filters__actions {
 		flex: 1 1 100%;
+	}
+
+	.mw-catalog-filters__actions {
+		justify-content: space-between;
+		margin-inline-start: 0;
 	}
 
 	.mw-catalog-filters input,
 	.mw-catalog-filters select {
 		width: 100%;
+	}
+
+	.mw-catalog-filters--stacked {
+		grid-template-columns: 1fr;
+		padding: var(--wp--preset--spacing--30);
+	}
+
+	.mw-catalog-filters--stacked > .mw-catalog-filters__actions button {
+		flex: 1 1 auto;
 	}
 
 	.mw-catalog-results {

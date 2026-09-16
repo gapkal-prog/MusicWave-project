@@ -194,6 +194,7 @@ $expected_theme_blocks = array(
 	'music-wave/theme-text',
 	'music-wave/theme-toggle',
 	'music-wave/synced-lyrics',
+	'music-wave/section-head',
 );
 $theme_block_names = array();
 foreach ( $theme_block_files as $theme_block_file ) {
@@ -225,7 +226,7 @@ mw_assert_same( 27, count( $core_names ), 'Core metadata inventory must contain 
 mw_assert_same( count( $core_names ), count( array_unique( $core_names ) ), 'Core metadata names must be unique.' );
 
 $theme_json_blocks = isset( $theme_json['settings']['blocks'] ) && is_array( $theme_json['settings']['blocks'] ) ? $theme_json['settings']['blocks'] : array();
-foreach ( array( 'music-wave/release-shelf', 'music-wave/release-slider', 'music-wave/theme-text', 'music-wave/theme-toggle', 'music-wave/synced-lyrics' ) as $theme_block_name ) {
+foreach ( array( 'music-wave/release-shelf', 'music-wave/release-slider', 'music-wave/theme-text', 'music-wave/theme-toggle', 'music-wave/synced-lyrics', 'music-wave/section-head' ) as $theme_block_name ) {
 	mw_assert_same( true, isset( $theme_json_blocks[ $theme_block_name ] ), 'theme.json settings must expose the canonical ' . $theme_block_name . ' block.' );
 }
 foreach ( array( 'musicwave/release-shelf', 'musicwave/release-slider', 'musicwave/theme-text', 'musicwave/theme-toggle' ) as $legacy_block_name ) {
@@ -268,6 +269,154 @@ foreach ( $sidebar_templates as $template_file ) {
 	}
 }
 
+/**
+ * Classify the MusicWave block comments stored in one piece of bundled content.
+ *
+ * Returns human-readable violations instead of asserting inline, so the very
+ * same rules can be exercised over real templates *and* over synthetic fixtures
+ * (a negative case cannot be asserted directly because mw_assert_same() exits).
+ *
+ * Which spelling is legitimate follows from how a block is registered, never
+ * from a per-block exception list:
+ *
+ *  - A block registered with a PHP `render_callback` renders its own markup
+ *    server-side, so stored inner HTML would be dead content shadowing the
+ *    renderer. Those comments must be self-closing.
+ *  - A block registered from block.json with no callback is a static container
+ *    whose children are real blocks, so it must open a properly paired
+ *    container; self-closing it would store no children at all.
+ *
+ * Nesting is still enforced by the balance walker further down this file, which
+ * is deliberately untouched: a paired container cannot smuggle in an unmatched
+ * delimiter.
+ *
+ * @param string             $content       Bundled template, part or pattern source.
+ * @param array<int, string> $dynamic_names Block names that render in PHP.
+ * @param array<int, string> $known_names   Every MusicWave block name the repository registers.
+ * @return array<int, string>
+ */
+function mw_musicwave_comment_violations( string $content, array $dynamic_names, array $known_names ): array {
+	$violations = array();
+
+	preg_match_all( '/<!--\s+wp:((?:music-wave|musicwave)\/[a-z0-9-]+)(.*?)-->/', $content, $matches, PREG_SET_ORDER );
+	foreach ( $matches as $match ) {
+		$name         = (string) $match[1];
+		$self_closing = '/' === substr( rtrim( (string) $match[2] ), -1 );
+
+		if ( ! in_array( $name, $known_names, true ) ) {
+			$violations[] = $name . ' is stored in bundled content but registered by neither Core nor the theme.';
+			continue;
+		}
+
+		if ( in_array( $name, $dynamic_names, true ) ) {
+			if ( ! $self_closing ) {
+				$violations[] = 'the dynamic block ' . $name . ' must be stored as a self-closing comment without fallback HTML.';
+			}
+			continue;
+		}
+
+		if ( $self_closing ) {
+			$violations[] = 'the child-bearing block ' . $name . ' must not be stored self-closing, or its inner blocks cannot be selected or edited.';
+			continue;
+		}
+
+		$opens  = preg_match_all( '/<!--\s+wp:' . preg_quote( $name, '/' ) . '\s/', $content );
+		$closes = preg_match_all( '/<!--\s+\/wp:' . preg_quote( $name, '/' ) . '\s*-->/', $content );
+		if ( $opens !== $closes ) {
+			$violations[] = 'the child-bearing block ' . $name . ' stores ' . $opens . ' opening and ' . $closes . ' closing comments.';
+		}
+	}
+
+	return $violations;
+}
+
+/*
+ * Stage D: derive the two lanes from the registration sites themselves.
+ *
+ * Every Core block is registered through BlockSupport::register_dynamic(), which
+ * always merges a render_callback over block.json, so each Core metadata name is
+ * dynamic. A theme dir is dynamic exactly when musicwave_register_presentation_blocks()
+ * maps it with a 'dir' => ... entry beside a callback (plus its hidden
+ * musicwave/* alias); every other bundled theme block.json is a static container.
+ */
+$mw_dynamic_theme_dirs = array();
+preg_match_all( "/'dir'\s*=>\s*'([a-z0-9-]+)'/", $functions_source, $mw_dynamic_dir_matches );
+$mw_dynamic_theme_dirs = array_values( array_unique( $mw_dynamic_dir_matches[1] ) );
+
+$mw_dynamic_block_names = $core_names;
+$mw_static_block_names  = array();
+$mw_derived_static_dirs = array();
+foreach ( $theme_block_files as $mw_theme_block_file ) {
+	$mw_theme_dir      = basename( dirname( $mw_theme_block_file ) );
+	$mw_theme_metadata = json_decode( (string) file_get_contents( $mw_theme_block_file ), true );
+	$mw_theme_name     = is_array( $mw_theme_metadata ) && isset( $mw_theme_metadata['name'] ) ? (string) $mw_theme_metadata['name'] : '';
+	if ( '' === $mw_theme_name ) {
+		continue;
+	}
+
+	if ( in_array( $mw_theme_dir, $mw_dynamic_theme_dirs, true ) ) {
+		$mw_dynamic_block_names[] = $mw_theme_name;
+		$mw_dynamic_block_names[] = 'musicwave/' . $mw_theme_dir;
+		continue;
+	}
+
+	$mw_static_block_names[]  = $mw_theme_name;
+	$mw_derived_static_dirs[] = $mw_theme_dir;
+}
+$mw_dynamic_block_names = array_values( array_unique( $mw_dynamic_block_names ) );
+$mw_known_block_names   = array_values( array_unique( array_merge( $mw_dynamic_block_names, $mw_static_block_names ) ) );
+
+// The static registration list must cover exactly the dirs derived above: a new
+// child-bearing block.json that nobody registers would otherwise ship silently
+// unregistered, and a listed dir without metadata would fatal the editor.
+preg_match( '/function musicwave_static_block_dirs\(\)\s*:\s*array\s*\{(.*?)\n\}/s', $functions_source, $mw_static_list_match );
+mw_assert_same( true, isset( $mw_static_list_match[1] ), 'functions.php must declare musicwave_static_block_dirs() as the static-block registration list.' );
+preg_match_all( "/'([a-z0-9-]+)'/", isset( $mw_static_list_match[1] ) ? (string) $mw_static_list_match[1] : '', $mw_static_list_matches );
+$mw_registered_static_dirs = array_values( array_unique( $mw_static_list_matches[1] ) );
+sort( $mw_registered_static_dirs );
+sort( $mw_derived_static_dirs );
+mw_assert_same(
+	$mw_derived_static_dirs,
+	$mw_registered_static_dirs,
+	'musicwave_static_block_dirs() must list exactly the theme blocks that ship block.json without a render callback.'
+);
+
+// Fixtures: the same classifier, proven to accept a correctly paired static
+// container and to reject each way the contract can be broken. The vinyl
+// pattern now stores a paired section-head (Stage E); the fixtures still
+// cover the negative cases bundled content cannot exercise.
+$mw_paired_static = '<!-- wp:music-wave/section-head {"align":"wide"} -->' . "\n"
+	. '<div class="wp-block-music-wave-section-head alignwide mw-section-head"><!-- wp:group {"className":"mw-section-head__text"} -->'
+	. '<div class="wp-block-group mw-section-head__text"><!-- wp:heading {"level":2} -->'
+	. '<h2 class="wp-block-heading">عنوان</h2>' . "\n" . '<!-- /wp:heading --></div>' . "\n" . '<!-- /wp:group --></div>' . "\n"
+	. '<!-- /wp:music-wave/section-head -->';
+mw_assert_same( array(), mw_musicwave_comment_violations( $mw_paired_static, $mw_dynamic_block_names, $mw_known_block_names ), 'A correctly paired static container must be accepted.' );
+mw_assert_same(
+	array(),
+	mw_musicwave_comment_violations( '<!-- wp:music-wave/release-meta {"compact":true} /-->', $mw_dynamic_block_names, $mw_known_block_names ),
+	'A self-closing dynamic leaf must still be accepted.'
+);
+mw_assert_same(
+	1,
+	count( mw_musicwave_comment_violations( '<!-- wp:music-wave/section-head /-->', $mw_dynamic_block_names, $mw_known_block_names ) ),
+	'A self-closing static container must be rejected: it stores no editable children.'
+);
+mw_assert_same(
+	1,
+	count( mw_musicwave_comment_violations( '<!-- wp:music-wave/release-shelf {"layout":"grid"} --><div>fallback</div><!-- /wp:music-wave/release-shelf -->', $mw_dynamic_block_names, $mw_known_block_names ) ),
+	'A dynamic block stored with fallback HTML must still be rejected.'
+);
+mw_assert_same(
+	1,
+	count( mw_musicwave_comment_violations( '<!-- wp:music-wave/section-head {"align":"wide"} -->', $mw_dynamic_block_names, $mw_known_block_names ) ),
+	'An unclosed static container must be rejected.'
+);
+mw_assert_same(
+	1,
+	count( mw_musicwave_comment_violations( '<!-- wp:music-wave/not-a-block /-->', $mw_dynamic_block_names, $mw_known_block_names ) ),
+	'A MusicWave block name nobody registers must be rejected.'
+);
+
 foreach ( $block_files as $block_file ) {
 	$content = (string) file_get_contents( $block_file );
 	$label   = basename( $block_file );
@@ -300,14 +449,11 @@ foreach ( $block_files as $block_file ) {
 		}
 	}
 
-	preg_match_all( '/<!--\s+wp:((?:music-wave|musicwave)\/[a-z0-9-]+)(.*?)-->/', $content, $dynamic_matches, PREG_SET_ORDER );
-	foreach ( $dynamic_matches as $dynamic_match ) {
-		mw_assert_same(
-			true,
-			'/' === substr( rtrim( $dynamic_match[2] ), -1 ),
-			$label . ' must store dynamic MusicWave blocks as self-closing comments without fallback HTML.'
-		);
-	}
+	mw_assert_same(
+		array(),
+		mw_musicwave_comment_violations( $content, $mw_dynamic_block_names, $mw_known_block_names ),
+		$label . ' must store MusicWave blocks the way they are registered: PHP-rendered blocks self-closing with no fallback HTML, static containers correctly paired.'
+	);
 
 	mw_assert_same( false, false !== strpos( $content, 'â' ), $label . ' must not contain mojibake sequences.' );
 	mw_assert_same( false, false !== strpos( $content, 'Ã' ), $label . ' must not contain mojibake sequences.' );
@@ -460,14 +606,145 @@ foreach ( array( '.mw-related-releases__section-header', '.mw-related-releases__
 }
 
 // Related rails reuse the MusicWave release shelf layout system so they stay
-// visually identical to the shelf block.
-foreach ( array( 'mw-release-shelf--', 'mw-release-shelf__items', 'mw-release-shelf__item', 'mw-release-shelf__art--' ) as $shelf_marker ) {
+// visually identical to the shelf block. The section chrome still lives in
+// ReleaseBlocks; the card itself is emitted by the shared ReleaseCard
+// renderer, so the card classes are asserted there instead.
+foreach ( array( 'mw-release-shelf--', 'mw-release-shelf__items' ) as $shelf_marker ) {
 	mw_assert_same(
 		true,
 		false !== strpos( $release_blocks_source, $shelf_marker ),
 		'Related releases must render with the release-shelf layout class ' . $shelf_marker . '.'
 	);
 }
+
+$release_card_source     = (string) file_get_contents( dirname( __DIR__ ) . '/music-wave-core/src/Blocks/ReleaseCard.php' );
+$listening_blocks_source = (string) file_get_contents( dirname( __DIR__ ) . '/music-wave-core/src/Blocks/ListeningBlocks.php' );
+foreach ( array( 'mw-release-shelf__item', 'mw-release-shelf__artwrap', 'mw-release-shelf__art--', 'mw-release-shelf__image', 'mw-release-shelf__placeholder', 'mw-release-shelf__artist', 'mw-release-shelf__body', 'mw-release-shelf__action' ) as $card_marker ) {
+	mw_assert_same(
+		true,
+		false !== strpos( $release_card_source, $card_marker ),
+		'The shared release card must render the shelf card class ' . $card_marker . '.'
+	);
+}
+
+// The card skeleton has exactly one home. Related releases, continue listening
+// and the theme shelf all delegate, so re-inlining the markup anywhere is a
+// regression: tests/card-markup.php pins the rendered bytes and these
+// assertions pin the delegation itself.
+foreach ( array( 'ReleaseBlocks.php' => $release_blocks_source, 'ListeningBlocks.php' => $listening_blocks_source ) as $producer_name => $producer_source ) {
+	mw_assert_same(
+		false,
+		false !== strpos( $producer_source, 'mw-release-shelf__artwrap' ),
+		$producer_name . ' must not re-inline the release card artwork; it must delegate to ReleaseCard.'
+	);
+	mw_assert_same(
+		true,
+		false !== strpos( $producer_source, 'ReleaseCard::render(' ) && false !== strpos( $producer_source, 'ReleaseCard::presentation_data(' ),
+		$producer_name . ' must build its cards through the shared ReleaseCard renderer.'
+	);
+}
+
+mw_assert_same(
+	true,
+	false !== strpos( $functions_source, 'ReleaseCard::presentation_data(' ) && false !== strpos( $functions_source, 'musicwave_render_release_card(' ),
+	'The theme release shelf must build its cards through the shared ReleaseCard renderer.'
+);
+
+// Stage A (docs/composability-architecture.md): one canonical release card.
+// Every release archive surface composes the same __media / __overlay / __body
+// structure so catalog.css styles them identically, and the preview button
+// lives inside the overlay - that selector is what turns it into an artwork
+// affordance instead of a loose button in the card flow.
+$mw_card_pattern_source = (string) file_get_contents( $theme_directory . '/patterns/release-card.php' );
+$mw_card_pattern_start  = strpos( $mw_card_pattern_source, '?>' );
+mw_assert_same( true, false !== $mw_card_pattern_start, 'release-card.php must be a PHP pattern file.' );
+$mw_canonical_card = trim( substr( $mw_card_pattern_source, (int) $mw_card_pattern_start + 2 ) );
+
+$mw_search_source = (string) file_get_contents( $theme_directory . '/templates/search.html' );
+$mw_search_card   = array();
+preg_match( '/<!-- wp:post-template.*?-->\n(.*?)\n<!-- \/wp:post-template -->/s', $mw_search_source, $mw_search_card );
+mw_assert_same(
+	isset( $mw_search_card[1] ) ? (string) $mw_search_card[1] : '',
+	$mw_canonical_card,
+	'The bundled release-card pattern must stay byte-identical to the search archive card, so the inserter and the templates cannot drift apart.'
+);
+
+mw_assert_same(
+	true,
+	in_array( 'musicwave/release-card', $registered_patterns, true ) && in_array( 'musicwave/release-grid', $registered_patterns, true ),
+	'The theme must register the canonical release-card and release-grid patterns.'
+);
+
+$mw_grid_pattern_source = (string) file_get_contents( $theme_directory . '/patterns/release-grid.php' );
+mw_assert_same(
+	true,
+	false !== strpos( $mw_grid_pattern_source, $mw_canonical_card ),
+	'The release-grid pattern must embed the same canonical card as the release-card pattern.'
+);
+mw_assert_same(
+	true,
+	false !== strpos( $mw_grid_pattern_source, '<!-- wp:query ' ) && false !== strpos( $mw_grid_pattern_source, '<!-- wp:post-template ' ) && false !== strpos( $mw_grid_pattern_source, '<!-- wp:query-no-results -->' ),
+	'The release-grid pattern must compose a native Query Loop with an empty state.'
+);
+
+// The shared card prefix (root group + media + overlay) is derived from the
+// canonical markup instead of being restated here, so this assertion cannot
+// disagree with the pattern it guards.
+$mw_body_marker   = '<!-- wp:group {"className":"mw-release-card__body"';
+$mw_body_position = strpos( $mw_canonical_card, $mw_body_marker );
+mw_assert_same( true, false !== $mw_body_position, 'The canonical card must have a body group.' );
+$mw_canonical_media = substr( $mw_canonical_card, 0, (int) $mw_body_position );
+
+foreach ( array( 'archive-mw_release.html', 'search.html', 'taxonomy-mw_artist.html', 'taxonomy-mw_genre.html' ) as $mw_release_template ) {
+	$mw_template_source = (string) file_get_contents( $theme_directory . '/templates/' . $mw_release_template );
+	$mw_template_card   = array();
+	preg_match( '/<!-- wp:post-template.*?-->\n(.*?)\n<!-- \/wp:post-template -->/s', $mw_template_source, $mw_template_card );
+	$mw_card_markup = isset( $mw_template_card[1] ) ? (string) $mw_template_card[1] : '';
+
+	mw_assert_same(
+		true,
+		0 === strpos( $mw_card_markup, $mw_canonical_media ),
+		$mw_release_template . ' must compose the canonical card media group and preview overlay.'
+	);
+	mw_assert_same(
+		true,
+		false !== strpos( $mw_card_markup, $mw_body_marker ),
+		$mw_release_template . ' must compose the canonical card body group.'
+	);
+	mw_assert_same(
+		1,
+		substr_count( $mw_card_markup, 'wp:music-wave/preview-button' ),
+		$mw_release_template . ' must place exactly one preview button, inside the card overlay.'
+	);
+	mw_assert_same(
+		true,
+		false !== strpos( $mw_card_markup, 'wp:music-wave/release-meta' ),
+		$mw_release_template . ' must keep the compact release metadata in the card body.'
+	);
+}
+
+// archive.html is the generic archive: it inherits the main query and renders
+// any post type, so release-only blocks stay out and there is no overlay - an
+// empty overlay would still paint its hover gradient across the artwork.
+$mw_generic_source = (string) file_get_contents( $theme_directory . '/templates/archive.html' );
+$mw_generic_card   = array();
+preg_match( '/<!-- wp:post-template.*?-->\n(.*?)\n<!-- \/wp:post-template -->/s', $mw_generic_source, $mw_generic_card );
+$mw_generic_markup = isset( $mw_generic_card[1] ) ? (string) $mw_generic_card[1] : '';
+mw_assert_same(
+	true,
+	false !== strpos( $mw_generic_markup, 'mw-release-card__media' ) && false !== strpos( $mw_generic_markup, $mw_body_marker ),
+	'archive.html must compose the canonical card media and body groups.'
+);
+mw_assert_same(
+	false,
+	false !== strpos( $mw_generic_markup, 'mw-release-card__overlay' ),
+	'archive.html renders any post type, so it must not carry a preview overlay it has nothing to put in.'
+);
+mw_assert_same(
+	false,
+	false !== strpos( $mw_generic_markup, 'wp:music-wave/' ),
+	'archive.html renders any post type, so it must not embed release-only MusicWave blocks.'
+);
 
 $access_css = (string) file_get_contents( $theme_directory . '/assets/css/components/access.css' );
 mw_assert_same(
@@ -842,6 +1119,389 @@ foreach ( array( 'playlistOrderBy', 'playlistSearch', "'playlists'" ) as $shelf_
 	);
 }
 
+/*
+ * Stage D — music-wave/section-head, the single deliberate InnerBlocks block.
+ *
+ * The contracts below hold the two rendering lanes apart: a block either renders
+ * itself in PHP (leaf + ServerSideRender preview) or stores itself from JS
+ * (static container + InnerBlocks), never both. Every assertion names the
+ * failure mode it prevents rather than restating the implementation.
+ */
+$mw_section_head_file     = $theme_directory . '/blocks/section-head/block.json';
+$mw_section_head_metadata = json_decode( (string) file_get_contents( $mw_section_head_file ), true );
+mw_assert_same( true, is_array( $mw_section_head_metadata ), 'blocks/section-head/block.json must contain valid JSON.' );
+mw_assert_same(
+	'music-wave/section-head',
+	isset( $mw_section_head_metadata['name'] ) ? (string) $mw_section_head_metadata['name'] : '',
+	'The static section head must use the canonical music-wave/* namespace.'
+);
+
+// No PHP renderer and no second script: the block stores its markup from save().
+foreach ( array( 'render', 'render_callback', 'script', 'editorScript', 'viewScript', 'usesContext' ) as $mw_forbidden_key ) {
+	mw_assert_same(
+		false,
+		is_array( $mw_section_head_metadata ) && isset( $mw_section_head_metadata[ $mw_forbidden_key ] ),
+		'section-head block.json must not declare ' . $mw_forbidden_key . ': a static container stores its own markup, so a renderer or extra script would open a second rendering path.'
+	);
+}
+mw_assert_same(
+	array(),
+	is_array( $mw_section_head_metadata ) && isset( $mw_section_head_metadata['attributes'] ) ? $mw_section_head_metadata['attributes'] : null,
+	'The section-head pilot must stay attribute-free: every value lives in a real child block, which is what removes the 22-attribute duplication instead of moving it.'
+);
+mw_assert_same(
+	false,
+	is_array( $mw_section_head_metadata ) && isset( $mw_section_head_metadata['supports']['inserter'] ),
+	'The section-head block must stay visible in the inserter alongside the section-heading pattern.'
+);
+
+$mw_section_supports = is_array( $mw_section_head_metadata ) && isset( $mw_section_head_metadata['supports'] ) ? (array) $mw_section_head_metadata['supports'] : array();
+mw_assert_same( array( 'wide', 'full' ), isset( $mw_section_supports['align'] ) ? $mw_section_supports['align'] : null, 'The section head must support the wide and full alignments the editorial headers use.' );
+mw_assert_same( true, isset( $mw_section_supports['anchor'] ) ? $mw_section_supports['anchor'] : null, 'The section head must expose an HTML anchor so sections can be linked.' );
+mw_assert_same( false, isset( $mw_section_supports['html'] ) ? $mw_section_supports['html'] : null, 'A container whose children are real blocks must not offer "Edit as HTML".' );
+mw_assert_same( true, isset( $mw_section_supports['color']['background'] ) ? $mw_section_supports['color']['background'] : null, 'The section head must accept a background so the inverted look has something to sit on.' );
+mw_assert_same(
+	false,
+	isset( $mw_section_supports['color']['text'] ) ? $mw_section_supports['color']['text'] : null,
+	'A root text colour must stay off: editorial.css sets .mw-section-head h2 and p colours, so the control would be dead. Children carry their own colour controls.'
+);
+mw_assert_same(
+	false,
+	isset( $mw_section_supports['spacing']['blockGap'] ) ? $mw_section_supports['spacing']['blockGap'] : null,
+	'blockGap must stay off: .mw-section-head sets its own flex gap, so the control would be dead.'
+);
+
+// The seeded structure is the one editorial.css actually styles: the __text
+// group stacks eyebrow/title/description, while the shell itself is a flex row
+// that expects extra siblings such as __rule.
+$mw_section_example = is_array( $mw_section_head_metadata ) && isset( $mw_section_head_metadata['example'] ) ? (array) $mw_section_head_metadata['example'] : array();
+$mw_example_group   = isset( $mw_section_example['innerBlocks'][0] ) ? (array) $mw_section_example['innerBlocks'][0] : array();
+mw_assert_same( 'core/group', isset( $mw_example_group['name'] ) ? (string) $mw_example_group['name'] : '', 'The section-head example must seed a real core/group child, not a wrapper the block owns.' );
+mw_assert_same(
+	'mw-section-head__text',
+	isset( $mw_example_group['attributes']['className'] ) ? (string) $mw_example_group['attributes']['className'] : '',
+	'The seeded text group must carry mw-section-head__text, the only element that stacks the header lines vertically.'
+);
+$mw_example_children = array();
+foreach ( isset( $mw_example_group['innerBlocks'] ) && is_array( $mw_example_group['innerBlocks'] ) ? $mw_example_group['innerBlocks'] : array() as $mw_example_child ) {
+	$mw_example_children[] = isset( $mw_example_child['name'] ) ? (string) $mw_example_child['name'] : '';
+}
+mw_assert_same(
+	array( 'core/paragraph', 'core/heading', 'core/paragraph' ),
+	$mw_example_children,
+	'The section-head example must seed eyebrow, level-2 title and description, matching the PHP shelf header order.'
+);
+mw_assert_same(
+	'mw-eyebrow',
+	isset( $mw_example_group['innerBlocks'][0]['attributes']['className'] ) ? (string) $mw_example_group['innerBlocks'][0]['attributes']['className'] : '',
+	'The seeded eyebrow must carry mw-eyebrow so it renders as the editorial kicker.'
+);
+mw_assert_same(
+	2,
+	isset( $mw_example_group['innerBlocks'][1]['attributes']['level'] ) ? (int) $mw_example_group['innerBlocks'][1]['attributes']['level'] : 0,
+	'The seeded title must be a level-2 heading, the level .mw-section-head h2 styles.'
+);
+
+// Registration: static blocks are registered from block.json with no callback
+// and no legacy alias, on the same init hook as the dynamic lane.
+preg_match( '/function musicwave_register_static_blocks\(\)\s*:\s*void\s*\{(.*?)\n\}/s', $functions_source, $mw_static_register_match );
+mw_assert_same( true, isset( $mw_static_register_match[1] ), 'functions.php must declare musicwave_register_static_blocks().' );
+$mw_static_register_body = isset( $mw_static_register_match[1] ) ? (string) $mw_static_register_match[1] : '';
+mw_assert_same( true, false !== strpos( $mw_static_register_body, 'register_block_type( $path )' ), 'Static blocks must be registered straight from their block.json directory.' );
+mw_assert_same( false, false !== strpos( $mw_static_register_body, 'render_callback' ), 'The static lane must not attach a render callback.' );
+mw_assert_same(
+	false,
+	false !== strpos( $mw_static_register_body, 'musicwave_register_legacy_presentation_block' ),
+	'The static lane must not register a legacy musicwave/* alias: no content was ever saved under another name.'
+);
+mw_assert_same(
+	true,
+	false !== strpos( $functions_source, "add_action( 'init', 'musicwave_register_static_blocks' )" ),
+	'Static blocks must register on init beside the dynamic presentation blocks.'
+);
+mw_assert_same(
+	true,
+	substr_count( $functions_source, 'musicwave_block_metadata_entry(' ) >= 3,
+	'Both editor lanes must build their client metadata through the one musicwave_block_metadata_entry() helper.'
+);
+mw_assert_same(
+	true,
+	false !== strpos( $functions_source, "'musicwaveStaticBlocks'" ) && false !== strpos( $theme_editor_script, 'window.musicwaveStaticBlocks' ),
+	'The static lane must be localized to the editor script under its own key.'
+);
+
+// Editor JS: the lanes must not borrow each other's rendering strategy. The
+// static lane ends at the IIFE invocation, whose argument list names every
+// dependency regardless of which lane uses it.
+$mw_static_lane_start = strpos( $theme_editor_script, 'var sectionHeadTemplate' );
+mw_assert_same( true, false !== $mw_static_lane_start, 'editor-blocks.js must register the static child-bearing lane.' );
+$mw_static_lane_end = strpos( $theme_editor_script, '} )(', (int) $mw_static_lane_start );
+mw_assert_same( true, false !== $mw_static_lane_end, 'editor-blocks.js must keep its single IIFE invocation after the registration lanes.' );
+$mw_dynamic_lane = substr( $theme_editor_script, 0, (int) $mw_static_lane_start );
+$mw_static_lane  = substr( $theme_editor_script, (int) $mw_static_lane_start, (int) $mw_static_lane_end - (int) $mw_static_lane_start );
+mw_assert_same(
+	false,
+	false !== strpos( $mw_dynamic_lane, 'blockEditor.InnerBlocks' ),
+	'The PHP-rendered lane must stay free of InnerBlocks: those blocks build their chrome from attributes in PHP, so a JS container would duplicate it.'
+);
+mw_assert_same(
+	false,
+	false !== strpos( $mw_static_lane, 'createElement( serverSideRender' ),
+	'The static lane must not use ServerSideRender: its children are real blocks, so a REST preview would add a second rendering path.'
+);
+foreach ( array( 'blockEditor.useBlockProps(', 'blockEditor.useBlockProps.save(', 'blockEditor.InnerBlocks.Content', 'templateLock: false', "className: 'mw-section-head'", "className: 'mw-section-head__text'", "className: 'mw-eyebrow'", 'level: 2' ) as $mw_static_hook ) {
+	mw_assert_same(
+		true,
+		false !== strpos( $mw_static_lane, $mw_static_hook ),
+		'The static section-head registration must use ' . $mw_static_hook . '.'
+	);
+}
+mw_assert_same(
+	true,
+	substr_count( $theme_editor_script, 'translatedMetadata( block )' ) >= 2,
+	'Both editor lanes must translate block.json metadata through the one translatedMetadata() helper.'
+);
+
+// Block styles ↔ stylesheet: the Styles panel writes is-style-<slug>, PHP headers
+// keep the BEM modifier, and editorial.css must carry one declaration set for
+// both spellings so a stored header and a rendered header cannot drift.
+preg_match( '/function musicwave_section_head_styles\(\)\s*:\s*array\s*\{(.*?)\n\}/s', $functions_source, $mw_section_style_match );
+mw_assert_same( true, isset( $mw_section_style_match[1] ), 'functions.php must declare musicwave_section_head_styles().' );
+preg_match_all( "/'([a-z-]+)'\s*=>\s*__\(/", isset( $mw_section_style_match[1] ) ? (string) $mw_section_style_match[1] : '', $mw_section_style_slugs );
+mw_assert_same(
+	array( 'center', 'stack', 'invert' ),
+	isset( $mw_section_style_slugs[1] ) ? $mw_section_style_slugs[1] : array(),
+	'The section head must offer the three editorial modifiers editorial.css ships, each with a translatable label.'
+);
+mw_assert_same(
+	true,
+	false !== strpos( $functions_source, 'foreach ( musicwave_section_head_styles() as $style_name => $style_label )' )
+		&& false !== strpos( $functions_source, "'music-wave/section-head'," ),
+	'Every section-head look must be registered as a block style on music-wave/section-head.'
+);
+
+$mw_editorial_css = (string) file_get_contents( $theme_directory . '/assets/css/components/editorial.css' );
+// Each needle is anchored to a rule start: an unanchored selector also matches
+// the descendant rules (.mw-section-head--center .mw-section-head__rule {), so
+// deleting a component rule would otherwise go unnoticed.
+foreach ( array( '.mw-section-head {', '.mw-section-head__text {', '.mw-section-head__rule {', '.mw-section-head h2 {', '.mw-section-head p {' ) as $mw_head_selector ) {
+	mw_assert_same(
+		true,
+		false !== strpos( $mw_editorial_css, "\n" . $mw_head_selector ),
+		'editorial.css must keep the section-head declaration block ' . $mw_head_selector . '.'
+	);
+}
+foreach ( $mw_section_style_slugs[1] as $mw_section_slug ) {
+	/*
+	 * Count both spellings rather than merely looking for them: every BEM
+	 * modifier rule needs an is-style twin, otherwise the look a PHP-rendered
+	 * header gets would silently differ from the look the Styles panel applies
+	 * to a stored container.
+	 */
+	$mw_bem_rules   = substr_count( $mw_editorial_css, '.mw-section-head--' . $mw_section_slug );
+	$mw_style_rules = substr_count( $mw_editorial_css, '.mw-section-head.is-style-' . $mw_section_slug );
+	mw_assert_same( true, $mw_bem_rules > 0, 'editorial.css must keep the BEM modifier mw-section-head--' . $mw_section_slug . '.' );
+	mw_assert_same(
+		$mw_bem_rules,
+		$mw_style_rules,
+		'editorial.css must give every mw-section-head--' . $mw_section_slug . ' rule an is-style-' . $mw_section_slug . ' twin, so the Styles panel and PHP headers share one declaration set.'
+	);
+}
+
+// Coexistence: the shipped section-heading pattern stays exactly as it was and
+// both inserter entries must say how they differ.
+$mw_heading_pattern = (string) file_get_contents( $theme_directory . '/patterns/section-heading.php' );
+mw_assert_same( true, in_array( 'musicwave/section-heading', $registered_patterns, true ), 'The existing section-heading pattern must stay registered.' );
+mw_assert_same(
+	false,
+	false !== strpos( $mw_heading_pattern, 'wp:music-wave/section-head' ),
+	'The section-heading pattern must keep composing core blocks: converting it would replace a shipped pattern instead of coexisting with the new block.'
+);
+mw_assert_same(
+	true,
+	false !== strpos( $mw_heading_pattern, '<!-- wp:group' )
+		&& false !== strpos( $mw_heading_pattern, '<!-- wp:heading' )
+		&& false !== strpos( $mw_heading_pattern, '<!-- wp:paragraph' )
+		&& false !== strpos( $mw_heading_pattern, 'Inserter: true' )
+		&& false !== strpos( $mw_heading_pattern, 'Block Types: core/group, core/heading, core/paragraph' ),
+	'The section-heading pattern must stay an inserter-visible composition of core blocks.'
+);
+mw_assert_same(
+	true,
+	false !== strpos( $mw_heading_pattern, 'music-wave/section-head' ),
+	'The section-heading pattern must document how it differs from the section-head block.'
+);
+
+// Stage E: vinyl is a pattern, not a new InnerBlocks parent. Its header is
+// the static section-head; the vinyl shelf stays a self-closing PHP renderer
+// with empty header attributes so the canvas heading is the only one.
+$mw_vinyl_pattern = (string) file_get_contents( $theme_directory . '/patterns/vinyl-record-shelf.php' );
+mw_assert_same(
+	true,
+	false !== strpos( $mw_vinyl_pattern, '<!-- wp:music-wave/section-head' )
+		&& false !== strpos( $mw_vinyl_pattern, '<!-- /wp:music-wave/section-head -->' )
+		&& false !== strpos( $mw_vinyl_pattern, 'wp-block-music-wave-section-head alignwide mw-section-head' ),
+	'The vinyl pattern must pair music-wave/section-head with the same save shell the static lane writes.'
+);
+mw_assert_same(
+	false,
+	false !== strpos( $mw_vinyl_pattern, 'wp:group {"align":"wide","className":"mw-section-head"' ),
+	'The vinyl pattern must not wrap its header in core/group.mw-section-head once section-head exists.'
+);
+mw_assert_same(
+	true,
+	false !== strpos( $mw_vinyl_pattern, '"eyebrow":""' )
+		&& false !== strpos( $mw_vinyl_pattern, '"title":""' )
+		&& false !== strpos( $mw_vinyl_pattern, 'is-style-vinyl' )
+		&& 1 === substr_count( $mw_vinyl_pattern, 'wp:music-wave/release-shelf' ),
+	'The vinyl shelf must stay a self-closing PHP renderer with empty header attrs and the vinyl look.'
+);
+mw_assert_same(
+	false,
+	false !== strpos( $functions_source, 'mw-vinyl-shelf' ),
+	'Do not reintroduce a vinyl wrapper class that is not in the live pattern.'
+);
+
+// Empty PHP headers: fill one-insert copy only when the editor already set
+// eyebrow or title, so a canvas section-head can sit above without a second
+// heading. The playlist more-link auto-URL is gated the same way.
+mw_assert_same(
+	true,
+	substr_count( $functions_source, "'' !== \$eyebrow || '' !== \$title" ) >= 3,
+	'Slider, playlist copy, and playlist auto-URL must all gate on eyebrow-or-title being set.'
+);
+mw_assert_same(
+	true,
+	false !== strpos( $release_blocks_source, "'' !== \$heading ? '<h2>'" )
+		&& false !== strpos( $release_blocks_source, "'' !== \$heading_html || '' !== \$more" ),
+	'Related-releases must skip an empty h2 and omit the section-header wrapper when heading and more are both empty.'
+);
+
+mw_assert_same(
+	true,
+	false !== strpos( $theme_editor_script, 'بالای اسلایدر قرار دهید' )
+		&& false !== strpos( $theme_editor_script, 'بالای ویترین قرار دهید' ),
+	'Shelf and slider heading fields must tell editors to leave them empty and use section-head on the canvas.'
+);
+
+mw_assert_same(
+	true,
+	false !== strpos( $editor_script, "'showLibraryButton'" )
+		&& false !== strpos( $editor_script, "'showActions'" )
+		&& false !== strpos( $editor_script, "'showTaxonomyChips'" )
+		&& false !== strpos( $editor_script, 'props.attributes.compact &&' ),
+	'Compact release-meta must hide the library, actions and taxonomy-chip toggles that have no effect on the compact <dl>.'
+);
+
+mw_assert_same(
+	true,
+	false !== strpos( $release_blocks_source, "'' !== \$same_artist_heading || '' !== \$similar_heading" )
+		&& false !== strpos( $release_blocks_source, 'Fill one-insert copy only when' ),
+	'Related-releases must fill default headings only when at least one heading attribute is already set.'
+);
+mw_assert_same(
+	true,
+	false !== strpos( $editor_script, 'هر دو عنوان را خالی بگذارید' )
+		&& false !== strpos( $editor_script, 'خالی بماند تا سربرگ این بخش چاپ نشود' ),
+	'Related-releases heading fields must tell editors to leave them empty and use section-head on the canvas.'
+);
+mw_assert_same(
+	true,
+	false !== strpos( $editor_script, "'music-wave/download-button' === blockName" )
+		&& false !== strpos( $editor_script, "'showHeading'" )
+		&& false !== strpos( $editor_script, "'showDescription'" )
+		&& false !== strpos( $editor_script, 'Compact download-button' ),
+	'Compact download-button must hide heading and description controls that have no effect on the inline action group.'
+);
+
+// Request-form: editorial chrome is core blocks on the existing __* classes;
+// the PHP block stays a self-closing form with heading/side off. POST/nonce
+// /honeypot never move to JavaScript, and the block is not InnerBlocks.
+$mw_request_cta = (string) file_get_contents( $theme_directory . '/patterns/request-cta.php' );
+$mw_request_form_php = (string) file_get_contents( dirname( __DIR__ ) . '/music-wave-core/src/Blocks/RequestFormBlock.php' );
+$mw_request_form_css = (string) file_get_contents( dirname( __DIR__ ) . '/music-wave-core/assets/request-form.css' );
+$mw_editor_canvas_css = (string) file_get_contents( dirname( __DIR__ ) . '/music-wave-core/assets/editor.css' );
+mw_assert_same(
+	true,
+	false !== strpos( $mw_request_cta, 'mw-request-form__header' )
+		&& false !== strpos( $mw_request_cta, 'mw-request-form__heading' )
+		&& false !== strpos( $mw_request_cta, 'mw-request-form__highlights' )
+		&& false !== strpos( $mw_request_cta, 'mw-request-form__steps' )
+		&& false !== strpos( $mw_request_cta, '"showHeading":false' )
+		&& false !== strpos( $mw_request_cta, '"showSteps":false' )
+		&& false !== strpos( $mw_request_cta, '"showHighlights":false' )
+		&& 1 === substr_count( $mw_request_cta, 'wp:music-wave/request-form' ),
+	'The request-cta pattern must compose canvas chrome around a self-closing form with PHP heading/side off.'
+);
+mw_assert_same(
+	false,
+	false !== strpos( $mw_request_form_php, 'InnerBlocks' ),
+	'RequestFormBlock must keep rendering the form in PHP; do not add InnerBlocks on the SSR form.'
+);
+mw_assert_same(
+	true,
+	false !== strpos( $mw_request_form_php, 'admin-post.php' )
+		&& false !== strpos( $mw_request_form_php, 'HONEYPOT' )
+		&& false !== strpos( $mw_request_form_php, 'wp_nonce_field' ),
+	'Request form POST, nonce and honeypot must stay in the PHP renderer.'
+);
+mw_assert_same(
+	true,
+	false !== strpos( $mw_request_form_css, '.mw-request-form .mw-request-form {' )
+		&& false !== strpos( $mw_request_form_css, 'ol.wp-block-list.mw-request-form__steps > li::before' ),
+	'Request-form CSS must flatten a nested PHP form and number core/list steps without touching the PHP ol.'
+);
+mw_assert_same(
+	true,
+	false !== strpos( $mw_editor_canvas_css, '.mw-block-editor-shell .mw-request-form__form' )
+		&& false === strpos( $mw_editor_canvas_css, '.mw-block-editor-shell > .wp-block-music-wave-request-form .mw-request-form__form' ),
+	'Canvas form lock must be a descendant selector so a composed wrapper still disables submit.'
+);
+mw_assert_same(
+	true,
+	false !== strpos( $editor_script, 'Request-form chrome copy is dead' )
+		&& false !== strpos( $editor_script, 'برای ویرایش روی بوم، سربرگ را خاموش کنید' ),
+	'Request-form inspector must hide chrome copy while show* is off and point editors at the canvas pattern.'
+);
+
+$mw_request_templates = array(
+	$theme_directory . '/templates/page-requests.html',
+	$theme_directory . '/templates/page-request-song.html',
+	$theme_directory . '/templates/page-request-collab.html',
+);
+foreach ( $mw_request_templates as $mw_request_template ) {
+	$mw_request_html = (string) file_get_contents( $mw_request_template );
+	mw_assert_same(
+		true,
+		false !== strpos( $mw_request_html, 'mw-request-form__heading' )
+			&& false !== strpos( $mw_request_html, '"showHeading":false' )
+			&& 1 === substr_count( $mw_request_html, 'wp:music-wave/request-form' ),
+		basename( $mw_request_template ) . ' must pair canvas request chrome with a single self-closing PHP form.'
+	);
+}
+
+
+mw_assert_same(
+	true,
+	is_array( $mw_section_head_metadata ) && false !== strpos( (string) $mw_section_head_metadata['description'], 'عنوان بخش' ),
+	'The section-head block description must point editors at the section-heading pattern for a plain text heading.'
+);
+
+// No PHP/SSR product block may be converted to make this pilot work.
+foreach ( array( 'ReleaseBlocks.php', 'PlaylistBlocks.php', 'ListeningBlocks.php' ) as $mw_ssr_block_file ) {
+	$mw_ssr_source = (string) file_get_contents( dirname( $theme_directory ) . '/music-wave-core/src/Blocks/' . $mw_ssr_block_file );
+	mw_assert_same(
+		false,
+		false !== strpos( $mw_ssr_source, 'InnerBlocks' ),
+		$mw_ssr_block_file . ' must keep rendering its product blocks in PHP; the InnerBlocks pilot must not spread to them.'
+	);
+}
+mw_assert_same(
+	false,
+	false !== strpos( (string) file_get_contents( dirname( $theme_directory ) . '/music-wave-core/assets/blocks.js' ), 'InnerBlocks' ),
+	'Core editor JS must not gain an InnerBlocks path for its ServerSideRender blocks.'
+);
+
 // The release shelf hero slider ("اسلایدر هیرو") is the reference-style
 // crossfading layout: a dedicated stylesheet, a self-initializing fade
 // engine, and the render-time script enqueue wired in functions.php.
@@ -1075,3 +1735,82 @@ foreach ( $core_variation_map as $core_style_block_name => $core_style_body ) {
 		);
 	}
 }
+
+/*
+ * Editor preview fidelity, style-variation identity, and the secure download
+ * label contract.
+ *
+ * Each of these is a regression a PHP-only test run cannot see: the preview
+ * context lives in the editor bundle, the variations live in the stylesheets,
+ * and the labels live in the rendered markup. The source contracts are
+ * asserted directly so the fixes stay fixed.
+ */
+
+// Query Loop: every row must preview against its own post.
+mw_assert_same(
+	true,
+	false !== strpos( $core_editor_script, 'urlQueryArgs' )
+		&& false !== strpos( $core_editor_script, 'post_id: contextPost.postId' ),
+	'The editor preview must send the contextual post to the block renderer so a Query Loop row renders its own release.'
+);
+mw_assert_same(
+	true,
+	false !== strpos( $core_editor_script, '! contextPost && options.length' ),
+	'The representative-release fallback must never apply while a contextual post exists.'
+);
+mw_assert_same(
+	true,
+	false !== strpos( $core_editor_script, 'if ( existing && ! blocks.getBlockType( block.name ) ) {' ),
+	'Re-registration must restore the server definition when the editor settings are rejected, so a block is never left unregistered inside a template.'
+);
+
+// Catalog filters: the stacked look must differ from the toolbar structurally.
+$catalog_filters_stylesheet = (string) file_get_contents( $theme_directory . '/assets/css/components/catalog-filters.css' );
+foreach ( array( 'grid-template-columns', '.mw-catalog-filters__actions', 'grid-column: 1 / -1' ) as $stacked_rule ) {
+	mw_assert_same(
+		true,
+		false !== strpos( $catalog_filters_stylesheet, $stacked_rule ),
+		'The stacked catalog-filters variation must ship the "' . $stacked_rule . '" rule that separates it from the inline toolbar.'
+	);
+}
+mw_assert_same(
+	true,
+	false !== strpos( $release_blocks_source, 'mw-catalog-filters__actions' ),
+	'The catalog filter renderer must group the submit and reset controls so both looks can place them as one unit.'
+);
+
+// Collection list: the tracklist look must be its own design, not a tweak.
+$vinyl_stylesheet = (string) file_get_contents( $theme_directory . '/assets/css/components/vinyl.css' );
+foreach ( array( '.mw-collection-list.mw-collection-list--tracklist {', 'border-block-end: 1px dotted' ) as $tracklist_rule ) {
+	mw_assert_same(
+		true,
+		false !== strpos( $vinyl_stylesheet, $tracklist_rule ),
+		'The tracklist variation must ship the "' . $tracklist_rule . '" rule.'
+	);
+}
+
+// Secure download: the labels are visible text, not only an accessible name.
+foreach ( array( 'mw-download-button__label', 'mw-secure-play-button__label' ) as $download_label_class ) {
+	mw_assert_same(
+		true,
+		false !== strpos( $release_blocks_source, $download_label_class ),
+		'The secure download renderer must print the ' . $download_label_class . ' as visible text.'
+	);
+	mw_assert_same(
+		true,
+		false !== strpos( $downloads_css, $download_label_class ),
+		'The theme must style the ' . $download_label_class . '.'
+	);
+}
+mw_assert_same(
+	true,
+	false !== strpos( $release_blocks_source, 'download_sign_in_markup' ),
+	'The loginLabel attribute must drive a sign-in prompt instead of being declared and ignored.'
+);
+
+$download_runtime = (string) file_get_contents( dirname( __DIR__ ) . '/music-wave-core/assets/download.js' );
+mw_assert_same(
+	true,
+	false !== strpos( $download_runtime, '.mw-secure-play-button__label' ),
+	'The download runtime must keep the visible play/pause label in step with the accessible name.'
+);
