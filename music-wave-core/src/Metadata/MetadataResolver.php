@@ -57,13 +57,16 @@ final class MetadataResolver {
 		}
 
 		$attempts = array();
+		$errors   = array();
 		foreach ( $this->enabled() as $provider ) {
 			$attempts[] = $provider->name();
 			try {
 				$results = $provider->search( $query );
 			} catch ( RateLimitException $e ) {
+				$errors[ $provider->name() ] = 'rate_limited';
 				continue; // Fall through to the next provider in the chain.
 			} catch ( \Throwable $e ) {
+				$errors[ $provider->name() ] = 'unavailable';
 				continue;
 			}
 
@@ -72,15 +75,7 @@ final class MetadataResolver {
 			}
 
 			$results = array_slice( array_values( $results ), 0, $limit );
-			foreach ( $results as $result ) {
-				if ( '' === $result->cover_url ) {
-					try {
-						$result->cover_url = $provider->cover_for( $result );
-					} catch ( \Throwable $e ) {
-						$result->cover_url = '';
-					}
-				}
-			}
+			// Cover Art Archive is resolved only for the selected result, not N times per search.
 
 			$payload = array(
 				'success'  => true,
@@ -88,6 +83,7 @@ final class MetadataResolver {
 				'provider' => $provider->name(),
 				'label'    => $this->provider_label( $provider->name() ),
 				'attempts' => $attempts,
+				'errors'   => $errors,
 				'results'  => array_map(
 					static function ( MetadataResult $result ): array {
 						return $result->to_array();
@@ -98,6 +94,18 @@ final class MetadataResolver {
 			$this->cache_set( $query, $limit, $payload );
 
 			return $payload;
+		}
+
+		if ( ! empty( $errors ) ) {
+			return array(
+				'success'  => false,
+				'cached'   => false,
+				'code'     => 'provider_unavailable',
+				'attempts' => $attempts,
+				'errors'   => $errors,
+				'message'  => __( 'سرویس فراداده در دسترس نیست یا درخواست‌ها محدود شده‌اند. اتصال خروجی HTTPS و تنظیمات سرویس را بررسی کنید و کمی بعد دوباره امتحان کنید.', 'music-wave-core' ),
+				'results'  => array(),
+			);
 		}
 
 		return array(
@@ -118,18 +126,26 @@ final class MetadataResolver {
 			return $this->with_factual_description( $result, $release_types );
 		}
 
-		$cache_key = 'mw_meta_detail_v2_' . md5( $result->provider . ':' . $result->reference_id . ':' . implode( ',', $release_types ) );
+		$cache_key = 'mw_meta_detail_v3_' . md5( wp_json_encode( array( $result->to_array(), $release_types ) ) );
 		$cached    = get_transient( $cache_key );
 		if ( is_array( $cached ) ) {
 			return $this->with_factual_description( MetadataResult::from_array( array_merge( $result->to_array(), $cached ) ), $release_types );
 		}
 
 		foreach ( $this->enabled() as $provider ) {
-			if ( $provider->name() !== $result->provider || ! $provider instanceof MetadataEnrichmentProvider ) {
+			if ( $provider->name() !== $result->provider ) {
 				continue;
 			}
+			// Artwork failure must not discard usable descriptive metadata.
+			if ( '' === $result->cover_url ) {
+				try {
+					$result->cover_url = $provider->cover_for( $result );
+				} catch ( \Throwable $e ) {
+					$result->cover_url = '';
+				}
+			}
 			try {
-				$enriched = $provider->enrich( $result );
+				$enriched = $provider instanceof MetadataEnrichmentProvider ? $provider->enrich( $result ) : $result;
 				set_transient( $cache_key, $enriched->to_array(), 12 * HOUR_IN_SECONDS );
 				return $this->with_factual_description( $enriched, $release_types );
 			} catch ( \Throwable $e ) {
@@ -266,7 +282,7 @@ final class MetadataResolver {
 	}
 
 	private function cache_key( MetadataQuery $query, int $limit ): string {
-		return 'mw_meta_v4_' . md5( wp_json_encode( array( $query->track, $query->artist, $query->album, $query->year, $query->release_types, $limit ) ) );
+		return 'mw_meta_v5_' . md5( wp_json_encode( array( array_map( static function ( MetadataProvider $provider ): string { return $provider->name(); }, $this->enabled() ), $query->free_text, $query->track, $query->artist, $query->album, $query->year, $query->release_types, $limit ) ) );
 	}
 
 	/**

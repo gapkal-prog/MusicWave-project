@@ -24,7 +24,8 @@ final class MusicBrainzProvider implements MetadataProvider, MetadataEnrichmentP
 	 */
 	private function request( string $url, array $options = array() ) {
 		$defaults = array(
-			'timeout'    => 10,
+			'timeout'             => 10,
+			'limit_response_size' => 1024 * 1024,
 			'user-agent' => 'MusicWave/' . ( defined( 'MUSIC_WAVE_CORE_VERSION' ) ? MUSIC_WAVE_CORE_VERSION : '1.0' ) . ' ( ' . home_url( '/' ) . ' )',
 			'headers'    => array( 'Accept' => 'application/json' ),
 		);
@@ -39,20 +40,27 @@ final class MusicBrainzProvider implements MetadataProvider, MetadataEnrichmentP
 	 * @return array<string, mixed>|null
 	 * @throws RateLimitException When the MusicBrainz API reports a rate limit.
 	 */
-	private function decode_json( $response ): ?array {
+	private function decode_json( $response, bool $allow_not_found = false ): ?array {
 		if ( is_wp_error( $response ) ) {
-			return null;
+			throw new \RuntimeException( 'MusicBrainz connection failed.' );
 		}
 		$code = (int) wp_remote_retrieve_response_code( $response );
 		if ( 429 === $code || 503 === $code ) {
 			throw new RateLimitException( 'MusicBrainz rate limit reached.' );
 		}
-		if ( $code < 200 || $code >= 300 ) {
+		if ( $allow_not_found && 404 === $code ) {
 			return null;
+		}
+		if ( $code < 200 || $code >= 300 ) {
+			throw new \RuntimeException( 'MusicBrainz HTTP request failed.' );
 		}
 		$data = json_decode( (string) wp_remote_retrieve_body( $response ), true );
 
-		return is_array( $data ) ? $data : null;
+		if ( ! is_array( $data ) ) {
+			throw new \RuntimeException( 'MusicBrainz returned invalid JSON.' );
+		}
+
+		return $data;
 	}
 
 	public function name(): string {
@@ -82,7 +90,7 @@ final class MusicBrainzProvider implements MetadataProvider, MetadataEnrichmentP
 			$this->request(
 				add_query_arg(
 					array(
-						'query' => $lucene,
+						'query' => rawurlencode( $lucene ),
 						'fmt'   => 'json',
 						'limit' => 10,
 					),
@@ -92,8 +100,8 @@ final class MusicBrainzProvider implements MetadataProvider, MetadataEnrichmentP
 		);
 
 		$bucket = $release_search ? 'releases' : 'recordings';
-		if ( null === $data || empty( $data[ $bucket ] ) || ! is_array( $data[ $bucket ] ) ) {
-			return array();
+		if ( null === $data || ! isset( $data[ $bucket ] ) || ! is_array( $data[ $bucket ] ) ) {
+			throw new \RuntimeException( 'MusicBrainz returned an invalid search payload.' );
 		}
 
 		$results = array();
@@ -113,7 +121,10 @@ final class MusicBrainzProvider implements MetadataProvider, MetadataEnrichmentP
 		$parts = array();
 		$title = '' !== $query->album ? $query->album : $query->track;
 		if ( '' !== $title ) {
-			$parts[] = 'release:"' . self::escape_lucene( $title ) . '"';
+			$title_term = 'release:"' . self::escape_lucene( $title ) . '"';
+			$parts[]    = '' !== $query->free_text && '' === $query->artist && '' === $query->album
+				? '(' . $title_term . ' OR artist:"' . self::escape_lucene( $title ) . '")'
+				: $title_term;
 		}
 		if ( '' !== $query->artist ) {
 			$parts[] = 'artist:"' . self::escape_lucene( $query->artist ) . '"';
@@ -156,7 +167,7 @@ final class MusicBrainzProvider implements MetadataProvider, MetadataEnrichmentP
 			return '';
 		}
 
-		$data = $this->decode_json( $this->request( trailingslashit( self::COVER_ENDPOINT ) . rawurlencode( $result->reference_id ) ) );
+		$data = $this->decode_json( $this->request( trailingslashit( self::COVER_ENDPOINT ) . rawurlencode( $result->reference_id ) ), true );
 		if ( null === $data || empty( $data['images'] ) || ! is_array( $data['images'] ) ) {
 			return '';
 		}
@@ -203,7 +214,7 @@ final class MusicBrainzProvider implements MetadataProvider, MetadataEnrichmentP
 			$this->request(
 				add_query_arg(
 					array(
-						'inc' => 'artist-credits+labels+release-groups+genres+annotation',
+						'inc' => rawurlencode( 'artist-credits+labels+release-groups+genres+annotation' ),
 						'fmt' => 'json',
 					),
 					trailingslashit( self::RELEASE_ENDPOINT ) . rawurlencode( $result->reference_id )
@@ -256,7 +267,10 @@ final class MusicBrainzProvider implements MetadataProvider, MetadataEnrichmentP
 	private function lucene( MetadataQuery $query ): string {
 		$parts = array();
 		if ( '' !== $query->track ) {
-			$parts[] = 'recording:"' . self::escape_lucene( $query->track ) . '"';
+			$title_term = 'recording:"' . self::escape_lucene( $query->track ) . '"';
+			$parts[]    = '' !== $query->free_text && '' === $query->artist
+				? '(' . $title_term . ' OR artist:"' . self::escape_lucene( $query->track ) . '")'
+				: $title_term;
 		}
 		if ( '' !== $query->artist ) {
 			$parts[] = 'artistname:"' . self::escape_lucene( $query->artist ) . '"';

@@ -41,7 +41,7 @@ final class SpotifyProvider implements MetadataProvider, MetadataEnrichmentProvi
 	public function search( MetadataQuery $query ): array {
 		$token = $this->access_token();
 		if ( '' === $token ) {
-			return array();
+			throw new \RuntimeException( 'Spotify authentication failed.' );
 		}
 
 		$entity_type = $this->search_type( $query );
@@ -53,7 +53,7 @@ final class SpotifyProvider implements MetadataProvider, MetadataEnrichmentProvi
 		$response = wp_remote_get(
 			add_query_arg(
 				array(
-					'q'     => $q,
+					'q'     => rawurlencode( $q ),
 					'type'  => $entity_type,
 					'limit' => 10,
 				),
@@ -66,18 +66,21 @@ final class SpotifyProvider implements MetadataProvider, MetadataEnrichmentProvi
 		);
 
 		if ( is_wp_error( $response ) ) {
-			return array();
+			throw new \RuntimeException( 'Spotify connection failed.' );
 		}
 		$code = (int) wp_remote_retrieve_response_code( $response );
 		if ( 429 === $code ) {
 			throw new RateLimitException( 'Spotify rate limit reached.' );
 		}
 		if ( $code < 200 || $code >= 300 ) {
-			return array();
+			throw new \RuntimeException( 'Spotify search failed.' );
 		}
 
 		$data   = json_decode( (string) wp_remote_retrieve_body( $response ), true );
 		$bucket = $entity_type . 's';
+		if ( ! is_array( $data ) || ! isset( $data[ $bucket ]['items'] ) || ! is_array( $data[ $bucket ]['items'] ) ) {
+			throw new \RuntimeException( 'Spotify returned an invalid search payload.' );
+		}
 		$items  = is_array( $data ) && isset( $data[ $bucket ]['items'] ) && is_array( $data[ $bucket ]['items'] ) ? $data[ $bucket ]['items'] : array();
 
 		$results = array();
@@ -309,7 +312,8 @@ final class SpotifyProvider implements MetadataProvider, MetadataEnrichmentProvi
 			return '';
 		}
 
-		$cached = get_transient( self::TOKEN_TRANSIENT );
+		$token_key = self::TOKEN_TRANSIENT . '_' . md5( $this->client_id . ':' . $this->client_secret );
+		$cached    = get_transient( $token_key );
 		if ( is_string( $cached ) && '' !== $cached ) {
 			return $cached;
 		}
@@ -335,7 +339,7 @@ final class SpotifyProvider implements MetadataProvider, MetadataEnrichmentProvi
 		$token = is_array( $data ) && ! empty( $data['access_token'] ) ? (string) $data['access_token'] : '';
 		if ( '' !== $token ) {
 			$ttl = is_array( $data ) && ! empty( $data['expires_in'] ) ? max( 60, (int) $data['expires_in'] - 60 ) : 3300;
-			set_transient( self::TOKEN_TRANSIENT, $token, $ttl );
+			set_transient( $token_key, $token, $ttl );
 		}
 
 		return $token;
