@@ -653,7 +653,10 @@ final class ReleaseBlocks {
 			}
 			$value = $this->repository->get( $release_id, $key );
 			if ( 'mw_duration' === $key && (int) $value > 0 ) {
-				$value = gmdate( 'i:s', (int) $value );
+				$seconds = (int) $value;
+				$value   = $seconds >= HOUR_IN_SECONDS
+					? sprintf( '%d:%02d:%02d', intdiv( $seconds, HOUR_IN_SECONDS ), intdiv( $seconds % HOUR_IN_SECONDS, MINUTE_IN_SECONDS ), $seconds % MINUTE_IN_SECONDS )
+					: sprintf( '%d:%02d', intdiv( $seconds, MINUTE_IN_SECONDS ), $seconds % MINUTE_IN_SECONDS );
 			}
 			if ( '' === (string) $value || '0' === (string) $value ) {
 				continue;
