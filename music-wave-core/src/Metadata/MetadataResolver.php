@@ -185,21 +185,40 @@ final class MetadataResolver {
 			)
 		);
 
-		$tmp = download_url( $url, isset( $budgets['timeout'] ) ? max( 5, (int) $budgets['timeout'] ) : 15 );
-		if ( is_wp_error( $tmp ) ) {
-			return $tmp;
+		$budgets   = is_array( $budgets ) ? $budgets : array();
+		$max_bytes = isset( $budgets['max_bytes'] ) ? max( 1, min( 20 * 1024 * 1024, (int) $budgets['max_bytes'] ) ) : 10 * 1024 * 1024;
+		$tmp       = wp_tempnam( 'musicwave-cover' );
+		if ( ! $tmp ) {
+			return new \WP_Error( 'cover_temp_failed', __( 'ایجاد فایل موقت جلد ممکن نیست.', 'music-wave-core' ) );
+		}
+
+		// Enforce the byte budget DURING streaming, not after an unlimited download.
+		// WordPress safe HTTP also validates the destination and redirect targets.
+		$response = wp_safe_remote_get(
+			$url,
+			array(
+				'timeout'             => isset( $budgets['timeout'] ) ? max( 5, min( 30, (int) $budgets['timeout'] ) ) : 15,
+				'redirection'         => 3,
+				'stream'              => true,
+				'filename'            => $tmp,
+				'limit_response_size' => $max_bytes + 1,
+			)
+		);
+		if ( is_wp_error( $response ) || 200 !== (int) wp_remote_retrieve_response_code( $response ) ) {
+			wp_delete_file( $tmp );
+			return new \WP_Error( 'cover_download_failed', __( 'دریافت جلد از سرویس خارجی ممکن نیست؛ اتصال HTTPS یا وجود تصویر را بررسی کنید.', 'music-wave-core' ) );
 		}
 
 		$bytes = filesize( $tmp );
-		if ( false === $bytes || $bytes < 1 || ( isset( $budgets['max_bytes'] ) && $bytes > (int) $budgets['max_bytes'] ) ) {
-			@unlink( $tmp ); // phpcs:ignore WordPress.WP.AlternativeFunctions.unlink_unlink, WordPress.PHP.NoSilencedErrors.Discouraged -- best-effort temp cleanup.
+		if ( false === $bytes || $bytes < 1 || $bytes > $max_bytes ) {
+			wp_delete_file( $tmp );
 			return new \WP_Error( 'cover_too_large', __( 'اندازهٔ جلد دانلودشده از حد تعیین‌شده بیشتر است.', 'music-wave-core' ) );
 		}
 
 		$dimensions = @getimagesize( $tmp ); // phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged -- probing untrusted bytes; failures handled below.
-		$max_pixels = isset( $budgets['max_pixels'] ) ? (int) $budgets['max_pixels'] : 5000;
+		$max_pixels = isset( $budgets['max_pixels'] ) ? max( 1, min( 5000, (int) $budgets['max_pixels'] ) ) : 5000;
 		if ( ! is_array( $dimensions ) || ! isset( $dimensions[0], $dimensions[1] ) || $dimensions[0] < 1 || $dimensions[1] < 1 || $dimensions[0] > $max_pixels || $dimensions[1] > $max_pixels ) {
-			@unlink( $tmp ); // phpcs:ignore WordPress.WP.AlternativeFunctions.unlink_unlink, WordPress.PHP.NoSilencedErrors.Discouraged -- best-effort temp cleanup.
+			wp_delete_file( $tmp );
 			return new \WP_Error( 'invalid_cover_dimensions', __( 'جلد دانلودشده تصویری قابل رمزگشایی در محدودهٔ پیکسلی تعیین‌شده نیست.', 'music-wave-core' ) );
 		}
 
@@ -212,7 +231,7 @@ final class MetadataResolver {
 			'image/avif' => 'avif',
 		);
 		if ( ! is_string( $mime ) || ! isset( $extensions[ $mime ] ) ) {
-			@unlink( $tmp ); // phpcs:ignore WordPress.WP.AlternativeFunctions.unlink_unlink, WordPress.PHP.NoSilencedErrors.Discouraged -- best-effort temp cleanup.
+			wp_delete_file( $tmp );
 			return new \WP_Error( 'invalid_cover_type', __( 'جلد دانلود شده یک تصویر پشتیبانی نمی‌شود.', 'music-wave-core' ) );
 		}
 
@@ -225,7 +244,7 @@ final class MetadataResolver {
 
 		$attachment_id = media_handle_sideload( $file, $post_id, $title );
 		if ( is_wp_error( $attachment_id ) ) {
-			@unlink( $tmp ); // phpcs:ignore WordPress.WP.AlternativeFunctions.unlink_unlink, WordPress.PHP.NoSilencedErrors.Discouraged -- best-effort temp cleanup.
+			wp_delete_file( $tmp );
 			return $attachment_id;
 		}
 		update_post_meta( (int) $attachment_id, '_wp_attachment_image_alt', sanitize_text_field( $title ) );

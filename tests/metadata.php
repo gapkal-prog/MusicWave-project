@@ -15,7 +15,10 @@ use ManaCore\MusicWave\Core\Metadata\DiscogsProvider;
 
 const MINUTE_IN_SECONDS = 60;
 const HOUR_IN_SECONDS = 3600;
-class WP_Error {}
+class WP_Error {
+	public $code;
+	public function __construct( string $code = '', string $message = '' ) { $this->code = $code; }
+}
 function is_wp_error( $value ): bool { return $value instanceof WP_Error; }
 function __( string $value, string $domain = '' ): string { return $value; }
 function sanitize_text_field( string $value ): string { return trim( strip_tags( $value ) ); }
@@ -42,6 +45,14 @@ function wp_remote_get( string $url, array $args = array() ) {
 	$GLOBALS['requests'][] = array( $url, $args );
 	if ( empty( $GLOBALS['responses'] ) ) { throw new LogicException( 'Unexpected HTTP request: ' . $url ); }
 	return array_shift( $GLOBALS['responses'] );
+}
+function apply_filters( string $hook, $value ) { return $GLOBALS['budgets'] ?? $value; }
+function wp_tempnam( string $name ): string { return $GLOBALS['cover_tmp'] = tempnam( dirname( __DIR__ ) . '/.staging', 'cover-test-' ); }
+function wp_delete_file( string $path ): void { unlink( $path ); }
+function wp_safe_remote_get( string $url, array $args ) {
+	$response = wp_remote_get( $url, $args );
+	if ( ! is_wp_error( $response ) ) { file_put_contents( $args['filename'], substr( $response['body'], 0, $args['limit_response_size'] ) ); }
+	return $response;
 }
 function wp_remote_post( string $url, array $args = array() ) { return wp_remote_get( $url, $args ); }
 function fixture( $body, int $status = 200 ): array {
@@ -148,5 +159,23 @@ reset_http( array( fixture( array( 'access_token' => 'first-token', 'expires_in'
 same( 4, count( $GLOBALS['requests'] ), 'Spotify credential changes must not reuse the previous application token.' );
 same( 'Bearer second-token', $GLOBALS['requests'][3][1]['headers']['Authorization'], 'Second client gets its own token.' );
 same( 'track:A & B', request_params( 1 )['q'], 'Spotify title survives encoding.' );
+
+// Bounded streaming and temp cleanup run against a tiny local byte budget.
+$GLOBALS['budgets'] = array( 'max_bytes' => 4, 'timeout' => 999, 'max_pixels' => 10 );
+reset_http( array( fixture( 'too many bytes' ) ) );
+same( 'cover_too_large', $resolver->import_cover( 'https://example.test/cover' )->code, 'Oversized cover is rejected.' );
+same( 5, $GLOBALS['requests'][0][1]['limit_response_size'], 'HTTP read is capped at budget plus one byte.' );
+same( 30, $GLOBALS['requests'][0][1]['timeout'], 'Filter cannot create unbounded HTTP timeouts.' );
+same( false, file_exists( $GLOBALS['cover_tmp'] ), 'Oversized temporary file is removed.' );
+reset_http( array( new WP_Error() ) );
+same( 'cover_download_failed', $resolver->import_cover( 'https://example.test/cover' )->code, 'Transport errors produce safe import failures.' );
+same( false, file_exists( $GLOBALS['cover_tmp'] ), 'Failed download temporary file is removed.' );
+reset_http( array( fixture( '', 404 ) ) );
+same( 'cover_download_failed', $resolver->import_cover( 'https://example.test/missing' )->code, 'Missing cover is distinct from an empty image.' );
+same( false, file_exists( $GLOBALS['cover_tmp'] ), 'Missing cover temporary file is removed.' );
+reset_http( array() );
+same( 'invalid_cover', $resolver->import_cover( 'file:///etc/passwd' )->code, 'Non-HTTPS cover input is rejected before download.' );
+same( 0, count( $GLOBALS['requests'] ), 'Invalid cover input cannot issue HTTP requests.' );
+unset( $GLOBALS['budgets'] );
 
 echo 'Metadata regression tests passed (' . $GLOBALS['assertions'] . ' assertions).' . PHP_EOL;
