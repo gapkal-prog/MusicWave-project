@@ -2294,7 +2294,7 @@
 						],
 					],
 					help: __(
-						'برای استفاده از متن‌های پیش‌فرض ترجمه‌شدهٔ هر حالت خالی بگذارید.',
+						'برای ویرایش روی بوم، سربرگ را خاموش کنید و عنوان و متن را با بلوک‌های وردپرس در الگوی درخواست بسازید.',
 						'music-wave-core'
 					),
 				},
@@ -3333,12 +3333,32 @@
 		var attr = descriptor[ 1 ];
 		var label = descriptor[ 2 ];
 
+		if ( 'music-wave/release-meta' === blockName && props.attributes.compact &&
+			[ 'showLibraryButton', 'showActions', 'showTaxonomyChips' ].indexOf( attr ) !== -1 ) {
+			return null;
+		}
+		// Compact download-button does not render heading or description.
+		if ( 'music-wave/download-button' === blockName && props.attributes.compact &&
+			[ 'showHeading', 'showDescription', 'heading', 'description' ].indexOf( attr ) !== -1 ) {
+			return null;
+		}
+		// Request-form chrome copy is dead when its matching visual region is off.
+		if ( 'music-wave/request-form' === blockName ) {
+			if ( ( false === props.attributes.showHeading && [ 'eyebrow', 'heading', 'intro' ].indexOf( attr ) !== -1 ) ||
+				( false === props.attributes.showHighlights && /^highlight[1-3]/.test( attr ) ) ||
+				( false === props.attributes.showSteps && /^step[1-3]$/.test( attr ) ) ) {
+				return null;
+			}
+		}
+
 		if ( 'text' === type ) {
 			return createElement( components.TextControl, {
 				key: attr,
 				label,
 				value: props.attributes[ attr ] || '',
-				help: descriptor[ 4 ] || undefined,
+				help: 'music-wave/related-releases' === blockName && [ 'sameArtistHeading', 'similarHeading' ].indexOf( attr ) !== -1
+					? __( 'هر دو عنوان را خالی بگذارید تا عنوان را با بلوک مستقل بسازید؛ خالی بماند تا سربرگ این بخش چاپ نشود.', 'music-wave-core' )
+					: descriptor[ 4 ] || undefined,
 				onChange( value ) {
 					props.setAttributes(
 						attributeUpdate( props, blockName, attr, value )

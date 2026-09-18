@@ -1697,8 +1697,11 @@ function musicwave_render_release_slider( array $attributes ): string {
 	$interval      = min( 20000, max( 2000, $interval ) );
 	$eyebrow       = isset( $attributes['eyebrow'] ) ? sanitize_text_field( (string) $attributes['eyebrow'] ) : '';
 	$title         = isset( $attributes['title'] ) ? sanitize_text_field( (string) $attributes['title'] ) : '';
-	$eyebrow       = '' !== $eyebrow ? $eyebrow : __( 'برای شما', 'musicwave' );
-	$title         = '' !== $title ? $title : __( 'انتشارهای منتخب', 'musicwave' );
+	// Fill one-insert copy only when a header is requested.
+	if ( '' !== $eyebrow || '' !== $title ) {
+		$eyebrow = '' !== $eyebrow ? $eyebrow : __( 'برای شما', 'musicwave' );
+		$title   = '' !== $title ? $title : __( 'انتشارهای منتخب', 'musicwave' );
+	}
 	$id            = $instance;
 	$controls      = $arrows ? '<div class="mw-release-slider__arrows"><button type="button" data-mw-slider-previous aria-controls="' . esc_attr( $id ) . '" aria-label="' . esc_attr__( 'انتشارهای قبلی', 'musicwave' ) . '">&#8592;</button><button type="button" data-mw-slider-next aria-controls="' . esc_attr( $id ) . '" aria-label="' . esc_attr__( 'انتشارهای بعدی', 'musicwave' ) . '">&#8594;</button></div>' : '';
 	$dot_container = $dots ? '<div class="mw-release-slider__dots" data-mw-slider-dots aria-label="' . esc_attr__( 'صفحه‌بندی اسلایدر', 'musicwave' ) . '"></div>' : '';
@@ -1717,7 +1720,11 @@ function musicwave_render_release_slider( array $attributes ): string {
 		'mw-release-slider'
 	);
 
-	return '<section ' . get_block_wrapper_attributes( array( 'class' => 'mw-release-slider mw-release-slider--size-' . $size_mod . $slider_variant ) ) . ' data-mw-slider data-autoplay="' . esc_attr( $autoplay ? '1' : '0' ) . '" data-loop="' . esc_attr( $loop ? '1' : '0' ) . '" data-pause-hover="' . esc_attr( $pause ? '1' : '0' ) . '" data-interval="' . esc_attr( (string) $interval ) . '"><header class="mw-release-slider__header"><div><span class="mw-release-slider__eyebrow">' . esc_html( $eyebrow ) . '</span><h2>' . esc_html( $title ) . '</h2></div><div class="mw-release-slider__tools">' . $tabs_markup . $more . $controls . '</div></header><div id="' . esc_attr( $id ) . '" class="mw-release-slider__viewport" data-mw-slider-viewport tabindex="0"><div class="mw-release-slider__track">' . implode( '', $cards ) . '</div></div>' . $dot_container . '<p class="screen-reader-text" aria-live="polite" data-mw-slider-status></p></section>';
+	$heading_markup = '' !== $title ? '<div><span class="mw-release-slider__eyebrow">' . esc_html( $eyebrow ) . '</span><h2>' . esc_html( $title ) . '</h2></div>' : '';
+	$tools_markup   = $tabs_markup . $more . $controls;
+	$header_markup  = '' !== $heading_markup || '' !== $tools_markup ? '<header class="mw-release-slider__header">' . $heading_markup . '<div class="mw-release-slider__tools">' . $tools_markup . '</div></header>' : '';
+
+	return '<section ' . get_block_wrapper_attributes( array( 'class' => 'mw-release-slider mw-release-slider--size-' . $size_mod . $slider_variant ) ) . ' data-mw-slider data-autoplay="' . esc_attr( $autoplay ? '1' : '0' ) . '" data-loop="' . esc_attr( $loop ? '1' : '0' ) . '" data-pause-hover="' . esc_attr( $pause ? '1' : '0' ) . '" data-interval="' . esc_attr( (string) $interval ) . '">' . $header_markup . '<div id="' . esc_attr( $id ) . '" class="mw-release-slider__viewport" data-mw-slider-viewport tabindex="0"><div class="mw-release-slider__track">' . implode( '', $cards ) . '</div></div>' . $dot_container . '<p class="screen-reader-text" aria-live="polite" data-mw-slider-status></p></section>';
 }
 
 /**
@@ -2169,25 +2176,19 @@ function musicwave_render_playlist_shelf( array $attributes ): string {
 	$section_url        = isset( $attributes['sectionUrl'] ) ? esc_url( (string) $attributes['sectionUrl'] ) : '';
 	$section_link_label = isset( $attributes['sectionLinkLabel'] ) ? sanitize_text_field( (string) $attributes['sectionLinkLabel'] ) : '';
 	$section_link_label = '' !== $section_link_label ? $section_link_label : __( 'مشاهدهٔ همهٔ فهرست‌های پخش', 'musicwave' );
-	if ( '' === $title && 'playlists' === ( isset( $attributes['source'] ) ? sanitize_key( (string) $attributes['source'] ) : '' ) ) {
-		$title = __( 'فهرست‌های پخش اجتماعی', 'musicwave' );
-	}
-	if ( '' === $eyebrow ) {
-		$eyebrow = __( 'منتخب شنوندگان', 'musicwave' );
+	if ( '' !== $eyebrow || '' !== $title ) {
+		$title   = '' !== $title ? $title : __( 'فهرست‌های پخش اجتماعی', 'musicwave' );
+		$eyebrow = '' !== $eyebrow ? $eyebrow : __( 'منتخب شنوندگان', 'musicwave' );
 	}
 
-	// Default to the dedicated playlists page if no URL given.
-	if ( '' === $section_url ) {
+	// Card destinations remain valid even when the composed header is hidden.
+	$playlist_url = $section_url;
+	if ( '' === $playlist_url ) {
 		$page = get_page_by_path( 'playlists' );
-		if ( $page instanceof WP_Post ) {
-			$perm = get_permalink( $page );
-			if ( is_string( $perm ) && '' !== $perm ) {
-				$section_url = $perm;
-			}
-		}
-		if ( '' === $section_url ) {
-			$section_url = home_url( '/playlists/' );
-		}
+		$playlist_url = $page instanceof WP_Post ? (string) get_permalink( $page ) : home_url( '/playlists/' );
+	}
+	if ( '' === $section_url && ( '' !== $eyebrow || '' !== $title ) ) {
+		$section_url = $playlist_url;
 	}
 
 	$cards = array();
@@ -2196,7 +2197,7 @@ function musicwave_render_playlist_shelf( array $attributes ): string {
 		$ptitle = (string) $playlist['title'];
 		$author = isset( $playlist['author_name'] ) ? (string) $playlist['author_name'] : '';
 		$count  = isset( $playlist['count'] ) ? (int) $playlist['count'] : 0;
-		$link   = add_query_arg( array( 'mw-playlist' => (string) $pid ), $section_url );
+		$link   = add_query_arg( array( 'mw-playlist' => (string) $pid ), $playlist_url );
 
 		// Build 2x2 art grid from viewer's visible items (published only).
 		$art_grid   = '';

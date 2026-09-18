@@ -297,6 +297,7 @@
 				createElement( components.TextControl, {
 					label: __( 'عنوان', 'musicwave' ),
 					value: props.attributes.title || '',
+					help: __( 'عنوان و برچسب را خالی بگذارید و بلوک عنوان بخش را بالای اسلایدر قرار دهید.', 'musicwave' ),
 					onChange( value ) {
 						props.setAttributes( { title: value } );
 					},
@@ -428,6 +429,7 @@
 				createElement( components.TextControl, {
 					label: __( 'عنوان', 'musicwave' ),
 					value: props.attributes.title || '',
+					help: __( 'عنوان و برچسب را خالی بگذارید و بلوک عنوان بخش را بالای ویترین قرار دهید.', 'musicwave' ),
 					onChange( value ) {
 						update( 'title', value );
 					},

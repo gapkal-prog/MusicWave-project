@@ -1788,8 +1788,13 @@ final class ReleaseBlocks {
 		$excluded = array( $release_id );
 		$sections = array();
 
-		$same_artist_heading = BlockSupport::text_attribute( $attributes, 'sameArtistHeading', __( 'انتشارهای بیشتر از این هنرمند', 'music-wave-core' ) );
-		$similar_heading     = BlockSupport::text_attribute( $attributes, 'similarHeading', __( 'انتشارهای مشابه', 'music-wave-core' ) );
+		$same_artist_heading = BlockSupport::text_attribute( $attributes, 'sameArtistHeading', '' );
+		$similar_heading     = BlockSupport::text_attribute( $attributes, 'similarHeading', '' );
+		// Fill one-insert copy only when at least one header is requested.
+		if ( '' !== $same_artist_heading || '' !== $similar_heading ) {
+			$same_artist_heading = '' !== $same_artist_heading ? $same_artist_heading : __( 'انتشارهای بیشتر از این هنرمند', 'music-wave-core' );
+			$similar_heading     = '' !== $similar_heading ? $similar_heading : __( 'انتشارهای مشابه', 'music-wave-core' );
+		}
 		$show_section_link   = BlockSupport::bool_attribute( $attributes, 'showSectionLink', false );
 		$section_link_label  = BlockSupport::text_attribute( $attributes, 'sectionLinkLabel', __( 'همه را ببینید', 'music-wave-core' ) );
 
@@ -2010,7 +2015,10 @@ final class ReleaseBlocks {
 			$shelf_class .= ' mw-release-shelf--columns-' . $options['columns'];
 		}
 
-		return '<section class="mw-related-releases__section ' . esc_attr( $shelf_class ) . '"><div class="mw-related-releases__section-header"><h2>' . esc_html( $heading ) . '</h2>' . $more . '</div><div class="mw-release-shelf__items">' . implode( '', $cards ) . '</div></section>';
+		$heading_html = '' !== $heading ? '<h2>' . esc_html( $heading ) . '</h2>' : '';
+		$header       = '' !== $heading_html || '' !== $more ? '<div class="mw-related-releases__section-header">' . $heading_html . $more . '</div>' : '';
+
+		return '<section class="mw-related-releases__section ' . esc_attr( $shelf_class ) . '">' . $header . '<div class="mw-release-shelf__items">' . implode( '', $cards ) . '</div></section>';
 	}
 
 	/**
