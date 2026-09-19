@@ -81,7 +81,7 @@ final class SpotifyProvider implements MetadataProvider, MetadataEnrichmentProvi
 		if ( ! is_array( $data ) || ! isset( $data[ $bucket ]['items'] ) || ! is_array( $data[ $bucket ]['items'] ) ) {
 			throw new \RuntimeException( 'Spotify returned an invalid search payload.' );
 		}
-		$items  = is_array( $data ) && isset( $data[ $bucket ]['items'] ) && is_array( $data[ $bucket ]['items'] ) ? $data[ $bucket ]['items'] : array();
+		$items = is_array( $data ) && isset( $data[ $bucket ]['items'] ) && is_array( $data[ $bucket ]['items'] ) ? $data[ $bucket ]['items'] : array();
 
 		$results = array();
 		foreach ( $items as $item ) {

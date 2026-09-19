@@ -3333,20 +3333,39 @@
 		var attr = descriptor[ 1 ];
 		var label = descriptor[ 2 ];
 
-		if ( 'music-wave/release-meta' === blockName && props.attributes.compact &&
-			[ 'showLibraryButton', 'showActions', 'showTaxonomyChips' ].indexOf( attr ) !== -1 ) {
+		if (
+			'music-wave/release-meta' === blockName &&
+			props.attributes.compact &&
+			[ 'showLibraryButton', 'showActions', 'showTaxonomyChips' ].indexOf(
+				attr
+			) !== -1
+		) {
 			return null;
 		}
 		// Compact download-button does not render heading or description.
-		if ( 'music-wave/download-button' === blockName && props.attributes.compact &&
-			[ 'showHeading', 'showDescription', 'heading', 'description' ].indexOf( attr ) !== -1 ) {
+		if (
+			'music-wave/download-button' === blockName &&
+			props.attributes.compact &&
+			[
+				'showHeading',
+				'showDescription',
+				'heading',
+				'description',
+			].indexOf( attr ) !== -1
+		) {
 			return null;
 		}
 		// Request-form chrome copy is dead when its matching visual region is off.
 		if ( 'music-wave/request-form' === blockName ) {
-			if ( ( false === props.attributes.showHeading && [ 'eyebrow', 'heading', 'intro' ].indexOf( attr ) !== -1 ) ||
-				( false === props.attributes.showHighlights && /^highlight[1-3]/.test( attr ) ) ||
-				( false === props.attributes.showSteps && /^step[1-3]$/.test( attr ) ) ) {
+			if (
+				( false === props.attributes.showHeading &&
+					[ 'eyebrow', 'heading', 'intro' ].indexOf( attr ) !==
+						-1 ) ||
+				( false === props.attributes.showHighlights &&
+					/^highlight[1-3]/.test( attr ) ) ||
+				( false === props.attributes.showSteps &&
+					/^step[1-3]$/.test( attr ) )
+			) {
 				return null;
 			}
 		}
@@ -3356,9 +3375,16 @@
 				key: attr,
 				label,
 				value: props.attributes[ attr ] || '',
-				help: 'music-wave/related-releases' === blockName && [ 'sameArtistHeading', 'similarHeading' ].indexOf( attr ) !== -1
-					? __( 'هر دو عنوان را خالی بگذارید تا عنوان را با بلوک مستقل بسازید؛ خالی بماند تا سربرگ این بخش چاپ نشود.', 'music-wave-core' )
-					: descriptor[ 4 ] || undefined,
+				help:
+					'music-wave/related-releases' === blockName &&
+					[ 'sameArtistHeading', 'similarHeading' ].indexOf(
+						attr
+					) !== -1
+						? __(
+								'هر دو عنوان را خالی بگذارید تا عنوان را با بلوک مستقل بسازید؛ خالی بماند تا سربرگ این بخش چاپ نشود.',
+								'music-wave-core'
+						  )
+						: descriptor[ 4 ] || undefined,
 				onChange( value ) {
 					props.setAttributes(
 						attributeUpdate( props, blockName, attr, value )
@@ -3803,7 +3829,14 @@
 		);
 	}
 
-	function editorPreview( props, block, options, contextualId, contextPost, wrapperProps ) {
+	function editorPreview(
+		props,
+		block,
+		options,
+		contextualId,
+		contextPost,
+		wrapperProps
+	) {
 		var config = fieldConfig[ block.name ] || {};
 		var attrs = Object.assign( {}, props.attributes || {} );
 
@@ -3937,38 +3970,46 @@
 			);
 		}
 
-		blocks.registerBlockType( block.name, Object.assign( {}, existing || {}, {
-			apiVersion:
-				existing && existing.apiVersion ? existing.apiVersion : 3,
-			title: ( existing && existing.title ) || block.title,
-			description:
-				( existing && existing.description ) || block.description,
-			category: ( existing && existing.category ) || 'music-wave',
-			icon: blockIcon( block.icon || ( existing && existing.icon ) ),
-			keywords: block.keywords || [],
-			attributes: Object.assign(
-				{},
-				block.attributes || {},
-				( existing && existing.attributes ) || {}
-			),
-			usesContext:
-				existing && existing.usesContext && existing.usesContext.length
-					? existing.usesContext
-					: block.usesContext || [],
-			supports: Object.assign(
-				{},
-				block.supports || {},
-				( existing && existing.supports ) || {}
-			),
-			styles: existing && existing.styles ? existing.styles : undefined,
-			example:
-				block.example ||
-				( existing && existing.example ? existing.example : undefined ),
-			edit: ReleaseFieldsEdit,
-			save() {
-				return null;
-			},
-		} ) );
+		blocks.registerBlockType(
+			block.name,
+			Object.assign( {}, existing || {}, {
+				apiVersion:
+					existing && existing.apiVersion ? existing.apiVersion : 3,
+				title: ( existing && existing.title ) || block.title,
+				description:
+					( existing && existing.description ) || block.description,
+				category: ( existing && existing.category ) || 'music-wave',
+				icon: blockIcon( block.icon || ( existing && existing.icon ) ),
+				keywords: block.keywords || [],
+				attributes: Object.assign(
+					{},
+					block.attributes || {},
+					( existing && existing.attributes ) || {}
+				),
+				usesContext:
+					existing &&
+					existing.usesContext &&
+					existing.usesContext.length
+						? existing.usesContext
+						: block.usesContext || [],
+				supports: Object.assign(
+					{},
+					block.supports || {},
+					( existing && existing.supports ) || {}
+				),
+				styles:
+					existing && existing.styles ? existing.styles : undefined,
+				example:
+					block.example ||
+					( existing && existing.example
+						? existing.example
+						: undefined ),
+				edit: ReleaseFieldsEdit,
+				save() {
+					return null;
+				},
+			} )
+		);
 
 		// registerBlockType() drops settings it cannot validate (a missing
 		// title, for instance) and returns undefined. Put the server definition
@@ -3983,35 +4024,62 @@
 	var metaBlock = blocks.getBlockType( 'music-wave/release-meta' );
 	if ( metaBlock && blocks.registerBlockVariation ) {
 		var factFields = [
-			[ 'release-date', 'showReleaseDate', __( 'تاریخ انتشار', 'music-wave-core' ) ],
+			[
+				'release-date',
+				'showReleaseDate',
+				__( 'تاریخ انتشار', 'music-wave-core' ),
+			],
 			[ 'duration', 'showDuration', __( 'مدت زمان', 'music-wave-core' ) ],
 			[ 'bpm', 'showBpm', __( 'تمپو (BPM)', 'music-wave-core' ) ],
-			[ 'musical-key', 'showKey', __( 'کلید موسیقی', 'music-wave-core' ) ],
-			[ 'catalog-number', 'showCatalogNumber', __( 'شماره کاتالوگ', 'music-wave-core' ) ],
+			[
+				'musical-key',
+				'showKey',
+				__( 'کلید موسیقی', 'music-wave-core' ),
+			],
+			[
+				'catalog-number',
+				'showCatalogNumber',
+				__( 'شماره کاتالوگ', 'music-wave-core' ),
+			],
 		];
 		factFields.forEach( function ( field ) {
-			var attributes = { compact: true, layout: 'inline', showLabels: true };
-			var switches = Object.keys( metaBlock.attributes ).filter( function ( name ) {
-				return name.indexOf( 'show' ) === 0 && name !== 'showLabels';
+			var attributes = {
+				compact: true,
+				layout: 'inline',
+				showLabels: true,
+			};
+			var switches = Object.keys( metaBlock.attributes ).filter(
+				function ( name ) {
+					return (
+						name.indexOf( 'show' ) === 0 && name !== 'showLabels'
+					);
+				}
+			);
+			switches.forEach( function ( name ) {
+				attributes[ name ] = false;
 			} );
-			switches.forEach( function ( name ) { attributes[ name ] = false; } );
 			attributes[ field[ 1 ] ] = true;
 			attributes.metadata = { name: field[ 2 ] };
 			blocks.registerBlockVariation( 'music-wave/release-meta', {
 				name: 'music-wave-' + field[ 0 ],
 				title: field[ 2 ],
-				description: __( 'یک مشخصهٔ مستقل و قابل جابه‌جایی از انتشار جاری؛ رنگ، فاصله و تایپوگرافی را جداگانه تنظیم کنید.', 'music-wave-core' ),
+				description: __(
+					'یک مشخصهٔ مستقل و قابل جابه‌جایی از انتشار جاری؛ رنگ، فاصله و تایپوگرافی را جداگانه تنظیم کنید.',
+					'music-wave-core'
+				),
 				attributes,
 				scope: [ 'inserter' ],
 				isActive( current ) {
-					return current.compact && switches.every( function ( name ) {
-						return current[ name ] === attributes[ name ];
-					} );
+					return (
+						current.compact &&
+						switches.every( function ( name ) {
+							return current[ name ] === attributes[ name ];
+						} )
+					);
 				},
 			} );
 		} );
 	}
-
 } )(
 	window.wp && window.wp.blocks,
 	window.wp && window.wp.element,

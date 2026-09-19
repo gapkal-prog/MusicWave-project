@@ -26,8 +26,8 @@ final class MusicBrainzProvider implements MetadataProvider, MetadataEnrichmentP
 		$defaults = array(
 			'timeout'             => 10,
 			'limit_response_size' => 1024 * 1024,
-			'user-agent' => 'MusicWave/' . ( defined( 'MUSIC_WAVE_CORE_VERSION' ) ? MUSIC_WAVE_CORE_VERSION : '1.0' ) . ' ( ' . home_url( '/' ) . ' )',
-			'headers'    => array( 'Accept' => 'application/json' ),
+			'user-agent'          => 'MusicWave/' . ( defined( 'MUSIC_WAVE_CORE_VERSION' ) ? MUSIC_WAVE_CORE_VERSION : '1.0' ) . ' ( ' . home_url( '/' ) . ' )',
+			'headers'             => array( 'Accept' => 'application/json' ),
 		);
 
 		return wp_remote_get( $url, array_merge( $defaults, $options ) );

@@ -301,7 +301,25 @@ final class MetadataResolver {
 	}
 
 	private function cache_key( MetadataQuery $query, int $limit ): string {
-		return 'mw_meta_v5_' . md5( wp_json_encode( array( array_map( static function ( MetadataProvider $provider ): string { return $provider->name(); }, $this->enabled() ), $query->free_text, $query->track, $query->artist, $query->album, $query->year, $query->release_types, $limit ) ) );
+		return 'mw_meta_v5_' . md5(
+			wp_json_encode(
+				array(
+					array_map(
+						static function ( MetadataProvider $provider ): string {
+							return $provider->name();
+						},
+						$this->enabled()
+					),
+					$query->free_text,
+					$query->track,
+					$query->artist,
+					$query->album,
+					$query->year,
+					$query->release_types,
+					$limit,
+				)
+			)
+		);
 	}
 
 	/**

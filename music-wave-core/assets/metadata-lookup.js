@@ -22,7 +22,8 @@
 		if ( url.searchParams.has( 'rest_route' ) ) {
 			url.searchParams.set(
 				'rest_route',
-				url.searchParams.get( 'rest_route' ).replace( /\/$/, '' ) + suffix
+				url.searchParams.get( 'rest_route' ).replace( /\/$/, '' ) +
+					suffix
 			);
 		} else {
 			url.pathname = url.pathname.replace( /\/$/, '' ) + suffix;

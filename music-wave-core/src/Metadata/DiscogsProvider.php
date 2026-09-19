@@ -78,7 +78,7 @@ final class DiscogsProvider implements MetadataProvider, MetadataEnrichmentProvi
 			throw new \RuntimeException( 'Discogs search failed.' );
 		}
 
-		$data    = json_decode( (string) wp_remote_retrieve_body( $response ), true );
+		$data = json_decode( (string) wp_remote_retrieve_body( $response ), true );
 		if ( ! is_array( $data ) || ! isset( $data['results'] ) || ! is_array( $data['results'] ) ) {
 			throw new \RuntimeException( 'Discogs returned an invalid search payload.' );
 		}
