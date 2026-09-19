@@ -14,7 +14,25 @@
 	var config = window.musicWaveMetadataLookup || {};
 	var strings = config.strings || {};
 	var nonce = config.nonce || '';
-	var root = ( config.root || '' ).replace( /\?.*$/, '' );
+	var root = config.root || '';
+
+	// Plain permalinks use ?rest_route=; never strip that routing parameter.
+	function endpoint( suffix, query ) {
+		var url = new URL( root, window.location.href );
+		if ( url.searchParams.has( 'rest_route' ) ) {
+			url.searchParams.set(
+				'rest_route',
+				url.searchParams.get( 'rest_route' ).replace( /\/$/, '' ) +
+					suffix
+			);
+		} else {
+			url.pathname = url.pathname.replace( /\/$/, '' ) + suffix;
+		}
+		new URLSearchParams( query || '' ).forEach( function ( value, key ) {
+			url.searchParams.append( key, value );
+		} );
+		return url.toString();
+	}
 
 	function t( key, fallback ) {
 		return strings[ key ] || fallback || key;
@@ -148,6 +166,9 @@
 		}
 
 		function search() {
+			if ( button.disabled ) {
+				return;
+			}
 			var q = input.value.trim();
 			var artist = artistInput.value.trim();
 			var album = albumInput.value.trim();
@@ -188,7 +209,7 @@
 				);
 			} );
 
-			fetch( root + '?' + params.join( '&' ), {
+			fetch( endpoint( '', params.join( '&' ) ), {
 				method: 'GET',
 				headers: headers( false ),
 				credentials: 'same-origin',
@@ -341,7 +362,7 @@
 				fill_excerpt: editorFieldIsEmpty( 'excerpt' ),
 			};
 
-			fetch( root + '/apply', {
+			fetch( endpoint( '/apply' ), {
 				method: 'POST',
 				headers: headers( true ),
 				credentials: 'same-origin',

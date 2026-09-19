@@ -23,7 +23,7 @@
 
 	<!-- wp:group {"className":"mw-metabar","layout":{"type":"flex","flexWrap":"wrap","verticalAlignment":"center"}} -->
 	<div class="wp-block-group mw-metabar">
-		<!-- wp:post-date {"format":"Y","className":"mw-metabar__item mw-metabar__value"} /-->
+		<!-- wp:music-wave/release-meta {"showCatalogNumber":false,"showReleaseDate":true,"showDuration":false,"showBpm":false,"showKey":false,"showArtist":false,"showGenre":false,"showLibraryButton":false,"showTaxonomyChips":false,"showActions":false,"showMood":false,"showLabel":false,"showReleaseType":false,"compact":true,"layout":"inline","showLabels":true,"metadata":{"name":"تاریخ واقعی انتشار"}} /-->
 		<!-- wp:post-terms {"term":"mw_label","separator":"","className":"mw-metabar__item"} /-->
 		<!-- wp:post-terms {"term":"mw_genre","separator":"","className":"mw-metabar__item"} /-->
 	</div>
@@ -50,9 +50,9 @@
 		<!-- wp:group {"className":"mw-spec-strip__cell mw-spec-strip__cell--gold","layout":{"type":"default"}} -->
 		<div class="wp-block-group mw-spec-strip__cell mw-spec-strip__cell--gold">
 			<!-- wp:paragraph {"className":"mw-spec-strip__label"} -->
-			<p class="mw-spec-strip__label"><?php echo esc_html__( 'سال انتشار', 'musicwave' ); ?></p>
+			<p class="mw-spec-strip__label"><?php echo esc_html__( 'مدت زمان', 'musicwave' ); ?></p>
 			<!-- /wp:paragraph -->
-			<!-- wp:post-date {"format":"Y","className":"mw-spec-strip__value"} /-->
+			<!-- wp:music-wave/release-meta {"showCatalogNumber":false,"showReleaseDate":false,"showDuration":true,"showBpm":false,"showKey":false,"showArtist":false,"showGenre":false,"showLibraryButton":false,"showTaxonomyChips":false,"showActions":false,"showMood":false,"showLabel":false,"showReleaseType":false,"compact":true,"layout":"inline","showLabels":true,"metadata":{"name":"مدت زمان"}} /-->
 		</div>
 		<!-- /wp:group -->
 	</div>

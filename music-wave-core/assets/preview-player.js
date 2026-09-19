@@ -65,7 +65,9 @@
 					stamps.push( match );
 				}
 				if ( stamps.length ) {
-					var text = row.replace( /\[\d{1,2}:\d{2}(?:\.\d{1,3})?\]/g, '' ).trim();
+					var text = row
+						.replace( /\[\d{1,2}:\d{2}(?:\.\d{1,3})?\]/g, '' )
+						.trim();
 					if ( ! text ) {
 						return;
 					}
@@ -73,11 +75,16 @@
 					var primary = ( parts[ 0 ] || text ).trim();
 					var translation = ( parts[ 1 ] || '' ).trim();
 					stamps.forEach( function ( stamp ) {
-						var ms = stamp[ 3 ] ? parseFloat( '0.' + stamp[ 3 ] ) : 0;
+						var ms = stamp[ 3 ]
+							? parseFloat( '0.' + stamp[ 3 ] )
+							: 0;
 						lines.push( {
-							time: parseInt( stamp[ 1 ], 10 ) * 60 + parseInt( stamp[ 2 ], 10 ) + ms,
+							time:
+								parseInt( stamp[ 1 ], 10 ) * 60 +
+								parseInt( stamp[ 2 ], 10 ) +
+								ms,
 							text: primary,
-							translation: translation,
+							translation,
 						} );
 					} );
 					return;
@@ -96,7 +103,11 @@
 		}
 		var minutes = Math.floor( seconds / 60 );
 		var remain = Math.floor( seconds ) % 60;
-		return String( minutes ).padStart( 2, '0' ) + ':' + String( remain ).padStart( 2, '0' );
+		return (
+			String( minutes ).padStart( 2, '0' ) +
+			':' +
+			String( remain ).padStart( 2, '0' )
+		);
 	}
 
 	function formatTime( seconds ) {
@@ -526,7 +537,12 @@
 		}
 
 		function renderLyricsPanel() {
-			if ( ! lyricsToggle || ! lyricsPanel || ! lyricsStage || ! lyricsRoot ) {
+			if (
+				! lyricsToggle ||
+				! lyricsPanel ||
+				! lyricsStage ||
+				! lyricsRoot
+			) {
 				return;
 			}
 			var track = currentTrack();
@@ -543,7 +559,10 @@
 				String( track.lyricsOffset || 0 )
 			);
 			if ( track.releaseId ) {
-				lyricsRoot.setAttribute( 'data-release-id', String( track.releaseId ) );
+				lyricsRoot.setAttribute(
+					'data-release-id',
+					String( track.releaseId )
+				);
 			}
 			var lines = parseLrc( raw );
 			lyricsStage.replaceChildren();
@@ -552,7 +571,10 @@
 				var node = document.createElement( timed ? 'button' : 'p' );
 				if ( timed ) {
 					node.type = 'button';
-					node.setAttribute( 'data-mw-lyric-time', String( line.time ) );
+					node.setAttribute(
+						'data-mw-lyric-time',
+						String( line.time )
+					);
 				}
 				node.className = 'mw-lyrics__line';
 				node.setAttribute( 'data-mw-lyric-index', String( index ) );
@@ -1132,7 +1154,8 @@
 						position: audio.currentTime || 0,
 						playing: ! audio.paused,
 						queueOpen: Boolean( queuePanel ) && ! queuePanel.hidden,
-						lyricsOpen: Boolean( lyricsPanel ) && ! lyricsPanel.hidden,
+						lyricsOpen:
+							Boolean( lyricsPanel ) && ! lyricsPanel.hidden,
 						queue,
 						meta: queueMeta,
 					} )

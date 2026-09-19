@@ -2705,6 +2705,11 @@ mw_assert_same( 1, count( $track_names ), 'Collection JSON-LD must list only pub
 mw_assert_same( false, in_array( 'https://example.test/?p=5', $track_names, true ), 'Unpublished child releases must never appear in public JSON-LD.' );
 mw_assert_same( 1, isset( $schema['numTracks'] ) ? (int) $schema['numTracks'] : 0, 'JSON-LD track counts must exclude unpublished children.' );
 
+$GLOBALS['mw_test_release_types'][6] = array( 'playlist' );
+mw_assert_same( 'MusicPlaylist', $jsonld->schema( 6 )['@type'], 'A curated playlist must not claim to be a published MusicAlbum.' );
+$GLOBALS['mw_test_release_types'][6] = array( 'album' );
+mw_assert_same( 'MusicAlbum', $jsonld->schema( 6 )['@type'], 'Album schema remains MusicAlbum.' );
+
 // Public REST projections must redact gated release bodies for denied actors.
 $rest_policy_repository = new TestPolicyRepository();
 $rest_policy_repository->values['mw_access_mode'] = 'restricted';

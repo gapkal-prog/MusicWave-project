@@ -212,14 +212,14 @@ function musicwave_register_header_customizer( $wp_customize ): void {
 	);
 
 	$controls = array(
-		'musicwave_site_header'         => array(
-			'default' => 'header-stream',
+		'musicwave_site_header'        => array(
+			'default'  => 'header-stream',
 			'sanitize' => 'musicwave_sanitize_site_header',
-			'label'   => __( 'سربرگ سراسری', 'musicwave' ),
-			'type'    => 'select',
-			'choices' => musicwave_site_header_choices(),
+			'label'    => __( 'سربرگ سراسری', 'musicwave' ),
+			'type'     => 'select',
+			'choices'  => musicwave_site_header_choices(),
 		),
-		'musicwave_site_header_mobile'  => array(
+		'musicwave_site_header_mobile' => array(
 			'default'     => 'drawer',
 			'sanitize'    => 'musicwave_sanitize_mobile_header',
 			'label'       => __( 'سربرگ موبایل', 'musicwave' ),
@@ -227,38 +227,38 @@ function musicwave_register_header_customizer( $wp_customize ): void {
 			'type'        => 'select',
 			'choices'     => musicwave_mobile_header_choices(),
 		),
-		'musicwave_topbar_brand'        => array(
+		'musicwave_topbar_brand'       => array(
 			'default'  => 'full',
 			'sanitize' => 'musicwave_sanitize_topbar_brand',
 			'label'    => __( 'برند نوار بالا', 'musicwave' ),
 			'type'     => 'select',
 			'choices'  => musicwave_topbar_brand_choices(),
 		),
-		'musicwave_rail_brand'          => array(
-			'default'     => '1',
-			'sanitize'    => 'musicwave_sanitize_onoff',
-			'label'       => __( 'لوگو و نام در نوار کناری دسکتاپ / منوی کشویی', 'musicwave' ),
-			'type'        => 'checkbox',
+		'musicwave_rail_brand'         => array(
+			'default'  => '1',
+			'sanitize' => 'musicwave_sanitize_onoff',
+			'label'    => __( 'لوگو و نام در نوار کناری دسکتاپ / منوی کشویی', 'musicwave' ),
+			'type'     => 'checkbox',
 		),
-		'musicwave_show_search'         => array(
+		'musicwave_show_search'        => array(
 			'default'  => '1',
 			'sanitize' => 'musicwave_sanitize_onoff',
 			'label'    => __( 'نمایش جستجو', 'musicwave' ),
 			'type'     => 'checkbox',
 		),
-		'musicwave_show_theme'          => array(
+		'musicwave_show_theme'         => array(
 			'default'  => '1',
 			'sanitize' => 'musicwave_sanitize_onoff',
 			'label'    => __( 'نمایش تغییر پوسته', 'musicwave' ),
 			'type'     => 'checkbox',
 		),
-		'musicwave_show_account'        => array(
+		'musicwave_show_account'       => array(
 			'default'  => '1',
 			'sanitize' => 'musicwave_sanitize_onoff',
 			'label'    => __( 'نمایش حساب کاربری', 'musicwave' ),
 			'type'     => 'checkbox',
 		),
-		'musicwave_tabs_count'          => array(
+		'musicwave_tabs_count'         => array(
 			'default'  => '5',
 			'sanitize' => 'musicwave_sanitize_tabs_count',
 			'label'    => __( 'تعداد آیکون نوار پایین', 'musicwave' ),

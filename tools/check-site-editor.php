@@ -120,7 +120,8 @@ foreach ($block_files as $block_file) {
 	// a fallback HTML body is not synchronized with server-side rendering.
 	preg_match_all('/<!--\s+wp:((?:music-wave|musicwave)\/[a-z0-9-]+)(.*?)-->/', $content, $dynamic_matches, PREG_SET_ORDER);
 	foreach ($dynamic_matches as $dynamic_match) {
-		if ('/' !== substr(rtrim($dynamic_match[2]), -1)) {
+		// section-head is the explicitly registered static container, not a PHP leaf.
+		if ('music-wave/section-head' !== $dynamic_match[1] && '/' !== substr(rtrim($dynamic_match[2]), -1)) {
 			$fail($label . ' stores dynamic MusicWave block ' . $dynamic_match[1] . ' with fallback HTML.');
 		}
 	}

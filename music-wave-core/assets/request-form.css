@@ -722,3 +722,26 @@
 		transform: none;
 	}
 }
+
+/* Native Group/List composition around the protected PHP form. */
+.mw-request-form .mw-request-form {
+	padding: 0;
+	border: 0;
+	background: none;
+	box-shadow: none;
+	overflow: visible;
+}
+.mw-request-form .mw-request-form > .mw-request-form__glow { display: none; }
+ol.wp-block-list.mw-request-form__steps > li::before {
+	counter-increment: mw-step;
+	content: counter(mw-step);
+	position: static;
+	display: grid;
+	place-items: center;
+	flex: 0 0 1.8rem;
+	width: 1.8rem;
+	height: 1.8rem;
+	border-radius: 50%;
+	background: var(--mw-rf-raised);
+	color: var(--mw-rf-accent);
+}
