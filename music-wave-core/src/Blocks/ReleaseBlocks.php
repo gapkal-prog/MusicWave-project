@@ -1795,8 +1795,8 @@ final class ReleaseBlocks {
 			$same_artist_heading = '' !== $same_artist_heading ? $same_artist_heading : __( 'انتشارهای بیشتر از این هنرمند', 'music-wave-core' );
 			$similar_heading     = '' !== $similar_heading ? $similar_heading : __( 'انتشارهای مشابه', 'music-wave-core' );
 		}
-		$show_section_link   = BlockSupport::bool_attribute( $attributes, 'showSectionLink', false );
-		$section_link_label  = BlockSupport::text_attribute( $attributes, 'sectionLinkLabel', __( 'همه را ببینید', 'music-wave-core' ) );
+		$show_section_link  = BlockSupport::bool_attribute( $attributes, 'showSectionLink', false );
+		$section_link_label = BlockSupport::text_attribute( $attributes, 'sectionLinkLabel', __( 'همه را ببینید', 'music-wave-core' ) );
 
 		if ( $this->visibility_attribute( $attributes, 'sameArtistSection', 'show_same_artist_releases' ) ) {
 			$artist_ids = wp_get_post_terms( $release_id, 'mw_artist', array( 'fields' => 'ids' ) );

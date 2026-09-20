@@ -31,6 +31,6 @@
     "make-pot": "@php tools/generate-pot.php",
     "make-script-json": "@php tools/generate-script-json.php",
     "check:script-translations": "@php tools/check-script-translations.php",
-    "test": "@php tests/run.php"
+    "test": ["@php tests/run.php", "@php tests/metadata.php"]
   }
 }

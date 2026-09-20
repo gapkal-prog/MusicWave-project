@@ -47,7 +47,11 @@ function wp_remote_get( string $url, array $args = array() ) {
 	return array_shift( $GLOBALS['responses'] );
 }
 function apply_filters( string $hook, $value ) { return $GLOBALS['budgets'] ?? $value; }
-function wp_tempnam( string $name ): string { return $GLOBALS['cover_tmp'] = tempnam( dirname( __DIR__ ) . '/.staging', 'cover-test-' ); }
+function wp_tempnam( string $name ): string {
+	$dir = dirname( __DIR__ ) . '/.staging';
+	if ( ! is_dir( $dir ) ) { mkdir( $dir, 0775, true ); }
+	return $GLOBALS['cover_tmp'] = tempnam( $dir, 'cover-test-' );
+}
 function wp_delete_file( string $path ): void { unlink( $path ); }
 function wp_safe_remote_get( string $url, array $args ) {
 	$response = wp_remote_get( $url, $args );

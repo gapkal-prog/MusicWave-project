@@ -343,14 +343,17 @@ add_filter( 'body_class', 'musicwave_release_body_class' );
  * @return void
  */
 function musicwave_save_header_admin_mods(): void {
-	set_theme_mod( 'musicwave_site_header', musicwave_sanitize_site_header( wp_unslash( (string) ( $_POST['musicwave_site_header'] ?? '' ) ) ) );
-	set_theme_mod( 'musicwave_site_header_mobile', musicwave_sanitize_mobile_header( wp_unslash( (string) ( $_POST['musicwave_site_header_mobile'] ?? 'drawer' ) ) ) );
-	set_theme_mod( 'musicwave_topbar_brand', musicwave_sanitize_topbar_brand( wp_unslash( (string) ( $_POST['musicwave_topbar_brand'] ?? 'full' ) ) ) );
+	if ( ! current_user_can( 'edit_theme_options' ) || ! check_admin_referer( 'musicwave_site_header' ) ) {
+		return;
+	}
+	set_theme_mod( 'musicwave_site_header', musicwave_sanitize_site_header( isset( $_POST['musicwave_site_header'] ) && is_string( $_POST['musicwave_site_header'] ) ? sanitize_text_field( wp_unslash( $_POST['musicwave_site_header'] ) ) : '' ) );
+	set_theme_mod( 'musicwave_site_header_mobile', musicwave_sanitize_mobile_header( isset( $_POST['musicwave_site_header_mobile'] ) && is_string( $_POST['musicwave_site_header_mobile'] ) ? sanitize_text_field( wp_unslash( $_POST['musicwave_site_header_mobile'] ) ) : 'drawer' ) );
+	set_theme_mod( 'musicwave_topbar_brand', musicwave_sanitize_topbar_brand( isset( $_POST['musicwave_topbar_brand'] ) && is_string( $_POST['musicwave_topbar_brand'] ) ? sanitize_text_field( wp_unslash( $_POST['musicwave_topbar_brand'] ) ) : 'full' ) );
 	set_theme_mod( 'musicwave_rail_brand', isset( $_POST['musicwave_rail_brand'] ) ? '1' : '0' );
 	set_theme_mod( 'musicwave_show_search', isset( $_POST['musicwave_show_search'] ) ? '1' : '0' );
 	set_theme_mod( 'musicwave_show_theme', isset( $_POST['musicwave_show_theme'] ) ? '1' : '0' );
 	set_theme_mod( 'musicwave_show_account', isset( $_POST['musicwave_show_account'] ) ? '1' : '0' );
-	set_theme_mod( 'musicwave_tabs_count', musicwave_sanitize_tabs_count( wp_unslash( (string) ( $_POST['musicwave_tabs_count'] ?? '5' ) ) ) );
+	set_theme_mod( 'musicwave_tabs_count', musicwave_sanitize_tabs_count( isset( $_POST['musicwave_tabs_count'] ) && is_string( $_POST['musicwave_tabs_count'] ) ? sanitize_text_field( wp_unslash( $_POST['musicwave_tabs_count'] ) ) : '5' ) );
 }
 
 /**

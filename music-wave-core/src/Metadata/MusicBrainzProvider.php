@@ -34,11 +34,12 @@ final class MusicBrainzProvider implements MetadataProvider, MetadataEnrichmentP
 	}
 
 	/**
-	 * Decode a JSON response body into an array, or null on failure.
+	 * Decode JSON, allowing a missing cover only when explicitly requested.
 	 *
 	 * @param array<int|string, mixed>|\WP_Error $response HTTP response.
 	 * @return array<string, mixed>|null
 	 * @throws RateLimitException When the MusicBrainz API reports a rate limit.
+	 * @throws \RuntimeException When the request or payload is invalid.
 	 */
 	private function decode_json( $response, bool $allow_not_found = false ): ?array {
 		if ( is_wp_error( $response ) ) {
