@@ -117,5 +117,6 @@ function musicwave_release_excluded( string $relative ): bool {
 
 	$filename = basename( $relative );
 
-	return '.DS_Store' === $filename || 'Thumbs.db' === $filename || '.gitignore' === $filename || '.gitkeep' === $filename || 1 === preg_match( '/\.(log|map)$/', $filename );
+	// Never hash the previous manifest into its regenerated replacement.
+	return 'MANIFEST.sha256' === $filename || '.DS_Store' === $filename || 'Thumbs.db' === $filename || '.gitignore' === $filename || '.gitkeep' === $filename || 1 === preg_match( '/\.(log|map)$/', $filename );
 }

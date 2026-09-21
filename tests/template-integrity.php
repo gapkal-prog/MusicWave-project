@@ -1814,3 +1814,14 @@ mw_assert_same(
 	false !== strpos( $download_runtime, '.mw-secure-play-button__label' ),
 	'The download runtime must keep the visible play/pause label in step with the accessible name.'
 );
+
+// Release versions must agree across distributable headers and the manifest.
+$mw_manifest = json_decode( (string) file_get_contents( dirname( __DIR__ ) . '/release-manifest.json' ), true );
+foreach ( array( 'music-wave-core' => 'music-wave-core.php', 'music-wave-vip' => 'music-wave-vip.php', 'musicwave' => 'style.css' ) as $mw_package => $mw_entry ) {
+	$mw_header = (string) file_get_contents( dirname( __DIR__ ) . '/' . $mw_package . '/' . $mw_entry );
+	$mw_readme = (string) file_get_contents( dirname( __DIR__ ) . '/' . $mw_package . '/readme.txt' );
+	preg_match( '/^\s*(?:\*\s*)?Version:\s*([0-9.]+)/m', $mw_header, $mw_version );
+	preg_match( '/^Stable tag:\s*([0-9.]+)/m', $mw_readme, $mw_stable );
+	mw_assert_same( $mw_manifest['packages'][ $mw_package ]['version'], $mw_version[1] ?? '', $mw_package . ' manifest version must match its runtime header.' );
+	mw_assert_same( $mw_version[1] ?? '', $mw_stable[1] ?? '', $mw_package . ' readme stable tag must match its runtime header.' );
+}

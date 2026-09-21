@@ -4,13 +4,18 @@ Tags: block-theme, music, woocommerce, rtl, accessibility
 Requires at least: 6.6
 Tested up to: 6.8
 Requires PHP: 7.4
-Stable tag: 0.9.0
+Stable tag: 0.9.1
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
 MusicWave is a block theme for music catalogs and stores. It uses MusicWave Core for catalog data and supports WooCommerce plus MusicWave VIP protected downloads.
 
 == Changelog ==
+
+= 0.9.1 =
+* Editor: independent release facts and native editable request-page headings, introductions and steps. Existing saved templates are not overwritten.
+* Fix: empty shelf/slider headings stay empty for composition; restore the vinyl section header container and use actual release dates in the spec-sheet pattern.
+* Security: validate header settings within the save boundary.
 
 = 0.9.0 =
 * Feature: the "سربرگ (استریم)" template part (`header-stream`) becomes a streaming-app shell: a vertical side rail at the inline-start edge (right in RTL) with the brand and four destinations (خانه، پیشنهادی، جستجو، موسیقی من) rendered as core navigation blocks with mask icons, plus a slim top bar with the "جستجو در سانگ سرا" search field, the theme toggle and a round account link. The rail collapses to a 72px icon strip with a warm highlight for the current destination; `assets/rail.js` adds the toggle (`aria-expanded`, `aria-controls`), stores the choice in `localStorage` (`musicwave-rail`), preloads it before paint to avoid layout shift, marks custom destinations (search, account) as current, and survives the persistent-player soft navigation. Without JavaScript the rail is simply expanded. Below 64rem the same markup docks as a bottom tab bar above the global player. New tokens `--mw-rail-width*`, `--mw-rail-active`, `--mw-rail-on-active`; new module `components/rail.css`; editor styles keep the rail as an ordinary row in the canvas.
