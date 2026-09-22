@@ -4,13 +4,20 @@ Tags: music, catalog, releases, woocommerce, downloads
 Requires at least: 6.6
 Tested up to: 6.8
 Requires PHP: 7.4
-Stable tag: 0.14.0
+Stable tag: 0.14.1
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
 MusicWave Core provides catalog data, release relationships, WooCommerce mapping, customer music library, access decisions, secure-download contracts, onboarding, and diagnostics for the MusicWave theme.
 
 == Changelog ==
+
+= 0.14.1 =
+* Fix: distinguish provider failures from empty searches; encode external API queries and support plain-permalink REST URLs.
+* Performance: retrieve cover art only for the selected result; isolate detail caches by track and Spotify tokens by credentials.
+* Security: cap cover downloads during streaming, clean temporary files and require upload permission.
+* Editor: independently insertable release facts, native block props and conditional inspector controls.
+* SEO: playlists use MusicPlaylist structured data.
 
 = 0.14.0 =
 * Feature: the `music-wave/request-form` block gains a `mode` (`both` | `song` | `collab`) so one site can run a combined page or two dedicated pages ("custom song" / "collaboration"). Each mode ships its own translated eyebrow, heading, intro, submit label, service highlights and process steps; editors can override every line (`highlight1Title` … `step3`, `privacyNote`), preset or hide the kind picker (`showTypeChips`, `defaultType`) and the role picker (`showRoles`, `defaultRole`). Existing blocks keep their behaviour (`mode` defaults to `both`).

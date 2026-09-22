@@ -212,14 +212,14 @@ function musicwave_register_header_customizer( $wp_customize ): void {
 	);
 
 	$controls = array(
-		'musicwave_site_header'         => array(
-			'default' => 'header-stream',
+		'musicwave_site_header'        => array(
+			'default'  => 'header-stream',
 			'sanitize' => 'musicwave_sanitize_site_header',
-			'label'   => __( 'سربرگ سراسری', 'musicwave' ),
-			'type'    => 'select',
-			'choices' => musicwave_site_header_choices(),
+			'label'    => __( 'سربرگ سراسری', 'musicwave' ),
+			'type'     => 'select',
+			'choices'  => musicwave_site_header_choices(),
 		),
-		'musicwave_site_header_mobile'  => array(
+		'musicwave_site_header_mobile' => array(
 			'default'     => 'drawer',
 			'sanitize'    => 'musicwave_sanitize_mobile_header',
 			'label'       => __( 'سربرگ موبایل', 'musicwave' ),
@@ -227,38 +227,38 @@ function musicwave_register_header_customizer( $wp_customize ): void {
 			'type'        => 'select',
 			'choices'     => musicwave_mobile_header_choices(),
 		),
-		'musicwave_topbar_brand'        => array(
+		'musicwave_topbar_brand'       => array(
 			'default'  => 'full',
 			'sanitize' => 'musicwave_sanitize_topbar_brand',
 			'label'    => __( 'برند نوار بالا', 'musicwave' ),
 			'type'     => 'select',
 			'choices'  => musicwave_topbar_brand_choices(),
 		),
-		'musicwave_rail_brand'          => array(
-			'default'     => '1',
-			'sanitize'    => 'musicwave_sanitize_onoff',
-			'label'       => __( 'لوگو و نام در نوار کناری دسکتاپ / منوی کشویی', 'musicwave' ),
-			'type'        => 'checkbox',
+		'musicwave_rail_brand'         => array(
+			'default'  => '1',
+			'sanitize' => 'musicwave_sanitize_onoff',
+			'label'    => __( 'لوگو و نام در نوار کناری دسکتاپ / منوی کشویی', 'musicwave' ),
+			'type'     => 'checkbox',
 		),
-		'musicwave_show_search'         => array(
+		'musicwave_show_search'        => array(
 			'default'  => '1',
 			'sanitize' => 'musicwave_sanitize_onoff',
 			'label'    => __( 'نمایش جستجو', 'musicwave' ),
 			'type'     => 'checkbox',
 		),
-		'musicwave_show_theme'          => array(
+		'musicwave_show_theme'         => array(
 			'default'  => '1',
 			'sanitize' => 'musicwave_sanitize_onoff',
 			'label'    => __( 'نمایش تغییر پوسته', 'musicwave' ),
 			'type'     => 'checkbox',
 		),
-		'musicwave_show_account'        => array(
+		'musicwave_show_account'       => array(
 			'default'  => '1',
 			'sanitize' => 'musicwave_sanitize_onoff',
 			'label'    => __( 'نمایش حساب کاربری', 'musicwave' ),
 			'type'     => 'checkbox',
 		),
-		'musicwave_tabs_count'          => array(
+		'musicwave_tabs_count'         => array(
 			'default'  => '5',
 			'sanitize' => 'musicwave_sanitize_tabs_count',
 			'label'    => __( 'تعداد آیکون نوار پایین', 'musicwave' ),
@@ -343,14 +343,17 @@ add_filter( 'body_class', 'musicwave_release_body_class' );
  * @return void
  */
 function musicwave_save_header_admin_mods(): void {
-	set_theme_mod( 'musicwave_site_header', musicwave_sanitize_site_header( wp_unslash( (string) ( $_POST['musicwave_site_header'] ?? '' ) ) ) );
-	set_theme_mod( 'musicwave_site_header_mobile', musicwave_sanitize_mobile_header( wp_unslash( (string) ( $_POST['musicwave_site_header_mobile'] ?? 'drawer' ) ) ) );
-	set_theme_mod( 'musicwave_topbar_brand', musicwave_sanitize_topbar_brand( wp_unslash( (string) ( $_POST['musicwave_topbar_brand'] ?? 'full' ) ) ) );
+	if ( ! current_user_can( 'edit_theme_options' ) || ! check_admin_referer( 'musicwave_site_header' ) ) {
+		return;
+	}
+	set_theme_mod( 'musicwave_site_header', musicwave_sanitize_site_header( isset( $_POST['musicwave_site_header'] ) && is_string( $_POST['musicwave_site_header'] ) ? sanitize_text_field( wp_unslash( $_POST['musicwave_site_header'] ) ) : '' ) );
+	set_theme_mod( 'musicwave_site_header_mobile', musicwave_sanitize_mobile_header( isset( $_POST['musicwave_site_header_mobile'] ) && is_string( $_POST['musicwave_site_header_mobile'] ) ? sanitize_text_field( wp_unslash( $_POST['musicwave_site_header_mobile'] ) ) : 'drawer' ) );
+	set_theme_mod( 'musicwave_topbar_brand', musicwave_sanitize_topbar_brand( isset( $_POST['musicwave_topbar_brand'] ) && is_string( $_POST['musicwave_topbar_brand'] ) ? sanitize_text_field( wp_unslash( $_POST['musicwave_topbar_brand'] ) ) : 'full' ) );
 	set_theme_mod( 'musicwave_rail_brand', isset( $_POST['musicwave_rail_brand'] ) ? '1' : '0' );
 	set_theme_mod( 'musicwave_show_search', isset( $_POST['musicwave_show_search'] ) ? '1' : '0' );
 	set_theme_mod( 'musicwave_show_theme', isset( $_POST['musicwave_show_theme'] ) ? '1' : '0' );
 	set_theme_mod( 'musicwave_show_account', isset( $_POST['musicwave_show_account'] ) ? '1' : '0' );
-	set_theme_mod( 'musicwave_tabs_count', musicwave_sanitize_tabs_count( wp_unslash( (string) ( $_POST['musicwave_tabs_count'] ?? '5' ) ) ) );
+	set_theme_mod( 'musicwave_tabs_count', musicwave_sanitize_tabs_count( isset( $_POST['musicwave_tabs_count'] ) && is_string( $_POST['musicwave_tabs_count'] ) ? sanitize_text_field( wp_unslash( $_POST['musicwave_tabs_count'] ) ) : '5' ) );
 }
 
 /**

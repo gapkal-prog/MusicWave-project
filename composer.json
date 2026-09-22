@@ -25,12 +25,12 @@
   "scripts": {
     "check:syntax": "@php tools/check-syntax.php",
     "check:phpcs": "phpcs --standard=phpcs.xml music-wave-core music-wave-vip musicwave",
-    "check:phpstan": "phpstan analyse --configuration=phpstan.neon --memory-limit=2G",
+    "check:phpstan": "phpstan analyse --configuration=phpstan.neon --memory-limit=4G",
     "check:site-editor": "@php tools/check-site-editor.php",
     "check:js": "@php tools/check-js.php",
     "make-pot": "@php tools/generate-pot.php",
     "make-script-json": "@php tools/generate-script-json.php",
     "check:script-translations": "@php tools/check-script-translations.php",
-    "test": "@php tests/run.php"
+    "test": ["@php tests/run.php", "@php tests/metadata.php"]
   }
 }

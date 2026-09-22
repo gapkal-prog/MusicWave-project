@@ -1,5 +1,8 @@
 parameters:
     level: 3
+    tmpDir: .phpstan-cache
+    parallel:
+        maximumNumberOfProcesses: 1
     paths:
         - music-wave-core
         - music-wave-vip
