@@ -51,6 +51,15 @@ foreach ( $components as $component => $entry_file ) {
 	}
 
 	$files = musicwave_release_files( $source );
+	if ( ! isset( $files['LICENSE'] ) ) {
+		$license = $project_root . '/LICENSE';
+		if ( ! is_readable( $license ) ) {
+			fwrite( STDERR, "Missing product license text.\n" );
+			exit( 1 );
+		}
+		$files['LICENSE'] = $license;
+	}
+	ksort( $files, SORT_STRING );
 	$manifest = array();
 	foreach ( $files as $relative_path => $absolute_path ) {
 		$archive_name = $component . '/' . $relative_path;
