@@ -57,13 +57,16 @@ final class MetadataResolver {
 		}
 
 		$attempts = array();
+		$errors   = array();
 		foreach ( $this->enabled() as $provider ) {
 			$attempts[] = $provider->name();
 			try {
 				$results = $provider->search( $query );
 			} catch ( RateLimitException $e ) {
+				$errors[ $provider->name() ] = 'rate_limited';
 				continue; // Fall through to the next provider in the chain.
 			} catch ( \Throwable $e ) {
+				$errors[ $provider->name() ] = 'unavailable';
 				continue;
 			}
 
@@ -72,15 +75,7 @@ final class MetadataResolver {
 			}
 
 			$results = array_slice( array_values( $results ), 0, $limit );
-			foreach ( $results as $result ) {
-				if ( '' === $result->cover_url ) {
-					try {
-						$result->cover_url = $provider->cover_for( $result );
-					} catch ( \Throwable $e ) {
-						$result->cover_url = '';
-					}
-				}
-			}
+			// Cover Art Archive is resolved only for the selected result, not N times per search.
 
 			$payload = array(
 				'success'  => true,
@@ -88,6 +83,7 @@ final class MetadataResolver {
 				'provider' => $provider->name(),
 				'label'    => $this->provider_label( $provider->name() ),
 				'attempts' => $attempts,
+				'errors'   => $errors,
 				'results'  => array_map(
 					static function ( MetadataResult $result ): array {
 						return $result->to_array();
@@ -98,6 +94,18 @@ final class MetadataResolver {
 			$this->cache_set( $query, $limit, $payload );
 
 			return $payload;
+		}
+
+		if ( ! empty( $errors ) ) {
+			return array(
+				'success'  => false,
+				'cached'   => false,
+				'code'     => 'provider_unavailable',
+				'attempts' => $attempts,
+				'errors'   => $errors,
+				'message'  => __( 'سرویس فراداده در دسترس نیست یا درخواست‌ها محدود شده‌اند. اتصال خروجی HTTPS و تنظیمات سرویس را بررسی کنید و کمی بعد دوباره امتحان کنید.', 'music-wave-core' ),
+				'results'  => array(),
+			);
 		}
 
 		return array(
@@ -118,18 +126,26 @@ final class MetadataResolver {
 			return $this->with_factual_description( $result, $release_types );
 		}
 
-		$cache_key = 'mw_meta_detail_v2_' . md5( $result->provider . ':' . $result->reference_id . ':' . implode( ',', $release_types ) );
+		$cache_key = 'mw_meta_detail_v3_' . md5( wp_json_encode( array( $result->to_array(), $release_types ) ) );
 		$cached    = get_transient( $cache_key );
 		if ( is_array( $cached ) ) {
 			return $this->with_factual_description( MetadataResult::from_array( array_merge( $result->to_array(), $cached ) ), $release_types );
 		}
 
 		foreach ( $this->enabled() as $provider ) {
-			if ( $provider->name() !== $result->provider || ! $provider instanceof MetadataEnrichmentProvider ) {
+			if ( $provider->name() !== $result->provider ) {
 				continue;
 			}
+			// Artwork failure must not discard usable descriptive metadata.
+			if ( '' === $result->cover_url ) {
+				try {
+					$result->cover_url = $provider->cover_for( $result );
+				} catch ( \Throwable $e ) {
+					$result->cover_url = '';
+				}
+			}
 			try {
-				$enriched = $provider->enrich( $result );
+				$enriched = $provider instanceof MetadataEnrichmentProvider ? $provider->enrich( $result ) : $result;
 				set_transient( $cache_key, $enriched->to_array(), 12 * HOUR_IN_SECONDS );
 				return $this->with_factual_description( $enriched, $release_types );
 			} catch ( \Throwable $e ) {
@@ -169,21 +185,40 @@ final class MetadataResolver {
 			)
 		);
 
-		$tmp = download_url( $url, isset( $budgets['timeout'] ) ? max( 5, (int) $budgets['timeout'] ) : 15 );
-		if ( is_wp_error( $tmp ) ) {
-			return $tmp;
+		$budgets   = is_array( $budgets ) ? $budgets : array();
+		$max_bytes = isset( $budgets['max_bytes'] ) ? max( 1, min( 20 * 1024 * 1024, (int) $budgets['max_bytes'] ) ) : 10 * 1024 * 1024;
+		$tmp       = wp_tempnam( 'musicwave-cover' );
+		if ( ! $tmp ) {
+			return new \WP_Error( 'cover_temp_failed', __( 'ایجاد فایل موقت جلد ممکن نیست.', 'music-wave-core' ) );
+		}
+
+		// Enforce the byte budget DURING streaming, not after an unlimited download.
+		// WordPress safe HTTP also validates the destination and redirect targets.
+		$response = wp_safe_remote_get(
+			$url,
+			array(
+				'timeout'             => isset( $budgets['timeout'] ) ? max( 5, min( 30, (int) $budgets['timeout'] ) ) : 15,
+				'redirection'         => 3,
+				'stream'              => true,
+				'filename'            => $tmp,
+				'limit_response_size' => $max_bytes + 1,
+			)
+		);
+		if ( is_wp_error( $response ) || 200 !== (int) wp_remote_retrieve_response_code( $response ) ) {
+			wp_delete_file( $tmp );
+			return new \WP_Error( 'cover_download_failed', __( 'دریافت جلد از سرویس خارجی ممکن نیست؛ اتصال HTTPS یا وجود تصویر را بررسی کنید.', 'music-wave-core' ) );
 		}
 
 		$bytes = filesize( $tmp );
-		if ( false === $bytes || $bytes < 1 || ( isset( $budgets['max_bytes'] ) && $bytes > (int) $budgets['max_bytes'] ) ) {
-			@unlink( $tmp ); // phpcs:ignore WordPress.WP.AlternativeFunctions.unlink_unlink, WordPress.PHP.NoSilencedErrors.Discouraged -- best-effort temp cleanup.
+		if ( false === $bytes || $bytes < 1 || $bytes > $max_bytes ) {
+			wp_delete_file( $tmp );
 			return new \WP_Error( 'cover_too_large', __( 'اندازهٔ جلد دانلودشده از حد تعیین‌شده بیشتر است.', 'music-wave-core' ) );
 		}
 
 		$dimensions = @getimagesize( $tmp ); // phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged -- probing untrusted bytes; failures handled below.
-		$max_pixels = isset( $budgets['max_pixels'] ) ? (int) $budgets['max_pixels'] : 5000;
+		$max_pixels = isset( $budgets['max_pixels'] ) ? max( 1, min( 5000, (int) $budgets['max_pixels'] ) ) : 5000;
 		if ( ! is_array( $dimensions ) || ! isset( $dimensions[0], $dimensions[1] ) || $dimensions[0] < 1 || $dimensions[1] < 1 || $dimensions[0] > $max_pixels || $dimensions[1] > $max_pixels ) {
-			@unlink( $tmp ); // phpcs:ignore WordPress.WP.AlternativeFunctions.unlink_unlink, WordPress.PHP.NoSilencedErrors.Discouraged -- best-effort temp cleanup.
+			wp_delete_file( $tmp );
 			return new \WP_Error( 'invalid_cover_dimensions', __( 'جلد دانلودشده تصویری قابل رمزگشایی در محدودهٔ پیکسلی تعیین‌شده نیست.', 'music-wave-core' ) );
 		}
 
@@ -196,7 +231,7 @@ final class MetadataResolver {
 			'image/avif' => 'avif',
 		);
 		if ( ! is_string( $mime ) || ! isset( $extensions[ $mime ] ) ) {
-			@unlink( $tmp ); // phpcs:ignore WordPress.WP.AlternativeFunctions.unlink_unlink, WordPress.PHP.NoSilencedErrors.Discouraged -- best-effort temp cleanup.
+			wp_delete_file( $tmp );
 			return new \WP_Error( 'invalid_cover_type', __( 'جلد دانلود شده یک تصویر پشتیبانی نمی‌شود.', 'music-wave-core' ) );
 		}
 
@@ -209,7 +244,7 @@ final class MetadataResolver {
 
 		$attachment_id = media_handle_sideload( $file, $post_id, $title );
 		if ( is_wp_error( $attachment_id ) ) {
-			@unlink( $tmp ); // phpcs:ignore WordPress.WP.AlternativeFunctions.unlink_unlink, WordPress.PHP.NoSilencedErrors.Discouraged -- best-effort temp cleanup.
+			wp_delete_file( $tmp );
 			return $attachment_id;
 		}
 		update_post_meta( (int) $attachment_id, '_wp_attachment_image_alt', sanitize_text_field( $title ) );
@@ -266,7 +301,25 @@ final class MetadataResolver {
 	}
 
 	private function cache_key( MetadataQuery $query, int $limit ): string {
-		return 'mw_meta_v4_' . md5( wp_json_encode( array( $query->track, $query->artist, $query->album, $query->year, $query->release_types, $limit ) ) );
+		return 'mw_meta_v5_' . md5(
+			wp_json_encode(
+				array(
+					array_map(
+						static function ( MetadataProvider $provider ): string {
+							return $provider->name();
+						},
+						$this->enabled()
+					),
+					$query->free_text,
+					$query->track,
+					$query->artist,
+					$query->album,
+					$query->year,
+					$query->release_types,
+					$limit,
+				)
+			)
+		);
 	}
 
 	/**

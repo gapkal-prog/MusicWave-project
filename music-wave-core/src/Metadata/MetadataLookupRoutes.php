@@ -394,7 +394,9 @@ final class MetadataLookupRoutes {
 		}
 
 		$attachment = null;
-		if ( '' !== $result->cover_url ) {
+		if ( '' !== $result->cover_url && ! current_user_can( 'upload_files' ) ) {
+			$warnings[] = __( 'فراداده ذخیره شد، اما حساب شما مجوز بارگذاری تصویر جلد ندارد.', 'music-wave-core' );
+		} elseif ( '' !== $result->cover_url ) {
 			require_once ABSPATH . 'wp-admin/includes/media.php';
 			require_once ABSPATH . 'wp-admin/includes/file.php';
 			require_once ABSPATH . 'wp-admin/includes/image.php';

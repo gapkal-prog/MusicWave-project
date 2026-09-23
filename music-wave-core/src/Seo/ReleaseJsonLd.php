@@ -220,6 +220,10 @@ final class ReleaseJsonLd {
 	 * @param array<int, string> $types Release type slugs.
 	 */
 	private function schema_type( array $types ): string {
+		if ( in_array( 'playlist', $types, true ) ) {
+			return 'MusicPlaylist';
+		}
+
 		if ( in_array( 'album', $types, true ) || in_array( 'ep', $types, true ) || in_array( 'mix', $types, true ) || in_array( 'playlist', $types, true ) ) {
 			return 'MusicAlbum';
 		}

@@ -40,7 +40,7 @@ final class DiscogsProvider implements MetadataProvider, MetadataEnrichmentProvi
 		$args = array(
 			'type'     => 'release',
 			'per_page' => 8,
-			'query'    => trim( implode( ' ', array_filter( array( $query->track, $query->artist, $query->album ) ) ) ),
+			'q'        => trim( implode( ' ', array_filter( array( $query->track, $query->artist, $query->album ) ) ) ),
 		);
 		if ( '' !== $query->artist ) {
 			$args['artist'] = $query->artist;
@@ -57,7 +57,7 @@ final class DiscogsProvider implements MetadataProvider, MetadataEnrichmentProvi
 		}
 
 		$response = wp_remote_get(
-			add_query_arg( $args, self::SEARCH_ENDPOINT ),
+			add_query_arg( array_map( 'rawurlencode', array_map( 'strval', $args ) ), self::SEARCH_ENDPOINT ),
 			array(
 				'timeout'    => 10,
 				'user-agent' => 'MusicWave/' . ( defined( 'MUSIC_WAVE_CORE_VERSION' ) ? MUSIC_WAVE_CORE_VERSION : '1.0' ),
@@ -68,17 +68,20 @@ final class DiscogsProvider implements MetadataProvider, MetadataEnrichmentProvi
 		);
 
 		if ( is_wp_error( $response ) ) {
-			return array();
+			throw new \RuntimeException( 'Discogs connection failed.' );
 		}
 		$code = (int) wp_remote_retrieve_response_code( $response );
 		if ( 429 === $code ) {
 			throw new RateLimitException( 'Discogs rate limit reached.' );
 		}
 		if ( $code < 200 || $code >= 300 ) {
-			return array();
+			throw new \RuntimeException( 'Discogs search failed.' );
 		}
 
-		$data    = json_decode( (string) wp_remote_retrieve_body( $response ), true );
+		$data = json_decode( (string) wp_remote_retrieve_body( $response ), true );
+		if ( ! is_array( $data ) || ! isset( $data['results'] ) || ! is_array( $data['results'] ) ) {
+			throw new \RuntimeException( 'Discogs returned an invalid search payload.' );
+		}
 		$results = is_array( $data ) && ! empty( $data['results'] ) && is_array( $data['results'] ) ? $data['results'] : array();
 
 		$out = array();

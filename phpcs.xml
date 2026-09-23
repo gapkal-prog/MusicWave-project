@@ -53,9 +53,8 @@
         <exclude name="Generic.Commenting.DocComment"/>
     </rule>
 
-    <rule ref="PHPCompatibilityWP">
-        <config name="testVersion" value="7.4-"/>
-    </rule>
+    <config name="testVersion" value="7.4-"/>
+    <rule ref="PHPCompatibilityWP"/>
 
     <rule ref="WordPress.Security.EscapeOutput">
         <exclude-pattern>music-wave-vip/src/SettingsPage.php</exclude-pattern>

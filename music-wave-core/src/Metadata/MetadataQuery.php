@@ -53,7 +53,7 @@ final class MetadataQuery {
 
 		// Parse "Artist - Title" and "Title (2021)" patterns out of free text.
 		if ( '' === $query->track && '' === $query->artist && '' !== $query->free_text ) {
-			$text = $query->free_text;
+			$text = str_replace( array( ' – ', ' — ' ), ' - ', $query->free_text );
 			if ( '' === $query->year && preg_match( '/\((\d{4})\)/', $text, $match ) ) {
 				$query->year = $match[1];
 				$text        = trim( str_replace( $match[0], '', $text ) );
@@ -96,14 +96,18 @@ final class MetadataQuery {
 	}
 
 	private static function clean( string $value ): string {
-		$value = sanitize_text_field( wp_unslash( $value ) );
+		$value = self::ascii_digits( sanitize_text_field( $value ) );
 		$value = (string) preg_replace( '/\s+/', ' ', $value );
 
 		return trim( $value );
 	}
 
+	private static function ascii_digits( string $value ): string {
+		return strtr( $value, array_combine( preg_split( '//u', '۰۱۲۳۴۵۶۷۸۹٠١٢٣٤٥٦٧٨٩', -1, PREG_SPLIT_NO_EMPTY ), str_split( '01234567890123456789' ) ) );
+	}
+
 	private static function normalize_year( string $value ): string {
-		if ( preg_match( '/(\d{4})/', $value, $match ) ) {
+		if ( preg_match( '/^(\d{4})$/', trim( self::ascii_digits( $value ) ), $match ) ) {
 			return $match[1];
 		}
 

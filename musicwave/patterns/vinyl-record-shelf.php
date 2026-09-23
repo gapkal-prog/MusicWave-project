@@ -16,8 +16,8 @@
  */
 
 ?>
-<!-- wp:group {"align":"wide","className":"mw-section-head","layout":{"type":"default"}} -->
-<div class="wp-block-group alignwide mw-section-head">
+<!-- wp:music-wave/section-head {"align":"wide"} -->
+<div class="wp-block-music-wave-section-head alignwide mw-section-head">
 	<!-- wp:group {"className":"mw-section-head__text","layout":{"type":"default"}} -->
 	<div class="wp-block-group mw-section-head__text">
 		<!-- wp:paragraph {"className":"mw-eyebrow"} -->
@@ -32,6 +32,6 @@
 	</div>
 	<!-- /wp:group -->
 </div>
-<!-- /wp:group -->
+<!-- /wp:music-wave/section-head -->
 
 <!-- wp:music-wave/release-shelf {"className":"is-style-vinyl","align":"wide","eyebrow":"","title":"","orderBy":"rand","itemsToShow":8,"columns":4,"layout":"grid","showAction":false} /-->

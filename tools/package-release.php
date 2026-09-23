@@ -51,6 +51,15 @@ foreach ( $components as $component => $entry_file ) {
 	}
 
 	$files = musicwave_release_files( $source );
+	if ( ! isset( $files['LICENSE'] ) ) {
+		$license = $project_root . '/LICENSE';
+		if ( ! is_readable( $license ) ) {
+			fwrite( STDERR, "Missing product license text.\n" );
+			exit( 1 );
+		}
+		$files['LICENSE'] = $license;
+	}
+	ksort( $files, SORT_STRING );
 	$manifest = array();
 	foreach ( $files as $relative_path => $absolute_path ) {
 		$archive_name = $component . '/' . $relative_path;
@@ -117,5 +126,6 @@ function musicwave_release_excluded( string $relative ): bool {
 
 	$filename = basename( $relative );
 
-	return '.DS_Store' === $filename || 'Thumbs.db' === $filename || '.gitignore' === $filename || '.gitkeep' === $filename || 1 === preg_match( '/\.(log|map)$/', $filename );
+	// Never hash the previous manifest into its regenerated replacement.
+	return 'MANIFEST.sha256' === $filename || '.DS_Store' === $filename || 'Thumbs.db' === $filename || '.gitignore' === $filename || '.gitkeep' === $filename || 1 === preg_match( '/\.(log|map)$/', $filename );
 }
